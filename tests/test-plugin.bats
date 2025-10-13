@@ -358,7 +358,7 @@ setup() {
 # ==============================================================================
 
 @test "LICENSE file exists" {
-  [ -f "LICENSE" ]
+  [ -f "LICENSE" ] || [ -f "LICENSE.md" ] || [ -f "LICENSE.txt" ]
 }
 
 @test "CHANGELOG.md exists" {

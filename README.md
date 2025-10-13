@@ -37,11 +37,21 @@
 
 ## 🚀 Quick Install
 
+**Recommended: Via Marketplace**
 ```bash
-cd ~/.config/claude/plugins
-git clone https://github.com/kanopi/cms-cultivator.git cms-cultivator
-claude plugins enable cms-cultivator
+# Add the Kanopi marketplace
+claude plugins marketplace add kanopi-claude-plugins https://github.com/kanopi/kanopi-claude-plugins
+
+# Install CMS Cultivator
+claude plugins install kanopi-claude-plugins/cms-cultivator
 ```
+
+**Alternative: Direct Install**
+```bash
+claude plugins install https://github.com/kanopi/cms-cultivator
+```
+
+See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) for project-specific installation and more options.
 
 ---
 
@@ -143,7 +153,7 @@ Contributions welcome! See [Contributing Guide](https://kanopi.github.io/cms-cul
 
 ## 📄 License
 
-GPL-2.0-or-later - see [LICENSE.md](LICENSE.md) file for details.
+GPL-2.0-or-later - see [LICENSE](LICENSE.md) file for details.
 
 ---
 
