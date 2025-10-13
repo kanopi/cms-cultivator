@@ -267,7 +267,8 @@ wp cache flush
 **If new env vars:**
 ```
 [List specific variables to add]
-GOOGLE_MAPS_API_KEY=your_key_here
+# Example placeholder - replace with actual value
+GOOGLE_MAPS_API_KEY=your_key_here_example
 ```
 
 ### 8. Disable Maintenance Mode

@@ -227,10 +227,10 @@ Production database credentials were committed to git repository 3 months ago. W
 
 **Technical Details**:
 ```bash
-# Found in commit abc123 (3 months ago)
+# Example of exposed credentials found in commit abc123 (3 months ago)
 DB_HOST=production.rds.amazonaws.com
 DB_USER=prod_user
-DB_PASSWORD=SuperSecretProd123!
+DB_PASSWORD=SuperSecretProd123_example
 ```
 
 **Exploitation Scenario**:
