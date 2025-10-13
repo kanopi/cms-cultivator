@@ -1,0 +1,257 @@
+name: Test Plugin
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  bats-tests:
+    name: BATS Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install BATS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats
+
+      - name: Install jq for JSON validation
+        run: sudo apt-get install -y jq
+
+      - name: Install yq for YAML validation
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Run BATS tests
+        run: bats tests/test-plugin.bats
+
+  frontmatter-validation:
+    name: Validate Command Frontmatter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate frontmatter structure
+        run: |
+          errors=0
+          for file in commands/*.md; do
+            echo "Checking $file..."
+
+            # Check for frontmatter markers
+            if ! grep -q "^---$" "$file"; then
+              echo "❌ Missing frontmatter in $file"
+              errors=$((errors + 1))
+            fi
+
+            # Check for required fields
+            if ! grep -q "^description:" "$file"; then
+              echo "❌ Missing description in $file"
+              errors=$((errors + 1))
+            fi
+
+            if ! grep -q "^allowed-tools:" "$file"; then
+              echo "❌ Missing allowed-tools in $file"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo ""
+            echo "Found $errors frontmatter errors"
+            exit 1
+          else
+            echo "✅ All command files have valid frontmatter"
+          fi
+
+  documentation-build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          path: ~/.cache/pip
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install MkDocs and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs-material
+          pip install mkdocs-git-revision-date-localized-plugin
+
+      - name: Build documentation (non-strict for warnings)
+        run: mkdocs build
+
+      - name: Check for broken links in docs
+        run: |
+          # Check that all internal links resolve
+          find docs -name "*.md" -exec grep -h '\[.*\](.*)' {} \; | \
+            grep -o '(\([^)]*\.md\))' | \
+            sed 's/[()]//g' | \
+            while read link; do
+              if [[ "$link" =~ ^http ]]; then
+                continue  # Skip external links
+              fi
+              # Remove anchors
+              file=$(echo "$link" | cut -d'#' -f1)
+              if [ -n "$file" ] && [ ! -f "docs/$file" ]; then
+                echo "❌ Broken link: $link"
+              fi
+            done
+
+  command-count-validation:
+    name: Validate Command Count
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Count commands and verify totals
+        run: |
+          total=$(find commands -maxdepth 1 -name "*.md" | wc -l)
+          pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
+          a11y_count=$(find commands -maxdepth 1 -name "a11y-*.md" -o -name "fix-a11y-*.md" | wc -l)
+          perf_count=$(find commands -maxdepth 1 -name "perf-*.md" | wc -l)
+          security_count=$(find commands -maxdepth 1 -name "security-*.md" | wc -l)
+          test_count=$(find commands -maxdepth 1 -name "test-*.md" | wc -l)
+          quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
+          docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
+
+          echo "Command counts:"
+          echo "  Total: $total"
+          echo "  PR Workflow: $pr_count"
+          echo "  Accessibility: $a11y_count"
+          echo "  Performance: $perf_count"
+          echo "  Security: $security_count"
+          echo "  Testing: $test_count"
+          echo "  Quality: $quality_count"
+          echo "  Documentation: $docs_count"
+
+          # Verify expected counts
+          errors=0
+
+          if [ "$total" -ne 25 ]; then
+            echo "❌ Expected 25 total commands, found $total"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$pr_count" -ne 6 ]; then
+            echo "❌ Expected 6 PR commands, found $pr_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$a11y_count" -ne 5 ]; then
+            echo "❌ Expected 5 accessibility commands, found $a11y_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$perf_count" -ne 5 ]; then
+            echo "❌ Expected 5 performance commands, found $perf_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$security_count" -ne 3 ]; then
+            echo "❌ Expected 3 security commands, found $security_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$test_count" -ne 3 ]; then
+            echo "❌ Expected 3 test commands, found $test_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$quality_count" -ne 2 ]; then
+            echo "❌ Expected 2 quality commands, found $quality_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$docs_count" -ne 1 ]; then
+            echo "❌ Expected 1 documentation command, found $docs_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ $errors -gt 0 ]; then
+            echo ""
+            echo "Found $errors command count errors"
+            exit 1
+          else
+            echo "✅ All command counts match expected values"
+          fi
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for secrets
+        run: |
+          # Check for potential hardcoded secrets
+          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" commands/*.md docs/*.md | grep -v "example\|placeholder\|TODO"; then
+            echo "❌ Potential hardcoded secrets found"
+            exit 1
+          else
+            echo "✅ No hardcoded secrets detected"
+          fi
+
+      - name: Check for merge conflict markers
+        run: |
+          if grep -r "^<<<<<<< \|^=======$\|^>>>>>>> " commands/ docs/ 2>/dev/null; then
+            echo "❌ Found merge conflict markers"
+            exit 1
+          else
+            echo "✅ No merge conflict markers found"
+          fi
+
+  json-yaml-validation:
+    name: Validate JSON and YAML Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install validators
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Validate plugin.json
+        run: |
+          jq empty .claude-plugin/plugin.json && echo "✅ plugin.json is valid"
+
+      - name: Validate mkdocs.yml
+        run: |
+          yq eval mkdocs.yml > /dev/null && echo "✅ mkdocs.yml is valid"
+
+      - name: Validate GitHub Actions workflows
+        run: |
+          for workflow in .github/workflows/*.yml; do
+            echo "Validating $workflow..."
+            yq eval "$workflow" > /dev/null && echo "✅ $workflow is valid"
+          done

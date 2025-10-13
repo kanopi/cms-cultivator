@@ -1,0 +1,23 @@
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.lock
+
+# Build artifacts
+*.log
+
+# Claude
+.claude/settings.local.json
+
+# mkdocs
+/site*
