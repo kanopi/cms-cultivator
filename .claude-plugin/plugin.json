@@ -10,7 +10,7 @@
     "url": "https://kanopi.com"
   },
   "license": "GPL-2.0-or-later",
-  "marketplace": "kanopi-claude-plugins",
+  "marketplace": "claude-toolbox",
   "keywords": [
     "claude-code",
     "slash-commands",

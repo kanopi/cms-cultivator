@@ -25,30 +25,41 @@ Before installing CMS Cultivator, ensure you have:
 
 This is the easiest method and enables automatic updates. **Installs globally for all projects.**
 
-#### Step 1: Add the Kanopi Marketplace
+#### Step 1: Start Claude Code
 
 ```bash
-claude plugins marketplace add kanopi-claude-plugins https://github.com/kanopi/kanopi-claude-plugins
+cd /path/to/your/project
+claude
 ```
 
-#### Step 2: Install CMS Cultivator
+#### Step 2: Add the Claude Toolbox Marketplace
+
+Inside Claude Code CLI:
 
 ```bash
-claude plugins install kanopi-claude-plugins/cms-cultivator
+/plugin marketplace add kanopi/claude-toolbox
 ```
 
-#### Step 3: Verify Installation
+#### Step 3: Install CMS Cultivator
 
 ```bash
-claude plugins list
+/plugin install cms-cultivator@claude-toolbox
 ```
 
-You should see `cms-cultivator` in the list of installed plugins.
+#### Step 4: Verify Installation
+
+```bash
+/plugin
+```
+
+Select "Manage Plugins" and you should see `cms-cultivator` in the list of installed plugins.
 
 #### Updating Via Marketplace
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins update kanopi-claude-plugins/cms-cultivator
+/plugin update cms-cultivator@claude-toolbox
 ```
 
 ---
@@ -57,16 +68,20 @@ claude plugins update kanopi-claude-plugins/cms-cultivator
 
 Install directly without adding a marketplace. **Installs globally for all projects.**
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins install https://github.com/kanopi/cms-cultivator
+/plugin install https://github.com/kanopi/cms-cultivator
 ```
 
 This method installs the latest version from the main branch.
 
 #### Updating Direct Installation
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins update cms-cultivator
+/plugin update cms-cultivator
 ```
 
 ---
@@ -90,8 +105,10 @@ git clone https://github.com/kanopi/cms-cultivator.git
 
 #### Step 2: Enable the Plugin
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins enable cms-cultivator
+/plugin enable cms-cultivator
 ```
 
 #### Updating Manual Installation
@@ -99,7 +116,12 @@ claude plugins enable cms-cultivator
 ```bash
 cd ~/.claude/plugins/cms-cultivator
 git pull origin main
-claude plugins reload cms-cultivator
+```
+
+Then inside Claude Code CLI:
+
+```bash
+/plugin reload cms-cultivator
 ```
 
 ---
@@ -116,12 +138,12 @@ In your project root, create or edit `.claude/settings.json`:
 {
   "extraKnownMarketplaces": [
     {
-      "name": "kanopi-claude-plugins",
-      "url": "https://github.com/kanopi/kanopi-claude-plugins"
+      "name": "claude-toolbox",
+      "url": "https://github.com/kanopi/claude-toolbox"
     }
   ],
   "enabledPlugins": {
-    "cms-cultivator@kanopi-claude-plugins": true
+    "cms-cultivator@claude-toolbox": true
   }
 }
 ```
@@ -149,7 +171,7 @@ Team members can override project settings in `.claude/settings.local.json` (not
 ```json
 {
   "enabledPlugins": {
-    "cms-cultivator@kanopi-claude-plugins": false
+    "cms-cultivator@claude-toolbox": false
   }
 }
 ```
@@ -252,14 +274,23 @@ Example `.gitignore` entry:
 
 ### Remove from Marketplace
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins uninstall kanopi-claude-plugins/cms-cultivator
+/plugin uninstall cms-cultivator@claude-toolbox
 ```
 
 ### Remove Manual Installation
 
+Inside Claude Code CLI:
+
 ```bash
-claude plugins disable cms-cultivator
+/plugin disable cms-cultivator
+```
+
+Then remove the files:
+
+```bash
 rm -rf ~/.claude/plugins/cms-cultivator
 ```
 
@@ -270,7 +301,7 @@ Remove or edit `.claude/settings.json` in your project:
 ```json
 {
   "enabledPlugins": {
-    "cms-cultivator@kanopi-claude-plugins": false
+    "cms-cultivator@claude-toolbox": false
   }
 }
 ```
@@ -281,15 +312,17 @@ Remove or edit `.claude/settings.json` in your project:
 
 ### Commands Not Showing Up
 
+Inside Claude Code CLI:
+
 ```bash
 # Check plugin status
-claude plugins list
+/plugin
 
 # Verify plugin is enabled
-claude plugins enable cms-cultivator
+/plugin enable cms-cultivator
 
 # Reload plugin
-claude plugins reload cms-cultivator
+/plugin reload cms-cultivator
 ```
 
 ### Marketplace Not Found
@@ -298,11 +331,15 @@ If the marketplace fails to load:
 
 ```bash
 # Verify marketplace URL
-curl https://raw.githubusercontent.com/kanopi/kanopi-claude-plugins/main/marketplace.json
+curl https://raw.githubusercontent.com/kanopi/claude-toolbox/main/.claude-plugin/marketplace.json
+```
 
+Inside Claude Code CLI:
+
+```bash
 # Remove and re-add marketplace
-claude plugins marketplace remove kanopi-claude-plugins
-claude plugins marketplace add kanopi-claude-plugins https://github.com/kanopi/kanopi-claude-plugins
+/plugin marketplace remove claude-toolbox
+/plugin marketplace add kanopi/claude-toolbox
 ```
 
 ### Permission Denied
@@ -362,4 +399,4 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 
 **Installation Support:**
 - **Issues**: [GitHub Issues](https://github.com/kanopi/cms-cultivator/issues)
-- **Marketplace**: [Kanopi Claude Plugins](https://github.com/kanopi/kanopi-claude-plugins)
+- **Marketplace**: [Claude Toolbox](https://github.com/kanopi/claude-toolbox)

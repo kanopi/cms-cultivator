@@ -38,17 +38,23 @@
 ## 🚀 Quick Install
 
 **Recommended: Via Marketplace**
+
+Inside Claude Code CLI:
+
 ```bash
-# Add the Kanopi marketplace
-claude plugins marketplace add kanopi-claude-plugins https://github.com/kanopi/kanopi-claude-plugins
+# Add the Claude Toolbox marketplace
+/plugin marketplace add kanopi/claude-toolbox
 
 # Install CMS Cultivator
-claude plugins install kanopi-claude-plugins/cms-cultivator
+/plugin install cms-cultivator@claude-toolbox
 ```
 
 **Alternative: Direct Install**
+
+Inside Claude Code CLI:
+
 ```bash
-claude plugins install https://github.com/kanopi/cms-cultivator
+/plugin install https://github.com/kanopi/cms-cultivator
 ```
 
 See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) for project-specific installation and more options.
