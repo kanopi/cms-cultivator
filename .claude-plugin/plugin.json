@@ -1,16 +1,13 @@
 {
   "name": "cms-cultivator",
-  "displayName": "CMS Cultivator",
   "version": "0.1.0",
   "description": "Comprehensive Claude Code development commands for Kanopi Studios. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across Drupal and WordPress projects.",
-  "publisher": "Kanopi Studios",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",
     "url": "https://kanopi.com"
   },
   "license": "GPL-2.0-or-later",
-  "marketplace": "claude-toolbox",
   "keywords": [
     "claude-code",
     "slash-commands",
@@ -29,20 +26,6 @@
     "testing",
     "code-quality"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kanopi/cms-cultivator"
-  },
-  "bugs": {
-    "url": "https://github.com/kanopi/cms-cultivator/issues"
-  },
-  "homepage": "https://kanopi.github.io/cms-cultivator/",
-  "documentation": "https://kanopi.github.io/cms-cultivator/",
-  "categories": [
-    "Development",
-    "Quality Assurance",
-    "Security",
-    "Accessibility",
-    "Performance"
-  ]
+  "repository": "https://github.com/kanopi/cms-cultivator",
+  "homepage": "https://kanopi.github.io/cms-cultivator/"
 }
