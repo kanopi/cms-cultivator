@@ -1,22 +1,20 @@
 # Commands Overview
 
-CMS Cultivator provides 25 specialized commands organized into 7 categories. Each command integrates seamlessly with Drupal and WordPress projects.
+CMS Cultivator provides 23 specialized commands organized into 7 categories. Each command integrates seamlessly with Drupal and WordPress projects.
 
 ---
 
 ## Command Categories
 
-### 🔄 [PR Workflow](pr-workflow.md) (6 commands)
+### 🔄 [PR Workflow](pr-workflow.md) (4 commands)
 
 Streamline pull request creation, review, and deployment.
 
 | Command | Description |
 |---------|-------------|
-| `/pr-desc [ticket]` | Generate comprehensive PR descriptions from git changes |
-| `/pr-create-pr [ticket]` | Create pull request with generated description |
-| `/pr-review [pr-number\|url]` | Review existing pull requests with detailed feedback |
+| `/pr-create [ticket]` | Create pull request with generated description |
+| `/pr-review [pr-number\|self] [focus]` | Review PR or analyze your own changes (size, breaking changes, test plan) |
 | `/pr-commit-msg` | Generate conventional commit messages from staged changes |
-| `/pr-analysis [focus]` | Analyze PR size, breaking changes, and generate test plan |
 | `/pr-release [focus]` | Generate changelog, deployment checklist, and update PR |
 
 ---

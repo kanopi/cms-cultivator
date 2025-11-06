@@ -208,7 +208,7 @@ In Claude Code, type `/` to see all available commands. CMS Cultivator commands 
 
 ### GitHub CLI (for PR Commands)
 
-To use `/pr-create-pr` and other PR commands:
+To use `/pr-create` and other PR commands:
 
 === "macOS"
 

@@ -31,8 +31,11 @@
 ## 🚀 Quick Example
 
 ```bash
-# Generate PR description from your changes
-/pr-desc PROJ-123
+# Create PR with generated description
+/pr-create PROJ-123
+
+# Review your changes before submitting
+/pr-review self
 
 # Run accessibility audit
 /a11y-audit
@@ -53,7 +56,8 @@
 
 ### For Developers
 - **Before committing**: `/pr-commit-msg` - Generate proper commit messages
-- **Before PR**: `/pr-desc` - Generate comprehensive PR descriptions
+- **Before PR**: `/pr-review self` - Self-review your changes
+- **Creating PR**: `/pr-create` - Generate and create PR automatically
 - **During development**: `/perf-analyze queries` - Catch performance issues early
 - **During QA**: `/a11y-audit` - Ensure accessibility compliance
 

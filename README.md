@@ -17,7 +17,7 @@
 |----------|-------------|
 | **[Installation](https://kanopi.github.io/cms-cultivator/installation/)** | Get started in minutes |
 | **[Quick Start](https://kanopi.github.io/cms-cultivator/quick-start/)** | Common workflows and examples |
-| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (25 commands) |
+| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (23 commands) |
 | **[Kanopi Tools](https://kanopi.github.io/cms-cultivator/kanopi-tools/overview/)** | Integration with DDEV add-ons |
 | **[Contributing](https://kanopi.github.io/cms-cultivator/contributing/)** | Contribute to the project |
 
@@ -25,7 +25,7 @@
 
 ## ✨ Features
 
-- **🔄 6 PR Workflow Commands** - From commit to deployment
+- **🔄 4 PR Workflow Commands** - From commit to deployment
 - **♿ 5 Accessibility Commands** - WCAG 2.1 Level AA compliance
 - **⚡ 5 Performance Commands** - Core Web Vitals optimization
 - **🔒 3 Security Commands** - Vulnerability scanning
@@ -64,8 +64,11 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 ## 💡 Quick Example
 
 ```bash
-# Generate PR description from your changes
-/pr-desc PROJ-123
+# Create PR with generated description
+/pr-create PROJ-123
+
+# Review your changes before submitting
+/pr-review self
 
 # Run accessibility audit
 /a11y-audit
@@ -86,7 +89,8 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 
 ### For Developers
 - `/pr-commit-msg` - Generate proper commit messages
-- `/pr-desc` - Generate comprehensive PR descriptions
+- `/pr-create` - Generate and create PRs automatically
+- `/pr-review self` - Self-review before submitting PR
 - `/perf-analyze queries` - Catch performance issues early
 - `/a11y-audit` - Ensure accessibility compliance
 

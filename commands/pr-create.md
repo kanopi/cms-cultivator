@@ -8,45 +8,48 @@ You are helping create a pull request on GitHub. Follow this workflow:
 
 ## Step 1: Generate PR Description
 
-First, run the `/pr-desc` command logic internally (don't literally call the command):
+Follow the same analysis and template approach as `/pr-desc` command:
 
-1. Run `git status` to see changed files
-2. Run `git diff` to see actual changes
-3. Run `git log origin/main..HEAD` to see commits since branching from main
-4. Analyze all changes for:
-   - **Drupal-specific changes** (if Drupal project detected):
-     - Config changes in `config/sync/*.yml`
-     - Custom modules in `modules/custom/`
-     - `.info.yml`, `.module`, `.install`, `.theme` files
-     - Service definitions (`*.services.yml`)
-     - Route definitions (`*.routing.yml`)
-     - Permission definitions (`*.permissions.yml`)
-     - Database updates (`hook_update_N`)
-     - Entity/field definitions
-     - Twig templates
-     - Theme libraries
-     - View modes, form displays
-     - Views in `config/sync/views.view.*.yml`
-   - **WordPress-specific changes** (if WordPress project detected):
-     - Theme changes (`functions.php`, templates)
-     - Gutenberg blocks in `blocks/`
-     - ACF field groups in `acf-json/`
-     - Must-use plugins in `mu-plugins/`
-     - Custom post types and taxonomies
-     - Shortcodes
-     - WP_Query customizations
-     - Template hierarchy customizations
-   - **Cypress tests** in `cypress/e2e/`
-   - **composer.json** or **package.json** changes
-   - **Database migrations** or schema changes
-   - **Environment variable** changes
+1. **Analyze the git state:**
+   - Run `git status` to see modified, staged, and untracked files
+   - Run `git diff` to see the actual code changes
+   - Run `git log origin/main..HEAD` to see commits since branching from main
+   - Check branch name for ticket references
+   - Review recent commit messages for context
 
-5. Generate a description following this template:
+2. **Detect key information for Drupal/WordPress projects:**
+   - Check if Cypress tests (`.cy.js` or `.cy.ts` files) were modified and extract test scenarios
+   - Identify changes to `composer.json` or `composer.lock` for new PHP dependencies
+   - Identify changes to `package.json` or `package-lock.json` for new frontend dependencies
+
+   **For Drupal projects:**
+   - Config changes in `config/sync/*.yml` or similar config directories
+   - Custom module changes in `modules/custom/`
+   - Contrib module patches in `patches/` or `composer.json` patches section
+   - Services definitions in `*.services.yml` files
+   - Routing changes in `*.routing.yml` files
+   - Permissions in `*.permissions.yml` files
+   - Module dependencies in `*.info.yml` files
+   - Database updates (`hook_update_N` in `.install` files)
+   - Entity type definitions, field definitions, view modes, form display configurations
+   - Theme changes: Twig templates, libraries (`*.libraries.yml`), preprocess functions
+   - Migration configurations, REST API endpoints, webform configurations
+
+   **For WordPress projects:**
+   - Theme changes (`functions.php`, template files)
+   - Custom Gutenberg blocks in `blocks/` directories
+   - ACF field group exports in `acf-json/` directories
+   - Must-use plugins in `mu-plugins/`
+   - Custom plugin modifications
+   - Custom post type or taxonomy registrations
+   - Shortcode implementations
+   - Changes to `wp-config.php`
+
+3. **Generate description using the same template as `/pr-desc`:**
 
 ```markdown
 ## Description
 Teamwork Ticket(s): [insert_ticket_name_here](insert_link_here)
-
 - [ ] Was AI used in this pull request?
 
 > As a developer, I need to start with a story.
@@ -77,12 +80,13 @@ with this PR?_
 _Notes regarding deployment of the contained body of work. These should note any
 new dependencies, new scripts, etc. This should also include work that needs to be
 accomplished post-launch like enabling a plugin._
-
-## Deploy Notes
-
-### Rollback Plan
-[How to rollback if issues occur]
 ```
+
+4. **Populate intelligently** following the same guidelines as `/pr-desc`:
+   - Extract acceptance criteria from hook implementations, entity alterations, field definitions, etc.
+   - Note deployment requirements like config imports, entity updates, module enablement
+   - Include specific admin paths and validation steps
+   - List all new dependencies and configuration changes
 
 ## Step 2: Show Generated Description
 
