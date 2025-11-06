@@ -45,46 +45,40 @@ First, run the `/pr-desc` command logic internally (don't literally call the com
 
 ```markdown
 ## Description
-[Comprehensive summary of what this PR accomplishes and why]
+Teamwork Ticket(s): [insert_ticket_name_here](insert_link_here)
+
+- [ ] Was AI used in this pull request?
+
+> As a developer, I need to start with a story.
+
+_A few sentences describing the overall goals of the pull request's commits.
+What is the current behavior of the app? What is the updated/expected behavior
+with this PR?_
 
 ## Acceptance Criteria
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+* A list describing how the feature should behave
+* e.g. Clicking outside a modal will close it
+* e.g. Clicking on a new accordion tab will not close open tabs
 
 ## Assumptions
-- [Any assumptions made]
+* A list of things the code reviewer or project manager should know
+* e.g. There is a known Javascript error in the console.log
+* e.g. On any `multidev`, the popup plugin breaks.
 
 ## Steps to Validate
-1. [Step-by-step validation instructions]
+1. A list of steps to validate
+1. Include direct links to test sites (specific nodes, admin screens, etc)
+1. Be explicit
 
 ## Affected URL
-- [URL where changes can be seen]
+[link_to_relevant_multidev_or_test_site](insert_link_here)
 
 ## Deploy Notes
+_Notes regarding deployment of the contained body of work. These should note any
+new dependencies, new scripts, etc. This should also include work that needs to be
+accomplished post-launch like enabling a plugin._
 
-### Pre-deployment
-- [ ] [Any pre-deploy steps]
-
-### Deployment Steps
-**If Drupal project:**
-- [ ] `drush cim -y` (if config changes detected)
-- [ ] `drush updb -y` (if database updates detected)
-- [ ] `drush cr` (if needed)
-- [ ] `drush entup -y` (if entity/field changes)
-- [ ] Additional Drush commands as needed
-
-**If WordPress project:**
-- [ ] Run database migrations if present
-- [ ] Flush permalinks if CPT/taxonomy changes
-- [ ] Clear object cache
-- [ ] Additional WP-CLI commands as needed
-
-**If Cypress tests added/modified:**
-- [ ] Verify test environment is up-to-date
-- [ ] Run Cypress tests: `npm run cypress:run` or `npx cypress run`
-
-### Post-deployment
-- [ ] [Any post-deploy verification steps]
+## Deploy Notes
 
 ### Rollback Plan
 [How to rollback if issues occur]
