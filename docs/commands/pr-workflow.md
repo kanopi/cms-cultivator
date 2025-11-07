@@ -143,7 +143,7 @@ git add feature.php
 # 2. Before creating PR - self-review
 /pr-review self           # Analyze your own changes
 /quality-standards        # Check code standards
-/security-scan secrets    # Check for exposed secrets
+/audit-security secrets  # Check for exposed secrets
 
 # 3. Create PR
 /pr-create PROJ-123    # Generates description and creates PR

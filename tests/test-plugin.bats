@@ -70,9 +70,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (23)" {
+@test "command count matches expected (14)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 23 ]
+  [ "$count" -eq 14 ]
 }
 
 # ==============================================================================
@@ -145,19 +145,19 @@ setup() {
   [ "$pr_count" -eq 4 ]
 }
 
-@test "accessibility commands start with a11y- or fix-" {
-  a11y_count=$(find commands -maxdepth 1 -name "a11y-*.md" -o -name "fix-a11y-*.md" | wc -l)
-  [ "$a11y_count" -eq 5 ]
+@test "accessibility commands start with audit-a11y" {
+  a11y_count=$(find commands -maxdepth 1 -name "audit-a11y.md" | wc -l)
+  [ "$a11y_count" -eq 1 ]
 }
 
-@test "performance commands start with perf-" {
-  perf_count=$(find commands -maxdepth 1 -name "perf-*.md" | wc -l)
-  [ "$perf_count" -eq 5 ]
+@test "performance commands start with audit-perf" {
+  perf_count=$(find commands -maxdepth 1 -name "audit-perf.md" | wc -l)
+  [ "$perf_count" -eq 1 ]
 }
 
-@test "security commands start with security-" {
-  sec_count=$(find commands -maxdepth 1 -name "security-*.md" | wc -l)
-  [ "$sec_count" -eq 3 ]
+@test "security commands start with audit-security" {
+  sec_count=$(find commands -maxdepth 1 -name "audit-security.md" | wc -l)
+  [ "$sec_count" -eq 1 ]
 }
 
 @test "test commands start with test-" {
@@ -193,8 +193,9 @@ setup() {
   total=$(find commands -maxdepth 1 -name "*.md" | wc -l)
   with_code=$(grep -l '```' commands/*.md | wc -l)
 
-  # At least 20 out of 23 commands should have code examples
-  [ "$with_code" -ge 20 ]
+  # At least 12 out of 14 commands should have code examples (86%)
+  [ "$with_code" -ge 12 ]
+
 }
 
 @test "no command contains TODO markers" {
