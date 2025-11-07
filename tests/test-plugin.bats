@@ -48,7 +48,7 @@ setup() {
   [ "$status" -eq 0 ]
 
   # Repository should be a string
-  run jq -r 'type' <<< "$(jq -r '.repository' .claude-plugin/plugin.json)"
+  run jq -r '.repository | type' .claude-plugin/plugin.json
   [ "$output" = "string" ]
 }
 
