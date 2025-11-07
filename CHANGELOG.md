@@ -7,22 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-- `/pr-desc` - Functionality merged into `/pr-create` command
-- `/pr-analysis` - Functionality merged into `/pr-review` command
-- `/a11y-check` - Merged into `/a11y-audit` as focus areas
-- `/a11y-checklist` - Merged into `/a11y-audit checklist` mode
-- `/a11y-report` - Merged into `/a11y-audit report` mode
-- `/fix-a11y-issues` - Merged into `/a11y-audit fix` mode
+### Added
+- `/audit-live-site [url]` - New comprehensive live website auditing command using Chrome DevTools MCP
+  - Automated multi-page discovery and intelligent prioritization
+  - Performance analysis with Core Web Vitals
+  - Accessibility testing (WCAG 2.1 Level AA)
+  - SEO analysis and best practices
+  - Security scanning and SSL validation
+  - Responsive design testing
+  - Executive summary reports with actionable recommendations
 
 ### Changed
+- **BREAKING**: Consolidated audit commands with new naming convention `audit-[category]`
+- `/a11y-audit` → `/audit-a11y [mode]` - Consolidated 5 accessibility commands into 1
+  - Modes: default (full audit), `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`, `checklist`, `report`, `fix`
+- `/perf-performance-audit` → `/audit-perf [mode]` - Consolidated 5 performance commands into 1
+  - Modes: default (full audit), `queries`, `n+1`, `assets`, `bundles`, `caching`, `lcp`, `fid`, `inp`, `cls`, `lighthouse`, `report`
+- `/security-audit` → `/audit-security [mode]` - Consolidated 3 security commands into 1
+  - Modes: default (full audit), `deps`, `secrets`, `permissions`, `report`
 - `/pr-create` now generates PR descriptions inline (previously required separate `/pr-desc` step)
 - `/pr-review` now includes size/complexity analysis and breaking change detection (previously separate `/pr-analysis`)
-- `/a11y-audit` now consolidated with multiple modes:
-  - Default mode: Full WCAG 2.1 AA audit
-  - Focus modes: `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`
-  - Special modes: `checklist`, `report`, `fix`
-- Updated command count from 25 to 19 commands (6→4 PR commands, 5→1 A11y commands)
+- Updated command count from 25 to 14 commands total
+
+### Removed
+- **PR Workflow**: `/pr-desc`, `/pr-analysis` (merged into `/pr-create` and `/pr-review`)
+- **Accessibility**: `/a11y-audit`, `/a11y-check`, `/a11y-checklist`, `/a11y-report`, `/fix-a11y-issues` (consolidated into `/audit-a11y`)
+- **Performance**: `/perf-performance-audit`, `/perf-lighthouse-report`, `/perf-performance-report`, `/perf-analyze`, `/perf-vitals` (consolidated into `/audit-perf`)
+- **Security**: `/security-audit`, `/security-scan`, `/security-report` (consolidated into `/audit-security`)
+
+### Migration Guide
+```bash
+# Old commands → New commands
+
+# Accessibility
+/a11y-audit              → /audit-a11y
+/a11y-check contrast     → /audit-a11y contrast
+/a11y-checklist          → /audit-a11y checklist
+/a11y-report             → /audit-a11y report
+/fix-a11y-issues         → /audit-a11y fix
+
+# Performance
+/perf-performance-audit  → /audit-perf
+/perf-analyze queries    → /audit-perf queries
+/perf-vitals lcp         → /audit-perf lcp
+/perf-lighthouse-report  → /audit-perf lighthouse
+/perf-performance-report → /audit-perf report
+
+# Security
+/security-audit          → /audit-security
+/security-scan secrets   → /audit-security secrets
+/security-report         → /audit-security report
+
+# PR Workflow
+/pr-desc                 → /pr-create (auto-generates description)
+/pr-analysis             → /pr-review (includes analysis)
+```
 
 ## [0.1.0] - 2025-10-13
 

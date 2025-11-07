@@ -128,9 +128,9 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Commands](commands/overview.md)** - Discover all 19 commands
+3. **[Explore Commands](commands/overview.md)** - Discover all 14 commands
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons
 
 ---
 
-**Total Commands**: 19 (4 PR + 1 A11y + 5 Perf + 3 Security + 1 Docs + 3 Testing + 2 Quality)
+**Total Commands**: 14 (4 PR + 1 A11y + 1 Perf + 1 Security + 1 Live Audit + 1 Docs + 3 Testing + 2 Quality)
