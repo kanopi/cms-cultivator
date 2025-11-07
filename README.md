@@ -17,7 +17,7 @@
 |----------|-------------|
 | **[Installation](https://kanopi.github.io/cms-cultivator/installation/)** | Get started in minutes |
 | **[Quick Start](https://kanopi.github.io/cms-cultivator/quick-start/)** | Common workflows and examples |
-| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (23 commands) |
+| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (14 commands) |
 | **[Kanopi Tools](https://kanopi.github.io/cms-cultivator/kanopi-tools/overview/)** | Integration with DDEV add-ons |
 | **[Contributing](https://kanopi.github.io/cms-cultivator/contributing/)** | Contribute to the project |
 
@@ -26,9 +26,10 @@
 ## ✨ Features
 
 - **🔄 4 PR Workflow Commands** - From commit to deployment
-- **♿ 5 Accessibility Commands** - WCAG 2.1 Level AA compliance
-- **⚡ 5 Performance Commands** - Core Web Vitals optimization
-- **🔒 3 Security Commands** - Vulnerability scanning
+- **♿ 1 Accessibility Command** - WCAG 2.1 Level AA compliance
+- **⚡ 1 Performance Command** - Core Web Vitals optimization
+- **🔒 1 Security Command** - Vulnerability scanning
+- **🔍 1 Live Site Audit Command** - Comprehensive audits with Chrome DevTools
 - **📝 1 Documentation Command** - API docs, guides, changelogs
 - **🧪 3 Testing Commands** - Test generation and coverage
 - **📊 2 Code Quality Commands** - Standards and technical debt
@@ -71,13 +72,13 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 /pr-review self
 
 # Run accessibility audit
-/a11y-audit
+/audit-a11y
 
 # Analyze performance
-/perf-analyze
+/audit-perf
 
 # Check security
-/security-scan
+/audit-security
 
 # Analyze code quality
 /quality-analyze
@@ -91,18 +92,18 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 - `/pr-commit-msg` - Generate proper commit messages
 - `/pr-create` - Generate and create PRs automatically
 - `/pr-review self` - Self-review before submitting PR
-- `/perf-analyze queries` - Catch performance issues early
-- `/a11y-audit` - Ensure accessibility compliance
+- `/audit-perf queries` - Catch performance issues early
+- `/audit-a11y` - Ensure accessibility compliance
 
 ### For Tech Leads
 - `/pr-review 123` - AI-assisted code review
-- `/perf-performance-audit` - Identify bottlenecks
-- `/security-scan` - Comprehensive security scan
+- `/audit-perf` - Identify bottlenecks
+- `/audit-security` - Comprehensive security scan
 
 ### For Project Managers
-- `/perf-performance-report` - Executive-friendly reports
-- `/a11y-report` - Accessibility documentation
-- `/security-report` - Security posture and compliance
+- `/audit-perf report` - Executive-friendly reports
+- `/audit-a11y report` - Accessibility documentation
+- `/audit-security report` - Security posture and compliance
 
 ---
 

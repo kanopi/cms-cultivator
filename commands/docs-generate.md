@@ -123,7 +123,7 @@ Generate comprehensive API documentation for custom code.
 
 **Output:** PHPDoc/JSDoc formatted documentation with examples
 
-See full documentation in original `/docs-api.md`
+For more details, use `/docs-generate api`
 
 ---
 
@@ -149,7 +149,7 @@ Update or generate README.md with current project information.
 
 **Output:** Complete README.md file
 
-See full documentation in original `/docs-readme.md`
+For more details, use `/docs-generate readme`
 
 ---
 
@@ -175,7 +175,7 @@ Generate changelog from git commit history.
 
 **Output:** CHANGELOG.md file
 
-See full documentation in original `/docs-changelog.md`
+For more details, use `/docs-generate changelog`
 
 ---
 

@@ -238,7 +238,7 @@ To use `/pr-create` and other PR commands:
 
 ### Lighthouse (for Performance Analysis)
 
-For `/perf-lighthouse-report`:
+For `/audit-perf lighthouse`:
 
 ```bash
 npm install -g lighthouse
@@ -391,7 +391,7 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Commands Overview](commands/overview.md)** - Explore all 23 commands
+- **[Commands Overview](commands/overview.md)** - Explore all 19 commands
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 

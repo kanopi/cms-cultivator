@@ -210,7 +210,7 @@ if ($this->permissionChecker->userCanEdit($uid)) {
 [Continue with all refactoring opportunities...]
 ```
 
-See full documentation in original `/quality-refactor.md`
+For more details, use `/quality-analyze refactor`
 
 ---
 
@@ -327,7 +327,7 @@ public function validateInput(ValidationRequest $request): ValidationResult {
 - PHPMD (PHP Mess Detector)
 - ESComplex (JavaScript)
 
-See full documentation in original `/quality-complexity.md`
+For more details, use `/quality-analyze complexity`
 
 ---
 
@@ -467,7 +467,7 @@ Assess technical debt including TODOs, FIXMEs, deprecated code, and legacy patte
 **Payback Period**: 9-12 months
 ```
 
-See full documentation in original `/quality-debt.md`
+For more details, use `/quality-analyze debt`
 
 ---
 

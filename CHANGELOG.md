@@ -10,11 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - `/pr-desc` - Functionality merged into `/pr-create` command
 - `/pr-analysis` - Functionality merged into `/pr-review` command
+- `/a11y-check` - Merged into `/a11y-audit` as focus areas
+- `/a11y-checklist` - Merged into `/a11y-audit checklist` mode
+- `/a11y-report` - Merged into `/a11y-audit report` mode
+- `/fix-a11y-issues` - Merged into `/a11y-audit fix` mode
 
 ### Changed
 - `/pr-create` now generates PR descriptions inline (previously required separate `/pr-desc` step)
 - `/pr-review` now includes size/complexity analysis and breaking change detection (previously separate `/pr-analysis`)
-- Updated command count from 25 to 23 commands (6→4 PR commands)
+- `/a11y-audit` now consolidated with multiple modes:
+  - Default mode: Full WCAG 2.1 AA audit
+  - Focus modes: `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`
+  - Special modes: `checklist`, `report`, `fix`
+- Updated command count from 25 to 19 commands (6→4 PR commands, 5→1 A11y commands)
 
 ## [0.1.0] - 2025-10-13
 

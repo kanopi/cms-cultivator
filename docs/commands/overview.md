@@ -1,6 +1,6 @@
 # Commands Overview
 
-CMS Cultivator provides 23 specialized commands organized into 7 categories. Each command integrates seamlessly with Drupal and WordPress projects.
+CMS Cultivator provides 14 specialized commands organized into 8 categories. Each command integrates seamlessly with Drupal and WordPress projects.
 
 ---
 
@@ -19,51 +19,53 @@ Streamline pull request creation, review, and deployment.
 
 ---
 
-### ♿ [Accessibility](accessibility.md) (5 commands)
+### ♿ [Accessibility](accessibility.md) (1 command)
 
 Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
 | Command | Description |
 |---------|-------------|
-| `/a11y-audit` | Run comprehensive WCAG 2.1 Level AA accessibility audit |
-| `/a11y-report` | Generate accessibility compliance report for stakeholders |
-| `/a11y-checklist` | Generate WCAG 2.1 Level AA compliance checklist |
-| `/a11y-check [focus]` | Check specific accessibility aspects |
-| `/fix-a11y-issues` | Generate specific code fixes for accessibility issues |
+| `/audit-a11y [focus]` | Comprehensive accessibility audit with WCAG 2.1 Level AA compliance |
 
-**Focus options**: `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`
+**Usage modes**:
+- `/audit-a11y` - Full audit with detailed findings
+- `/audit-a11y [focus]` - Focused checks (contrast, aria, headings, forms, alt-text, keyboard)
+- `/audit-a11y checklist` - Generate WCAG 2.1 AA compliance checklist
+- `/audit-a11y report` - Generate stakeholder-friendly compliance report
+- `/audit-a11y fix` - Generate specific code fixes for identified issues
 
 ---
 
-### ⚡ [Performance](performance.md) (5 commands)
+### ⚡ [Performance](performance.md) (1 command)
 
 Optimize site speed and improve Core Web Vitals.
 
 | Command | Description |
 |---------|-------------|
-| `/perf-performance-audit` | Comprehensive full-stack performance analysis |
-| `/perf-lighthouse-report` | Generate Lighthouse audit with recommendations |
-| `/perf-performance-report` | Generate executive performance report with ROI |
-| `/perf-analyze [focus]` | Analyze performance aspects in detail |
-| `/perf-vitals [metric]` | Check and optimize Core Web Vitals |
+| `/audit-perf [focus]` | Comprehensive performance analysis and Core Web Vitals optimization |
 
-**Focus options**: `queries`, `n-plus-one`, `assets`, `bundles`, `caching`
-
-**Metric options**: `lcp`, `fid`, `cls`
+**Usage modes**:
+- `/audit-perf` - Full performance audit across all areas
+- `/audit-perf [focus]` - Focused analysis (queries, n+1, assets, bundles, caching)
+- `/audit-perf vitals` - Check all Core Web Vitals (LCP, INP/FID, CLS)
+- `/audit-perf [metric]` - Optimize specific vital (lcp, inp, fid, cls)
+- `/audit-perf lighthouse` - Generate Lighthouse performance report
+- `/audit-perf report` - Generate stakeholder-friendly performance report
 
 ---
 
-### 🔒 [Security](security.md) (3 commands)
+### 🔒 [Security](security.md) (1 command)
 
 Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
 | Command | Description |
 |---------|-------------|
-| `/security-audit` | Comprehensive security audit (OWASP Top 10, code vulnerabilities) |
-| `/security-scan [focus]` | Scan for vulnerabilities, secrets, and permission issues |
-| `/security-report` | Generate security compliance report for stakeholders |
+| `/audit-security [focus]` | Comprehensive security audit with vulnerability scanning and compliance reporting |
 
-**Focus options**: `deps`, `secrets`, `permissions`
+**Usage modes**:
+- `/audit-security` - Complete security audit with detailed findings
+- `/audit-security [focus]` - Focused scans (deps, secrets, permissions)
+- `/audit-security report` - Generate stakeholder-friendly compliance report
 
 ---
 
@@ -103,6 +105,27 @@ Maintain code quality and reduce technical debt.
 | `/quality-standards` | Check code against standards (PHPCS, ESLint, Drupal/WordPress) |
 
 **Focus options**: `refactor`, `complexity`, `debt`
+
+---
+
+### 🔍 [Live Site Auditing](live-site-auditing.md) (1 command)
+
+Comprehensive audits of live websites using Chrome DevTools.
+
+| Command | Description |
+|---------|-------------|
+| `/audit-live-site [url]` | Full site audit for performance, accessibility, SEO, and security |
+
+**Requirements**: Chrome DevTools MCP Server
+
+**What it audits**:
+- Performance (Core Web Vitals: LCP, INP, CLS, FCP, TBT)
+- Accessibility (WCAG 2.2 AA compliance)
+- SEO (meta tags, structured data, sitemaps)
+- Security (HTTPS, headers, mixed content)
+- Best practices (console errors, optimization)
+
+**Output**: Markdown report + CSV task list
 
 ---
 

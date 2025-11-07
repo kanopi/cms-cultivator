@@ -42,7 +42,7 @@ Before creating a PR, check your work:
 Check your code for WCAG compliance:
 
 ```bash
-/a11y-audit
+/audit-a11y
 ```
 
 **What it checks:**
@@ -58,7 +58,7 @@ Check your code for WCAG compliance:
 Find performance bottlenecks:
 
 ```bash
-/perf-analyze
+/audit-perf
 ```
 
 **What it analyzes:**
@@ -72,7 +72,7 @@ Find performance bottlenecks:
 Scan for vulnerabilities:
 
 ```bash
-/security-scan
+/audit-security
 ```
 
 **What it scans:**
@@ -108,7 +108,7 @@ Check coding standards:
 /quality-standards
 
 # 3. Check for security issues
-/security-scan secrets
+/audit-security secrets
 
 # 4. Create the PR (auto-generates description)
 /pr-create PROJ-123
@@ -139,27 +139,27 @@ git commit -m "[selected message]"
 /pr-review 456 performance   # Performance review
 
 # 3. Check specific concerns
-/a11y-check
-/perf-analyze queries
-/security-scan deps
+/audit-a11y contrast
+/audit-perf queries
+/audit-security deps
 ```
 
 ### Workflow 4: Before Deployment
 
 ```bash
 # 1. Run comprehensive audits
-/perf-performance-audit
-/a11y-audit
-/security-audit
+/audit-perf
+/audit-a11y
+/audit-security
 
 # 2. Generate release artifacts
 /pr-release changelog
 /pr-release deploy
 
 # 3. Create compliance reports
-/perf-performance-report
-/a11y-report
-/security-report
+/audit-perf report
+/audit-a11y report
+/audit-security report
 ```
 
 ### Workflow 5: Working on Kanopi Projects
@@ -172,11 +172,11 @@ git commit -m "[selected message]"
 /test-coverage       # Uses ddev cypress-run
 
 # 2. Check performance
-/perf-analyze        # Suggests ddev theme-build
+/audit-perf          # Suggests ddev theme-build
                      # and ddev critical-run
 
 # 3. Security audit
-/security-audit      # Uses ddev composer audit
+/audit-security      # Uses ddev composer audit
 ```
 
 ---
@@ -195,29 +195,29 @@ git commit -m "[selected message]"
 ### ♿ Accessibility
 
 ```bash
-/a11y-audit                 # Comprehensive WCAG audit
-/a11y-report                # Generate compliance report
-/a11y-checklist             # WCAG 2.1 AA checklist
-/a11y-check [focus]         # Check specific aspects
-/fix-a11y-issues            # Generate code fixes
+/audit-a11y                 # Comprehensive WCAG audit
+/audit-a11y report          # Generate compliance report
+/audit-a11y checklist       # WCAG 2.1 AA checklist
+/audit-a11y [focus]         # Check specific aspects (contrast, aria, headings, forms, alt-text, keyboard)
+/audit-a11y fix             # Generate code fixes
 ```
 
 ### ⚡ Performance
 
 ```bash
-/perf-performance-audit     # Full-stack performance analysis
-/perf-lighthouse-report     # Lighthouse audit
-/perf-performance-report    # Executive performance report
-/perf-analyze [focus]       # Detailed performance analysis
-/perf-vitals [metric]       # Core Web Vitals optimization
+/audit-perf                 # Full-stack performance analysis
+/audit-perf lighthouse      # Lighthouse audit
+/audit-perf report          # Executive performance report
+/audit-perf [focus]         # Focused analysis (queries, n+1, assets, bundles, caching)
+/audit-perf [metric]        # Core Web Vitals optimization (lcp, inp, fid, cls)
 ```
 
 ### 🔒 Security
 
 ```bash
-/security-audit             # Comprehensive security audit
-/security-scan [focus]      # Scan for specific issues
-/security-report            # Security compliance report
+/audit-security             # Comprehensive security audit
+/audit-security [focus]     # Focused scans (deps, secrets, permissions)
+/audit-security report      # Security compliance report
 ```
 
 ### 📝 Documentation
@@ -266,27 +266,27 @@ Many commands accept optional focus parameters to analyze specific areas:
 
 ### Performance Focus
 ```bash
-/perf-analyze queries      # Database queries only
-/perf-analyze n-plus-one   # N+1 detection only
-/perf-analyze assets       # Asset optimization only
-/perf-analyze bundles      # JavaScript bundles only
-/perf-analyze caching      # Caching effectiveness only
+/audit-perf queries        # Database queries only
+/audit-perf n+1            # N+1 detection only
+/audit-perf assets         # Asset optimization only
+/audit-perf bundles        # JavaScript bundles only
+/audit-perf caching        # Caching effectiveness only
 ```
 
 ### Accessibility Focus
 ```bash
-/a11y-check contrast       # Color contrast only
-/a11y-check aria           # ARIA attributes only
-/a11y-check headings       # Heading structure only
-/a11y-check forms          # Form accessibility only
-/a11y-check keyboard       # Keyboard navigation only
+/audit-a11y contrast       # Color contrast only
+/audit-a11y aria           # ARIA attributes only
+/audit-a11y headings       # Heading structure only
+/audit-a11y forms          # Form accessibility only
+/audit-a11y keyboard       # Keyboard navigation only
 ```
 
 ### Security Focus
 ```bash
-/security-scan deps        # Dependency vulnerabilities only
-/security-scan secrets     # Exposed secrets only
-/security-scan permissions # Permission issues only
+/audit-security deps       # Dependency vulnerabilities only
+/audit-security secrets    # Exposed secrets only
+/audit-security permissions # Permission issues only
 ```
 
 ### Quality Focus
@@ -303,9 +303,9 @@ Many commands accept optional focus parameters to analyze specific areas:
 ### 1. Run Checks Early and Often
 ```bash
 # Don't wait until the end of the sprint
-/a11y-audit              # Check accessibility during development
-/perf-analyze queries    # Catch N+1 queries early
-/security-scan secrets   # Before committing code
+/audit-a11y              # Check accessibility during development
+/audit-perf queries      # Catch N+1 queries early
+/audit-security secrets  # Before committing code
 ```
 
 ### 2. Self-Review Before Creating PRs
@@ -320,8 +320,8 @@ Many commands accept optional focus parameters to analyze specific areas:
 ```bash
 # When you know what you're looking for
 /pr-review 456 security  # Just security review
-/perf-analyze queries    # Just check database queries
-/a11y-check contrast     # Just check color contrast
+/audit-perf queries      # Just check database queries
+/audit-a11y contrast     # Just check color contrast
 ```
 
 ### 4. Combine with Git Workflows
@@ -332,7 +332,7 @@ Many commands accept optional focus parameters to analyze specific areas:
 # Pre-PR
 /pr-review self
 /quality-standards
-/security-scan secrets
+/audit-security secrets
 
 # Post-merge
 /docs-generate changelog
@@ -341,9 +341,9 @@ Many commands accept optional focus parameters to analyze specific areas:
 ### 5. Generate Reports for Stakeholders
 ```bash
 # Before client demos
-/perf-performance-report  # Performance metrics
-/a11y-report              # Accessibility compliance
-/security-report          # Security posture
+/audit-perf report        # Performance metrics
+/audit-a11y report        # Accessibility compliance
+/audit-security report    # Security posture
 ```
 
 ---

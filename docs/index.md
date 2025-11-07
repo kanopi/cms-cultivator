@@ -3,14 +3,15 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing 23 specialized commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing 14 specialized commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
 - **🔄 4 PR Workflow Commands** - Streamline pull requests from commit to deployment
-- **♿ 5 Accessibility Commands** - Ensure WCAG 2.1 Level AA compliance
-- **⚡ 5 Performance Commands** - Optimize Core Web Vitals and page speed
-- **🔒 3 Security Commands** - Scan for vulnerabilities and security issues
+- **♿ 1 Accessibility Command** - Ensure WCAG 2.1 Level AA compliance
+- **⚡ 1 Performance Command** - Optimize Core Web Vitals and page speed
+- **🔒 1 Security Command** - Scan for vulnerabilities and security issues
+- **🔍 1 Live Site Audit Command** - Comprehensive audits using Chrome DevTools
 - **📝 1 Documentation Command** - Generate comprehensive project documentation
 - **🧪 3 Testing Commands** - Create tests and analyze coverage
 - **📊 2 Code Quality Commands** - Maintain standards and reduce technical debt
@@ -38,13 +39,13 @@
 /pr-review self
 
 # Run accessibility audit
-/a11y-audit
+/audit-a11y
 
 # Analyze performance
-/perf-analyze
+/audit-perf
 
 # Check security
-/security-scan
+/audit-security
 
 # Analyze code quality
 /quality-analyze
@@ -58,18 +59,18 @@
 - **Before committing**: `/pr-commit-msg` - Generate proper commit messages
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
-- **During development**: `/perf-analyze queries` - Catch performance issues early
-- **During QA**: `/a11y-audit` - Ensure accessibility compliance
+- **During development**: `/audit-perf queries` - Catch performance issues early
+- **During QA**: `/audit-a11y` - Ensure accessibility compliance
 
 ### For Tech Leads
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
-- **Performance audits**: `/perf-performance-audit` - Identify bottlenecks
-- **Security audits**: `/security-scan` - Comprehensive security scan
+- **Performance audits**: `/audit-perf` - Identify bottlenecks
+- **Security audits**: `/audit-security` - Comprehensive security scan
 
 ### For Project Managers
-- **Stakeholder reports**: `/perf-performance-report` - Executive-friendly reports
-- **Compliance reports**: `/a11y-report` - Accessibility documentation
-- **Security reports**: `/security-report` - Security posture and compliance
+- **Stakeholder reports**: `/audit-perf report` - Executive-friendly reports
+- **Compliance reports**: `/audit-a11y report` - Accessibility documentation
+- **Security reports**: `/audit-security report` - Security posture and compliance
 
 ---
 
@@ -127,9 +128,9 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Commands](commands/overview.md)** - Discover all 23 commands
+3. **[Explore Commands](commands/overview.md)** - Discover all 19 commands
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons
 
 ---
 
-**Total Commands**: 23 (4 PR + 5 A11y + 5 Perf + 3 Security + 1 Docs + 3 Testing + 2 Quality)
+**Total Commands**: 19 (4 PR + 1 A11y + 5 Perf + 3 Security + 1 Docs + 3 Testing + 2 Quality)
