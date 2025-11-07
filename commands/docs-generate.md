@@ -422,10 +422,10 @@ The command detects what needs updating:
 
 **Documentation in PR Workflow:**
 ```bash
-/pr-desc                    # Generate PR description
+/pr-review self             # Review changes before PR
 /docs-generate changelog    # Update changelog
 /docs-generate api          # Update API docs for new code
-/pr-create-pr               # Create PR with docs
+/pr-create                  # Create PR with docs
 ```
 
 **Release Documentation:**

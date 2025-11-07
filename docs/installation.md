@@ -208,7 +208,7 @@ In Claude Code, type `/` to see all available commands. CMS Cultivator commands 
 
 ### GitHub CLI (for PR Commands)
 
-To use `/pr-create-pr` and other PR commands:
+To use `/pr-create` and other PR commands:
 
 === "macOS"
 
@@ -391,7 +391,7 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Commands Overview](commands/overview.md)** - Explore all 25 commands
+- **[Commands Overview](commands/overview.md)** - Explore all 23 commands
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 

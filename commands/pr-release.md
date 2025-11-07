@@ -367,7 +367,7 @@ git log origin/main..HEAD --oneline
 
 #### Update PR Description
 
-Generate updated description following the same template as `/pr-desc`:
+Generate updated description following the same template as `/pr-create`:
 
 ```markdown
 ## Description

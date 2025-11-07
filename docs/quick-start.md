@@ -6,13 +6,13 @@ Get started with CMS Cultivator in minutes! This guide covers the most common wo
 
 ## Your First Commands
 
-### 1. Generate a PR Description
+### 1. Create a Pull Request
 
 When you're ready to create a pull request:
 
 ```bash
 # From your feature branch
-/pr-desc PROJ-123
+/pr-create PROJ-123
 ```
 
 **What it does:**
@@ -20,8 +20,24 @@ When you're ready to create a pull request:
 - Generates comprehensive PR description
 - Detects Drupal/WordPress-specific changes
 - Lists configuration changes, database updates, and more
+- Creates the PR on GitHub via `gh` CLI
 
-### 2. Run an Accessibility Audit
+### 2. Review Your Own Changes
+
+Before creating a PR, check your work:
+
+```bash
+/pr-review self
+```
+
+**What it analyzes:**
+- PR size and complexity
+- Breaking changes
+- Code quality issues
+- Security concerns
+- Generates test plan
+
+### 3. Run an Accessibility Audit
 
 Check your code for WCAG compliance:
 
@@ -37,7 +53,7 @@ Check your code for WCAG compliance:
 - Form labels and validation
 - Alt text for images
 
-### 3. Analyze Performance
+### 4. Analyze Performance
 
 Find performance bottlenecks:
 
@@ -51,7 +67,7 @@ Find performance bottlenecks:
 - JavaScript bundle analysis
 - Caching effectiveness
 
-### 4. Check Security
+### 5. Check Security
 
 Scan for vulnerabilities:
 
@@ -65,7 +81,7 @@ Scan for vulnerabilities:
 - OWASP Top 10 issues
 - Permission problems
 
-### 5. Verify Code Quality
+### 6. Verify Code Quality
 
 Check coding standards:
 
@@ -85,8 +101,8 @@ Check coding standards:
 ### Workflow 1: Before Creating a PR
 
 ```bash
-# 1. Generate commit message
-/pr-commit-msg
+# 1. Self-review your changes
+/pr-review self
 
 # 2. Run quality checks
 /quality-standards
@@ -94,21 +110,33 @@ Check coding standards:
 # 3. Check for security issues
 /security-scan secrets
 
-# 4. Generate PR description
-/pr-desc PROJ-123
-
-# 5. Create the PR
-/pr-create-pr 123
+# 4. Create the PR (auto-generates description)
+/pr-create PROJ-123
 ```
 
-### Workflow 2: Code Review
+### Workflow 2: Making Commits
 
 ```bash
-# 1. Analyze the PR
-/pr-analysis
+# 1. Stage your changes
+git add .
 
-# 2. Review the code
+# 2. Generate commit message
+/pr-commit-msg
+
+# 3. Commit with selected message
+git commit -m "[selected message]"
+```
+
+### Workflow 3: Code Review
+
+```bash
+# 1. Review the PR
 /pr-review 456
+
+# 2. Focus on specific areas if needed
+/pr-review 456 security      # Security review
+/pr-review 456 breaking      # Breaking changes check
+/pr-review 456 performance   # Performance review
 
 # 3. Check specific concerns
 /a11y-check
@@ -116,7 +144,7 @@ Check coding standards:
 /security-scan deps
 ```
 
-### Workflow 3: Before Deployment
+### Workflow 4: Before Deployment
 
 ```bash
 # 1. Run comprehensive audits
@@ -134,7 +162,7 @@ Check coding standards:
 /security-report
 ```
 
-### Workflow 4: Working on Kanopi Projects
+### Workflow 5: Working on Kanopi Projects
 
 ```bash
 # 1. Run Kanopi quality checks
@@ -158,12 +186,10 @@ Check coding standards:
 ### 🔄 PR Workflow
 
 ```bash
-/pr-desc [ticket]           # Generate PR description
-/pr-create-pr [ticket]      # Create PR on GitHub
-/pr-review [pr-number]      # Review existing PR
-/pr-commit-msg              # Generate commit message
-/pr-analysis [focus]        # Analyze size, breaking changes, tests
-/pr-release [focus]         # Generate changelog and deployment docs
+/pr-create [ticket]             # Create PR with generated description
+/pr-review [pr-number|self] [focus] # Review PR or analyze your own changes
+/pr-commit-msg                     # Generate commit message
+/pr-release [focus]                # Generate changelog and deployment docs
 ```
 
 ### ♿ Accessibility
@@ -225,6 +251,19 @@ Check coding standards:
 
 Many commands accept optional focus parameters to analyze specific areas:
 
+### PR Review Focus
+```bash
+/pr-review self              # Full self-assessment
+/pr-review self size         # Size and complexity
+/pr-review self breaking     # Breaking changes
+/pr-review self testing      # Test plan generation
+
+/pr-review 456               # Full review
+/pr-review 456 code          # Code quality focus
+/pr-review 456 security      # Security focus
+/pr-review 456 performance   # Performance focus
+```
+
 ### Performance Focus
 ```bash
 /perf-analyze queries      # Database queries only
@@ -257,13 +296,6 @@ Many commands accept optional focus parameters to analyze specific areas:
 /quality-analyze debt      # Technical debt assessment
 ```
 
-### PR Analysis Focus
-```bash
-/pr-analysis size          # Size and complexity
-/pr-analysis breaking      # Breaking changes
-/pr-analysis testing       # Test plan generation
-```
-
 ---
 
 ## Tips & Best Practices
@@ -276,29 +308,37 @@ Many commands accept optional focus parameters to analyze specific areas:
 /security-scan secrets   # Before committing code
 ```
 
-### 2. Use Focus Parameters for Speed
+### 2. Self-Review Before Creating PRs
 ```bash
-# When you know what you're looking for
-/perf-analyze queries    # Just check database queries
-/a11y-check contrast     # Just check color contrast
-/security-scan deps      # Just check dependencies
+# Catch issues before code review
+/pr-review self          # Full self-assessment
+# Fix any issues found
+/pr-create PROJ-123   # Create PR when ready
 ```
 
-### 3. Combine with Git Workflows
+### 3. Use Focus Parameters for Speed
+```bash
+# When you know what you're looking for
+/pr-review 456 security  # Just security review
+/perf-analyze queries    # Just check database queries
+/a11y-check contrast     # Just check color contrast
+```
+
+### 4. Combine with Git Workflows
 ```bash
 # Pre-commit
 /pr-commit-msg
 
 # Pre-PR
+/pr-review self
 /quality-standards
 /security-scan secrets
-/pr-desc
 
 # Post-merge
 /docs-generate changelog
 ```
 
-### 4. Generate Reports for Stakeholders
+### 5. Generate Reports for Stakeholders
 ```bash
 # Before client demos
 /perf-performance-report  # Performance metrics

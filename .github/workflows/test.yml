@@ -151,13 +151,13 @@ jobs:
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 25 ]; then
-            echo "❌ Expected 25 total commands, found $total"
+          if [ "$total" -ne 23 ]; then
+            echo "❌ Expected 23 total commands, found $total"
             errors=$((errors + 1))
           fi
 
-          if [ "$pr_count" -ne 6 ]; then
-            echo "❌ Expected 6 PR commands, found $pr_count"
+          if [ "$pr_count" -ne 4 ]; then
+            echo "❌ Expected 4 PR commands, found $pr_count"
             errors=$((errors + 1))
           fi
 

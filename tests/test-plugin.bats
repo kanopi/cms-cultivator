@@ -70,9 +70,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (25)" {
+@test "command count matches expected (23)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 25 ]
+  [ "$count" -eq 23 ]
 }
 
 # ==============================================================================
@@ -142,7 +142,7 @@ setup() {
 @test "PR commands start with pr-" {
   # Count PR command files
   pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
-  [ "$pr_count" -eq 6 ]
+  [ "$pr_count" -eq 4 ]
 }
 
 @test "accessibility commands start with a11y- or fix-" {
@@ -193,7 +193,7 @@ setup() {
   total=$(find commands -maxdepth 1 -name "*.md" | wc -l)
   with_code=$(grep -l '```' commands/*.md | wc -l)
 
-  # At least 20 out of 25 commands should have code examples
+  # At least 20 out of 23 commands should have code examples
   [ "$with_code" -ge 20 ]
 }
 
@@ -452,7 +452,7 @@ setup() {
   pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
 
   # Check if README mentions correct count
-  if grep -q "6 PR" README.md && [ "$pr_count" -eq 6 ]; then
+  if grep -q "4 PR" README.md && [ "$pr_count" -eq 4 ]; then
     return 0
   else
     echo "PR command count mismatch between README and actual files"
