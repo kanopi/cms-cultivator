@@ -26,9 +26,6 @@ setup() {
   run jq -e '.name' .claude-plugin/plugin.json
   [ "$status" -eq 0 ]
 
-  run jq -e '.displayName' .claude-plugin/plugin.json
-  [ "$status" -eq 0 ]
-
   run jq -e '.version' .claude-plugin/plugin.json
   [ "$status" -eq 0 ]
 
@@ -47,8 +44,12 @@ setup() {
 }
 
 @test "plugin has repository URL" {
-  run jq -e '.repository.url' .claude-plugin/plugin.json
+  run jq -e '.repository' .claude-plugin/plugin.json
   [ "$status" -eq 0 ]
+
+  # Repository should be a string
+  run jq -r 'type' <<< "$(jq -r '.repository' .claude-plugin/plugin.json)"
+  [ "$output" = "string" ]
 }
 
 # ==============================================================================

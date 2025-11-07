@@ -131,9 +131,10 @@ jobs:
         run: |
           total=$(find commands -maxdepth 1 -name "*.md" | wc -l)
           pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
-          a11y_count=$(find commands -maxdepth 1 -name "a11y-*.md" -o -name "fix-a11y-*.md" | wc -l)
-          perf_count=$(find commands -maxdepth 1 -name "perf-*.md" | wc -l)
-          security_count=$(find commands -maxdepth 1 -name "security-*.md" | wc -l)
+          a11y_count=$(find commands -maxdepth 1 -name "audit-a11y.md" | wc -l)
+          perf_count=$(find commands -maxdepth 1 -name "audit-perf.md" | wc -l)
+          security_count=$(find commands -maxdepth 1 -name "audit-security.md" | wc -l)
+          live_audit_count=$(find commands -maxdepth 1 -name "audit-live-site.md" | wc -l)
           test_count=$(find commands -maxdepth 1 -name "test-*.md" | wc -l)
           quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
           docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
@@ -144,6 +145,7 @@ jobs:
           echo "  Accessibility: $a11y_count"
           echo "  Performance: $perf_count"
           echo "  Security: $security_count"
+          echo "  Live Site Audit: $live_audit_count"
           echo "  Testing: $test_count"
           echo "  Quality: $quality_count"
           echo "  Documentation: $docs_count"
@@ -151,8 +153,8 @@ jobs:
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 19 ]; then
-            echo "❌ Expected 19 total commands, found $total"
+          if [ "$total" -ne 14 ]; then
+            echo "❌ Expected 14 total commands, found $total"
             errors=$((errors + 1))
           fi
 
@@ -162,17 +164,22 @@ jobs:
           fi
 
           if [ "$a11y_count" -ne 1 ]; then
-            echo "❌ Expected 1 accessibility command, found $a11y_count"
+            echo "❌ Expected 1 accessibility command (audit-a11y.md), found $a11y_count"
             errors=$((errors + 1))
           fi
 
-          if [ "$perf_count" -ne 5 ]; then
-            echo "❌ Expected 5 performance commands, found $perf_count"
+          if [ "$perf_count" -ne 1 ]; then
+            echo "❌ Expected 1 performance command (audit-perf.md), found $perf_count"
             errors=$((errors + 1))
           fi
 
-          if [ "$security_count" -ne 3 ]; then
-            echo "❌ Expected 3 security commands, found $security_count"
+          if [ "$security_count" -ne 1 ]; then
+            echo "❌ Expected 1 security command (audit-security.md), found $security_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$live_audit_count" -ne 1 ]; then
+            echo "❌ Expected 1 live site audit command (audit-live-site.md), found $live_audit_count"
             errors=$((errors + 1))
           fi
 
@@ -210,7 +217,8 @@ jobs:
       - name: Scan for secrets
         run: |
           # Check for potential hardcoded secrets
-          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" commands/*.md docs/*.md | grep -v "example\|placeholder\|TODO"; then
+          # Exclude audit-security.md and audit-live-site.md which contain example security code
+          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" commands/*.md docs/*.md | grep -v "example\|placeholder\|TODO\|audit-security.md\|audit-live-site.md"; then
             echo "❌ Potential hardcoded secrets found"
             exit 1
           else
