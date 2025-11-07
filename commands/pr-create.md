@@ -8,8 +8,6 @@ You are helping create a pull request on GitHub. Follow this workflow:
 
 ## Step 1: Generate PR Description
 
-Follow the same analysis and template approach as `/pr-desc` command:
-
 1. **Analyze the git state:**
    - Run `git status` to see modified, staged, and untracked files
    - Run `git diff` to see the actual code changes
@@ -45,7 +43,7 @@ Follow the same analysis and template approach as `/pr-desc` command:
    - Shortcode implementations
    - Changes to `wp-config.php`
 
-3. **Generate description using the same template as `/pr-desc`:**
+3. **Generate description using this template:**
 
 ```markdown
 ## Description
@@ -82,7 +80,7 @@ new dependencies, new scripts, etc. This should also include work that needs to 
 accomplished post-launch like enabling a plugin._
 ```
 
-4. **Populate intelligently** following the same guidelines as `/pr-desc`:
+4. **Populate intelligently:**
    - Extract acceptance criteria from hook implementations, entity alterations, field definitions, etc.
    - Note deployment requirements like config imports, entity updates, module enablement
    - Include specific admin paths and validation steps

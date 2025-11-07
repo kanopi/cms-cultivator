@@ -1,6 +1,6 @@
 ---
 description: Review a pull request or analyze your own changes
-argument-hint: [pr-number|self] [focus-area]
+argument-hint: "[pr-number|self] [focus-area]"
 allowed-tools: Bash(gh:*), Bash(git:*), Read, Glob, Grep, Bash(ddev composer:*), Bash(ddev:*)
 ---
 
