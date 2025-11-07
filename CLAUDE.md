@@ -80,7 +80,7 @@ cms-cultivator/
 │   └── plugin.json          # Claude Code plugin metadata
 ├── .github/workflows/
 │   └── docs.yml             # MkDocs deployment
-├── commands/                # 25 command files (*.md)
+├── commands/                # 23 command files (*.md)
 ├── docs/                    # MkDocs documentation
 │   ├── commands/           # Command reference pages
 │   ├── kanopi-tools/       # Kanopi integration docs

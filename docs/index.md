@@ -3,11 +3,11 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing 25 specialized commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing 23 specialized commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
-- **🔄 6 PR Workflow Commands** - Streamline pull requests from commit to deployment
+- **🔄 4 PR Workflow Commands** - Streamline pull requests from commit to deployment
 - **♿ 5 Accessibility Commands** - Ensure WCAG 2.1 Level AA compliance
 - **⚡ 5 Performance Commands** - Optimize Core Web Vitals and page speed
 - **🔒 3 Security Commands** - Scan for vulnerabilities and security issues
@@ -127,9 +127,9 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Commands](commands/overview.md)** - Discover all 25 commands
+3. **[Explore Commands](commands/overview.md)** - Discover all 23 commands
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons
 
 ---
 
-**Total Commands**: 25 (6 PR + 5 A11y + 5 Perf + 3 Security + 1 Docs + 3 Testing + 2 Quality)
+**Total Commands**: 23 (4 PR + 5 A11y + 5 Perf + 3 Security + 1 Docs + 3 Testing + 2 Quality)

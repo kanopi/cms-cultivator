@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- `/pr-desc` - Functionality merged into `/pr-create` command
+- `/pr-analysis` - Functionality merged into `/pr-review` command
+
+### Changed
+- `/pr-create` now generates PR descriptions inline (previously required separate `/pr-desc` step)
+- `/pr-review` now includes size/complexity analysis and breaking change detection (previously separate `/pr-analysis`)
+- Updated command count from 25 to 23 commands (6→4 PR commands)
+
 ## [0.1.0] - 2025-10-13
 
 ### Added
