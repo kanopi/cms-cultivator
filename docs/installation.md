@@ -391,7 +391,7 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Commands Overview](commands/overview.md)** - Explore all 19 commands
+- **[Commands Overview](commands/overview.md)** - Explore all 14 commands
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 
