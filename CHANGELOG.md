@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - TBD
 
+## [0.3.1] - 2025-11-10
+
+### Added
+- Live Site Auditing documentation to navigation (docs/commands/live-site-auditing.md)
+- Agent Skills best practices section in CLAUDE.md
+  - Good vs. bad skill description examples
+  - Key elements of effective skill descriptions
+  - Skill vs. Command decision guide
+
+### Changed
+- Updated file organization diagram in CLAUDE.md to reflect current structure
+
+### Fixed
+- MkDocs navigation now includes all command documentation pages
+
 ## [0.3.0] - 2025-11-10
 
 ### Added
@@ -152,7 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/kanopi/cms-cultivator/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/kanopi/cms-cultivator/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/kanopi/cms-cultivator/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/kanopi/cms-cultivator/releases/tag/0.1.0
