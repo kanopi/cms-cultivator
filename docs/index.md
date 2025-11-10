@@ -3,10 +3,11 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing 14 specialized commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing **14 specialized commands** and **9 Agent Skills** for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
+### Slash Commands (User-Invoked)
 - **🔄 4 PR Workflow Commands** - Streamline pull requests from commit to deployment
 - **♿ 1 Accessibility Command** - Ensure WCAG 2.1 Level AA compliance
 - **⚡ 1 Performance Command** - Optimize Core Web Vitals and page speed
@@ -16,6 +17,18 @@
 - **🧪 3 Testing Commands** - Create tests and analyze coverage
 - **📊 2 Code Quality Commands** - Maintain standards and reduce technical debt
 
+### Agent Skills (Auto-Invoked)
+- **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
+  - Commit message generation
+  - Code standards checking
+  - Test scaffolding
+  - Documentation generation
+  - And more...
+- **💬 Natural Language** - No need to remember command names
+- **🎯 Context-Aware** - Activates when you need help
+
+[Learn about Agent Skills →](agent-skills.md)
+
 ---
 
 ## 📚 Documentation
@@ -24,7 +37,8 @@
 |---------|-------------|
 | **[Getting Started](installation.md)** | Installation and initial setup |
 | **[Quick Start](quick-start.md)** | Common workflows and examples |
-| **[Commands](commands/overview.md)** | Complete command reference |
+| **[Commands](commands/overview.md)** | Complete command reference (14 commands) |
+| **[Agent Skills](agent-skills.md)** | Auto-invoked intelligent assistance (9 skills) |
 | **[Kanopi Tools](kanopi-tools/overview.md)** | Integration with Kanopi's DDEV add-ons |
 
 ---
@@ -56,18 +70,34 @@
 ## 🎯 Use Cases
 
 ### For Developers
-- **Before committing**: `/pr-commit-msg` - Generate proper commit messages
+
+**Natural Language (Agent Skills auto-activate):**
+- "I need to commit my changes" → Generates commit message
+- "Is this button accessible?" → Checks accessibility
+- "This query is slow" → Analyzes performance
+- "Does this follow WordPress standards?" → Checks code standards
+- "I need tests for this class" → Generates test scaffolding
+
+**Explicit Commands:**
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
-- **During development**: `/audit-perf queries` - Catch performance issues early
-- **During QA**: `/audit-a11y` - Ensure accessibility compliance
+- **Full audits**: `/audit-perf`, `/audit-a11y`, `/audit-security` - Comprehensive analysis
 
 ### For Tech Leads
+
+**Natural Language:**
+- "What code isn't tested?" → Coverage analysis
+- "Is this secure?" → Security check
+- "What should QA test?" → Test plan generation
+
+**Explicit Commands:**
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
 - **Performance audits**: `/audit-perf` - Identify bottlenecks
-- **Security audits**: `/audit-security` - Comprehensive security scan
+- **Quality analysis**: `/quality-analyze` - Technical debt assessment
 
 ### For Project Managers
+
+**Explicit Commands (Reports):**
 - **Stakeholder reports**: `/audit-perf report` - Executive-friendly reports
 - **Compliance reports**: `/audit-a11y report` - Accessibility documentation
 - **Security reports**: `/audit-security report` - Security posture and compliance

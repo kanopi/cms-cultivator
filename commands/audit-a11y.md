@@ -24,6 +24,9 @@ You are helping perform accessibility audits following WCAG 2.1 Level AA guideli
 - `/audit-a11y report` - Generate stakeholder-friendly compliance report
 - `/audit-a11y fix` - Generate specific code fixes for identified issues
 
+**Quick Element Checks:**
+For quick accessibility checks on specific buttons, forms, or elements during conversation, the **accessibility-checker** Agent Skill auto-activates when you ask "is this accessible?" See: [`skills/accessibility-checker/SKILL.md`](../skills/accessibility-checker/SKILL.md)
+
 ---
 
 ## MODE 1: Full Audit (`/audit-a11y`)

@@ -2,9 +2,44 @@
 
 Get started with CMS Cultivator in minutes! This guide covers the most common workflows.
 
+CMS Cultivator provides **two ways to work**:
+1. **Talk naturally** - Agent Skills automatically help when you need it
+2. **Use commands** - Explicit `/command` for full control
+
 ---
 
-## Your First Commands
+## Natural Conversation (Agent Skills)
+
+Just describe what you need in plain English:
+
+```
+"I need to commit my changes"
+→ Automatically generates commit message
+
+"Is this button accessible?"
+→ Checks accessibility instantly
+
+"This database query is slow"
+→ Analyzes for N+1 issues and suggests fixes
+
+"Does this follow Drupal coding standards?"
+→ Runs PHPCS and reports violations
+
+"I need tests for this UserManager class"
+→ Generates PHPUnit test scaffolding
+```
+
+**No need to remember command names!** Claude automatically helps based on context.
+
+See [Agent Skills Guide](agent-skills.md) for all 9 available skills.
+
+---
+
+## Explicit Commands (Full Control)
+
+When you want comprehensive analysis or specific workflows:
+
+### Your First Commands
 
 ### 1. Create a Pull Request
 

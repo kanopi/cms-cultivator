@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
-  "version": "0.1.0",
-  "description": "Comprehensive Claude Code development commands for Kanopi Studios. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across Drupal and WordPress projects.",
+  "version": "0.3.0",
+  "description": "14 specialized commands + 9 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation. Talk naturally or use explicit commands.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",
@@ -11,6 +11,7 @@
   "keywords": [
     "claude-code",
     "slash-commands",
+    "agent-skills",
     "drupal",
     "wordpress",
     "cms",
@@ -24,7 +25,8 @@
     "ddev",
     "security",
     "testing",
-    "code-quality"
+    "code-quality",
+    "natural-language"
   ],
   "repository": "https://github.com/kanopi/cms-cultivator",
   "homepage": "https://kanopi.github.io/cms-cultivator/"

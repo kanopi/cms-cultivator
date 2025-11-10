@@ -19,6 +19,9 @@ You are helping perform comprehensive security audits for Drupal and WordPress p
 **Reporting:**
 - `/audit-security report` - Generate stakeholder-friendly compliance report
 
+**Quick Code Security:**
+For quick security checks on specific code snippets during conversation, the **security-scanner** Agent Skill auto-activates when you ask "is this secure?" See: [`skills/security-scanner/SKILL.md`](../skills/security-scanner/SKILL.md)
+
 ---
 
 ## MODE 1: Full Security Audit (`/audit-security`)

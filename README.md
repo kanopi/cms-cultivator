@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing specialized slash commands for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing **14 specialized commands** and **9 Agent Skills** for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ---
 
@@ -18,6 +18,7 @@
 | **[Installation](https://kanopi.github.io/cms-cultivator/installation/)** | Get started in minutes |
 | **[Quick Start](https://kanopi.github.io/cms-cultivator/quick-start/)** | Common workflows and examples |
 | **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (14 commands) |
+| **[Agent Skills](https://kanopi.github.io/cms-cultivator/agent-skills/)** | Auto-invoked intelligent assistance (9 skills) |
 | **[Kanopi Tools](https://kanopi.github.io/cms-cultivator/kanopi-tools/overview/)** | Integration with DDEV add-ons |
 | **[Contributing](https://kanopi.github.io/cms-cultivator/contributing/)** | Contribute to the project |
 
@@ -25,6 +26,7 @@
 
 ## ✨ Features
 
+### Slash Commands (User-Invoked)
 - **🔄 4 PR Workflow Commands** - From commit to deployment
 - **♿ 1 Accessibility Command** - WCAG 2.1 Level AA compliance
 - **⚡ 1 Performance Command** - Core Web Vitals optimization
@@ -33,6 +35,12 @@
 - **📝 1 Documentation Command** - API docs, guides, changelogs
 - **🧪 3 Testing Commands** - Test generation and coverage
 - **📊 2 Code Quality Commands** - Standards and technical debt
+
+### Agent Skills (Auto-Invoked) 🆕
+- **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
+- **💬 Natural Language** - No need to remember command names
+- **🎯 Context-Aware** - Activates when you need assistance
+- Skills for: commits, testing, docs, security, performance, accessibility, and more
 
 ---
 
@@ -89,21 +97,33 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 ## 🎯 Use Cases
 
 ### For Developers
-- `/pr-commit-msg` - Generate proper commit messages
-- `/pr-create` - Generate and create PRs automatically
-- `/pr-review self` - Self-review before submitting PR
-- `/audit-perf queries` - Catch performance issues early
-- `/audit-a11y` - Ensure accessibility compliance
+
+**Talk naturally** - Agent Skills auto-activate:
+- "I need to commit" → Generates commit message
+- "Is this accessible?" → Checks accessibility
+- "Need tests for this" → Generates test scaffolding
+
+**Or use commands** - Explicit control:
+- `/pr-create` - Generate and create PRs
+- `/pr-review self` - Self-review before PR
+- `/audit-perf`, `/audit-a11y` - Full audits
 
 ### For Tech Leads
+
+**Talk naturally:**
+- "What's not tested?" → Coverage analysis
+- "Is this secure?" → Security check
+
+**Or use commands:**
 - `/pr-review 123` - AI-assisted code review
-- `/audit-perf` - Identify bottlenecks
-- `/audit-security` - Comprehensive security scan
+- `/quality-analyze` - Technical debt assessment
 
 ### For Project Managers
+
+**Generate reports:**
 - `/audit-perf report` - Executive-friendly reports
 - `/audit-a11y report` - Accessibility documentation
-- `/audit-security report` - Security posture and compliance
+- `/audit-security report` - Security compliance
 
 ---
 

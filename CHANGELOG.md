@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- TBD
+
+### Changed
+- TBD
+
+## [0.3.0] - 2025-11-10
+
+### Added
+- **9 Agent Skills** - Model-invoked automatic assistance during conversation
+  - `commit-message-generator` - Auto-generate commit messages when user mentions committing
+  - `code-standards-checker` - Auto-check coding standards when user asks about code style
+  - `test-scaffolding` - Auto-generate test boilerplate when user needs tests
+  - `documentation-generator` - Auto-generate docs when user mentions documentation
+  - `test-plan-generator` - Auto-generate QA test plans when user asks what to test
+  - `accessibility-checker` - Auto-check accessibility when user asks "is this accessible?"
+  - `performance-analyzer` - Auto-analyze performance when user mentions "slow" or "optimize"
+  - `security-scanner` - Auto-scan for vulnerabilities when user asks "is this secure?"
+  - `coverage-analyzer` - Auto-analyze test coverage when user asks "what's not tested?"
+- **Natural Language Support** - Talk to Claude naturally, no need to remember command names
+- **Hybrid Architecture** - Both explicit commands and automatic Agent Skills
+- **Comprehensive Agent Skills Documentation** - Complete guide at `docs/agent-skills.md`
 - `/audit-live-site [url]` - New comprehensive live website auditing command using Chrome DevTools MCP
   - Automated multi-page discovery and intelligent prioritization
   - Performance analysis with Core Web Vitals
@@ -18,6 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Executive summary reports with actionable recommendations
 
 ### Changed
+- **Architecture Refactoring** - "Skills as Engine, Commands as Interface" pattern
+  - Commands now reference Agent Skills for detailed workflows (72% size reduction)
+  - Skills are single source of truth for implementation details
+  - Commands provide quick start guides and link to skills
+  - Eliminates duplication between commands and skills (was 60-80% duplicated)
 - **BREAKING**: Consolidated audit commands with new naming convention `audit-[category]`
 - `/a11y-audit` → `/audit-a11y [mode]` - Consolidated 5 accessibility commands into 1
   - Modes: default (full audit), `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`, `checklist`, `report`, `fix`
@@ -28,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pr-create` now generates PR descriptions inline (previously required separate `/pr-desc` step)
 - `/pr-review` now includes size/complexity analysis and breaking change detection (previously separate `/pr-analysis`)
 - Updated command count from 25 to 14 commands total
+- Updated plugin description to highlight Agent Skills
+- Updated all documentation (README, docs, quick-start) to show both natural language and explicit commands
 
 ### Removed
 - **PR Workflow**: `/pr-desc`, `/pr-analysis` (merged into `/pr-create` and `/pr-review`)
@@ -124,5 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/kanopi/cms-cultivator/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/kanopi/cms-cultivator/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/kanopi/cms-cultivator/releases/tag/v0.1.0
