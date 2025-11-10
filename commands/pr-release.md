@@ -12,7 +12,7 @@ You are helping prepare a pull request for release. This command combines change
 - `/pr-release changelog` - Focus on changelog generation only
 - `/pr-release deploy` - Focus on deployment checklist only
 - `/pr-release update` - Focus on updating PR description only
-- `/pr-release v1.2.0` - Generate changelog for specific version
+- `/pr-release 1.2.0` - Generate changelog for specific version
 
 ## Step 1: Analyze Changes
 
@@ -97,7 +97,7 @@ If version not provided, suggest based on Semantic Versioning:
 - Updated Drupal core 10.1.0 → 10.2.1 (security update)
 
 ### Deprecated
-- `get_event_location()` function (use `Event::getLocation()` in v2.0.0)
+- `get_event_location()` function (use `Event::getLocation()` in 2.0.0)
 
 ### Removed
 - jQuery dependency from event calendar
@@ -125,7 +125,7 @@ If version not provided, suggest based on Semantic Versioning:
 - Clear object cache
 - Regenerate thumbnails if image sizes changed
 
-[Full Changelog](https://github.com/org/repo/compare/v1.0.0...v1.1.0)
+[Full Changelog](https://github.com/org/repo/compare/1.0.0...1.1.0)
 ```
 
 ---
@@ -485,7 +485,7 @@ Output only the deployment checklist section
 ### `/pr-release update`
 Output only the PR description update section
 
-### `/pr-release v1.2.0`
+### `/pr-release 1.2.0`
 Generate changelog for specific version number provided
 
 ### `/pr-release` (no argument)

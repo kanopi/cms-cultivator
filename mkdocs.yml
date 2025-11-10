@@ -43,6 +43,7 @@ nav:
     - Documentation: commands/documentation.md
     - Testing: commands/testing.md
     - Code Quality: commands/code-quality.md
+  - Agent Skills: agent-skills.md
   - Kanopi Tools:
     - Overview: kanopi-tools/overview.md
     - Composer Scripts: kanopi-tools/composer-scripts.md

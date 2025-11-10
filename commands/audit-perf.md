@@ -29,6 +29,9 @@ You are helping perform comprehensive performance analysis and optimization for 
 - `/audit-perf lighthouse` - Generate Lighthouse performance report
 - `/audit-perf report` - Generate stakeholder-friendly performance report
 
+**Quick Code Analysis:**
+For quick performance analysis of specific queries or functions during conversation, the **performance-analyzer** Agent Skill auto-activates when you mention "slow" or "optimize". See: [`skills/performance-analyzer/SKILL.md`](../skills/performance-analyzer/SKILL.md)
+
 ---
 
 ## MODE 1: Full Performance Audit (`/audit-perf`)

@@ -4,9 +4,30 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 ## Project Overview
 
-**CMS Cultivator** is a Claude Code plugin providing 25 specialized commands for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
+**CMS Cultivator** is a Claude Code plugin providing **14 specialized slash commands** and **9 Agent Skills** for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
+
+### Architecture: "Skills as Engine, Commands as Interface"
+
+- **Agent Skills** (`/skills/`) - Detailed "how-to" documentation with complete workflows, examples, and instructions. Single source of truth.
+- **Slash Commands** (`/commands/`) - User-facing interfaces that reference skills for detailed instructions. Quick start guides.
 
 ## Key Architectural Decisions
+
+### Hybrid Architecture: Commands + Skills
+
+**Two complementary systems:**
+
+1. **Agent Skills** (9 skills in `/skills/`)
+   - Model-invoked (Claude decides when to use)
+   - Complete technical documentation
+   - Detailed workflows, examples, best practices
+   - **Single source of truth** for implementation details
+
+2. **Slash Commands** (14 commands in `/commands/`)
+   - User-invoked (explicit `/command` triggering)
+   - Quick start guides
+   - Reference skills for detailed instructions
+   - When to use command vs. skill
 
 ### Command Structure
 
@@ -20,10 +41,21 @@ allowed-tools: Bash(git:*), Read, Glob, Grep, Write
 ---
 ```
 
+**Commands reference skills:**
+```markdown
+## How It Works
+
+This command uses the **skill-name** Agent Skill.
+
+**For complete workflow and technical details**, see:
+→ [`skills/skill-name/SKILL.md`](../skills/skill-name/SKILL.md)
+```
+
 **Important conventions:**
 - Commands support both direct tool execution AND DDEV-wrapped execution
 - Example: Allow both `composer` and `ddev composer` in `allowed-tools`
 - Platform-agnostic: Commands work for both Drupal and WordPress projects
+- Commands are concise (90-200 lines), skills are comprehensive (150-300 lines)
 
 ### Kanopi Integration
 
@@ -43,22 +75,48 @@ Commands automatically reference Kanopi-specific tools when available:
 
 ## Development Workflow
 
-### Adding a New Command
+### Adding a New Feature
 
-1. **Create command file**: `/commands/new-command.md`
-2. **Add frontmatter** with description and allowed-tools
-3. **Write documentation** with examples for both Drupal and WordPress
-4. **Add Kanopi integration** if applicable
-5. **Update command overview**: `docs/commands/overview.md`
-6. **Update README** command count if changing categories
+**Two scenarios:**
 
-### Updating Commands
+#### Scenario A: Feature with Both Command and Skill
+
+1. **Create skill first**: `/skills/feature-name/SKILL.md`
+   - Add YAML frontmatter with name and description
+   - Write complete workflow (150-300 lines)
+   - Include all code examples, patterns, best practices
+   - Add Drupal and WordPress examples
+
+2. **Create command**: `/commands/feature-name.md`
+   - Add frontmatter with description and allowed-tools
+   - Write quick start (90-200 lines)
+   - Reference skill for detailed instructions
+   - Add "When to Use" section explaining command vs. skill
+
+3. **Update documentation**:
+   - Add to `docs/agent-skills.md` (skill)
+   - Add to `docs/commands/overview.md` (command)
+   - Update README if needed
+
+#### Scenario B: Command Only (No Skill)
+
+For explicit workflows that shouldn't auto-activate (PR creation, releases, etc.):
+1. Create command with full documentation
+2. No corresponding skill needed
+
+### Updating Existing Features
+
+**IMPORTANT: Skills are the single source of truth**
+
+To update a feature:
+1. **Update the skill** (`/skills/feature-name/SKILL.md`)
+2. Command automatically reflects changes (it references the skill)
+3. No need to update both!
 
 When updating command files:
-- Preserve the existing structure and examples
-- Add "Quick Start (Kanopi Projects)" sections for Kanopi tool integration
-- Don't remove generic instructions (non-Kanopi projects need them)
-- Update `allowed-tools` to include both direct and DDEV-wrapped variants
+- Keep them concise and reference-focused
+- Don't duplicate content from skills
+- Update "When to Use" if invocation patterns change
 
 Example:
 ```yaml

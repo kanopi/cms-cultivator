@@ -7,22 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-- `/pr-desc` - Functionality merged into `/pr-create` command
-- `/pr-analysis` - Functionality merged into `/pr-review` command
-- `/a11y-check` - Merged into `/a11y-audit` as focus areas
-- `/a11y-checklist` - Merged into `/a11y-audit checklist` mode
-- `/a11y-report` - Merged into `/a11y-audit report` mode
-- `/fix-a11y-issues` - Merged into `/a11y-audit fix` mode
+### Added
+- TBD
 
 ### Changed
+- TBD
+
+## [0.3.0] - 2025-11-10
+
+### Added
+- **9 Agent Skills** - Model-invoked automatic assistance during conversation
+  - `commit-message-generator` - Auto-generate commit messages when user mentions committing
+  - `code-standards-checker` - Auto-check coding standards when user asks about code style
+  - `test-scaffolding` - Auto-generate test boilerplate when user needs tests
+  - `documentation-generator` - Auto-generate docs when user mentions documentation
+  - `test-plan-generator` - Auto-generate QA test plans when user asks what to test
+  - `accessibility-checker` - Auto-check accessibility when user asks "is this accessible?"
+  - `performance-analyzer` - Auto-analyze performance when user mentions "slow" or "optimize"
+  - `security-scanner` - Auto-scan for vulnerabilities when user asks "is this secure?"
+  - `coverage-analyzer` - Auto-analyze test coverage when user asks "what's not tested?"
+- **Natural Language Support** - Talk to Claude naturally, no need to remember command names
+- **Hybrid Architecture** - Both explicit commands and automatic Agent Skills
+- **Comprehensive Agent Skills Documentation** - Complete guide at `docs/agent-skills.md`
+- `/audit-live-site [url]` - New comprehensive live website auditing command using Chrome DevTools MCP
+  - Automated multi-page discovery and intelligent prioritization
+  - Performance analysis with Core Web Vitals
+  - Accessibility testing (WCAG 2.1 Level AA)
+  - SEO analysis and best practices
+  - Security scanning and SSL validation
+  - Responsive design testing
+  - Executive summary reports with actionable recommendations
+
+### Changed
+- **Architecture Refactoring** - "Skills as Engine, Commands as Interface" pattern
+  - Commands now reference Agent Skills for detailed workflows (72% size reduction)
+  - Skills are single source of truth for implementation details
+  - Commands provide quick start guides and link to skills
+  - Eliminates duplication between commands and skills (was 60-80% duplicated)
+- **BREAKING**: Consolidated audit commands with new naming convention `audit-[category]`
+- `/a11y-audit` → `/audit-a11y [mode]` - Consolidated 5 accessibility commands into 1
+  - Modes: default (full audit), `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`, `checklist`, `report`, `fix`
+- `/perf-performance-audit` → `/audit-perf [mode]` - Consolidated 5 performance commands into 1
+  - Modes: default (full audit), `queries`, `n+1`, `assets`, `bundles`, `caching`, `lcp`, `fid`, `inp`, `cls`, `lighthouse`, `report`
+- `/security-audit` → `/audit-security [mode]` - Consolidated 3 security commands into 1
+  - Modes: default (full audit), `deps`, `secrets`, `permissions`, `report`
 - `/pr-create` now generates PR descriptions inline (previously required separate `/pr-desc` step)
 - `/pr-review` now includes size/complexity analysis and breaking change detection (previously separate `/pr-analysis`)
-- `/a11y-audit` now consolidated with multiple modes:
-  - Default mode: Full WCAG 2.1 AA audit
-  - Focus modes: `contrast`, `aria`, `headings`, `forms`, `alt-text`, `keyboard`
-  - Special modes: `checklist`, `report`, `fix`
-- Updated command count from 25 to 19 commands (6→4 PR commands, 5→1 A11y commands)
+- Updated command count from 25 to 14 commands total
+- Updated plugin description to highlight Agent Skills
+- Updated all documentation (README, docs, quick-start) to show both natural language and explicit commands
+
+### Removed
+- **PR Workflow**: `/pr-desc`, `/pr-analysis` (merged into `/pr-create` and `/pr-review`)
+- **Accessibility**: `/a11y-audit`, `/a11y-check`, `/a11y-checklist`, `/a11y-report`, `/fix-a11y-issues` (consolidated into `/audit-a11y`)
+- **Performance**: `/perf-performance-audit`, `/perf-lighthouse-report`, `/perf-performance-report`, `/perf-analyze`, `/perf-vitals` (consolidated into `/audit-perf`)
+- **Security**: `/security-audit`, `/security-scan`, `/security-report` (consolidated into `/audit-security`)
+
+### Migration Guide
+```bash
+# Old commands → New commands
+
+# Accessibility
+/a11y-audit              → /audit-a11y
+/a11y-check contrast     → /audit-a11y contrast
+/a11y-checklist          → /audit-a11y checklist
+/a11y-report             → /audit-a11y report
+/fix-a11y-issues         → /audit-a11y fix
+
+# Performance
+/perf-performance-audit  → /audit-perf
+/perf-analyze queries    → /audit-perf queries
+/perf-vitals lcp         → /audit-perf lcp
+/perf-lighthouse-report  → /audit-perf lighthouse
+/perf-performance-report → /audit-perf report
+
+# Security
+/security-audit          → /audit-security
+/security-scan secrets   → /audit-security secrets
+/security-report         → /audit-security report
+
+# PR Workflow
+/pr-desc                 → /pr-create (auto-generates description)
+/pr-analysis             → /pr-review (includes analysis)
+```
 
 ## [0.1.0] - 2025-10-13
 
@@ -85,5 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/kanopi/cms-cultivator/releases/tag/v0.1.0
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/kanopi/cms-cultivator/compare/0.2.0...0.3.0
+[0.2.0]: https://github.com/kanopi/cms-cultivator/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/kanopi/cms-cultivator/releases/tag/0.1.0

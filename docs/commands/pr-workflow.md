@@ -116,7 +116,7 @@ Generate changelog, deployment checklist, and update PR for release.
 /pr-release changelog     # Focus on changelog only
 /pr-release deploy        # Focus on deployment checklist only
 /pr-release update        # Update PR with release info
-/pr-release v1.2.0        # Generate for specific version
+/pr-release 1.2.0         # Generate for specific version
 ```
 
 **Focus options:**
@@ -186,7 +186,7 @@ git add feature.php
 
 ```bash
 # Generate all release artifacts
-/pr-release v2.0.0
+/pr-release 2.0.0
 
 # Or generate individually
 /pr-release changelog     # First, create changelog
