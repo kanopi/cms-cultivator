@@ -36,11 +36,18 @@
 - **🧪 3 Testing Commands** - Test generation and coverage
 - **📊 2 Code Quality Commands** - Standards and technical debt
 
-### Agent Skills (Auto-Invoked) 🆕
+### Agent Skills (Auto-Invoked)
 - **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need assistance
 - Skills for: commits, testing, docs, security, performance, accessibility, and more
+
+### Session Analytics Hook
+- **📈 Automatic Session Tracking** - Logs every Claude Code session to CSV
+- **💰 Cost Tracking** - Track token usage and estimated costs
+- **☁️ Google Sheets Integration** - Optional cloud sync for team sharing
+- **📊 21 Data Points** - Duration, messages, tokens, tools used, and more
+- See [`hooks/README.md`](hooks/README.md) for details
 
 ---
 

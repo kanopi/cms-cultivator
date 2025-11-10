@@ -505,3 +505,75 @@ setup() {
     skip "markdownlint not installed"
   fi
 }
+
+# ==============================================================================
+# HOOKS TESTS
+# ==============================================================================
+
+@test "hooks directory exists" {
+  [ -d "hooks" ]
+}
+
+@test "hooks.json exists" {
+  [ -f "hooks/hooks.json" ]
+}
+
+@test "hooks.json is valid JSON" {
+  run jq empty hooks/hooks.json
+  [ "$status" -eq 0 ]
+}
+
+@test "hooks.json has SessionEnd hook" {
+  run jq -e '.hooks.SessionEnd' hooks/hooks.json
+  [ "$status" -eq 0 ]
+}
+
+@test "SessionEnd hook has correct structure" {
+  run jq -e '.hooks.SessionEnd[0].hooks[0].type' hooks/hooks.json
+  [ "$output" = '"command"' ]
+
+  run jq -e '.hooks.SessionEnd[0].hooks[0].command' hooks/hooks.json
+  [ "$status" -eq 0 ]
+}
+
+@test "session-end-logger.sh exists and is executable" {
+  [ -f "hooks/session-end-logger.sh" ]
+  [ -x "hooks/session-end-logger.sh" ]
+}
+
+@test "session-end-logger.sh has valid shebang" {
+  head -n 1 hooks/session-end-logger.sh | grep -q "^#!/bin/bash"
+}
+
+@test "sync-to-google-sheets.py exists and is executable" {
+  [ -f "hooks/sync-to-google-sheets.py" ]
+  [ -x "hooks/sync-to-google-sheets.py" ]
+}
+
+@test "sync-to-google-sheets.py has valid shebang" {
+  head -n 1 hooks/sync-to-google-sheets.py | grep -q "^#!/usr/bin/env python3"
+}
+
+@test "hooks README exists" {
+  [ -f "hooks/README.md" ]
+}
+
+@test "Google Sheets setup guide exists" {
+  [ -f "hooks/GOOGLE_SHEETS_SETUP.md" ]
+}
+
+@test "session-end-logger.sh uses CLAUDE_PLUGIN_ROOT" {
+  grep -q 'CLAUDE_PLUGIN_ROOT' hooks/session-end-logger.sh
+}
+
+@test "hooks.json uses CLAUDE_PLUGIN_ROOT variable" {
+  grep -q '${CLAUDE_PLUGIN_ROOT}' hooks/hooks.json
+}
+
+@test "session-end-logger.sh has jq dependency check" {
+  grep -q 'jq' hooks/session-end-logger.sh
+}
+
+@test "hooks documentation is in mkdocs navigation" {
+  grep -q 'hooks.md' mkdocs.yml
+}

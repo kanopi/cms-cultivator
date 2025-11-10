@@ -4,18 +4,19 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 ## Project Overview
 
-**CMS Cultivator** is a Claude Code plugin providing **14 specialized slash commands** and **9 Agent Skills** for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
+**CMS Cultivator** is a Claude Code plugin providing **14 specialized slash commands**, **9 Agent Skills**, and **1 SessionEnd Hook** for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
 
-### Architecture: "Skills as Engine, Commands as Interface"
+### Architecture: "Skills as Engine, Commands as Interface, Hooks as Analytics"
 
 - **Agent Skills** (`/skills/`) - Detailed "how-to" documentation with complete workflows, examples, and instructions. Single source of truth.
 - **Slash Commands** (`/commands/`) - User-facing interfaces that reference skills for detailed instructions. Quick start guides.
+- **Hooks** (`/hooks/`) - Event-driven automation that runs automatically when specific events occur (e.g., SessionEnd).
 
 ## Key Architectural Decisions
 
-### Hybrid Architecture: Commands + Skills
+### Hybrid Architecture: Commands + Skills + Hooks
 
-**Two complementary systems:**
+**Three complementary systems:**
 
 1. **Agent Skills** (9 skills in `/skills/`)
    - Model-invoked (Claude decides when to use)
@@ -28,6 +29,12 @@ This file provides context for Claude (or other AI assistants) when working on t
    - Quick start guides
    - Reference skills for detailed instructions
    - When to use command vs. skill
+
+3. **Hooks** (1 hook in `/hooks/`)
+   - Event-invoked (automatically triggered by Claude Code events)
+   - Configured via `hooks/hooks.json`
+   - Session analytics, automation, and workflow enhancement
+   - Optional features that enhance the user experience
 
 ### Command Structure
 
@@ -103,6 +110,33 @@ Commands automatically reference Kanopi-specific tools when available:
 For explicit workflows that shouldn't auto-activate (PR creation, releases, etc.):
 1. Create command with full documentation
 2. No corresponding skill needed
+
+#### Scenario C: Hook (Event-Driven Automation)
+
+For features that should run automatically on specific events:
+1. Create hook script in `/hooks/`
+2. Add configuration to `/hooks/hooks.json`
+3. Document in `/hooks/README.md`
+4. Test with appropriate event trigger
+
+Example hook structure:
+```json
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/script-name.sh",
+            "description": "Brief description of what the hook does"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 ### Updating Existing Features
 
@@ -219,6 +253,12 @@ cms-cultivator/
 │   ├── security-scanner/
 │   ├── coverage-analyzer/
 │   └── README.md            # Skills overview
+├── hooks/                   # Event-driven automation
+│   ├── hooks.json           # Hook configuration
+│   ├── session-end-logger.sh        # SessionEnd hook (CSV logging)
+│   ├── sync-to-google-sheets.py     # Optional Google Sheets integration
+│   ├── README.md            # Hook usage documentation
+│   └── GOOGLE_SHEETS_SETUP.md       # Google Sheets setup guide
 ├── docs/                    # MkDocs documentation site
 │   ├── commands/            # Command category pages
 │   ├── kanopi-tools/        # Kanopi integration docs
@@ -227,7 +267,7 @@ cms-cultivator/
 │   ├── quick-start.md       # Getting started guide
 │   └── contributing.md      # Contribution guidelines
 ├── tests/
-│   └── test-plugin.bats     # 54 BATS tests
+│   └── test-plugin.bats     # BATS tests
 ├── mkdocs.yml               # MkDocs configuration
 ├── CHANGELOG.md             # Version history (Keep a Changelog format)
 ├── CLAUDE.md                # This file (AI assistant context)

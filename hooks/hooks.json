@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end-logger.sh",
+            "description": "Log session statistics to CSV and optionally sync to Google Sheets"
+          }
+        ]
+      }
+    ]
+  }
+}
