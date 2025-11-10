@@ -130,21 +130,108 @@ allowed-tools: Bash(composer:*), Bash(ddev composer:*), Bash(npm:*), Bash(ddev e
 3. **Build**: `mkdocs build --strict` (catches broken links)
 4. **Commit**: Automatically deploys to GitHub Pages on push to main
 
+### Agent Skill Best Practices
+
+When creating or updating Agent Skills, follow these guidelines:
+
+#### Good Skill Description Examples
+
+✅ **Good** (Specific trigger terms + clear use case):
+```yaml
+name: commit-message-generator
+description: Automatically generate conventional commit messages when user has staged changes and mentions committing. Analyzes git diff and status to create properly formatted commit messages following conventional commits specification. Invoke when user mentions "commit", "staged", "committing", or asks for help with commit messages.
+```
+
+✅ **Good** (Clear activation context):
+```yaml
+name: security-scanner
+description: Automatically scan code for security vulnerabilities when user asks if code is secure or shows potentially unsafe code. Performs focused security checks on specific code, functions, or patterns. Invoke when user asks "is this secure?", "security issue?", mentions XSS, SQL injection, or shows security-sensitive code.
+```
+
+❌ **Bad** (Too vague, no trigger terms):
+```yaml
+name: helper
+description: Helps with code stuff when needed.
+```
+
+❌ **Bad** (Too broad, unclear when to activate):
+```yaml
+name: code-analyzer
+description: Analyzes code quality, performance, security, accessibility, and more.
+```
+
+#### Key Elements of Good Skill Descriptions
+
+1. **Specific trigger terms**: List exact phrases that should activate the skill
+   - Example: "commit", "staged", "committing", "ready to commit"
+
+2. **Clear use case**: What problem does this solve?
+   - Example: "Generate conventional commit messages for staged changes"
+
+3. **When to invoke**: Explicit conditions for activation
+   - Example: "Invoke when user mentions X, Y, or shows Z"
+
+4. **Scope boundaries**: What this skill does NOT do
+   - Example: "Performs focused checks on specific elements" (not comprehensive audits)
+
+#### Skill vs. Command Decision Guide
+
+**Create an Agent Skill when:**
+- ✅ Users might ask about this conversationally
+- ✅ Quick, focused assistance on specific code/elements
+- ✅ Common question that shouldn't require command knowledge
+- ✅ Can be triggered by natural language patterns
+
+**Create only a Slash Command when:**
+- ✅ Explicit workflow with side effects (PR creation, releases)
+- ✅ Comprehensive project-wide analysis (full audits)
+- ✅ Requires specific targeting (PR number, file paths)
+- ✅ Batch operations across many files
+- ✅ Formal reports for stakeholders
+
+**Create both (Skill + Command) when:**
+- ✅ Users need both quick checks AND comprehensive analysis
+- ✅ Example: accessibility-checker (quick) + /audit-a11y (comprehensive)
+
 ## File Organization
 
 ```
 cms-cultivator/
 ├── .claude-plugin/
-│   └── plugin.json          # Claude Code plugin metadata
+│   └── plugin.json          # Claude Code plugin metadata (version, description)
 ├── .github/workflows/
-│   └── docs.yml             # MkDocs deployment
-├── commands/                # 19 command files (*.md)
-├── docs/                    # MkDocs documentation
-│   ├── commands/           # Command reference pages
-│   ├── kanopi-tools/       # Kanopi integration docs
-│   └── reference/          # Technical reference
-├── mkdocs.yml              # MkDocs configuration
-└── README.md               # Simplified, points to docs site
+│   ├── docs.yml             # MkDocs deployment
+│   └── test.yml             # BATS test automation
+├── commands/                # 14 slash command files (*.md)
+│   ├── pr-*.md              # PR workflow commands
+│   ├── audit-*.md           # Audit commands (comprehensive)
+│   ├── test-*.md            # Testing commands
+│   ├── quality-*.md         # Quality commands
+│   └── docs-generate.md     # Documentation command
+├── skills/                  # 9 Agent Skill directories
+│   ├── commit-message-generator/
+│   ├── code-standards-checker/
+│   ├── test-scaffolding/
+│   ├── documentation-generator/
+│   ├── test-plan-generator/
+│   ├── accessibility-checker/
+│   ├── performance-analyzer/
+│   ├── security-scanner/
+│   ├── coverage-analyzer/
+│   └── README.md            # Skills overview
+├── docs/                    # MkDocs documentation site
+│   ├── commands/            # Command category pages
+│   ├── kanopi-tools/        # Kanopi integration docs
+│   ├── agent-skills.md      # Agent Skills guide
+│   ├── index.md             # Home page
+│   ├── quick-start.md       # Getting started guide
+│   └── contributing.md      # Contribution guidelines
+├── tests/
+│   └── test-plugin.bats     # 54 BATS tests
+├── mkdocs.yml               # MkDocs configuration
+├── CHANGELOG.md             # Version history (Keep a Changelog format)
+├── CLAUDE.md                # This file (AI assistant context)
+└── README.md                # Project overview, points to docs site
 ```
 
 ## Important Files to NOT Modify
