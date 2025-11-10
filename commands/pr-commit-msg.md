@@ -64,26 +64,6 @@ feat(auth): add two-factor authentication support
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Conventional Commits Quick Reference
-
-### Common Types
-- `feat` - New feature
-- `fix` - Bug fix
-- `docs` - Documentation only
-- `style` - Code style/formatting
-- `refactor` - Code restructuring
-- `test` - Tests
-- `chore` - Maintenance tasks
-- `perf` - Performance improvements
-
-### Common Scopes
-
-**Drupal**: `config`, `module`, `theme`, `entity`, `views`, `forms`
-
-**WordPress**: `theme`, `plugin`, `block`, `acf`, `cpt`
-
-**General**: `api`, `ui`, `deps`, `security`, `a11y`, `db`
-
 ## Related Commands
 
 - **[`/pr-create`](pr-create.md)** - Create PR with generated description
