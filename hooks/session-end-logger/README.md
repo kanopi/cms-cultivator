@@ -56,19 +56,61 @@ The hook can automatically upload each session to a Google Sheet, giving you:
 - ✅ Built-in charting and pivot tables
 - ✅ Access from any device
 
-**Setup Guide:** See [GOOGLE_SHEETS_SETUP.md](./GOOGLE_SHEETS_SETUP.md) for complete instructions.
+#### Prerequisites
 
-**Quick Start:**
+1. Python 3 installed on your system
+2. pip (Python package manager)
+3. Google Cloud account (free tier works fine)
+
+#### Setup Steps
+
+**1. Install Required Python Packages**
+
 ```bash
-# Install required packages
 pip3 install gspread oauth2client
-
-# Run interactive setup
-python3 .claude/hooks/sync-to-google-sheets.py --setup
-
-# Test connection
-python3 .claude/hooks/sync-to-google-sheets.py --test
 ```
+
+**2. Create Google Cloud Service Account**
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or use existing)
+3. Go to **APIs & Services** → **Library** → Search "Google Sheets API" → **Enable**
+4. Go to **APIs & Services** → **Credentials** → **Create Credentials** → **Service Account**
+5. Name it "claude-code-logger" → **Create and Continue** → **Done**
+6. Click on the service account → **Keys** tab → **Add Key** → **Create new key** → **JSON** → **Create**
+7. Save the downloaded JSON file (e.g., `~/.claude/service-account-key.json`)
+
+**Important:** Keep this credentials file private!
+
+**3. Create and Share Google Sheet**
+
+1. Go to [Google Sheets](https://sheets.google.com/) and create a new blank spreadsheet
+2. Name it "Claude Code Sessions"
+3. Click **Share** button
+4. In the service account JSON file, find the `client_email` field
+5. Paste that email in the share dialog and give it **Editor** access
+6. Uncheck "Notify people" → Click **Share**
+
+**4. Configure the Integration**
+
+Run the interactive setup:
+
+```bash
+python3 hooks/session-end-logger/sync-to-google-sheets.py --setup
+```
+
+You'll be prompted for:
+- Service account JSON file path (e.g., `~/.claude/service-account-key.json`)
+- Google Sheet URL
+- Worksheet name (default: `Sheet1`)
+
+**5. Test the Connection**
+
+```bash
+python3 hooks/session-end-logger/sync-to-google-sheets.py --test
+```
+
+You should see: `✅ Successfully connected to: Claude Code Sessions`
 
 Once configured, data syncs automatically after each session!
 

@@ -110,7 +110,7 @@ print(Counter(all_tools).most_common(10))
 
 ### Setup Guide
 
-**Complete setup instructions:** [`hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md`](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md)
+**Complete setup instructions:** [`hooks/session-end-logger/README.md`](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/README.md)
 
 **Quick start:**
 
@@ -332,7 +332,6 @@ Based on Claude Sonnet 4.5 pricing (January 2025):
 ## Additional Resources
 
 - [Hook README](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/README.md)
-- [Google Sheets Setup Guide](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md)
 - [Claude Code Hooks Documentation](https://code.claude.com/docs/en/hooks)
 
 ## Questions or Issues?

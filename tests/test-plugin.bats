@@ -562,10 +562,6 @@ setup() {
   [ -f "hooks/session-end-logger/README.md" ]
 }
 
-@test "Google Sheets setup guide exists" {
-  [ -f "hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md" ]
-}
-
 @test "session-end-logger.sh uses CLAUDE_PLUGIN_ROOT" {
   grep -q 'CLAUDE_PLUGIN_ROOT' hooks/session-end-logger/session-end-logger.sh
 }
