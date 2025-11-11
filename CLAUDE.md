@@ -116,7 +116,7 @@ For explicit workflows that shouldn't auto-activate (PR creation, releases, etc.
 For features that should run automatically on specific events:
 1. Create hook script in `/hooks/`
 2. Add configuration to `/hooks/hooks.json`
-3. Document in `/hooks/README.md`
+3. Document in `/hooks/[hook-name]/README.md`
 4. Test with appropriate event trigger
 
 Example hook structure:
@@ -255,10 +255,11 @@ cms-cultivator/
 │   └── README.md            # Skills overview
 ├── hooks/                   # Event-driven automation
 │   ├── hooks.json           # Hook configuration
-│   ├── session-end-logger.sh        # SessionEnd hook (CSV logging)
-│   ├── sync-to-google-sheets.py     # Optional Google Sheets integration
-│   ├── README.md            # Hook usage documentation
-│   └── GOOGLE_SHEETS_SETUP.md       # Google Sheets setup guide
+│   └── session-end-logger/  # SessionEnd hook
+│       ├── session-end-logger.sh    # Main hook script
+│       ├── sync-to-google-sheets.py # Google Sheets integration
+│       ├── README.md                # Hook documentation
+│       └── GOOGLE_SHEETS_SETUP.md   # Google Sheets setup guide
 ├── docs/                    # MkDocs documentation site
 │   ├── commands/            # Command category pages
 │   ├── kanopi-tools/        # Kanopi integration docs

@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tracks duration, messages, tokens, costs, tool usage, and more
   - Optional Google Sheets integration for cloud sync and team sharing
   - Automatically enabled when plugin is active (no configuration needed)
-  - Files: `hooks/hooks.json`, `hooks/session-end-logger.sh`, `hooks/sync-to-google-sheets.py`
-  - Documentation: `hooks/README.md`, `hooks/GOOGLE_SHEETS_SETUP.md`, `docs/hooks.md`
+  - Files: `hooks/hooks.json`, `hooks/session-end-logger/session-end-logger.sh`, `hooks/session-end-logger/sync-to-google-sheets.py`
+  - Documentation: `hooks/session-end-logger/README.md`, `hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md`, `docs/hooks.md`
   - 15 new BATS tests for hooks validation (now 69 total tests)
 
 ### Changed

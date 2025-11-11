@@ -110,7 +110,7 @@ print(Counter(all_tools).most_common(10))
 
 ### Setup Guide
 
-**Complete setup instructions:** [`hooks/GOOGLE_SHEETS_SETUP.md`](https://github.com/kanopi/cms-cultivator/blob/main/hooks/GOOGLE_SHEETS_SETUP.md)
+**Complete setup instructions:** [`hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md`](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md)
 
 **Quick start:**
 
@@ -121,12 +121,12 @@ print(Counter(all_tools).most_common(10))
 
 2. **Configure:**
    ```bash
-   python3 ~/.config/claude/plugins/cms-cultivator/hooks/sync-to-google-sheets.py --setup
+   python3 ~/.config/claude/plugins/cms-cultivator/hooks/session-end-logger/sync-to-google-sheets.py --setup
    ```
 
 3. **Test connection:**
    ```bash
-   python3 ~/.config/claude/plugins/cms-cultivator/hooks/sync-to-google-sheets.py --test
+   python3 ~/.config/claude/plugins/cms-cultivator/hooks/session-end-logger/sync-to-google-sheets.py --test
    ```
 
 Once configured, every session automatically syncs to your Google Sheet!
@@ -251,7 +251,7 @@ The hook is part of the plugin and runs automatically. To disable:
 
 **Option 1: Disable Google Sheets sync only**
 ```bash
-python3 ~/.config/claude/plugins/cms-cultivator/hooks/sync-to-google-sheets.py --disable
+python3 ~/.config/claude/plugins/cms-cultivator/hooks/session-end-logger/sync-to-google-sheets.py --disable
 ```
 
 **Option 2: Disable the entire plugin**
@@ -271,10 +271,10 @@ claude plugins disable cms-cultivator
 
 ```bash
 # Test connection
-python3 ~/.config/claude/plugins/cms-cultivator/hooks/sync-to-google-sheets.py --test
+python3 ~/.config/claude/plugins/cms-cultivator/hooks/session-end-logger/sync-to-google-sheets.py --test
 
 # Re-run setup
-python3 ~/.config/claude/plugins/cms-cultivator/hooks/sync-to-google-sheets.py --setup
+python3 ~/.config/claude/plugins/cms-cultivator/hooks/session-end-logger/sync-to-google-sheets.py --setup
 ```
 
 ### jq command not found
@@ -331,12 +331,12 @@ Based on Claude Sonnet 4.5 pricing (January 2025):
 
 ## Additional Resources
 
-- [Hook README](https://github.com/kanopi/cms-cultivator/blob/main/hooks/README.md)
-- [Google Sheets Setup Guide](https://github.com/kanopi/cms-cultivator/blob/main/hooks/GOOGLE_SHEETS_SETUP.md)
+- [Hook README](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/README.md)
+- [Google Sheets Setup Guide](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md)
 - [Claude Code Hooks Documentation](https://code.claude.com/docs/en/hooks)
 
 ## Questions or Issues?
 
 - Check the [troubleshooting section](#troubleshooting)
-- Review [hooks/README.md](https://github.com/kanopi/cms-cultivator/blob/main/hooks/README.md)
+- Review [hooks/session-end-logger/README.md](https://github.com/kanopi/cms-cultivator/blob/main/hooks/session-end-logger/README.md)
 - Open an issue on [GitHub](https://github.com/kanopi/cms-cultivator/issues)

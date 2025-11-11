@@ -47,7 +47,7 @@
 - **💰 Cost Tracking** - Track token usage and estimated costs
 - **☁️ Google Sheets Integration** - Optional cloud sync for team sharing
 - **📊 21 Data Points** - Duration, messages, tokens, tools used, and more
-- See [`hooks/README.md`](hooks/README.md) for details
+- See [`hooks/session-end-logger/README.md`](hooks/session-end-logger/README.md) for details
 
 ---
 

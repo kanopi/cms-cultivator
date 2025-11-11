@@ -92,9 +92,9 @@ echo "$end_datetime,$session_id,$project_name,\"$summary\",$reason,$duration_sec
 # Sync to Google Sheets (if configured)
 # Use CLAUDE_PLUGIN_ROOT if available (when called from plugin), otherwise fall back to CLAUDE_PROJECT_DIR
 if [ -n "$CLAUDE_PLUGIN_ROOT" ]; then
-    sync_script="$CLAUDE_PLUGIN_ROOT/hooks/sync-to-google-sheets.py"
+    sync_script="$CLAUDE_PLUGIN_ROOT/hooks/session-end-logger/sync-to-google-sheets.py"
 else
-    sync_script="$CLAUDE_PROJECT_DIR/.claude/hooks/sync-to-google-sheets.py"
+    sync_script="$CLAUDE_PROJECT_DIR/.claude/hooks/session-end-logger/sync-to-google-sheets.py"
 fi
 
 if [ -f "$sync_script" ]; then

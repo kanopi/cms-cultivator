@@ -536,34 +536,38 @@ setup() {
   [ "$status" -eq 0 ]
 }
 
+@test "session-end-logger directory exists" {
+  [ -d "hooks/session-end-logger" ]
+}
+
 @test "session-end-logger.sh exists and is executable" {
-  [ -f "hooks/session-end-logger.sh" ]
-  [ -x "hooks/session-end-logger.sh" ]
+  [ -f "hooks/session-end-logger/session-end-logger.sh" ]
+  [ -x "hooks/session-end-logger/session-end-logger.sh" ]
 }
 
 @test "session-end-logger.sh has valid shebang" {
-  head -n 1 hooks/session-end-logger.sh | grep -q "^#!/bin/bash"
+  head -n 1 hooks/session-end-logger/session-end-logger.sh | grep -q "^#!/bin/bash"
 }
 
 @test "sync-to-google-sheets.py exists and is executable" {
-  [ -f "hooks/sync-to-google-sheets.py" ]
-  [ -x "hooks/sync-to-google-sheets.py" ]
+  [ -f "hooks/session-end-logger/sync-to-google-sheets.py" ]
+  [ -x "hooks/session-end-logger/sync-to-google-sheets.py" ]
 }
 
 @test "sync-to-google-sheets.py has valid shebang" {
-  head -n 1 hooks/sync-to-google-sheets.py | grep -q "^#!/usr/bin/env python3"
+  head -n 1 hooks/session-end-logger/sync-to-google-sheets.py | grep -q "^#!/usr/bin/env python3"
 }
 
 @test "hooks README exists" {
-  [ -f "hooks/README.md" ]
+  [ -f "hooks/session-end-logger/README.md" ]
 }
 
 @test "Google Sheets setup guide exists" {
-  [ -f "hooks/GOOGLE_SHEETS_SETUP.md" ]
+  [ -f "hooks/session-end-logger/GOOGLE_SHEETS_SETUP.md" ]
 }
 
 @test "session-end-logger.sh uses CLAUDE_PLUGIN_ROOT" {
-  grep -q 'CLAUDE_PLUGIN_ROOT' hooks/session-end-logger.sh
+  grep -q 'CLAUDE_PLUGIN_ROOT' hooks/session-end-logger/session-end-logger.sh
 }
 
 @test "hooks.json uses CLAUDE_PLUGIN_ROOT variable" {
@@ -571,7 +575,7 @@ setup() {
 }
 
 @test "session-end-logger.sh has jq dependency check" {
-  grep -q 'jq' hooks/session-end-logger.sh
+  grep -q 'jq' hooks/session-end-logger/session-end-logger.sh
 }
 
 @test "hooks documentation is in mkdocs navigation" {
