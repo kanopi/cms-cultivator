@@ -7,20 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- **SessionEnd Hook** - Automatic session analytics and usage tracking
-  - Logs 21 data points per session to CSV (`~/.claude/session-logs/sessions.csv`)
-  - Tracks duration, messages, tokens, costs, tool usage, and more
-  - Optional Google Sheets integration for cloud sync and team sharing
-  - Automatically enabled when plugin is active (no configuration needed)
-  - Files: `hooks/hooks.json`, `hooks/session-end-logger/session-end-logger.sh`, `hooks/session-end-logger/sync-to-google-sheets.py`
-  - Documentation: `hooks/session-end-logger/README.md`, `docs/hooks.md`
-  - 15 new BATS tests for hooks validation (now 69 total tests)
+### Removed
+- **Hooks System** - Session analytics hooks have been extracted to a standalone plugin
+  - Removed entire `hooks/` directory
+  - Removed `docs/hooks.md` documentation
+  - Removed 16 hook-related tests from BATS suite (now 53 tests total)
+  - Removed Session Analytics section from README.md
+  - **Migration:** Install the new `claude-dev-insights` plugin for session analytics functionality
+  - **See:** https://github.com/kanopi/claude-dev-insights
 
 ### Changed
-- Updated CLAUDE.md to document hooks architecture and development workflow
-- Updated mkdocs.yml to include Session Analytics documentation page
-- Updated README.md to highlight new Session Analytics Hook feature
+- Updated CHANGELOG to document hooks extraction
+- Reverted documentation to focus on CMS-specific commands and skills
 
 ## [0.3.1] - 2025-11-10
 
