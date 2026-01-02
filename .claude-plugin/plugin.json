@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
-  "version": "0.3.1",
-  "description": "14 specialized commands + 9 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation. Talk naturally or use explicit commands.",
+  "version": "0.4.0",
+  "description": "8 specialist agents + 14 commands + 9 skills for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",
@@ -10,6 +10,8 @@
   "license": "GPL-2.0-or-later",
   "keywords": [
     "claude-code",
+    "agents",
+    "subagents",
     "slash-commands",
     "agent-skills",
     "drupal",
