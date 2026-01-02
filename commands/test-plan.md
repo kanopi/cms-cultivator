@@ -1,61 +1,22 @@
 ---
-description: Generate comprehensive QA test plan based on code changes
-allowed-tools: Bash(git:*), Read, Glob, Grep, Write
+description: Generate comprehensive QA test plan based on code changes using testing specialist
+argument-hint: "[focus-area]"
+allowed-tools: Task
 ---
 
-# Generate QA Test Plan
+I'll use the **testing specialist** agent to generate a comprehensive QA test plan.
 
-Generate comprehensive manual and automated test plans based on code changes, feature requirements, and risk analysis.
+The testing specialist will:
+1. **Analyze code changes** - Review commits, diffs, and modified functionality
+2. **Generate test scenarios** - Functional, security, performance, accessibility tests
+3. **Create test checklists** - Step-by-step validation instructions
+4. **Include CMS-specific tests**:
+   - **Drupal**: Config imports, update hooks, permissions, cache clearing
+   - **WordPress**: Permalinks, ACF sync, CPTs, shortcodes
+5. **Provide acceptance criteria** - Clear pass/fail conditions
 
-## Quick Start
+**Focus areas**: `functional`, `security`, `performance`, `accessibility`, `regression`
 
-```bash
-# Generate test plan from current changes
-/test-plan
+## Agent Used
 
-# Claude will:
-# - Analyze git changes
-# - Identify features and risks
-# - Create test scenarios
-# - Generate test cases with steps
-# - Provide acceptance criteria
-```
-
-## How It Works
-
-This command uses the **test-plan-generator** Agent Skill to create structured test plans.
-
-**For complete test plan structure and examples**, see:
-→ [`skills/test-plan-generator/SKILL.md`](../skills/test-plan-generator/SKILL.md)
-
-The skill provides detailed instructions for:
-- Analyzing code changes for test scenarios
-- Creating structured test cases
-- Defining acceptance criteria
-- Identifying test data requirements
-- Assessing risk and priority
-
-## When to Use
-
-**Use this command (`/test-plan`)** when:
-- ✅ Preparing comprehensive QA documentation
-- ✅ Need formal test plan for stakeholders
-- ✅ Planning testing for major feature release
-- ✅ Documenting test strategy
-
-**The skill auto-activates** when you ask:
-- "What should QA test?"
-- "Need test scenarios for this feature"
-- "How do we test this?"
-
-## Related Commands
-
-- **[`/test-generate`](test-generate.md)** - Generate automated tests
-- **[`/test-coverage`](test-coverage.md)** - Analyze test coverage
-- **[`/pr-review`](pr-review.md)** - Review changes that need testing
-
-## Resources
-
-- [IEEE 829 Test Plan](https://en.wikipedia.org/wiki/IEEE_829)
-- [Test Case Management Best Practices](https://www.guru99.com/test-case-management.html)
-- [test-plan-generator Agent Skill](../skills/test-plan-generator/SKILL.md)
+**testing-specialist** - QA planning specialist with CMS-specific testing knowledge.

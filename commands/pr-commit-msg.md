@@ -1,41 +1,25 @@
 ---
-description: Generate conventional commit messages from staged changes
-allowed-tools: Bash(git:*), Read, Glob
+description: Generate conventional commit messages from staged changes using workflow specialist
+allowed-tools: Task
 ---
 
-# Generate Commit Messages
+I'll use the **workflow specialist** agent to generate a conventional commit message from your staged changes.
 
-Generate conventional commit messages from staged changes following best practices.
-
-## Quick Start
-
-```bash
-# 1. Stage your changes
-git add .
-
-# 2. Run this command
-/pr-commit-msg
-
-# Claude will:
-# - Analyze your staged changes
-# - Review recent commit style
-# - Generate conventional commit message
-# - Present for your approval
-```
+The workflow specialist will:
+1. Analyze your staged changes (`git status`, `git diff`)
+2. Review recent commit style for consistency
+3. Apply the **commit-message-generator** skill
+4. Generate a conventional commit message (feat, fix, refactor, etc.)
+5. Include appropriate scope and detailed body
+6. Add CMS-specific context (Drupal/WordPress patterns)
+7. Present the message for your approval
 
 ## How It Works
 
-This command uses the **commit-message-generator** Agent Skill to generate commit messages.
+This command spawns the **workflow-specialist** agent, which uses the **commit-message-generator** Agent Skill to analyze staged changes and create properly formatted commit messages following the [Conventional Commits specification](https://www.conventionalcommits.org/).
 
-**For complete workflow and technical details**, see:
+**For complete technical details about the commit-message-generator skill**, see:
 → [`skills/commit-message-generator/SKILL.md`](../skills/commit-message-generator/SKILL.md)
-
-The skill provides detailed instructions for:
-- Analyzing git staged changes
-- Determining commit type (feat, fix, docs, etc.)
-- Identifying appropriate scope
-- Generating conventional commit message format
-- Platform-specific patterns for Drupal and WordPress
 
 ## When to Use
 
@@ -61,7 +45,7 @@ feat(auth): add two-factor authentication support
 
 🤖 Generated with Claude Code
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 ## Related Commands
@@ -69,7 +53,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **[`/pr-create`](pr-create.md)** - Create PR with generated description
 - **[`/pr-review self`](pr-review.md)** - Review your changes before committing
 
-## Resources
+## Agent Used
 
-- [Conventional Commits Specification](https://www.conventionalcommits.org/)
-- [commit-message-generator Agent Skill](../skills/commit-message-generator/SKILL.md)
+**workflow-specialist** - Orchestrates commit message generation using the commit-message-generator skill.
