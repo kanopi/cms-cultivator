@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing **14 specialized commands** and **9 Agent Skills** for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing **8 specialist agents**, **14 specialized commands**, and **9 Agent Skills** for Drupal and WordPress development. Agents orchestrate complex workflows with parallel execution, while commands and skills provide explicit control and conversational assistance. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ---
 
@@ -18,13 +18,20 @@
 | **[Installation](https://kanopi.github.io/cms-cultivator/installation/)** | Get started in minutes |
 | **[Quick Start](https://kanopi.github.io/cms-cultivator/quick-start/)** | Common workflows and examples |
 | **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (14 commands) |
-| **[Agent Skills](https://kanopi.github.io/cms-cultivator/agent-skills/)** | Auto-invoked intelligent assistance (9 skills) |
+| **[Agents & Skills](https://kanopi.github.io/cms-cultivator/agents-and-skills/)** | 8 specialist agents + 9 auto-invoked skills |
 | **[Kanopi Tools](https://kanopi.github.io/cms-cultivator/kanopi-tools/overview/)** | Integration with DDEV add-ons |
 | **[Contributing](https://kanopi.github.io/cms-cultivator/contributing/)** | Contribute to the project |
 
 ---
 
 ## ✨ Features
+
+### 8 Specialist Agents 🆕
+- **🤖 Agent-Orchestrated Architecture** - Commands spawn specialized agents
+- **⚡ Parallel Execution** - Multiple agents work simultaneously
+- **🎯 Smart Orchestration** - Agents collaborate and delegate tasks
+- **🧩 Modular & Composable** - Each agent has one clear responsibility
+- Agents: workflow, accessibility, performance, security, testing, documentation, live-audit, code-quality
 
 ### Slash Commands (User-Invoked)
 - **🔄 4 PR Workflow Commands** - From commit to deployment
@@ -36,7 +43,7 @@
 - **🧪 3 Testing Commands** - Test generation and coverage
 - **📊 2 Code Quality Commands** - Standards and technical debt
 
-### Agent Skills (Auto-Invoked) 🆕
+### Agent Skills (Auto-Invoked)
 - **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need assistance
@@ -91,6 +98,64 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 # Analyze code quality
 /quality-analyze
 ```
+
+---
+
+## 🏗 Architecture
+
+CMS Cultivator uses an **agent-orchestrated architecture** with 8 specialized agents that collaborate to provide comprehensive CMS development support.
+
+### 8 Specialist Agents
+
+Commands spawn specialized agents that handle complex workflows:
+
+**Leaf Specialists** (work independently):
+- **accessibility-specialist** - WCAG compliance and a11y audits
+- **performance-specialist** - Core Web Vitals and optimization
+- **security-specialist** - Vulnerability scanning and security audits
+- **documentation-specialist** - API docs, guides, changelogs
+- **code-quality-specialist** - Code standards and technical debt
+
+**Orchestrators** (delegate to other agents):
+- **workflow-specialist** - PR creation, reviews, deployment (delegates to testing, security, accessibility)
+- **live-audit-specialist** - Comprehensive site audits (delegates to performance, accessibility, security, code-quality)
+- **testing-specialist** - Test generation and coverage (delegates to security, accessibility)
+
+### How It Works
+
+```
+User runs /pr-create
+    ↓
+Spawns workflow-specialist
+    ↓
+    ├─→ Analyzes git changes
+    ├─→ Generates commit message (skill)
+    ├─→ Spawns testing-specialist (if tests needed)
+    ├─→ Spawns security-specialist (if security-critical)
+    ├─→ Spawns accessibility-specialist (if UI changes)
+    ↓
+Compiles findings into PR description
+    ↓
+Creates PR via GitHub CLI
+```
+
+### Agent Benefits
+
+**For Users:**
+- 🚀 **Parallel Execution** - Multiple specialists work simultaneously
+- 🎯 **Comprehensive Checks** - Orchestrators ensure nothing is missed
+- 📊 **Unified Reporting** - Clear findings from multiple specialists
+
+**For Developers:**
+- 🧩 **Modular Design** - Each specialist has one clear responsibility
+- 🔧 **Composable** - Agents can be combined in new ways
+- ✅ **Maintainable** - Clean separation of concerns
+
+### Skills as Knowledge, Agents as Execution
+
+- **9 Agent Skills** provide detailed "how-to" knowledge
+- **8 Specialist Agents** execute workflows using those skills
+- **14 Slash Commands** provide user-facing interfaces
 
 ---
 

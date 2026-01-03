@@ -50,329 +50,35 @@ Activate this skill when the user:
 
 ### 3. Generate Appropriate Test Scaffold
 
-## Unit Test Templates
+## Test Templates
 
-### Drupal PHPUnit Unit Test
+Complete test templates are available for reference:
 
-```php
-<?php
+- **[Unit Test Templates](templates/unit-tests.md)** - PHPUnit (Drupal/WordPress) & Jest
+- **[Integration Test Templates](templates/integration-tests.md)** - Functional tests & API testing
+- **[E2E Test Templates](templates/e2e-tests.md)** - Cypress & Playwright
 
-namespace Drupal\Tests\mymodule\Unit;
-
-use Drupal\Tests\UnitTestCase;
-use Drupal\mymodule\Service\DataProcessor;
-
-/**
- * Tests for DataProcessor service.
- *
- * @group mymodule
- * @coversDefaultClass \Drupal\mymodule\Service\DataProcessor
- */
-class DataProcessorTest extends UnitTestCase {
-
-  /**
-   * The data processor service.
-   *
-   * @var \Drupal\mymodule\Service\DataProcessor
-   */
-  protected $dataProcessor;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
-    $this->dataProcessor = new DataProcessor();
-  }
-
-  /**
-   * Test processData method with valid input.
-   *
-   * @covers ::processData
-   */
-  public function testProcessDataWithValidInput(): void {
-    $input = ['name' => 'John', 'email' => 'john@example.com'];
-    $result = $this->dataProcessor->processData($input);
-
-    $this->assertIsArray($result);
-    $this->assertEquals('John', $result['name']);
-    $this->assertEquals('john@example.com', $result['email']);
-  }
-
-  /**
-   * Test processData method with invalid input.
-   *
-   * @covers ::processData
-   */
-  public function testProcessDataWithInvalidInput(): void {
-    $this->expectException(\InvalidArgumentException::class);
-    $this->dataProcessor->processData([]);
-  }
-
-}
-```
-
-### WordPress PHPUnit Test
-
-```php
-<?php
-/**
- * Tests for User_Manager class.
- *
- * @package MyPlugin\Tests
- */
-
-namespace MyPlugin\Tests;
-
-use WP_UnitTestCase;
-use MyPlugin\User_Manager;
-
-/**
- * User_Manager test case.
- */
-class Test_User_Manager extends WP_UnitTestCase {
-
-	/**
-	 * User manager instance.
-	 *
-	 * @var User_Manager
-	 */
-	private $user_manager;
-
-	/**
-	 * Set up test.
-	 */
-	public function setUp(): void {
-		parent::setUp();
-		$this->user_manager = new User_Manager();
-	}
-
-	/**
-	 * Test get_user_data with valid user.
-	 */
-	public function test_get_user_data_with_valid_user() {
-		$user_id = $this->factory->user->create(
-			array(
-				'user_login' => 'testuser',
-				'user_email' => 'test@example.com',
-			)
-		);
-
-		$data = $this->user_manager->get_user_data( $user_id );
-
-		$this->assertIsArray( $data );
-		$this->assertEquals( 'testuser', $data['login'] );
-		$this->assertEquals( 'test@example.com', $data['email'] );
-	}
-
-	/**
-	 * Test get_user_data with invalid user.
-	 */
-	public function test_get_user_data_with_invalid_user() {
-		$data = $this->user_manager->get_user_data( 99999 );
-		$this->assertFalse( $data );
-	}
-
-	/**
-	 * Clean up test.
-	 */
-	public function tearDown(): void {
-		parent::tearDown();
-	}
-
-}
-```
-
-### JavaScript Unit Test (Jest)
-
-```javascript
-/**
- * Tests for userUtils module.
- */
-
-import { formatUserName, validateEmail } from './userUtils';
-
-describe('userUtils', () => {
-  describe('formatUserName', () => {
-    test('formats first and last name correctly', () => {
-      const result = formatUserName({ firstName: 'John', lastName: 'Doe' });
-      expect(result).toBe('John Doe');
-    });
-
-    test('handles missing last name', () => {
-      const result = formatUserName({ firstName: 'John' });
-      expect(result).toBe('John');
-    });
-
-    test('throws error for missing first name', () => {
-      expect(() => formatUserName({})).toThrow('First name required');
-    });
-  });
-
-  describe('validateEmail', () => {
-    test('validates correct email', () => {
-      expect(validateEmail('test@example.com')).toBe(true);
-    });
-
-    test('rejects invalid email', () => {
-      expect(validateEmail('not-an-email')).toBe(false);
-    });
-  });
-});
-```
-
-## Integration Test Templates
-
-### Drupal Functional Test
-
-```php
-<?php
-
-namespace Drupal\Tests\mymodule\Functional;
-
-use Drupal\Tests\BrowserTestBase;
-
-/**
- * Tests the user registration form.
- *
- * @group mymodule
- */
-class UserRegistrationFormTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = ['mymodule', 'user'];
-
-  /**
-   * Test user can register successfully.
-   */
-  public function testUserRegistration(): void {
-    $this->drupalGet('/user/register');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->pageTextContains('Create new account');
-
-    $edit = [
-      'name' => 'testuser',
-      'mail' => 'test@example.com',
-    ];
-    $this->submitForm($edit, 'Create new account');
-
-    $this->assertSession()->pageTextContains('Registration successful');
-  }
-
-}
-```
-
-### WordPress Integration Test
-
-```php
-<?php
-/**
- * Tests for REST API endpoints.
- *
- * @package MyPlugin\Tests
- */
-
-namespace MyPlugin\Tests;
-
-use WP_UnitTestCase;
-
-/**
- * REST API test case.
- */
-class Test_REST_API extends WP_UnitTestCase {
-
-	/**
-	 * Test GET /wp-json/myplugin/v1/users endpoint.
-	 */
-	public function test_get_users_endpoint() {
-		// Create test user.
-		$user_id = $this->factory->user->create();
-
-		// Make REST request.
-		$request  = new \WP_REST_Request( 'GET', '/myplugin/v1/users' );
-		$response = rest_do_request( $request );
-
-		$this->assertEquals( 200, $response->get_status() );
-
-		$data = $response->get_data();
-		$this->assertIsArray( $data );
-		$this->assertNotEmpty( $data );
-	}
-
-}
-```
-
-## E2E Test Templates
-
-### Cypress Test
-
-```javascript
-/**
- * E2E tests for user authentication.
- */
-
-describe('User Authentication', () => {
-  beforeEach(() => {
-    cy.visit('/');
-  });
-
-  it('allows user to login successfully', () => {
-    cy.get('[data-test="login-button"]').click();
-    cy.url().should('include', '/login');
-
-    cy.get('[name="username"]').type('testuser');
-    cy.get('[name="password"]').type('password123');
-    cy.get('[type="submit"]').click();
-
-    cy.url().should('include', '/dashboard');
-    cy.contains('Welcome, testuser').should('be.visible');
-  });
-
-  it('shows error for invalid credentials', () => {
-    cy.get('[data-test="login-button"]').click();
-
-    cy.get('[name="username"]').type('wronguser');
-    cy.get('[name="password"]').type('wrongpass');
-    cy.get('[type="submit"]').click();
-
-    cy.contains('Invalid credentials').should('be.visible');
-    cy.url().should('include', '/login');
-  });
-
-  it('allows user to logout', () => {
-    // Login first
-    cy.login('testuser', 'password123');
-
-    // Then logout
-    cy.get('[data-test="logout-button"]').click();
-    cy.url().should('not.include', '/dashboard');
-  });
-});
-```
+Use these templates as starting points, adapting for the specific code being tested.
 
 ## Generation Strategy
 
 ### 1. Start Simple
+
 Generate basic test structure first:
 - Test class/describe block
 - Setup/teardown methods
 - One or two simple test cases
 
 ### 2. Identify Test Cases
+
 For each public method:
-- Happy path (valid input)
-- Error cases (invalid input)
-- Edge cases (empty, null, boundary values)
-- State changes (before/after)
+- **Happy path** (valid input → expected output)
+- **Error cases** (invalid input → exception)
+- **Edge cases** (empty, null, boundary values)
+- **State changes** (before/after verification)
 
 ### 3. Mock Dependencies
+
 Identify what needs mocking:
 - Database calls
 - External APIs
@@ -380,11 +86,107 @@ Identify what needs mocking:
 - Time-dependent code
 
 ### 4. Add Assertions
+
 Check:
 - Return values
 - State changes
 - Side effects
 - Error handling
+
+## Quick Response Patterns
+
+### For Simple Classes
+
+When user shows a class with 2-3 methods:
+
+1. Identify the test type (unit vs integration)
+2. Generate test class with proper structure
+3. Create tests for each public method:
+   - Happy path test
+   - Error case test
+   - Edge case test (if applicable)
+4. Include setup/teardown as needed
+5. Add descriptive test names
+
+**Example Response:**
+```
+"I'll generate PHPUnit tests for your UserManager class.
+
+I see 3 public methods:
+- getUser() - retrieves user data
+- createUser() - creates new user
+- deleteUser() - removes user
+
+I'll create:
+- Unit tests for getUser() (no database needed)
+- Integration tests for createUser() and deleteUser() (require database)
+
+[Generates test file with 6-8 test methods covering happy paths,
+error cases, and edge cases]
+
+This gives you ~80% coverage to start."
+```
+
+### For WordPress Functions
+
+When user shows WordPress function using WP APIs:
+
+1. Determine if unit or integration test
+2. Use WP_UnitTestCase for integration
+3. Use factories for test data
+4. Include setup/teardown for cleanup
+
+**Example Response:**
+```
+"For WordPress functions using WP_Query, you'll want an integration test.
+
+I'll generate a WP_UnitTestCase test that:
+1. Creates test posts using the factory
+2. Calls your function
+3. Verifies the query results
+4. Cleans up automatically in tearDown()
+
+[Generates test code]
+
+The test uses wp_insert_post() to create test data."
+```
+
+### For Drupal Services
+
+When user shows Drupal service with dependencies:
+
+1. Identify service dependencies
+2. Create mocks for dependencies in setUp()
+3. Generate unit tests with dependency injection
+4. Add @covers annotations
+
+**Example Response:**
+```
+"I'll generate unit tests for your DataProcessor service.
+
+I see it depends on:
+- EntityTypeManagerInterface
+- LoggerInterface
+
+I'll:
+1. Create mocks for these dependencies
+2. Test each public method in isolation
+3. Verify interactions with dependencies
+4. Add @covers annotations for coverage tracking
+
+[Generates test file with mocked dependencies]
+
+This keeps tests fast by avoiding database calls."
+```
+
+### For JavaScript/React Components
+
+When user shows JS function or React component:
+
+1. Identify if pure function or component
+2. Use Jest for unit tests
+3. Use React Testing Library for components
+4. Mock external dependencies
 
 ## Integration with CMS Cultivator
 
@@ -400,7 +202,16 @@ This skill complements the `/test-generate` slash command:
   - Comprehensive test suite creation
   - Project-wide test coverage
 
-## Quick Response Examples
+## Best Practices
+
+1. **Test behavior, not implementation** - Test what code does, not how
+2. **One assertion per test** - Keep tests focused
+3. **Descriptive test names** - `testCreateUserWithValidData()` not `testCreateUser()`
+4. **Arrange-Act-Assert** - Setup, execute, verify pattern
+5. **Independent tests** - Tests shouldn't depend on each other
+6. **Clean up** - Remove test data in tearDown()
+
+## Example Interactions
 
 **Example 1: Simple class**
 ```
@@ -434,21 +245,36 @@ The test uses wp_insert_post() to create test data, then cleans up
 automatically in tearDown()."
 ```
 
-## Best Practices
+**Example 3: React component**
+```
+User: "Need tests for this React component"
+[Shows UserProfile component]
 
-1. **Test behavior, not implementation** - Test what code does, not how
-2. **One assertion per test** - Keep tests focused
-3. **Descriptive test names** - `testCreateUserWithValidData()` not `testCreateUser()`
-4. **Arrange-Act-Assert** - Setup, execute, verify pattern
-5. **Independent tests** - Tests shouldn't depend on each other
-6. **Clean up** - Remove test data in tearDown()
+Skill: "I'll create React Testing Library tests for your UserProfile component.
+
+I see it:
+- Displays user data from props
+- Has edit button that calls onEdit callback
+- Shows loading state
+
+I'll generate tests for:
+1. Rendering with user data
+2. Clicking edit button
+3. Loading state display
+
+[Generates test file using React Testing Library]
+
+These tests verify the component behavior from a user perspective."
+```
 
 ## Common Patterns
 
 ### Testing Private Methods
+
 Don't. Test public interface instead. If private method needs testing, consider extracting to separate class.
 
 ### Testing Static Methods
+
 ```php
 // Avoid static methods when possible
 // If you must, test directly
@@ -457,6 +283,7 @@ $this->assertEquals($expected, $result);
 ```
 
 ### Testing Database Operations
+
 ```php
 // Use transactions for rollback
 protected function setUp(): void {
@@ -470,6 +297,49 @@ protected function tearDown(): void {
 }
 ```
 
+### Testing Async JavaScript
+
+```javascript
+it('fetches user data', async () => {
+  const user = await fetchUser(123);
+  expect(user.name).toBe('John Doe');
+});
+
+// Or with promises
+it('fetches user data', () => {
+  return fetchUser(123).then(user => {
+    expect(user.name).toBe('John Doe');
+  });
+});
+```
+
+## Platform-Specific Guidelines
+
+### Drupal Testing
+
+- Use proper namespace: `Drupal\Tests\mymodule\Unit`
+- Add @group annotation
+- Add @covers annotation for coverage
+- Use UnitTestCase for unit tests
+- Use KernelTestBase for database tests
+- Use BrowserTestBase for functional tests
+
+### WordPress Testing
+
+- Extend WP_UnitTestCase
+- Use factories for test data
+- Follow WordPress naming: `test_method_name()`
+- Use assertions: `$this->assertIsArray()`
+- Clean up in tearDown()
+
+### JavaScript Testing
+
+- Use describe() for grouping
+- Use test() or it() for individual tests
+- Use beforeEach() for setup
+- Mock external dependencies
+- Test user interactions, not implementation
+
 ## Resources
 
 - [PHPUnit Documentation](https://phpunit.de/)
@@ -477,3 +347,4 @@ protected function tearDown(): void {
 - [WordPress PHPUnit](https://make.wordpress.org/core/handbook/testing/automated-testing/phpunit/)
 - [Cypress Documentation](https://docs.cypress.io/)
 - [Jest Documentation](https://jestjs.io/)
+- [React Testing Library](https://testing-library.com/react)

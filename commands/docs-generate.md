@@ -1,64 +1,22 @@
 ---
-description: Generate documentation (API, README, guides, changelog)
-argument-hint: [type]
-allowed-tools: Bash(git:*), Read, Glob, Grep, Write, Bash(ddev:*), Bash(ddev composer:*)
+description: Generate documentation (API, README, guides, changelog) using documentation specialist
+argument-hint: "[doc-type]"
+allowed-tools: Task
 ---
 
-# Generate Documentation
+I'll use the **documentation specialist** agent to generate comprehensive documentation.
 
-Generate API documentation, README files, user guides, developer guides, and changelogs.
+The documentation specialist will:
+1. **Generate API documentation** - PHPDoc, JSDoc with examples
+2. **Create user guides** - Step-by-step instructions with screenshots
+3. **Write developer docs** - Architecture, contributing, setup guides
+4. **Generate changelogs** - Keep a Changelog format from git history
+5. **Document CMS patterns**:
+   - **Drupal**: Hooks, services, plugins, configuration
+   - **WordPress**: Filters/actions, shortcodes, custom post types
 
-## Quick Start
+**Doc types**: `api`, `readme`, `guide`, `changelog`, `inline`
 
-```bash
-# Generate all documentation
-/docs-generate
+## Agent Used
 
-# Generate specific documentation types
-/docs-generate api       # API docblocks
-/docs-generate readme    # README.md
-/docs-generate changelog # CHANGELOG.md
-/docs-generate guide user      # User guide
-/docs-generate guide developer # Developer guide
-```
-
-## How It Works
-
-This command uses the **documentation-generator** Agent Skill to create documentation.
-
-**For complete templates and examples**, see:
-→ [`skills/documentation-generator/SKILL.md`](../skills/documentation-generator/SKILL.md)
-
-The skill provides detailed instructions for:
-- Generating API documentation (docblocks, parameter docs)
-- Creating README files with installation and usage
-- Writing user guides with screenshots and examples
-- Producing developer guides with architecture info
-- Maintaining changelogs following Keep a Changelog format
-
-## When to Use
-
-**Use this command (`/docs-generate`)** when:
-- ✅ Need comprehensive project documentation
-- ✅ Creating documentation for multiple components
-- ✅ Setting up documentation structure
-- ✅ Batch documentation generation
-
-**The skill auto-activates** when you say:
-- "I need to document this API"
-- "How do I write a README?"
-- "Need docblocks for this class"
-
-## Related Commands
-
-- **[`/test-generate`](test-generate.md)** - Generate tests for documented code
-- **[`/pr-release`](pr-release.md)** - Generate release notes and changelog
-- **[`/quality-analyze`](quality-analyze.md)** - Analyze documentation coverage
-
-## Resources
-
-- [Write the Docs](https://www.writethedocs.org/)
-- [Drupal Documentation Standards](https://www.drupal.org/docs/develop/coding-standards/api-documentation-and-comment-standards)
-- [WordPress Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/)
-- [Keep a Changelog](https://keepachangelog.com/)
-- [documentation-generator Agent Skill](../skills/documentation-generator/SKILL.md)
+**documentation-specialist** - Documentation generation specialist with CMS-specific knowledge.

@@ -1,10 +1,10 @@
 ---
-description: Generate changelog, deployment checklist, and update PR for release
+description: Generate changelog, deployment checklist, and update PR for release using workflow specialist
 argument-hint: [version-or-focus]
-allowed-tools: Bash(git:*), Bash(gh:*), Read, Glob
+allowed-tools: Task
 ---
 
-You are helping prepare a pull request for release. This command combines changelog generation, deployment checklist creation, and PR description updates.
+I'll use the **workflow specialist** agent to prepare comprehensive release artifacts for your pull request.
 
 ## Usage
 
@@ -14,76 +14,93 @@ You are helping prepare a pull request for release. This command combines change
 - `/pr-release update` - Focus on updating PR description only
 - `/pr-release 1.2.0` - Generate changelog for specific version
 
-## Step 1: Analyze Changes
+---
 
-Gather commit and change information:
+## How It Works
+
+This command spawns the **workflow-specialist** agent, which orchestrates release preparation by:
+
+1. **Analyzing changes** - Reviews commits since last release/tag
+2. **Categorizing commits** - Groups by conventional commit type (feat, fix, etc.)
+3. **Generating changelog** - Creates Keep a Changelog formatted entry
+4. **Creating deployment checklist** - Platform-specific deployment steps
+5. **Updating PR description** - Adds deploy notes and version info
+6. **Recommending version bump** - Suggests major/minor/patch based on changes
+
+### The Workflow Specialist Will Generate
+
+**1. Changelog Entry** - Following [Keep a Changelog](https://keepachangelog.com/) format:
+- Added - New features/functionality
+- Changed - Updates to existing functionality
+- Deprecated - Marked for future removal
+- Removed - Deleted features/functionality
+- Fixed - Bug fixes
+- Security - Security-related changes
+
+**2. Deployment Checklist** - Comprehensive deployment plan:
+- Pre-deployment checks
+- Step-by-step deployment instructions
+- Post-deployment verification
+- Rollback plan
+- CMS-specific upgrade notes (Drupal/WordPress)
+
+**3. PR Description Update** - Enhanced PR description with:
+- Release version and date
+- Changelog integration
+- Deployment requirements
+- Breaking changes warnings
+- Migration steps
+
+---
+
+## Quick Start
 
 ```bash
-# Get commits since last tag or since branching
-git log $(git describe --tags --abbrev=0)..HEAD --oneline
-# OR
-git log origin/main..HEAD --oneline
+# 1. Ensure you're on your release branch
+git checkout release/1.2.0
 
-# Get detailed changes
-git diff origin/main..HEAD --stat
-git diff origin/main..HEAD
+# 2. Run this command
+/pr-release
 
-# Check for specific change types
-git diff origin/main..HEAD config/sync/  # Drupal config
-git diff origin/main..HEAD acf-json/    # WordPress ACF
-git diff origin/main..HEAD composer.json
-git diff origin/main..HEAD package.json
+# Or specify version:
+/pr-release 1.2.0
+
+# Or focus on specific artifact:
+/pr-release changelog
 ```
 
-## Release Artifacts
+---
 
-### 1. CHANGELOG GENERATION
+## Semantic Versioning Guidance
 
-#### Categorize Changes (Keep a Changelog Format)
+The workflow specialist suggests version numbers based on [Semantic Versioning](https://semver.org/):
 
-**Added** - New features/functionality:
-- New user-facing features
+**Major (X.0.0)** - Breaking changes:
+- Incompatible API changes
+- Removed functions/endpoints
+- Database schema breaking changes
+- Minimum dependency version increases
+
+**Minor (1.X.0)** - New features (backwards-compatible):
+- New functionality added
 - New API endpoints
-- New configuration options
-- New dependencies
+- Deprecated features (not removed)
+- Optional new dependencies
 
-**Changed** - Updates to existing functionality:
-- Updates to features
-- Refactored code
-- Updated dependencies
-- Modified configurations
-
-**Deprecated** - Marked for future removal:
-- Deprecated functions
-- Deprecated APIs
-- Deprecated config options
-
-**Removed** - Deleted features/functionality:
-- Removed functions
-- Removed API endpoints
-- Removed dependencies
-
-**Fixed** - Bug fixes:
+**Patch (1.0.X)** - Bug fixes (backwards-compatible):
 - Bug fixes
-- Error corrections
-- Typo fixes
+- Security patches
+- Documentation updates
+- Performance improvements (no API changes)
 
-**Security** - Security-related changes:
-- Security vulnerabilities patched
-- Security enhancements
-- Auth/authorization fixes
+---
 
-#### Version Number Guidance
+## Changelog Format
 
-If version not provided, suggest based on Semantic Versioning:
-- **Major (X.0.0)**: Breaking changes, incompatible API changes
-- **Minor (1.X.0)**: New features, backwards-compatible
-- **Patch (1.0.X)**: Bug fixes, backwards-compatible
-
-#### Generate Changelog Entry
+The workflow specialist generates changelogs in Keep a Changelog format:
 
 ```markdown
-## [VERSION] - YYYY-MM-DD
+## [1.2.0] - 2025-01-15
 
 ### Added
 - New event registration functionality allowing users to RSVP (#123)
@@ -130,379 +147,244 @@ If version not provided, suggest based on Semantic Versioning:
 
 ---
 
-### 2. DEPLOYMENT CHECKLIST
+## Deployment Checklist Format
 
-#### Detect Project Type & Changes
-
-Identify:
-- Drupal or WordPress project
-- Config changes (Drupal config, ACF JSON)
-- Database changes (migrations, update hooks)
-- Dependencies (composer.json, package.json)
-- Assets (CSS/JS requiring rebuild)
-- Environment variables
-- Cypress tests
-
-#### Generate Comprehensive Checklist
+The workflow specialist generates platform-specific deployment checklists:
 
 ```markdown
-# Deployment Checklist - [PR Title]
+# Deployment Checklist - [Version]
 
-**PR**: #[number]
-**Target Environment**: [Production/Staging]
-**Estimated Downtime**: [None/5min/30min]
+**Target Environment**: Production
+**Estimated Downtime**: None/5min/30min
 **Deployment Date**: YYYY-MM-DD
-**Deployed By**: _______________
 
----
-
-## Pre-Deployment Checklist
-
-### Code Preparation
+## Pre-Deployment
 - [ ] All CI/CD checks passing
 - [ ] Code reviewed and approved
-- [ ] PR merged to main
-- [ ] No merge conflicts
-- [ ] All tests passing
-- [ ] Cypress tests passing (if applicable)
-
-### Environment Preparation
 - [ ] Backup database
 - [ ] Backup codebase
-- [ ] Verify disk space
-- [ ] Check server resources
-- [ ] Notify team of deployment window
-- [ ] Set maintenance mode if needed
-
-### Dependencies
-- [ ] Review composer.json changes
-- [ ] Review package.json changes
-- [ ] Run: composer audit / npm audit
-- [ ] Verify PHP/Node version compatibility
-
-### Drupal-Specific Pre-Deployment
-- [ ] Verify config changes: git diff origin/main..HEAD config/sync/
-- [ ] Check for database updates in .install files
-- [ ] Review entity/field changes
-- [ ] Check hook_update_N() implementations
-
-### WordPress-Specific Pre-Deployment
-- [ ] Check ACF field changes in acf-json/
-- [ ] Review CPT/taxonomy changes
-- [ ] Verify template changes
-- [ ] Check for database migrations
-
----
+- [ ] Review dependencies (composer.json, package.json)
+- [ ] Run security audits (composer audit, npm audit)
 
 ## Deployment Steps
-
 ### 1. Enable Maintenance Mode
-```bash
-# Drupal
-drush state:set system.maintenance_mode 1 --input-format=integer
-drush cr
-
-# WordPress
-wp maintenance-mode activate
-```
+[Platform-specific commands]
 
 ### 2. Pull Latest Code
 ```bash
-git fetch origin
-git checkout main
 git pull origin main
-git log -1  # Verify correct commit
+git log -1  # Verify commit
 ```
 
 ### 3. Install/Update Dependencies
-
-**If composer.json changed:**
-```bash
-composer install --no-dev --optimize-autoloader
-```
-
-**If package.json changed:**
-```bash
-npm ci
-```
+[If composer.json changed]
+[If package.json changed]
 
 ### 4. Build Assets
-**If frontend changes:**
-```bash
-npm run build
-# or
-npm run production
-```
+[If frontend changes]
 
-### 5. Drupal Deployment
-**If Drupal:**
-```bash
-# Import configuration
-drush config:import -y
+### 5. CMS-Specific Steps
+**Drupal:**
+- Import config: `drush config:import -y`
+- Run updates: `drush updatedb -y`
+- Entity updates: `drush entity:updates -y`
+- Clear cache: `drush cache:rebuild`
 
-# Run database updates
-drush updatedb -y
+**WordPress:**
+- Run migrations: [specific migrations]
+- Flush permalinks: `wp rewrite flush`
+- Clear cache: `wp cache flush`
 
-# Run entity updates
-drush entity:updates -y
+### 6. Environment Variables
+[New variables needed]
 
-# Rebuild cache
-drush cache:rebuild
-```
-
-### 6. WordPress Deployment
-**If WordPress:**
-```bash
-# Run migrations (if exist)
-[specific migration commands]
-
-# Flush permalinks (if CPT/tax changes)
-wp rewrite flush
-
-# Clear cache
-wp cache flush
-```
-
-### 7. Environment Variables
-**If new env vars:**
-```
-[List specific variables to add]
-# Example placeholder - replace with actual value
-GOOGLE_MAPS_API_KEY=your_key_here_example
-```
-
-### 8. Disable Maintenance Mode
-```bash
-# Drupal
-drush state:set system.maintenance_mode 0 --input-format=integer
-drush cr
-
-# WordPress
-wp maintenance-mode deactivate
-```
-
----
+### 7. Disable Maintenance Mode
+[Platform-specific commands]
 
 ## Post-Deployment Verification
-
-### Automated Checks
-- [ ] Run smoke tests
-- [ ] Run Cypress: npm run cypress:run
-- [ ] Check homepage loads
-- [ ] Verify critical paths work
-- [ ] Check error logs
-
-### Manual Verification
-- [ ] Test specific functionality changed
-- [ ] Verify affected URLs
-- [ ] Test as different user roles
-- [ ] Check responsive design
-- [ ] Verify forms work
-- [ ] Check email notifications
-
-### Drupal Verification
-- [ ] Config clean: drush config:status
-- [ ] No pending updates: drush updatedb:status
-- [ ] No entity updates: drush entity:updates
-- [ ] Status report: /admin/reports/status
-
-### WordPress Verification
-- [ ] Site Health: /wp-admin/site-health.php
-- [ ] Permalinks working
-- [ ] ACF fields display correctly
-- [ ] CPTs accessible
-
-### Performance
-- [ ] Page load times acceptable
-- [ ] No PHP errors/warnings
-- [ ] Database queries performant
-- [ ] Caching working
-
----
+- [ ] Homepage loads
+- [ ] Critical paths work
+- [ ] No PHP errors in logs
+- [ ] Automated tests pass
+- [ ] Performance acceptable
+- [ ] CMS status report clean
 
 ## Rollback Plan
-
-If deployment fails:
-```bash
-# 1. Enable maintenance mode
-
-# 2. Revert code
-git reset --hard [previous-commit]
-
-# 3. Restore database from backup (if needed)
-
-# 4. Clear caches
-
-# 5. Disable maintenance mode
+[If deployment fails - step-by-step rollback]
 ```
 
 ---
 
-## Sign-Off
+## CMS-Specific Detection
 
-**Deployed By**: _____________
-**Date/Time**: _____________
-**Deployment Status**: [ ] Success [ ] Failed [ ] Rolled Back
-**Issues**: _____________
-```
+### Drupal Projects
+
+The workflow specialist detects and documents:
+
+**Config Changes** (`config/sync/*.yml`):
+- New configuration entities
+- Modified field definitions
+- Permission changes
+- Deployment: `drush config:import`
+
+**Database Updates** (`hook_update_N()`):
+- Schema changes
+- Data migrations
+- Deployment: `drush updatedb`
+
+**Module Changes**:
+- New dependencies in `*.info.yml`
+- Service definitions
+- Route changes
+- Deployment: Module enablement, cache clear
+
+### WordPress Projects
+
+The workflow specialist detects and documents:
+
+**ACF Changes** (`acf-json/`):
+- New field groups
+- Modified fields
+- Deployment: Re-sync ACF fields
+
+**CPT/Taxonomy Changes**:
+- New post types
+- New taxonomies
+- Deployment: Flush permalinks
+
+**Theme Changes**:
+- Template modifications
+- New theme support
+- Deployment: Clear object cache
+
+**Database Migrations**:
+- Custom table changes
+- Deployment: Run WP-CLI migrations
 
 ---
 
-### 3. PR DESCRIPTION UPDATE
+## Focus Area Options
 
-If PR already exists and needs updating based on new changes:
+### `/pr-release changelog`
+Generates only the changelog entry. Analyzes commits, categorizes by type, and formats per Keep a Changelog.
 
-#### Detect What Changed
+### `/pr-release deploy`
+Generates only the deployment checklist. Includes pre-deployment checks, step-by-step instructions, and rollback plan.
 
-```bash
-# Get current PR
-gh pr view <pr-number>
+### `/pr-release update`
+Generates only PR description updates. Compares current PR description with actual changes and provides updated version.
 
-# Compare current description with actual changes
-gh pr view <pr-number> --json body
+### `/pr-release 1.2.0`
+Generates full release artifacts for specific version number. Includes changelog, checklist, and PR updates.
 
-# Check for new commits/changes
-git log origin/main..HEAD --oneline
-```
+### `/pr-release` (no argument)
+Generates all three artifacts in a unified report. Prompts for version number if not determinable from branch/commits.
 
-#### Update PR Description
+---
 
-Generate updated description following the same template as `/pr-create`:
+## What the Workflow Specialist Analyzes
+
+**Commit History:**
+- All commits since last tag: `git log $(git describe --tags --abbrev=0)..HEAD`
+- Or since branching: `git log origin/main..HEAD`
+
+**File Changes:**
+- Config files (Drupal/WordPress)
+- Dependencies (composer.json, package.json)
+- Database migrations and update hooks
+- Template/theme changes
+
+**Change Types:**
+- Features (new functionality)
+- Fixes (bug corrections)
+- Breaking changes (incompatibilities)
+- Security (vulnerabilities patched)
+- Performance (optimizations)
+- Deprecations (marked for removal)
+
+**Deployment Requirements:**
+- Database updates needed
+- Config imports required
+- Assets to rebuild
+- Cache clearing
+- Environment variables
+- Module/plugin activations
+
+---
+
+## Output Format
+
+When running `/pr-release` with no focus, the workflow specialist provides:
 
 ```markdown
-## Description
-[Updated comprehensive summary]
-
-## Acceptance Criteria
-- [ ] [Updated/new criteria]
-
-## Assumptions
-[Any new assumptions]
-
-## Steps to Validate
-1. [Updated validation steps]
-
-## Affected URL
-- [URLs where changes visible]
-
-## Deploy Notes
-
-### Pre-deployment
-- [ ] [Pre-deploy steps]
-
-### Deployment Steps
-[Updated based on actual changes - Drupal/WordPress specific]
-
-### Post-deployment
-- [ ] [Post-deploy verification]
-
-### Rollback Plan
-[Updated rollback procedure]
-```
-
-#### Show Changes & Confirm
-
-```markdown
-## Current PR Description
-[Show existing]
-
----
-
-## Proposed Updated Description
-[Show new with changes highlighted]
-
----
-
-## Summary of Changes
-- Added: [What was added to description]
-- Updated: [What was modified]
-- Removed: [What was removed]
-```
-
-Ask: "Would you like me to update the PR with these changes?"
-
-If approved:
-```bash
-gh pr edit <pr-number> --body "$(cat <<'EOF'
-[Updated description]
-EOF
-)"
-```
-
----
-
-## Combined Output Format
-
-When running `/pr-release` with no arguments, provide all three artifacts:
-
-```markdown
-# Release Preparation - [PR Title / Version]
+# Release Preparation - [Version]
 
 ## 📋 CHANGELOG ENTRY
-
-[Full changelog as detailed above]
+[Full Keep a Changelog formatted entry]
 
 ---
 
 ## 🚀 DEPLOYMENT CHECKLIST
-
-[Full deployment checklist as detailed above]
+[Complete deployment checklist with pre/post steps]
 
 ---
 
 ## 📝 PR DESCRIPTION UPDATE
-
-**Current PR Description**:
-[Show current if PR exists]
-
-**Recommended Updates**:
-[List what should be updated in PR description]
-
-**Updated Description**:
-[Show full updated description]
+**Current PR Description**: [If PR exists]
+**Recommended Updates**: [What should change]
+**Updated Description**: [Full updated version]
 
 ---
 
 ## NEXT STEPS
-
-1. **Review changelog entry** - Verify categorization is accurate
-2. **Review deployment checklist** - Add project-specific steps
-3. **Update PR description** - Apply changes if PR already exists
-4. **Test deployment** - Run checklist on staging first
-5. **Communicate** - Notify team of deployment plan
+1. Review changelog - Verify categorization
+2. Review checklist - Add project-specific steps
+3. Update PR description - Apply changes if PR exists
+4. Test on staging - Run checklist on staging first
+5. Communicate - Notify team of deployment plan
 
 **Ready to Deploy**: [✅ Yes | ⚠️ With cautions | ❌ Not ready]
 ```
 
-## Focus Area Execution
-
-### `/pr-release changelog`
-Output only the changelog entry section
-
-### `/pr-release deploy`
-Output only the deployment checklist section
-
-### `/pr-release update`
-Output only the PR description update section
-
-### `/pr-release 1.2.0`
-Generate changelog for specific version number provided
-
-### `/pr-release` (no argument)
-Output all three sections in combined report
+---
 
 ## Best Practices
 
-1. **Changelog**: Write for humans, be specific, link to issues
-2. **Deployment**: Be comprehensive, include rollback plan
-3. **PR Updates**: Keep accurate, reflect actual changes
-4. **Version Numbers**: Follow semantic versioning strictly
-5. **Communication**: Notify team early about deployments
+The workflow specialist follows industry standards:
 
-## Industry Standards
+1. **Changelog** - Write for humans, be specific, link to issues
+2. **Version Numbers** - Strict semantic versioning
+3. **Deployment** - Comprehensive steps, include rollback
+4. **Communication** - Clear, actionable, prioritized
+5. **Testing** - Test on staging before production
 
-- **Keep a Changelog**: https://keepachangelog.com/
-- **Semantic Versioning**: https://semver.org/
-- **Deployment Best Practices**: Test on staging first, have rollback ready
+---
 
-Remember: Good release preparation prevents production incidents. Take time to be thorough.
+## Related Commands
+
+- **[`/pr-create`](pr-create.md)** - Create initial PR
+- **[`/pr-review`](pr-review.md)** - Review changes before release
+- **[`/pr-commit-msg`](pr-commit-msg.md)** - Generate commit messages
+
+## Agent Used
+
+**workflow-specialist** - Orchestrates release artifact generation with changelog formatting, deployment planning, and PR description updates.
+
+## What Makes This Different
+
+**Before (manual release prep):**
+- Manually write changelog from commits
+- Create deployment checklist from memory
+- Miss CMS-specific upgrade steps
+- No version number guidance
+- Inconsistent changelog format
+
+**With workflow-specialist:**
+- ✅ Automated changelog generation from commits
+- ✅ Keep a Changelog compliant formatting
+- ✅ Semantic versioning recommendations
+- ✅ CMS-specific deployment steps detected
+- ✅ Comprehensive pre/post deployment checks
+- ✅ Rollback plan included
+- ✅ PR description auto-updated
+- ✅ Breaking changes highlighted

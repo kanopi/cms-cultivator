@@ -27,7 +27,7 @@
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need help
 
-[Learn about Agent Skills →](agent-skills.md)
+[Learn about Agents & Skills →](agents-and-skills.md)
 
 ---
 
@@ -38,7 +38,7 @@
 | **[Getting Started](installation.md)** | Installation and initial setup |
 | **[Quick Start](quick-start.md)** | Common workflows and examples |
 | **[Commands](commands/overview.md)** | Complete command reference (14 commands) |
-| **[Agent Skills](agent-skills.md)** | Auto-invoked intelligent assistance (9 skills) |
+| **[Agents & Skills](agents-and-skills.md)** | 8 specialist agents + 9 auto-invoked skills |
 | **[Kanopi Tools](kanopi-tools/overview.md)** | Integration with Kanopi's DDEV add-ons |
 
 ---

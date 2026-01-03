@@ -189,16 +189,6 @@ setup() {
   done
 }
 
-@test "commands have code examples" {
-  # Check that at least 90% of commands have code blocks
-  total=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  with_code=$(grep -l '```' commands/*.md | wc -l)
-
-  # At least 12 out of 14 commands should have code examples (86%)
-  [ "$with_code" -ge 12 ]
-
-}
-
 @test "no command contains TODO markers" {
   # Check for uncommitted TODO/FIXME markers (excluding code blocks and examples)
   # This checks for actual TODOs in documentation, not example TODOs shown to users
@@ -250,6 +240,383 @@ setup() {
       fi
     fi
   done
+}
+
+# ==============================================================================
+# AGENT DIRECTORY STRUCTURE TESTS
+# ==============================================================================
+
+@test "agents directory exists" {
+  [ -d "agents" ]
+}
+
+@test "agents directory contains expected subdirectories" {
+  count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
+  [ "$count" -eq 8 ]
+}
+
+@test "all agent directories have AGENT.md file" {
+  for agent_dir in agents/*/; do
+    if [ ! -f "${agent_dir}AGENT.md" ]; then
+      echo "Missing AGENT.md in $agent_dir"
+      return 1
+    fi
+  done
+}
+
+@test "agent count matches expected (8)" {
+  count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
+  [ "$count" -eq 8 ]
+}
+
+@test "expected agent directories exist" {
+  expected_agents=(
+    "accessibility-specialist"
+    "code-quality-specialist"
+    "documentation-specialist"
+    "live-audit-specialist"
+    "performance-specialist"
+    "security-specialist"
+    "testing-specialist"
+    "workflow-specialist"
+  )
+
+  for agent in "${expected_agents[@]}"; do
+    if [ ! -d "agents/$agent" ]; then
+      echo "Missing agent directory: agents/$agent"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# AGENT FRONTMATTER TESTS
+# ==============================================================================
+
+@test "all agent files have YAML frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^---$" "$agent"; then
+      echo "Missing frontmatter in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have name in frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^name:" "$agent"; then
+      echo "Missing name in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have description in frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^description:" "$agent"; then
+      echo "Missing description in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have tools in frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^tools:" "$agent"; then
+      echo "Missing tools in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have skills in frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^skills:" "$agent"; then
+      echo "Missing skills in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have model in frontmatter" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^model:" "$agent"; then
+      echo "Missing model in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "agent frontmatter has valid YAML syntax" {
+  for agent in agents/*/AGENT.md; do
+    frontmatter=$(awk 'BEGIN {state=0} /^---$/ {state++; next} state==1 {print} state==2 {exit}' "$agent")
+
+    if command -v python3 &> /dev/null; then
+      echo "$frontmatter" | python3 -c "import sys, yaml; yaml.safe_load(sys.stdin)" &> /dev/null || {
+        echo "Invalid YAML in $agent"
+        return 1
+      }
+    else
+      skip "No YAML validator available"
+    fi
+  done
+}
+
+@test "agent names match directory names" {
+  for agent_dir in agents/*/; do
+    dir_name=$(basename "$agent_dir")
+    agent_file="${agent_dir}AGENT.md"
+
+    if [ -f "$agent_file" ]; then
+      agent_name=$(sed -n 's/^name: *//p' "$agent_file")
+      if [ "$agent_name" != "$dir_name" ]; then
+        echo "Name mismatch in $agent_file: name=$agent_name, dir=$dir_name"
+        return 1
+      fi
+    fi
+  done
+}
+
+# ==============================================================================
+# AGENT SKILLS MAPPING TESTS
+# ==============================================================================
+
+@test "leaf specialists do not have Task tool" {
+  leaf_specialists=(
+    "accessibility-specialist"
+    "performance-specialist"
+    "security-specialist"
+    "documentation-specialist"
+    "code-quality-specialist"
+  )
+
+  for agent in "${leaf_specialists[@]}"; do
+    agent_file="agents/$agent/AGENT.md"
+    tools=$(sed -n 's/^tools: *//p' "$agent_file")
+
+    if echo "$tools" | grep -q "Task"; then
+      echo "Leaf specialist $agent should not have Task tool"
+      return 1
+    fi
+  done
+}
+
+@test "orchestrators have Task tool" {
+  orchestrators=(
+    "workflow-specialist"
+    "live-audit-specialist"
+    "testing-specialist"
+  )
+
+  for agent in "${orchestrators[@]}"; do
+    agent_file="agents/$agent/AGENT.md"
+    tools=$(sed -n 's/^tools: *//p' "$agent_file")
+
+    if ! echo "$tools" | grep -q "Task"; then
+      echo "Orchestrator $agent must have Task tool"
+      return 1
+    fi
+  done
+}
+
+@test "live-audit-specialist has no skills" {
+  agent_file="agents/live-audit-specialist/AGENT.md"
+  skills=$(sed -n 's/^skills: *//p' "$agent_file")
+
+  # Should be empty array [] or empty
+  if [ -n "$skills" ] && [ "$skills" != "[]" ]; then
+    echo "live-audit-specialist should have no skills (pure orchestrator)"
+    return 1
+  fi
+}
+
+@test "accessibility-specialist has accessibility-checker skill" {
+  agent_file="agents/accessibility-specialist/AGENT.md"
+  if ! grep -q "accessibility-checker" "$agent_file"; then
+    echo "accessibility-specialist missing accessibility-checker skill"
+    return 1
+  fi
+}
+
+@test "workflow-specialist has commit-message-generator skill" {
+  agent_file="agents/workflow-specialist/AGENT.md"
+  if ! grep -q "commit-message-generator" "$agent_file"; then
+    echo "workflow-specialist missing commit-message-generator skill"
+    return 1
+  fi
+}
+
+# ==============================================================================
+# AGENT CONTENT TESTS
+# ==============================================================================
+
+@test "all agents have markdown headers" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -q "^#" "$agent"; then
+      echo "No markdown headers in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents have Core Responsibilities section" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -qi "Core Responsibilities" "$agent"; then
+      echo "Missing Core Responsibilities section in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "all agents document their tools" {
+  for agent in agents/*/AGENT.md; do
+    if ! grep -qi "Tools Available\|Tools You" "$agent"; then
+      echo "Missing tools documentation in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "orchestrators document delegation patterns" {
+  orchestrators=(
+    "workflow-specialist"
+    "live-audit-specialist"
+    "testing-specialist"
+  )
+
+  for agent in "${orchestrators[@]}"; do
+    agent_file="agents/$agent/AGENT.md"
+
+    if ! grep -qi "orchestrat\|delegat\|spawn" "$agent_file"; then
+      echo "Orchestrator $agent missing delegation documentation"
+      return 1
+    fi
+  done
+}
+
+@test "no agent file exceeds reasonable size (200KB)" {
+  for agent in agents/*/AGENT.md; do
+    size=$(wc -c < "$agent")
+    if [ "$size" -gt 204800 ]; then
+      echo "Agent file $agent is too large: ${size} bytes"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# COMMAND-TO-AGENT INTEGRATION TESTS
+# ==============================================================================
+
+@test "commands use Task tool to spawn agents" {
+  # Commands should have Task in allowed-tools
+  task_count=$(grep -l "allowed-tools:.*Task" commands/*.md | wc -l)
+
+  # At least 10 commands should use Task (most commands should spawn agents)
+  [ "$task_count" -ge 10 ]
+}
+
+@test "commands reference agent specialists in content" {
+  # Commands should mention which specialist agent they use
+  specialist_mentions=0
+
+  for cmd in commands/*.md; do
+    if grep -qi "specialist" "$cmd"; then
+      specialist_mentions=$((specialist_mentions + 1))
+    fi
+  done
+
+  # At least 10 commands should reference specialists
+  [ "$specialist_mentions" -ge 10 ]
+}
+
+@test "PR commands reference workflow-specialist" {
+  pr_commands=(
+    "pr-commit-msg"
+    "pr-create"
+    "pr-review"
+    "pr-release"
+  )
+
+  for cmd in "${pr_commands[@]}"; do
+    cmd_file="commands/${cmd}.md"
+    if [ -f "$cmd_file" ]; then
+      if ! grep -qi "workflow-specialist\|workflow specialist" "$cmd_file"; then
+        echo "$cmd_file should reference workflow-specialist"
+        return 1
+      fi
+    fi
+  done
+}
+
+@test "audit-a11y references accessibility-specialist" {
+  if ! grep -qi "accessibility-specialist\|accessibility specialist" commands/audit-a11y.md; then
+    echo "audit-a11y should reference accessibility-specialist"
+    return 1
+  fi
+}
+
+@test "audit-perf references performance-specialist" {
+  if ! grep -qi "performance-specialist\|performance specialist" commands/audit-perf.md; then
+    echo "audit-perf should reference performance-specialist"
+    return 1
+  fi
+}
+
+@test "audit-security references security-specialist" {
+  if ! grep -qi "security-specialist\|security specialist" commands/audit-security.md; then
+    echo "audit-security should reference security-specialist"
+    return 1
+  fi
+}
+
+@test "audit-live-site references live-audit-specialist" {
+  if ! grep -qi "live-audit-specialist\|live audit specialist" commands/audit-live-site.md; then
+    echo "audit-live-site should reference live-audit-specialist"
+    return 1
+  fi
+}
+
+@test "test commands reference testing-specialist" {
+  test_commands=(
+    "test-generate"
+    "test-plan"
+    "test-coverage"
+  )
+
+  for cmd in "${test_commands[@]}"; do
+    cmd_file="commands/${cmd}.md"
+    if [ -f "$cmd_file" ]; then
+      if ! grep -qi "testing-specialist\|testing specialist" "$cmd_file"; then
+        echo "$cmd_file should reference testing-specialist"
+        return 1
+      fi
+    fi
+  done
+}
+
+@test "quality commands reference code-quality-specialist" {
+  quality_commands=(
+    "quality-analyze"
+    "quality-standards"
+  )
+
+  for cmd in "${quality_commands[@]}"; do
+    cmd_file="commands/${cmd}.md"
+    if [ -f "$cmd_file" ]; then
+      if ! grep -qi "code-quality-specialist\|quality specialist" "$cmd_file"; then
+        echo "$cmd_file should reference code-quality-specialist"
+        return 1
+      fi
+    fi
+  done
+}
+
+@test "docs-generate references documentation-specialist" {
+  if ! grep -qi "documentation-specialist\|documentation specialist" commands/docs-generate.md; then
+    echo "docs-generate should reference documentation-specialist"
+    return 1
+  fi
 }
 
 # ==============================================================================

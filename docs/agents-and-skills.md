@@ -1,18 +1,150 @@
-# Agent Skills
+# Agents and Skills
 
-CMS Cultivator includes 9 **Agent Skills** that Claude automatically invokes during conversation when contextually appropriate, alongside 14 **Slash Commands** that you explicitly trigger.
+CMS Cultivator features a three-tier architecture:
 
-## What Are Agent Skills?
+1. **8 Specialist Agents** - Orchestrate complex workflows (spawned by commands)
+2. **14 Slash Commands** - User-facing interfaces (you invoke explicitly)
+3. **9 Agent Skills** - Knowledge base (Claude invokes automatically during conversation)
+
+---
+
+## 8 Specialist Agents
+
+Agents are specialized AI assistants that handle complex, multi-step workflows. When you run a command, it spawns the appropriate agent to coordinate the work.
+
+### Agent Architecture
+
+**Leaf Specialists** (work independently):
+
+- **accessibility-specialist** - WCAG 2.1 Level AA compliance audits
+- **performance-specialist** - Core Web Vitals and optimization analysis
+- **security-specialist** - OWASP Top 10 vulnerability scanning
+- **documentation-specialist** - API docs, guides, and changelogs
+- **code-quality-specialist** - Code standards and technical debt assessment
+
+**Orchestrators** (delegate to other agents):
+
+- **workflow-specialist** - PR workflows (delegates to testing, security, accessibility)
+- **live-audit-specialist** - Comprehensive site audits (delegates to performance, accessibility, security, code-quality)
+- **testing-specialist** - Test generation and coverage (delegates to security, accessibility)
+
+### How Agents Work
+
+```
+/pr-create PROJ-123
+    ↓
+Spawns workflow-specialist
+    ↓
+    ├─→ Analyzes git changes
+    ├─→ Generates commit message (uses commit-message-generator skill)
+    ├─→ Spawns testing-specialist (if tests changed)
+    │   └─→ May spawn security-specialist (for security tests)
+    ├─→ Spawns security-specialist (if security-critical code)
+    ├─→ Spawns accessibility-specialist (if UI changes)
+    ↓
+Compiles all findings into PR description
+    ↓
+Creates PR via GitHub CLI
+```
+
+### Agent Orchestration Patterns
+
+#### Parallel Execution
+
+The **live-audit-specialist** spawns all 4 leaf specialists simultaneously:
+
+```
+/audit-live-site https://example.com
+    ↓
+Spawns live-audit-specialist
+    ↓
+Spawns ALL in parallel:
+    ├─→ performance-specialist (Core Web Vitals)
+    ├─→ accessibility-specialist (WCAG compliance)
+    ├─→ security-specialist (vulnerability scan)
+    └─→ code-quality-specialist (technical debt)
+    ↓
+Waits for all results
+    ↓
+Synthesizes unified report:
+    - Executive summary
+    - Critical issues
+    - Prioritized remediation roadmap
+```
+
+#### Conditional Delegation
+
+The **workflow-specialist** intelligently delegates based on code changes:
+
+```
+PR with UI changes:
+  → Spawns accessibility-specialist
+
+PR with authentication code:
+  → Spawns security-specialist
+
+PR with new features:
+  → Spawns testing-specialist
+      → May spawn security-specialist (if security tests needed)
+      → May spawn accessibility-specialist (if UI tests needed)
+```
+
+### Agent-to-Command Mapping
+
+| Agent | Used By Commands | Can Delegate To |
+|-------|------------------|-----------------|
+| workflow-specialist | `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release` | testing, security, accessibility |
+| accessibility-specialist | `/audit-a11y` | (none - leaf) |
+| performance-specialist | `/audit-perf` | (none - leaf) |
+| security-specialist | `/audit-security` | (none - leaf) |
+| testing-specialist | `/test-generate`, `/test-plan`, `/test-coverage` | security, accessibility |
+| documentation-specialist | `/docs-generate` | (none - leaf) |
+| live-audit-specialist | `/audit-live-site` | performance, accessibility, security, code-quality |
+| code-quality-specialist | `/quality-analyze`, `/quality-standards` | (none - leaf) |
+
+### Agent-to-Skill Mapping
+
+Each agent uses specific skills for detailed "how-to" knowledge:
+
+| Agent | Uses Skills |
+|-------|-------------|
+| workflow-specialist | commit-message-generator |
+| accessibility-specialist | accessibility-checker |
+| performance-specialist | performance-analyzer |
+| security-specialist | security-scanner |
+| testing-specialist | test-scaffolding, test-plan-generator, coverage-analyzer |
+| documentation-specialist | documentation-generator |
+| code-quality-specialist | code-standards-checker |
+| live-audit-specialist | (none - pure orchestrator) |
+
+### Why Agents?
+
+**Benefits for Users:**
+- 🚀 **Parallel Execution** - Multiple specialists work simultaneously (e.g., live audits)
+- 🎯 **Comprehensive Checks** - Orchestrators ensure nothing is missed
+- 📊 **Unified Reporting** - Clear, consolidated findings from multiple specialists
+- 🔄 **Consistent Quality** - Each specialist follows best practices
+
+**Benefits for Development:**
+- 🧩 **Modular Design** - Each agent has one clear responsibility
+- 🔧 **Composable** - Agents can be combined in new ways
+- ✅ **Maintainable** - Clean separation of concerns
+- 🔍 **Testable** - Each agent can be tested independently
+
+---
+
+## 9 Agent Skills
 
 Agent Skills are **model-invoked** capabilities—Claude decides when to use them based on your conversation context, without you needing to remember specific command names.
 
-### Skills vs. Commands
+### Three-Tier System Explained
 
-| Feature | Slash Commands | Agent Skills |
-|---------|----------------|--------------|
-| **Invocation** | User types `/command` | Claude activates automatically |
-| **Use Case** | Explicit workflows | Conversational assistance |
-| **Example** | `/pr-create PROJ-123` | "I need to commit my changes" |
+| Feature | Slash Commands | Specialist Agents | Agent Skills |
+|---------|----------------|-------------------|--------------|
+| **Invocation** | User types `/command` | Commands spawn agents | Claude activates automatically |
+| **Use Case** | User-facing interface | Multi-step orchestration | Conversational assistance |
+| **Execution** | Spawns an agent | Coordinates workflow | Provides knowledge |
+| **Example** | `/pr-create PROJ-123` | workflow-specialist orchestrates PR creation | "I need to commit my changes" |
 
 ## Available Agent Skills
 
