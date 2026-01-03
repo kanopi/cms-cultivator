@@ -4,7 +4,12 @@ argument-hint: "[path]"
 allowed-tools: Task
 ---
 
-I'll use the **testing specialist** agent to analyze test coverage and identify gaps.
+Spawn the **testing-specialist** agent using:
+
+```
+Task(cms-cultivator:testing-specialist:testing-specialist,
+     prompt="Analyze test coverage and identify gaps. Path: [use argument if provided, otherwise 'entire codebase']. Analyze existing tests, identify untested code, calculate coverage metrics, prioritize testing gaps, and generate test recommendations for uncovered code.")
+```
 
 The testing specialist will:
 1. **Analyze existing tests** - Review PHPUnit, Jest, Cypress tests

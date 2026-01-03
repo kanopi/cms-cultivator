@@ -4,7 +4,12 @@ argument-hint: "[test-type]"
 allowed-tools: Task
 ---
 
-I'll use the **testing specialist** agent to generate comprehensive test scaffolding for your code.
+Spawn the **testing-specialist** agent using:
+
+```
+Task(cms-cultivator:testing-specialist:testing-specialist,
+     prompt="Generate comprehensive test scaffolding. Test type: [use argument if provided, otherwise 'all types']. Analyze code to test, generate test files (PHPUnit/Jest/Cypress), create test cases, and delegate to security-specialist and accessibility-specialist for specialized test scenarios when needed.")
+```
 
 The testing specialist will:
 1. **Analyze code to test** - Identify functions, classes, and components needing coverage

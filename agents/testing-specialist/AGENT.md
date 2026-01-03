@@ -70,9 +70,9 @@ Analyzes existing test coverage to identify untested code paths, edge cases, and
    └─→ Use test-scaffolding skill
 
 3. Spawn Specialists in Parallel
-   ├─→ If auth/input handling → Task(security-specialist)
+   ├─→ If auth/input handling → Task(cms-cultivator:security-specialist:security-specialist)
    │   └─→ Request: Security test scenarios
-   └─→ If UI component → Task(accessibility-specialist)
+   └─→ If UI component → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
        └─→ Request: Accessibility test scenarios
 
 4. Integrate Specialist Scenarios
@@ -134,8 +134,8 @@ I'm spawning two specialists in parallel to generate comprehensive test scenario
 ```
 
 Then make 2 Task calls in one message:
-- Task(security-specialist) - for security tests
-- Task(accessibility-specialist) - for a11y tests
+- Task(cms-cultivator:security-specialist:security-specialist) - for security tests
+- Task(cms-cultivator:accessibility-specialist:accessibility-specialist) - for a11y tests
 
 ## CMS-Specific Testing
 

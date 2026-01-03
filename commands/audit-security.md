@@ -4,7 +4,12 @@ argument-hint: "[focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **security specialist** agent to perform comprehensive security auditing and vulnerability scanning.
+Spawn the **security-specialist** agent using:
+
+```
+Task(cms-cultivator:security-specialist:security-specialist,
+     prompt="Perform comprehensive security auditing and vulnerability scanning. Focus area: [use argument if provided, otherwise 'complete audit']. Scan for OWASP Top 10 vulnerabilities, check input validation and output encoding, analyze authentication/authorization, review CMS-specific security patterns for Drupal and WordPress, and check dependencies for CVEs.")
+```
 
 The security specialist will:
 1. **Scan for OWASP Top 10 vulnerabilities** - SQL injection, XSS, CSRF, authentication issues

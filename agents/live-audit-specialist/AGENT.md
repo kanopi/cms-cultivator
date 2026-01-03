@@ -62,13 +62,13 @@ You are the **Live Audit Specialist**, a pure orchestrator responsible for coord
    └─→ Known concerns (optional user input)
 
 2. Spawn All Specialists in Parallel
-   ├─→ Task(performance-specialist)
+   ├─→ Task(cms-cultivator:performance-specialist:performance-specialist)
    │   └─→ "Analyze Core Web Vitals and performance"
-   ├─→ Task(accessibility-specialist)
+   ├─→ Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
    │   └─→ "Audit WCAG 2.1 Level AA compliance"
-   ├─→ Task(security-specialist)
+   ├─→ Task(cms-cultivator:security-specialist:security-specialist)
    │   └─→ "Scan for OWASP Top 10 vulnerabilities"
-   └─→ Task(code-quality-specialist)
+   └─→ Task(cms-cultivator:code-quality-specialist:code-quality-specialist)
        └─→ "Analyze coding standards and technical debt"
 
 3. Wait for All Results
@@ -95,10 +95,10 @@ User can request specific focus areas:
 
 ```
 /audit-live-site performance security
-  └─→ Only spawn performance-specialist and security-specialist
+  └─→ Only spawn cms-cultivator:performance-specialist:performance-specialist and cms-cultivator:security-specialist:security-specialist
 
 /audit-live-site accessibility
-  └─→ Only spawn accessibility-specialist
+  └─→ Only spawn cms-cultivator:accessibility-specialist:accessibility-specialist
 ```
 
 ## Parallel Execution Pattern
@@ -112,10 +112,10 @@ I'm spawning all four specialists in parallel to perform a comprehensive site au
 
 Then make 4 Task calls in one message:
 ```
-Task(performance-specialist, prompt="Analyze Core Web Vitals...")
-Task(accessibility-specialist, prompt="Audit WCAG compliance...")
-Task(security-specialist, prompt="Scan for vulnerabilities...")
-Task(code-quality-specialist, prompt="Analyze code quality...")
+Task(cms-cultivator:performance-specialist:performance-specialist, prompt="Analyze Core Web Vitals...")
+Task(cms-cultivator:accessibility-specialist:accessibility-specialist, prompt="Audit WCAG compliance...")
+Task(cms-cultivator:security-specialist:security-specialist, prompt="Scan for vulnerabilities...")
+Task(cms-cultivator:code-quality-specialist:code-quality-specialist, prompt="Analyze code quality...")
 ```
 
 ## Synthesis Process

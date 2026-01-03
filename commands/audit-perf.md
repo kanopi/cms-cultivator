@@ -4,7 +4,12 @@ argument-hint: "[focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **performance specialist** agent to analyze performance and optimize Core Web Vitals.
+Spawn the **performance-specialist** agent using:
+
+```
+Task(cms-cultivator:performance-specialist:performance-specialist,
+     prompt="Analyze performance and optimize Core Web Vitals (LCP, INP, CLS). Focus area: [use argument if provided, otherwise 'complete analysis']. Check database queries, caching strategies, asset optimization, and rendering for both Drupal and WordPress projects.")
+```
 
 ## Usage
 

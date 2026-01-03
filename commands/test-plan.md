@@ -4,7 +4,12 @@ argument-hint: "[focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **testing specialist** agent to generate a comprehensive QA test plan.
+Spawn the **testing-specialist** agent using:
+
+```
+Task(cms-cultivator:testing-specialist:testing-specialist,
+     prompt="Generate a comprehensive QA test plan based on code changes. Focus area: [use argument if provided, otherwise 'all changes']. Analyze code changes, generate test scenarios (functional, security, performance, accessibility), create test checklists with step-by-step validation instructions, and include CMS-specific tests for Drupal and WordPress.")
+```
 
 The testing specialist will:
 1. **Analyze code changes** - Review commits, diffs, and modified functionality

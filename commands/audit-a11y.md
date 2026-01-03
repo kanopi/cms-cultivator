@@ -4,7 +4,12 @@ argument-hint: "[focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **accessibility specialist** agent to perform a comprehensive WCAG 2.1 Level AA accessibility audit.
+Spawn the **accessibility-specialist** agent using:
+
+```
+Task(cms-cultivator:accessibility-specialist:accessibility-specialist,
+     prompt="Perform a comprehensive WCAG 2.1 Level AA accessibility audit. Focus area: [use argument if provided, otherwise 'complete audit']. Check semantic HTML, ARIA, keyboard navigation, color contrast, and screen reader compatibility for both Drupal and WordPress patterns.")
+```
 
 ## Usage
 

@@ -4,7 +4,12 @@ argument-hint: [ticket-number]
 allowed-tools: Task
 ---
 
-I'll use the **workflow specialist** agent to create a comprehensive pull request for your changes.
+Spawn the **workflow-specialist** agent using:
+
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Create a comprehensive pull request for the user's changes. Analyze git changes, detect CMS-specific modifications (Drupal/WordPress), orchestrate quality checks by spawning specialists in parallel as needed, generate PR description following project template, and create the pull request using gh CLI. Ticket number: [use argument if provided]")
+```
 
 The workflow specialist will:
 1. **Analyze git changes** - Review commits, diffs, and modified files since branching from main

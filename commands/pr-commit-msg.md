@@ -3,7 +3,12 @@ description: Generate conventional commit messages from staged changes using wor
 allowed-tools: Task
 ---
 
-I'll use the **workflow specialist** agent to generate a conventional commit message from your staged changes.
+Spawn the **workflow-specialist** agent using:
+
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Generate a conventional commit message from the user's staged changes. Analyze git status and git diff, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification.")
+```
 
 The workflow specialist will:
 1. Analyze your staged changes (`git status`, `git diff`)

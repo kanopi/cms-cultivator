@@ -4,7 +4,12 @@ argument-hint: "[url]"
 allowed-tools: Task
 ---
 
-I'll use the **live-audit specialist** agent to perform a comprehensive site audit by orchestrating multiple specialists in parallel.
+Spawn the **live-audit-specialist** agent using:
+
+```
+Task(cms-cultivator:live-audit-specialist:live-audit-specialist,
+     prompt="Perform a comprehensive site audit by orchestrating performance-specialist, accessibility-specialist, security-specialist, and code-quality-specialist in parallel. Site URL: [use argument if provided]. Synthesize findings into unified report with health score, prioritized issues, and remediation roadmap.")
+```
 
 The live-audit specialist will:
 1. **Spawn 4 specialists in parallel**:
