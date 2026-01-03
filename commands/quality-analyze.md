@@ -4,7 +4,12 @@ argument-hint: "[focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **code-quality specialist** agent to analyze code quality and technical debt.
+Spawn the **code-quality-specialist** agent using:
+
+```
+Task(cms-cultivator:code-quality-specialist:code-quality-specialist,
+     prompt="Analyze code quality and technical debt. Focus area: [use argument if provided, otherwise 'complete analysis']. Analyze code complexity, assess technical debt, review design patterns, check maintainability, and apply CMS-specific standards for Drupal and WordPress projects.")
+```
 
 The code-quality specialist will:
 1. **Analyze code complexity** - Cyclomatic complexity, cognitive complexity

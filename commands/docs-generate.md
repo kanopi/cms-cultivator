@@ -4,7 +4,12 @@ argument-hint: "[doc-type]"
 allowed-tools: Task
 ---
 
-I'll use the **documentation specialist** agent to generate comprehensive documentation.
+Spawn the **documentation-specialist** agent using:
+
+```
+Task(cms-cultivator:documentation-specialist:documentation-specialist,
+     prompt="Generate comprehensive documentation. Documentation type: [use argument if provided, otherwise 'all types']. Generate API docs (PHPDoc/JSDoc), user guides, developer docs, and changelogs. Apply CMS-specific documentation patterns for Drupal and WordPress.")
+```
 
 The documentation specialist will:
 1. **Generate API documentation** - PHPDoc, JSDoc with examples

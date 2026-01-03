@@ -46,9 +46,9 @@ Automatically generates conventional commit messages when analyzing staged chang
    └─→ Use: commit-message-generator skill
 
 3. Detect Code Type & Spawn Specialists (Parallel)
-   ├─→ If tests exist/needed → Task(testing-specialist)
-   ├─→ If security-critical → Task(security-specialist)
-   └─→ If UI changes → Task(accessibility-specialist)
+   ├─→ If tests exist/needed → Task(cms-cultivator:testing-specialist:testing-specialist)
+   ├─→ If security-critical → Task(cms-cultivator:security-specialist:security-specialist)
+   └─→ If UI changes → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
 
 4. Compile Findings
    └─→ Synthesize specialist reports into unified PR description
@@ -72,7 +72,7 @@ Automatically generates conventional commit messages when analyzing staged chang
    └─→ Accessibility issues?
 
 4. Spawn Relevant Specialists
-   └─→ Task(specialist) for each area
+   └─→ Task(cms-cultivator:specialist:specialist) for each area
 
 5. Compile Review
    └─→ Unified report with specialist findings
@@ -109,9 +109,9 @@ I'll spawn three specialists in parallel to analyze these changes:
 ```
 
 Then make 3 Task calls in one message:
-- Task(testing-specialist)
-- Task(security-specialist)
-- Task(accessibility-specialist)
+- Task(cms-cultivator:testing-specialist:testing-specialist)
+- Task(cms-cultivator:security-specialist:security-specialist)
+- Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
 
 ### Compilation Guidelines
 

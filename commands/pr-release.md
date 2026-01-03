@@ -4,7 +4,12 @@ argument-hint: [version-or-focus]
 allowed-tools: Task
 ---
 
-I'll use the **workflow specialist** agent to prepare comprehensive release artifacts for your pull request.
+Spawn the **workflow-specialist** agent using:
+
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Prepare comprehensive release artifacts for the pull request. Include: changelog (Keep a Changelog format), deployment checklist (with CMS-specific steps), and PR description updates. User's focus: [use argument if provided, otherwise 'all']")
+```
 
 ## Usage
 

@@ -6,27 +6,35 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 **CMS Cultivator** is a Claude Code plugin providing **14 specialized slash commands** and **9 Agent Skills** for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
 
-### Architecture: "Skills as Engine, Commands as Interface"
+### Architecture: "Agents Orchestrate, Skills Guide, Commands Interface"
 
+- **Specialist Agents** (`/agents/`) - Autonomous agents that orchestrate complex workflows by spawning other agents in parallel. Use fully qualified names when referencing: `cms-cultivator:agent-name:agent-name`
 - **Agent Skills** (`/skills/`) - Detailed "how-to" documentation with complete workflows, examples, and instructions. Single source of truth.
-- **Slash Commands** (`/commands/`) - User-facing interfaces that reference skills for detailed instructions. Quick start guides.
+- **Slash Commands** (`/commands/`) - User-facing interfaces that spawn agents or reference skills. Quick start guides.
 
 ## Key Architectural Decisions
 
-### Hybrid Architecture: Commands + Skills
+### Hybrid Architecture: Agents + Commands + Skills
 
-**Two complementary systems:**
+**Three complementary systems:**
 
-1. **Agent Skills** (9 skills in `/skills/`)
+1. **Specialist Agents** (8 agents in `/agents/`)
+   - Autonomous agents spawned by commands or other agents
+   - Orchestrate complex workflows with parallel execution
+   - Each agent has a specific domain expertise
+   - **IMPORTANT:** When agents reference other agents via the Task tool, use fully qualified names: `cms-cultivator:agent-name:agent-name`
+   - Examples: accessibility-specialist, security-specialist, performance-specialist, etc.
+
+2. **Agent Skills** (9 skills in `/skills/`)
    - Model-invoked (Claude decides when to use)
    - Complete technical documentation
    - Detailed workflows, examples, best practices
    - **Single source of truth** for implementation details
 
-2. **Slash Commands** (14 commands in `/commands/`)
+3. **Slash Commands** (14 commands in `/commands/`)
    - User-invoked (explicit `/command` triggering)
    - Quick start guides
-   - Reference skills for detailed instructions
+   - Reference agents and/or skills for detailed instructions
    - When to use command vs. skill
 
 ### Command Structure
@@ -56,6 +64,57 @@ This command uses the **skill-name** Agent Skill.
 - Example: Allow both `composer` and `ddev composer` in `allowed-tools`
 - Platform-agnostic: Commands work for both Drupal and WordPress projects
 - Commands are concise (90-200 lines), skills are comprehensive (150-300 lines)
+
+### Agent Structure
+
+Each agent is a Markdown file in `/agents/{agent-name}/AGENT.md` with YAML frontmatter:
+
+```yaml
+---
+name: agent-name
+description: Clear description of when this agent should be invoked
+tools: Read, Glob, Grep, Bash
+skills: related-skill-name
+model: sonnet
+---
+```
+
+**Agent Naming Convention:**
+
+When agents spawn other agents using the Task tool, they must use **fully qualified names**:
+
+```
+Task(cms-cultivator:agent-name:agent-name, prompt="Task description")
+```
+
+**Format:** `plugin-name:agent-directory:agent-name`
+
+**Examples:**
+- `cms-cultivator:accessibility-specialist:accessibility-specialist`
+- `cms-cultivator:security-specialist:security-specialist`
+- `cms-cultivator:performance-specialist:performance-specialist`
+- `cms-cultivator:live-audit-specialist:live-audit-specialist`
+
+**Why fully qualified names?**
+- Avoids naming conflicts with other plugins
+- Explicit about which plugin's agent is being invoked
+- Required by Claude Code's agent registry system
+
+**Parallel Agent Execution:**
+
+When spawning multiple agents, always do so in a single message with multiple Task calls:
+
+```markdown
+I'm spawning all four specialists in parallel:
+```
+
+Then make 4 Task calls:
+```
+Task(cms-cultivator:performance-specialist:performance-specialist, prompt="...")
+Task(cms-cultivator:accessibility-specialist:accessibility-specialist, prompt="...")
+Task(cms-cultivator:security-specialist:security-specialist, prompt="...")
+Task(cms-cultivator:code-quality-specialist:code-quality-specialist, prompt="...")
+```
 
 ### Kanopi Integration
 

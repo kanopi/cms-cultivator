@@ -4,7 +4,12 @@ argument-hint: "[standard]"
 allowed-tools: Task
 ---
 
-I'll use the **code-quality specialist** agent to check code against coding standards.
+Spawn the **code-quality-specialist** agent using:
+
+```
+Task(cms-cultivator:code-quality-specialist:code-quality-specialist,
+     prompt="Check code against coding standards. Standard: [use argument if provided, otherwise 'auto-detect']. Run PHPCS, ESLint, and Prettier checks. Apply CMS-specific standards (Drupal Coding Standards or WordPress Coding Standards). Report violations with file/line locations.")
+```
 
 The code-quality specialist will:
 1. **Run coding standards checks** - PHPCS, ESLint, Prettier

@@ -4,7 +4,12 @@ argument-hint: "[pr-number|self] [focus-area]"
 allowed-tools: Task
 ---
 
-I'll use the **workflow specialist** agent to review changes comprehensively with input from other specialists as needed.
+Spawn the **workflow-specialist** agent using:
+
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Review changes comprehensively. Target: [first argument - PR number or 'self']. Focus area: [second argument if provided, otherwise 'all aspects']. Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
+```
 
 ## Usage
 
