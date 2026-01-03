@@ -13,6 +13,196 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - TBD
 
+## [0.4.0] - 2026-01-02
+
+### Added - Agent-Based Architecture 🤖
+
+**8 Specialist Agents** - Autonomous agents that orchestrate complex workflows:
+
+**Leaf Specialists** (work independently):
+- **accessibility-specialist** - WCAG 2.1 Level AA compliance audits
+  - Skills: `accessibility-checker`
+  - Commands: `/audit-a11y`
+- **performance-specialist** - Core Web Vitals and optimization analysis
+  - Skills: `performance-analyzer`
+  - Commands: `/audit-perf`
+- **security-specialist** - OWASP Top 10 vulnerability scanning
+  - Skills: `security-scanner`
+  - Commands: `/audit-security`
+- **documentation-specialist** - API documentation, guides, changelogs
+  - Skills: `documentation-generator`
+  - Commands: `/docs-generate`
+- **code-quality-specialist** - Coding standards and technical debt analysis
+  - Skills: `code-standards-checker`
+  - Commands: `/quality-analyze`, `/quality-standards`
+
+**Orchestrator Agents** (delegate to other agents):
+- **workflow-specialist** - PR workflows, commit messages, code review
+  - Skills: `commit-message-generator`
+  - Delegates to: testing, security, accessibility (conditional, based on change type)
+  - Commands: `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release`
+- **testing-specialist** - Test generation, coverage analysis, test planning
+  - Skills: `test-scaffolding`, `test-plan-generator`, `coverage-analyzer`
+  - Delegates to: security, accessibility (conditional, for specialized test scenarios)
+  - Commands: `/test-generate`, `/test-plan`, `/test-coverage`
+- **live-audit-specialist** - Comprehensive live site audits (pure orchestrator)
+  - Skills: none (delegates all work)
+  - Delegates to: performance, accessibility, security, code-quality (always, in parallel)
+  - Commands: `/audit-live-site`
+
+**Testing Infrastructure**:
+- **35 new BATS tests** validating agent structure, frontmatter, skills mapping, and integration
+  - Total BATS tests: 86 (100% passing)
+  - Agent directory structure validation
+  - Agent frontmatter validation (YAML, required fields)
+  - Skills mapping verification (leaf specialists vs orchestrators)
+  - Command-to-agent integration validation
+- **80 runtime integration test cases** in `tests/test-agents/`
+  - Leaf specialist tests (20 cases): spawn, skill access, no-delegation, output validation
+  - Orchestrator tests (13 cases): conditional/always delegation, parallel execution, synthesis
+  - Skills access tests (10 cases): loading behavior, mapping, isolation
+  - Orchestration tests (10 cases): Task tool usage, delegation logic, failure handling
+  - Output format tests (27 cases): structure standards, quality scoring (40-point scale)
+- **Test documentation suite**:
+  - `tests/agent-integration-tests.md` - Main testing guide
+  - `tests/test-agents/README.md` - Quick start and overview
+  - `tests/test-agents/01-leaf-specialists.md` - Leaf specialist test procedures
+  - `tests/test-agents/02-orchestrators.md` - Orchestrator test procedures
+  - `tests/test-agents/03-skills-access.md` - Skills integration tests
+  - `tests/test-agents/04-orchestration.md` - Delegation pattern tests
+  - `tests/test-agents/05-output-formats.md` - Output validation tests
+  - `tests/test-agents/test-results-template.log` - Results tracking template
+
+**Skill Enhancements**:
+- **Skill template system** for documentation-generator and test-scaffolding
+  - `skills/documentation-generator/templates/` - API docs, README, changelog, user guide templates
+  - `skills/test-scaffolding/templates/` - Unit, integration, e2e test templates
+  - Cleaner skill organization with reusable templates
+
+### Changed - Architecture Transformation
+
+**Command System** - Refactored from execution to orchestration:
+- All 14 commands now spawn appropriate specialist agents via Task tool
+- Command files reduced to concise interfaces (focus on "when to use" vs "how to do")
+- Commands delegate complex logic to agents
+- Agents handle all implementation details, CMS-specific patterns, and output generation
+- Average command size reduction: ~60-70% (agents handle the complexity)
+
+**Specific Command Updates**:
+- `/audit-a11y` - Now spawns accessibility-specialist agent
+- `/audit-perf` - Now spawns performance-specialist agent
+- `/audit-security` - Now spawns security-specialist agent
+- `/audit-live-site` - Now spawns live-audit-specialist (orchestrates 4 specialists in parallel)
+- `/pr-commit-msg` - Now spawns workflow-specialist agent
+- `/pr-create` - Now spawns workflow-specialist (delegates to testing/security/accessibility as needed)
+- `/pr-review` - Now spawns workflow-specialist agent
+- `/pr-release` - Now spawns workflow-specialist agent
+- `/test-generate` - Now spawns testing-specialist (delegates for security/a11y test scenarios)
+- `/test-plan` - Now spawns testing-specialist agent
+- `/test-coverage` - Now spawns testing-specialist agent
+- `/docs-generate` - Now spawns documentation-specialist agent
+- `/quality-analyze` - Now spawns code-quality-specialist agent
+- `/quality-standards` - Now spawns code-quality-specialist agent
+
+**Skills System**:
+- Skills now scoped to agents (load only when agent uses them, not globally)
+- Skills provide isolated knowledge contexts per agent
+- Pure orchestrators (live-audit-specialist) have no skills (delegate all work)
+- Skill isolation prevents cross-contamination between agents
+
+**Documentation**:
+- `docs/agent-skills.md` renamed to `docs/agents-and-skills.md`
+- Added comprehensive agent architecture documentation
+- Documented orchestration patterns (conditional vs. always-delegate)
+- Added delegation flow diagrams
+- Updated README with agent architecture overview
+- Command documentation now includes "Agent Used" sections
+
+**Plugin Metadata**:
+- Updated description to highlight agent orchestration capabilities
+- Added agent-related keywords: "agents", "subagents", "agent-skills"
+- Plugin version bumped to 0.4.0
+
+**Test Suite**:
+- Removed "commands have code examples" test (not applicable to agent-based commands)
+- Fixed "commands use Task tool" test (grep -l instead of grep -c)
+- Expanded from 52 to 86 BATS tests (+34 tests, -1 removed, +1 fixed)
+
+### Technical Details
+
+**Agent Orchestration Patterns**:
+1. **Conditional Delegation** (workflow-specialist, testing-specialist)
+   - Analyzes context to determine if delegation is needed
+   - Spawns specialists based on code/change type
+   - Example: UI changes → spawn accessibility-specialist
+2. **Always-Delegate** (live-audit-specialist)
+   - Pure orchestrator with no skills
+   - Always spawns all 4 leaf specialists in parallel
+   - Synthesizes findings into unified report
+3. **Parallel Execution**
+   - Orchestrators spawn multiple agents simultaneously
+   - Reduces overall execution time
+   - Example: live-audit spawns 4 specialists at once
+
+**Agent-to-Skill Mapping**:
+```
+accessibility-specialist    → accessibility-checker
+performance-specialist      → performance-analyzer
+security-specialist         → security-scanner
+testing-specialist          → test-scaffolding, test-plan-generator, coverage-analyzer
+workflow-specialist         → commit-message-generator
+documentation-specialist    → documentation-generator
+code-quality-specialist     → code-standards-checker
+live-audit-specialist       → (no skills, pure orchestrator)
+```
+
+**Testing Coverage**:
+- BATS automated tests: 86 (structure, frontmatter, integration)
+- Integration test cases: 80 (runtime behavior, delegation, output)
+- Total test validations: 166
+- Pass rate: 100% (all BATS tests passing)
+
+### Migration Notes
+
+**No Breaking Changes** - This is a major architectural refactor with 100% backward compatibility:
+- All 14 slash commands work identically from user perspective
+- Agent implementation is transparent to users
+- Same input → same output behavior
+- No changes to command syntax or arguments
+
+**What Changed Under the Hood**:
+- Commands spawn agents instead of executing directly
+- Agents orchestrate complex workflows via delegation
+- Skills scoped to agents (no global auto-triggering)
+- Improved parallel execution for comprehensive audits
+
+**For Plugin Developers**:
+- New `agents/` directory structure
+- Agent files use AGENT.md with YAML frontmatter
+- Agents have access to Task tool for delegation
+- Skills referenced in agent frontmatter
+- Test suite expanded to validate agent architecture
+
+### Benefits of Agent Architecture
+
+**For Users**:
+- Faster comprehensive audits (parallel specialist execution)
+- More consistent output quality (specialist expertise)
+- Better orchestration of complex workflows
+- Transparent - no changes to command usage
+
+**For Developers**:
+- Modular, composable design (agents are reusable)
+- Clear separation of concerns (one agent, one responsibility)
+- Easier to test and maintain
+- Extensible - easy to add new specialists
+
+**Technical**:
+- Progressive disclosure via agent delegation
+- Efficient context usage (skills load only when needed)
+- Clean orchestration patterns
+- Explicit delegation paths (no magic)
+
 ## [0.3.1] - 2025-11-10
 
 ### Added
@@ -167,7 +357,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.3.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/kanopi/cms-cultivator/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/kanopi/cms-cultivator/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/kanopi/cms-cultivator/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/kanopi/cms-cultivator/compare/0.1.0...0.2.0
