@@ -31,7 +31,7 @@ Just describe what you need in plain English:
 
 **No need to remember command names!** Claude automatically helps based on context.
 
-See [Agent Skills Guide](agent-skills.md) for all 9 available skills.
+See [Agents & Skills Guide](agents-and-skills.md) for all 8 specialist agents and 9 available skills.
 
 ---
 
