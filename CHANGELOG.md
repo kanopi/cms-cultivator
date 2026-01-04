@@ -13,6 +13,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - TBD
 
+## [0.4.2] - 2026-01-04
+
+### Added
+- **User Approval Workflow** - Interactive approval for commit messages and PR descriptions
+  - New `AskUserQuestion` integration in workflow-specialist agent
+  - Users can now approve or edit generated content before execution
+  - Applies to `/pr-commit-msg`, `/pr-create`, and `/pr-release` commands
+  - Two-option approval flow: "Approve and proceed" or "Edit content"
+  - Ensures explicit user control over all git operations
+
+### Changed
+- **workflow-specialist Agent** - Enhanced PR creation and commit workflows
+  - Added comprehensive user approval process documentation
+  - Updated PR creation flow to present descriptions before execution
+  - Added handling for user edits vs. as-is approvals
+  - Improved release artifact presentation (changelog, deployment checklist)
+- **commit-message-generator Skill** - Updated to support approval workflow
+  - Modified workflow to present message for user review
+  - Added guidance for handling user edits
+  - Removed auto-generated Claude Code footers from commit examples
+- **Command Updates** - Enhanced documentation for approval flow
+  - `/pr-commit-msg` - Documents approval step in workflow (step 7)
+  - `/pr-create` - Documents approval step in PR creation (step 5)
+  - `/pr-release` - Documents approval for changelog and deployment checklist
+
+### Improved
+- **User Experience** - More control and transparency in git operations
+  - Prevents accidental commits with unwanted messages
+  - Allows inline editing of PR descriptions before creation
+  - Shows preview of generated content before execution
+  - Maintains explicit user consent for all git operations
+
 ## [0.4.1] - 2026-01-02
 
 Bugfix for calling agents.
@@ -361,7 +393,9 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/kanopi/cms-cultivator/compare/0.4.1...0.4.2
+[0.4.1]: https://github.com/kanopi/cms-cultivator/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kanopi/cms-cultivator/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/kanopi/cms-cultivator/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/kanopi/cms-cultivator/compare/0.2.0...0.3.0
