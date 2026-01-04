@@ -17,7 +17,8 @@ The workflow specialist will:
 4. Generate a conventional commit message (feat, fix, refactor, etc.)
 5. Include appropriate scope and detailed body
 6. Add CMS-specific context (Drupal/WordPress patterns)
-7. Present the message for your approval
+7. **Present the message for your approval or edits**
+8. Execute commit with approved message
 
 ## How It Works
 
@@ -47,10 +48,6 @@ feat(auth): add two-factor authentication support
 - Add backup codes generation
 - Include recovery flow for lost devices
 - Update user profile settings UI
-
-🤖 Generated with Claude Code
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 ## Related Commands

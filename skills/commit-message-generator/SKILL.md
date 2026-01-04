@@ -72,12 +72,20 @@ feat(auth): add two-factor authentication support
 - Plugin work: `fix(plugin): correct ACF field validation`
 - Blocks: `feat(blocks): add testimonial Gutenberg block`
 
-### 5. Present to User
+### 5. Present to User for Approval
 
+**When used via workflow-specialist agent:**
+The agent will use `AskUserQuestion` to present the commit message for review:
+- Show the generated message
+- Ask: "Would you like to proceed with this commit message, or would you like to edit it?"
+- Options: "Approve and commit" or "Edit message"
+- If user selects "Other", they can provide their edited version
+
+**When used conversationally:**
 Show the generated commit message and ask:
 "Here's a commit message based on your changes. Would you like me to commit with this message, or would you like to modify it?"
 
-### 6. Execute Commit (if approved)
+### 6. Execute Commit (only after approval)
 
 ```bash
 git commit -m "commit message here"

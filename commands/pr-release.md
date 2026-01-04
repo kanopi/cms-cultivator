@@ -28,9 +28,13 @@ This command spawns the **workflow-specialist** agent, which orchestrates releas
 1. **Analyzing changes** - Reviews commits since last release/tag
 2. **Categorizing commits** - Groups by conventional commit type (feat, fix, etc.)
 3. **Generating changelog** - Creates Keep a Changelog formatted entry
-4. **Creating deployment checklist** - Platform-specific deployment steps
-5. **Updating PR description** - Adds deploy notes and version info
-6. **Recommending version bump** - Suggests major/minor/patch based on changes
+4. **Present changelog for your approval or edits** - Review and modify before proceeding
+5. **Creating deployment checklist** - Platform-specific deployment steps
+6. **Present checklist for your approval or edits** - Review and modify deployment steps
+7. **Updating PR description** - Adds deploy notes and version info
+8. **Present PR updates for your approval or edits** - Review final changes
+9. **Recommending version bump** - Suggests major/minor/patch based on changes
+10. **Create release PR with approved content** - Execute with all approved artifacts
 
 ### The Workflow Specialist Will Generate
 

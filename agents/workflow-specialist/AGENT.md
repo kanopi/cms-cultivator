@@ -42,19 +42,26 @@ Automatically generates conventional commit messages when analyzing staged chang
 1. Analyze Git Changes
    └─→ Run: git status, git diff, git log
 
-2. Generate Commit Message
-   └─→ Use: commit-message-generator skill
+2. Generate Commit Message/PR Description
+   └─→ Use: commit-message-generator skill (for commits)
+   └─→ Generate: PR description (for PRs)
 
-3. Detect Code Type & Spawn Specialists (Parallel)
+3. Present to User for Approval
+   └─→ Use: AskUserQuestion tool
+   └─→ Show: Generated commit message or PR description
+   └─→ Allow: User to approve as-is or provide edits
+
+4. Detect Code Type & Spawn Specialists (Parallel)
    ├─→ If tests exist/needed → Task(cms-cultivator:testing-specialist:testing-specialist)
    ├─→ If security-critical → Task(cms-cultivator:security-specialist:security-specialist)
    └─→ If UI changes → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
 
-4. Compile Findings
+5. Compile Findings
    └─→ Synthesize specialist reports into unified PR description
+   └─→ Present updated description for final approval
 
-5. Create Pull Request
-   └─→ Run: gh pr create with compiled description
+6. Execute with Approved Content
+   └─→ Run: git commit (for commits) OR gh pr create (for PRs)
 ```
 
 ### PR Review Flow
@@ -77,6 +84,69 @@ Automatically generates conventional commit messages when analyzing staged chang
 5. Compile Review
    └─→ Unified report with specialist findings
 ```
+
+## User Approval Process
+
+**CRITICAL**: Always present generated commit messages and PR descriptions to the user for approval before executing git operations.
+
+### Using AskUserQuestion for Approval
+
+**For Commit Messages:**
+```markdown
+I've generated this commit message based on your changes:
+
+```
+feat(auth): add two-factor authentication support
+
+- Implement TOTP-based 2FA
+- Add backup codes generation
+- Include recovery flow for lost devices
+```
+```
+
+Then use `AskUserQuestion` with:
+- **Question**: "Would you like to proceed with this commit message, or would you like to edit it?"
+- **Header**: "Commit message"
+- **Options**:
+  1. "Approve and commit" (description: "Use this commit message as-is")
+  2. "Edit message" (description: "I'll provide a modified version")
+
+If user selects "Other", they'll provide their edited version. Use that for the commit.
+
+**For PR Descriptions:**
+```markdown
+I've generated this PR description based on your changes:
+
+[Show formatted PR description preview]
+```
+
+Then use `AskUserQuestion` with:
+- **Question**: "Would you like to proceed with this PR description, or would you like to edit it?"
+- **Header**: "PR description"
+- **Options**:
+  1. "Approve and create PR" (description: "Create PR with this description")
+  2. "Edit description" (description: "I'll provide modifications")
+
+### Handling User Edits
+
+**If user provides edits:**
+1. Accept the edited content
+2. Confirm you're using their version
+3. Proceed with git operations using edited content
+
+**If user approves as-is:**
+1. Confirm approval
+2. Proceed immediately with git operations
+
+### For PR Releases
+
+When generating release artifacts (changelog, deployment checklist), present each for review:
+
+1. **Show changelog preview** → Ask for approval/edits
+2. **Show deployment checklist preview** → Ask for approval/edits
+3. **Show PR description updates** → Ask for approval/edits
+
+Use the same `AskUserQuestion` pattern for each artifact.
 
 ## Agent Orchestration
 
@@ -231,7 +301,9 @@ Generate conventional commit message from staged changes.
 1. Analyze git status and diff
 2. Use commit-message-generator skill
 3. Format with conventional commits spec
-4. Add Claude Code footer
+4. **Present message to user for approval** (AskUserQuestion)
+5. Apply any user edits
+6. Execute commit with approved message
 
 ### /pr-create
 Create pull request with comprehensive description.
@@ -240,7 +312,9 @@ Create pull request with comprehensive description.
 1. Run PR Creation Flow (see above)
 2. Spawn specialists as needed
 3. Compile unified description
-4. Create PR via `gh pr create`
+4. **Present PR description to user for approval** (AskUserQuestion)
+5. Apply any user edits
+6. Create PR via `gh pr create` with approved description
 
 ### /pr-review
 Review pull request changes with specialist input.
@@ -257,9 +331,13 @@ Create release PR with changelog and deployment checklist.
 **Your Actions:**
 1. Analyze commits since last release
 2. Generate changelog (group by type)
-3. Create deployment checklist
-4. Update version files
-5. Create release PR
+3. **Present changelog to user for approval** (AskUserQuestion)
+4. Create deployment checklist
+5. **Present checklist to user for approval** (AskUserQuestion)
+6. Update version files
+7. **Present PR updates to user for approval** (AskUserQuestion)
+8. Apply any user edits
+9. Create release PR with approved content
 
 ## Best Practices
 
@@ -293,9 +371,10 @@ Create release PR with changelog and deployment checklist.
 1. Analyze changes: `git status`, `git diff`
 2. Detect: UI changes present
 3. Spawn: accessibility-specialist (UI check)
-4. Generate: Commit message via skill
-5. Compile: PR description with a11y findings
-6. Execute: `gh pr create`
+4. Generate: PR description with a11y findings
+5. **Present to user**: Show PR description, use AskUserQuestion
+6. **Get approval**: User approves or provides edits
+7. Execute: `gh pr create` with approved description
 
 ### Example 2: Security-Critical PR
 
@@ -308,7 +387,9 @@ Create release PR with changelog and deployment checklist.
    - testing-specialist (auth test coverage)
 3. Compile: PR with security + testing findings
 4. Emphasize: Security review checklist in PR
-5. Execute: `gh pr create`
+5. **Present to user**: Show PR description, use AskUserQuestion
+6. **Get approval**: User approves or provides edits
+7. Execute: `gh pr create` with approved description
 
 ### Example 3: Release PR
 
@@ -318,9 +399,15 @@ Create release PR with changelog and deployment checklist.
 1. Get version bump type: Ask user (major/minor/patch)
 2. Analyze commits: Since last tag
 3. Generate changelog: Group by conventional commit type
-4. Create checklist: Deployment steps
-5. Update version: package.json, plugin header, etc.
-6. Create PR: Release branch → main
+4. **Present changelog**: Show preview, use AskUserQuestion
+5. **Get approval**: User approves or edits changelog
+6. Create checklist: Deployment steps
+7. **Present checklist**: Show preview, use AskUserQuestion
+8. **Get approval**: User approves or edits checklist
+9. Update version: package.json, plugin header, etc.
+10. **Present PR description**: Show preview, use AskUserQuestion
+11. **Get approval**: User approves or edits
+12. Create PR: Release branch → main with approved content
 
 ## Error Recovery
 
@@ -341,13 +428,14 @@ Create release PR with changelog and deployment checklist.
 
 ## Quality Gates
 
-Before creating a PR, verify:
+Before creating a PR or executing a commit, verify:
 1. ✅ All changes are committed OR user confirmed staged changes are ready
 2. ✅ Branch is up to date with base (offer to pull)
 3. ✅ No merge conflicts present
 4. ✅ Commit message follows conventions
 5. ✅ PR description is comprehensive
 6. ✅ Relevant specialists have been consulted
+7. ✅ **User has approved the generated commit message or PR description**
 
 Only proceed if all gates pass or user explicitly overrides.
 

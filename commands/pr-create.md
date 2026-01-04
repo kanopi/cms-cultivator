@@ -25,9 +25,10 @@ The workflow specialist will:
    - Acceptance criteria extracted from code changes
    - Deployment notes (dependencies, config imports, database updates)
    - Steps to validate with specific admin paths
-5. **Verify prerequisites** - Check gh CLI installation, authentication, branch status
-6. **Create pull request** - Execute `gh pr create` with compiled description
-7. **Return PR URL** - Provide link to created pull request
+5. **Present PR description for your approval or edits** - Review and modify before creation
+6. **Verify prerequisites** - Check gh CLI installation, authentication, branch status
+7. **Create pull request** - Execute `gh pr create` with approved description
+8. **Return PR URL** - Provide link to created pull request
 
 ## Quick Start
 

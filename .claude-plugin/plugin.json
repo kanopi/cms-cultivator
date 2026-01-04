@@ -1,6 +1,6 @@
 {
   "name": "cms-cultivator",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "8 specialist agents + 14 commands + 9 skills for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution.",
   "author": {
     "name": "Kanopi Studios",
