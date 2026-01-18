@@ -138,6 +138,7 @@ jobs:
           test_count=$(find commands -maxdepth 1 -name "test-*.md" | wc -l)
           quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
           docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
+          design_count=$(find commands -maxdepth 1 -name "design-*.md" | wc -l)
 
           echo "Command counts:"
           echo "  Total: $total"
@@ -149,12 +150,13 @@ jobs:
           echo "  Testing: $test_count"
           echo "  Quality: $quality_count"
           echo "  Documentation: $docs_count"
+          echo "  Design: $design_count"
 
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 14 ]; then
-            echo "❌ Expected 14 total commands, found $total"
+          if [ "$total" -ne 17 ]; then
+            echo "❌ Expected 17 total commands, found $total"
             errors=$((errors + 1))
           fi
 
@@ -195,6 +197,11 @@ jobs:
 
           if [ "$docs_count" -ne 1 ]; then
             echo "❌ Expected 1 documentation command, found $docs_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$design_count" -ne 3 ]; then
+            echo "❌ Expected 3 design commands, found $design_count"
             errors=$((errors + 1))
           fi
 
