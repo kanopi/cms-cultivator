@@ -17,8 +17,9 @@ The workflow specialist will:
 4. Generate a conventional commit message (feat, fix, refactor, etc.)
 5. Include appropriate scope and detailed body
 6. Add CMS-specific context (Drupal/WordPress patterns)
-7. **Present the message for your approval or edits**
-8. Execute commit with approved message
+7. **Present the FULL commit message for your approval or edits** (not a summary)
+8. Execute commit with approved message (without "Co-Authored-By: Claude...")
+9. **Suggest running `/pr-create`** as the next step to create a pull request
 
 ## How It Works
 

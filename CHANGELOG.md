@@ -8,10 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- TBD
+- **Concise Mode for PR Creation** - New `--concise` flag for `/pr-create` command
+  - Generates shorter, more focused PR descriptions for smaller tasks
+  - Reduces verbosity while maintaining all required template sections
+  - Skips comprehensive specialist checks unless critical issues detected
+  - Ideal for simple bug fixes, minor features, and support tickets
+  - Usage: `/pr-create PROJ-123 --concise`
 
 ### Changed
-- TBD
+- **workflow-specialist Agent** - Major improvements to commit and PR workflows
+  - **Present FULL content, not summaries** - Users now see complete commit messages and PR descriptions
+  - **Removed "Co-Authored-By: Claude..." footer** - No longer adds AI attribution to commits
+  - **Next step suggestions** - After commits, suggests running `/pr-create` to create pull request
+  - Added argument parsing for `--concise` flag in PR creation
+  - Updated approval prompts to be clearer about showing full content
+  - Improved PR creation flow to support both standard and concise modes
+- **Command Updates**
+  - `/pr-commit-msg` - Now shows full message and suggests `/pr-create` as next step
+  - `/pr-create` - Added `--concise` flag support and comprehensive mode documentation
+  - Updated workflow descriptions to clarify "FULL content" vs "summary" presentation
+
+### Fixed
+- **Commit Message Presentation** - Fixed issue where users saw summaries instead of actual messages (pr-commit-msg.md:20)
+- **PR Description Presentation** - Fixed issue where users saw summaries instead of full PR content (pr-create.md:28)
+- **Co-Authored-By Footer** - Removed unwanted Claude attribution from commit messages (workflow-specialist/AGENT.md:121)
 
 ## [0.4.2] - 2026-01-04
 

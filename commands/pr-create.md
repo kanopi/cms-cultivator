@@ -1,6 +1,6 @@
 ---
 description: Generate PR description and create pull request using workflow specialist
-argument-hint: [ticket-number]
+argument-hint: [ticket-number] [--concise]
 allowed-tools: Task
 ---
 
@@ -8,27 +8,27 @@ Spawn the **workflow-specialist** agent using:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Create a comprehensive pull request for the user's changes. Analyze git changes, detect CMS-specific modifications (Drupal/WordPress), orchestrate quality checks by spawning specialists in parallel as needed, generate PR description following project template, and create the pull request using gh CLI. Ticket number: [use argument if provided]")
+     prompt="Create a pull request for the user's changes. Analyze git changes, detect CMS-specific modifications (Drupal/WordPress), orchestrate quality checks by spawning specialists in parallel as needed (unless --concise mode), generate PR description following project template, and create the pull request using gh CLI. Arguments: [use ticket number and --concise flag if provided]")
 ```
 
 The workflow specialist will:
-1. **Analyze git changes** - Review commits, diffs, and modified files since branching from main
-2. **Detect CMS-specific changes**:
+1. **Parse arguments** - Check for ticket number and `--concise` flag
+2. **Analyze git changes** - Review commits, diffs, and modified files since branching from main
+3. **Detect CMS-specific changes**:
    - **Drupal**: Config changes, module updates, update hooks, services, routes, permissions, entity definitions
    - **WordPress**: Theme changes, Gutenberg blocks, ACF fields, custom post types, shortcodes
-3. **Orchestrate quality checks** - Spawn specialists in parallel as needed:
-   - **testing-specialist** - If tests exist or are needed
-   - **security-specialist** - If security-critical code detected
-   - **accessibility-specialist** - If UI/frontend changes detected
-4. **Generate PR description** - Following your project's template with:
-   - User story and description
+4. **Orchestrate quality checks** - Spawn specialists in parallel as needed:
+   - **Standard mode**: Run all applicable specialists (testing, security, accessibility)
+   - **Concise mode**: Skip specialists unless critical security/accessibility issues detected
+5. **Generate PR description** - Following your project's template with:
+   - User story and description (concise in --concise mode)
    - Acceptance criteria extracted from code changes
-   - Deployment notes (dependencies, config imports, database updates)
+   - Deployment notes (essential only in --concise mode)
    - Steps to validate with specific admin paths
-5. **Present PR description for your approval or edits** - Review and modify before creation
-6. **Verify prerequisites** - Check gh CLI installation, authentication, branch status
-7. **Create pull request** - Execute `gh pr create` with approved description
-8. **Return PR URL** - Provide link to created pull request
+6. **Present FULL PR title and description for approval** - Shows the complete PR content, not a summary
+7. **Verify prerequisites** - Check gh CLI installation, authentication, branch status
+8. **Create pull request** - Execute `gh pr create` with approved description
+9. **Return PR URL** - Provide link to created pull request
 
 ## Quick Start
 
@@ -41,9 +41,36 @@ git push -u origin feature-branch
 # 2. Run this command
 /pr-create
 
-# Or with ticket number:
+# With ticket number:
 /pr-create PROJ-123
+
+# For smaller tasks/support tickets (concise mode):
+/pr-create PROJ-123 --concise
+/pr-create --concise
 ```
+
+## Concise Mode
+
+For smaller support tickets or simple bug fixes, use the `--concise` flag to generate:
+- **Shorter descriptions** - 2-3 sentences instead of full paragraphs
+- **Bullet point format** - Easier to scan and read
+- **Fewer specialist checks** - Skips comprehensive analysis unless critical issues detected
+- **Essential deployment notes only** - Focuses on what's necessary
+- **All required template sections** - Still includes Description, Acceptance Criteria, Steps to Validate, etc.
+
+**Use concise mode when:**
+- ✅ Simple bug fixes
+- ✅ Minor feature additions
+- ✅ Small support tickets
+- ✅ Quick UI tweaks
+- ✅ Documentation updates
+
+**Use standard mode when:**
+- ✅ Major feature development
+- ✅ Security-critical changes
+- ✅ Complex refactoring
+- ✅ Database schema changes
+- ✅ Breaking changes
 
 ## How It Works
 

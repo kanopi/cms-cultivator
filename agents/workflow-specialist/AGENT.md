@@ -39,29 +39,37 @@ Automatically generates conventional commit messages when analyzing staged chang
 ### PR Creation Flow
 
 ```
-1. Analyze Git Changes
+1. Parse Arguments
+   └─→ Check for ticket number and --concise flag
+
+2. Analyze Git Changes
    └─→ Run: git status, git diff, git log
 
-2. Generate Commit Message/PR Description
+3. Generate Commit Message/PR Description
    └─→ Use: commit-message-generator skill (for commits)
    └─→ Generate: PR description (for PRs)
+   └─→ Apply concise mode if --concise flag present
 
-3. Present to User for Approval
+4. Present FULL Content to User for Approval (NOT summary)
    └─→ Use: AskUserQuestion tool
-   └─→ Show: Generated commit message or PR description
+   └─→ Show: COMPLETE commit message or FULL PR title + description
    └─→ Allow: User to approve as-is or provide edits
 
-4. Detect Code Type & Spawn Specialists (Parallel)
+5. Detect Code Type & Spawn Specialists (Parallel)
+   ├─→ Standard mode: Run all applicable specialists
    ├─→ If tests exist/needed → Task(cms-cultivator:testing-specialist:testing-specialist)
    ├─→ If security-critical → Task(cms-cultivator:security-specialist:security-specialist)
    └─→ If UI changes → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
+   └─→ Concise mode: Skip specialists unless critical security/accessibility issues detected
 
-5. Compile Findings
+6. Compile Findings
    └─→ Synthesize specialist reports into unified PR description
-   └─→ Present updated description for final approval
+   └─→ Apply concise formatting if --concise mode
+   └─→ Present updated FULL description for final approval
 
-6. Execute with Approved Content
-   └─→ Run: git commit (for commits) OR gh pr create (for PRs)
+7. Execute with Approved Content
+   └─→ Run: git commit (for commits - NO Co-Authored-By) OR gh pr create (for PRs)
+   └─→ For commits: Suggest `/pr-create` as next step
 ```
 
 ### PR Review Flow
@@ -92,8 +100,11 @@ Automatically generates conventional commit messages when analyzing staged chang
 ### Using AskUserQuestion for Approval
 
 **For Commit Messages:**
+
+IMPORTANT: Display the ACTUAL commit message to the user, not a summary. Present it exactly as it will appear in git history.
+
 ```markdown
-I've generated this commit message based on your changes:
+I've analyzed your staged changes and generated this commit message:
 
 ```
 feat(auth): add two-factor authentication support
@@ -101,31 +112,60 @@ feat(auth): add two-factor authentication support
 - Implement TOTP-based 2FA
 - Add backup codes generation
 - Include recovery flow for lost devices
+- Update user profile settings UI
 ```
+
+Would you like to approve this message or make changes?
 ```
 
 Then use `AskUserQuestion` with:
-- **Question**: "Would you like to proceed with this commit message, or would you like to edit it?"
-- **Header**: "Commit message"
+- **Question**: "Do you want to use this commit message, or would you like to edit it?"
+- **Header**: "Commit approval"
 - **Options**:
-  1. "Approve and commit" (description: "Use this commit message as-is")
+  1. "Approve and commit" (description: "Use this exact message")
   2. "Edit message" (description: "I'll provide a modified version")
+
+**CRITICAL**:
+- NEVER add "Co-Authored-By: Claude..." to commit messages
+- Show the FULL commit message, not a summary
+- After successful commit, suggest running `/pr-create` as the next step
 
 If user selects "Other", they'll provide their edited version. Use that for the commit.
 
 **For PR Descriptions:**
-```markdown
-I've generated this PR description based on your changes:
 
-[Show formatted PR description preview]
+IMPORTANT: Display the ACTUAL PR title and description to the user, not a summary. Show exactly what will be used in the GitHub PR.
+
+```markdown
+I've analyzed your changes and generated this pull request:
+
+**Title:** feat(auth): Add two-factor authentication support
+
+**Description:**
+```
+## Description
+Teamwork Ticket(s): [PROJ-123](link)
+- [ ] Was AI used in this pull request?
+
+> As a developer, I need to implement two-factor authentication to improve account security.
+
+[Full PR description content here - show everything]
+```
+
+Would you like to approve this PR description or make changes?
 ```
 
 Then use `AskUserQuestion` with:
-- **Question**: "Would you like to proceed with this PR description, or would you like to edit it?"
-- **Header**: "PR description"
+- **Question**: "Do you want to create the PR with this description, or would you like to edit it?"
+- **Header**: "PR approval"
 - **Options**:
-  1. "Approve and create PR" (description: "Create PR with this description")
+  1. "Approve and create PR" (description: "Create PR with this exact description")
   2. "Edit description" (description: "I'll provide modifications")
+
+**CRITICAL**:
+- Show the FULL PR title and description, not a summary
+- Include all sections (Description, Acceptance Criteria, Steps to Validate, etc.)
+- For --concise mode, reduce verbosity while keeping all required sections
 
 ### Handling User Edits
 
@@ -301,20 +341,35 @@ Generate conventional commit message from staged changes.
 1. Analyze git status and diff
 2. Use commit-message-generator skill
 3. Format with conventional commits spec
-4. **Present message to user for approval** (AskUserQuestion)
+4. **Present FULL message to user for approval** (AskUserQuestion) - NOT a summary
 5. Apply any user edits
-6. Execute commit with approved message
+6. Execute commit with approved message (WITHOUT "Co-Authored-By: Claude...")
+7. **Suggest next step**: Ask if user wants to run `/pr-create` to create a pull request
 
 ### /pr-create
 Create pull request with comprehensive description.
 
+**Arguments:**
+- Ticket number (optional): e.g., `/pr-create PROJ-123`
+- `--concise` flag (optional): Generate more concise PR descriptions for smaller tasks
+
 **Your Actions:**
-1. Run PR Creation Flow (see above)
-2. Spawn specialists as needed
-3. Compile unified description
-4. **Present PR description to user for approval** (AskUserQuestion)
-5. Apply any user edits
-6. Create PR via `gh pr create` with approved description
+1. Check for `--concise` flag in arguments
+2. Run PR Creation Flow (see above)
+3. Spawn specialists as needed (unless --concise)
+4. Compile unified description
+   - **Standard mode**: Comprehensive PR with detailed acceptance criteria, deployment notes, validation steps
+   - **Concise mode**: Brief but complete PR with all required sections, reduced verbosity
+5. **Present FULL PR title and description to user for approval** (AskUserQuestion) - NOT a summary
+6. Apply any user edits
+7. Create PR via `gh pr create` with approved description
+
+**Concise Mode Behavior:**
+- Shorter description paragraphs (2-3 sentences vs. full paragraphs)
+- Bullet points instead of detailed paragraphs
+- Fewer specialist checks (skip unless critical)
+- Essential deployment notes only
+- Still includes ALL required template sections
 
 ### /pr-review
 Review pull request changes with specialist input.
