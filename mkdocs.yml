@@ -41,6 +41,7 @@ nav:
     - Performance: commands/performance.md
     - Security: commands/security.md
     - Live Site Auditing: commands/live-site-auditing.md
+    - Design Workflow: commands/design-workflow.md
     - Documentation: commands/documentation.md
     - Testing: commands/testing.md
     - Code Quality: commands/code-quality.md

@@ -71,9 +71,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (14)" {
+@test "command count matches expected (17)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 14 ]
+  [ "$count" -eq 17 ]
 }
 
 # ==============================================================================
@@ -176,6 +176,11 @@ setup() {
   [ "$docs_count" -eq 1 ]
 }
 
+@test "design commands start with design-" {
+  design_count=$(find commands -maxdepth 1 -name "design-*.md" | wc -l)
+  [ "$design_count" -eq 3 ]
+}
+
 # ==============================================================================
 # COMMAND CONTENT TESTS
 # ==============================================================================
@@ -252,7 +257,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 8 ]
+  [ "$count" -eq 11 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -264,18 +269,21 @@ setup() {
   done
 }
 
-@test "agent count matches expected (8)" {
+@test "agent count matches expected (11)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 8 ]
+  [ "$count" -eq 11 ]
 }
 
 @test "expected agent directories exist" {
   expected_agents=(
     "accessibility-specialist"
+    "browser-validator-specialist"
     "code-quality-specialist"
+    "design-specialist"
     "documentation-specialist"
     "live-audit-specialist"
     "performance-specialist"
+    "responsive-styling-specialist"
     "security-specialist"
     "testing-specialist"
     "workflow-specialist"
@@ -384,10 +392,12 @@ setup() {
 @test "leaf specialists do not have Task tool" {
   leaf_specialists=(
     "accessibility-specialist"
-    "performance-specialist"
-    "security-specialist"
-    "documentation-specialist"
+    "browser-validator-specialist"
     "code-quality-specialist"
+    "documentation-specialist"
+    "performance-specialist"
+    "responsive-styling-specialist"
+    "security-specialist"
   )
 
   for agent in "${leaf_specialists[@]}"; do
@@ -403,9 +413,10 @@ setup() {
 
 @test "orchestrators have Task tool" {
   orchestrators=(
-    "workflow-specialist"
+    "design-specialist"
     "live-audit-specialist"
     "testing-specialist"
+    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -479,9 +490,10 @@ setup() {
 
 @test "orchestrators document delegation patterns" {
   orchestrators=(
-    "workflow-specialist"
+    "design-specialist"
     "live-audit-specialist"
     "testing-specialist"
+    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -615,6 +627,54 @@ setup() {
 @test "docs-generate references documentation-specialist" {
   if ! grep -qi "documentation-specialist\|documentation specialist" commands/docs-generate.md; then
     echo "docs-generate should reference documentation-specialist"
+    return 1
+  fi
+}
+
+@test "design commands reference design-specialist" {
+  design_commands=(
+    "design-to-block"
+    "design-to-paragraph"
+  )
+
+  for cmd in "${design_commands[@]}"; do
+    cmd_file="commands/${cmd}.md"
+    if [ -f "$cmd_file" ]; then
+      if ! grep -qi "design-specialist\|design specialist" "$cmd_file"; then
+        echo "$cmd_file should reference design-specialist"
+        return 1
+      fi
+    fi
+  done
+}
+
+@test "design-validate references browser-validator-specialist" {
+  if ! grep -qi "browser-validator-specialist\|browser validator specialist" commands/design-validate.md; then
+    echo "design-validate should reference browser-validator-specialist"
+    return 1
+  fi
+}
+
+@test "design-specialist has design-analyzer skill" {
+  agent_file="agents/design-specialist/AGENT.md"
+  if ! grep -q "design-analyzer" "$agent_file"; then
+    echo "design-specialist missing design-analyzer skill"
+    return 1
+  fi
+}
+
+@test "browser-validator-specialist has browser-validator skill" {
+  agent_file="agents/browser-validator-specialist/AGENT.md"
+  if ! grep -q "browser-validator" "$agent_file"; then
+    echo "browser-validator-specialist missing browser-validator skill"
+    return 1
+  fi
+}
+
+@test "responsive-styling-specialist has responsive-styling skill" {
+  agent_file="agents/responsive-styling-specialist/AGENT.md"
+  if ! grep -q "responsive-styling" "$agent_file"; then
+    echo "responsive-styling-specialist missing responsive-styling skill"
     return 1
   fi
 }

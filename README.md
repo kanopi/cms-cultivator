@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing **8 specialist agents**, **14 specialized commands**, and **9 Agent Skills** for Drupal and WordPress development. Agents orchestrate complex workflows with parallel execution, while commands and skills provide explicit control and conversational assistance. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing **11 specialist agents**, **17 specialized commands**, and **12 Agent Skills** for Drupal and WordPress development. Agents orchestrate complex workflows with parallel execution, while commands and skills provide explicit control and conversational assistance. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, maintain documentation, and accelerate design-to-code workflows across your projects.
 
 ---
 
@@ -17,8 +17,8 @@
 |----------|-------------|
 | **[Installation](https://kanopi.github.io/cms-cultivator/installation/)** | Get started in minutes |
 | **[Quick Start](https://kanopi.github.io/cms-cultivator/quick-start/)** | Common workflows and examples |
-| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (14 commands) |
-| **[Agents & Skills](https://kanopi.github.io/cms-cultivator/agents-and-skills/)** | 8 specialist agents + 9 auto-invoked skills |
+| **[Commands](https://kanopi.github.io/cms-cultivator/commands/overview/)** | Complete command reference (17 commands) |
+| **[Agents & Skills](https://kanopi.github.io/cms-cultivator/agents-and-skills/)** | 11 specialist agents + 12 auto-invoked skills |
 | **[Kanopi Tools](https://kanopi.github.io/cms-cultivator/kanopi-tools/overview/)** | Integration with DDEV add-ons |
 | **[Contributing](https://kanopi.github.io/cms-cultivator/contributing/)** | Contribute to the project |
 
@@ -26,12 +26,12 @@
 
 ## ✨ Features
 
-### 8 Specialist Agents 🆕
+### 11 Specialist Agents 🆕
 - **🤖 Agent-Orchestrated Architecture** - Commands spawn specialized agents
 - **⚡ Parallel Execution** - Multiple agents work simultaneously
 - **🎯 Smart Orchestration** - Agents collaborate and delegate tasks
 - **🧩 Modular & Composable** - Each agent has one clear responsibility
-- Agents: workflow, accessibility, performance, security, testing, documentation, live-audit, code-quality
+- Agents: workflow, accessibility, performance, security, testing, documentation, live-audit, code-quality, design, browser-validator, responsive-styling
 
 ### Slash Commands (User-Invoked)
 - **🔄 4 PR Workflow Commands** - From commit to deployment
@@ -39,15 +39,16 @@
 - **⚡ 1 Performance Command** - Core Web Vitals optimization
 - **🔒 1 Security Command** - Vulnerability scanning
 - **🔍 1 Live Site Audit Command** - Comprehensive audits with Chrome DevTools
+- **🎨 3 Design Workflow Commands** - Design-to-code with browser validation
 - **📝 1 Documentation Command** - API docs, guides, changelogs
 - **🧪 3 Testing Commands** - Test generation and coverage
 - **📊 2 Code Quality Commands** - Standards and technical debt
 
 ### Agent Skills (Auto-Invoked)
-- **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
+- **🤖 12 Intelligent Skills** - Claude automatically helps during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need assistance
-- Skills for: commits, testing, docs, security, performance, accessibility, and more
+- Skills for: commits, testing, docs, security, performance, accessibility, design analysis, responsive styling, browser validation, and more
 
 ---
 
@@ -97,15 +98,20 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 
 # Analyze code quality
 /quality-analyze
+
+# Design-to-code workflows
+/design-to-block design.png hero-cta
+/design-to-paragraph design.png content-section
+/design-validate http://site.ddev.site/test-page
 ```
 
 ---
 
 ## 🏗 Architecture
 
-CMS Cultivator uses an **agent-orchestrated architecture** with 8 specialized agents that collaborate to provide comprehensive CMS development support.
+CMS Cultivator uses an **agent-orchestrated architecture** with 11 specialized agents that collaborate to provide comprehensive CMS development support.
 
-### 8 Specialist Agents
+### 11 Specialist Agents
 
 Commands spawn specialized agents that handle complex workflows:
 
@@ -115,11 +121,14 @@ Commands spawn specialized agents that handle complex workflows:
 - **security-specialist** - Vulnerability scanning and security audits
 - **documentation-specialist** - API docs, guides, changelogs
 - **code-quality-specialist** - Code standards and technical debt
+- **browser-validator-specialist** - Browser-based validation with Chrome DevTools MCP
+- **responsive-styling-specialist** - Mobile-first CSS/SCSS generation
 
 **Orchestrators** (delegate to other agents):
 - **workflow-specialist** - PR creation, reviews, deployment (delegates to testing, security, accessibility)
 - **live-audit-specialist** - Comprehensive site audits (delegates to performance, accessibility, security, code-quality)
 - **testing-specialist** - Test generation and coverage (delegates to security, accessibility)
+- **design-specialist** - Design-to-code workflows (delegates to responsive-styling, browser-validator)
 
 ### How It Works
 
@@ -153,9 +162,9 @@ Creates PR via GitHub CLI
 
 ### Skills as Knowledge, Agents as Execution
 
-- **9 Agent Skills** provide detailed "how-to" knowledge
-- **8 Specialist Agents** execute workflows using those skills
-- **14 Slash Commands** provide user-facing interfaces
+- **12 Agent Skills** provide detailed "how-to" knowledge
+- **11 Specialist Agents** execute workflows using those skills
+- **17 Slash Commands** provide user-facing interfaces
 
 ---
 
