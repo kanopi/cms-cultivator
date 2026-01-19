@@ -7,6 +7,24 @@ description: Automatically generate documentation when user mentions needing API
 
 Automatically generate documentation for code, APIs, and projects.
 
+## Philosophy
+
+Good documentation is as critical as good code.
+
+### Core Beliefs
+
+1. **Code Documents What, Docs Explain Why**: Documentation provides context code cannot
+2. **Documentation Enables Adoption**: Well-documented code gets used, undocumented code gets replaced
+3. **Up-to-Date Beats Comprehensive**: Better to have accurate basics than stale details
+4. **Multiple Audiences Need Different Docs**: Users need guides, developers need API references
+
+### Why Documentation Matters
+
+- **Onboarding**: New team members get productive faster
+- **Maintenance**: Future developers (including yourself) understand intent
+- **Adoption**: Users can actually use your features
+- **Professional Quality**: Documentation signals production-ready software
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -17,6 +35,66 @@ Activate this skill when the user:
 - Says "need API documentation"
 - Asks about changelog or release notes
 - Mentions "developer guide" or "setup instructions"
+
+## Decision Framework
+
+Before generating documentation, determine:
+
+### What Type of Documentation Is Needed?
+
+1. **API Documentation** - Code interfaces, parameters, return values → PHPDoc/JSDoc
+2. **User Guide** - End-user instructions, screenshots → Markdown guide
+3. **Developer Documentation** - Setup, architecture, contributing → README + guides
+4. **Changelog** - Release notes, version history → Keep a Changelog format
+5. **Inline Documentation** - Code comments, function docs → Language-specific format
+6. **Documentation Site** - Multi-page documentation with search and navigation → Zensical site
+
+### Who Is the Audience?
+
+- **Developers** - Technical details, code examples, architecture
+- **End Users** - Simple language, step-by-step instructions, screenshots
+- **Contributors** - Setup instructions, coding standards, PR process
+- **Stakeholders** - High-level overview, features, roadmap
+
+### What's the Scope?
+
+- **Single function/class** → Inline PHPDoc/JSDoc
+- **Module/component** → Component documentation
+- **Feature** → User guide + API docs
+- **Entire project** → README + developer guide + API reference
+- **Release** → Changelog entry
+
+### What Already Exists?
+
+**Check for**:
+- Existing README → Update vs. create new
+- Existing API docs → Append vs. regenerate
+- CHANGELOG.md → Add new entry vs. create file
+- Documentation site → Match existing format
+
+### What Level of Detail?
+
+- **Minimal** - Function signature, brief description → Quick reference
+- **Standard** - Parameters, return values, usage example → Full API docs
+- **Comprehensive** - Architecture, examples, edge cases, troubleshooting → Complete guide
+
+### Decision Tree
+
+```
+User requests documentation
+    ↓
+Identify documentation type
+    ↓
+Determine audience (dev/user/contributor)
+    ↓
+Check for existing docs
+    ↓
+Assess scope (function/module/project)
+    ↓
+Generate appropriate documentation
+    ↓
+Format for platform (CMS-specific if needed)
+```
 
 ## Workflow
 
@@ -75,6 +153,82 @@ Complete templates are available for reference:
 - **[Changelog Template](templates/changelog.md)** - Version history (Keep a Changelog format)
 
 Use these templates as starting points, customizing for the specific project needs.
+
+## Documentation Site Generation
+
+For comprehensive documentation sites, use **Zensical** - a modern static site generator from the creators of Material for MkDocs.
+
+### When to Use Zensical
+
+- **Multi-page documentation** - Organize docs across multiple pages
+- **Search functionality** - Built-in search for documentation
+- **Modern theming** - Professional appearance with customization
+- **Navigation** - Organized navigation with sections and subsections
+- **GitHub Pages deployment** - Automated deployment via GitHub Actions
+
+### Zensical Setup
+
+**Install:**
+```bash
+pip install zensical
+```
+
+**Create new project:**
+```bash
+zensical new my-documentation
+```
+
+**Configuration (`zensical.toml`):**
+```toml
+[project]
+site_name = "Project Name"
+site_description = "Brief description"
+site_url = "https://yoursite.github.io/project/"
+docs_dir = "docs"
+site_dir = "site"
+
+nav = [
+  {"Home" = "index.md"},
+  {"Getting Started" = [
+    "installation.md",
+    "quick-start.md"
+  ]},
+  {"API Reference" = "api/index.md"}
+]
+
+[project.theme]
+variant = "modern"
+```
+
+**Build and serve:**
+```bash
+# Local preview
+zensical serve
+
+# Production build
+zensical build --clean
+```
+
+**GitHub Actions deployment:**
+```yaml
+name: Deploy Documentation
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install zensical
+      - run: zensical build --clean
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./site
+```
 
 ## Generation Strategy
 

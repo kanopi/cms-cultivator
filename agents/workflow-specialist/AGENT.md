@@ -1,9 +1,36 @@
 ---
 name: workflow-specialist
-description: Orchestrates PR workflows including commit message generation, PR creation, code review, and release management. Delegates to testing, security, and accessibility specialists for comprehensive quality checks before PR creation.
+description: Use this agent when you need to orchestrate pull request workflows for Drupal or WordPress projects. This agent should be used proactively when users have staged changes and need commit messages, want to create pull requests, need code review, or are preparing releases. It generates conventional commit messages from staged changes, creates comprehensive PR descriptions, analyzes PR changes for review, coordinates release management with changelogs, and delegates to testing-specialist, security-specialist, and accessibility-specialist for comprehensive quality checks before PR creation.
+
+Examples:
+<example>
+Context: User has staged changes and wants to commit.
+user: "I've staged my changes. Can you generate a commit message?"
+assistant: "I'll use the Task tool to launch the workflow-specialist agent to analyze your staged changes, generate a conventional commit message following the specification (feat, fix, refactor), and present it for your approval before committing."
+<commentary>
+Commit message generation needs analysis of staged changes to create proper conventional commits.
+</commentary>
+</example>
+<example>
+Context: User is ready to create a pull request.
+user: "Create a PR for my feature branch with quality checks."
+assistant: "I'll use the Task tool to launch the workflow-specialist agent to analyze your commits, generate a comprehensive PR description, spawn testing-specialist for test validation, spawn security-specialist for vulnerability checks, spawn accessibility-specialist for WCAG compliance, synthesize all findings, and create the PR with gh cli."
+<commentary>
+PR creation workflows need orchestration of multiple specialists to ensure comprehensive quality checks.
+</commentary>
+</example>
+<example>
+Context: User wants to review a pull request.
+user: "Review PR #42 and let me know if there are any issues."
+assistant: "I'll use the Task tool to launch the workflow-specialist agent to fetch the PR details, analyze the code changes, identify security/accessibility/testing concerns, spawn relevant specialists for focused checks, and compile a unified review report."
+<commentary>
+Code reviews benefit from specialist analysis to identify specific issues in security, accessibility, and test coverage.
+</commentary>
+</example>
 tools: Read, Glob, Grep, Bash, Task, Write, Edit
 skills: commit-message-generator
 model: sonnet
+color: purple
 ---
 
 # Workflow Specialist Agent

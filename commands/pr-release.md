@@ -1,15 +1,17 @@
 ---
 description: Generate changelog, deployment checklist, and update PR for release using workflow specialist
 argument-hint: [version-or-focus]
-allowed-tools: Task
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git tag:*), Bash(git describe:*), Bash(gh pr view:*), Task
 ---
 
-Spawn the **workflow-specialist** agent using:
+## Context
 
-```
-Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Prepare comprehensive release artifacts for the pull request. Include: changelog (Keep a Changelog format), deployment checklist (with CMS-specific steps), and PR description updates. User's focus: [use argument if provided, otherwise 'all']")
-```
+- **Current branch**: !`git branch --show-current`
+- **Last tag/version**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
+- **Commits since last tag**: !`git log $(git describe --tags --abbrev=0 2>/dev/null || echo "HEAD~10")..HEAD --oneline | wc -l | tr -d ' '`
+- **Files changed since last tag**: !`git diff --name-only $(git describe --tags --abbrev=0 2>/dev/null || echo "HEAD~10")..HEAD | wc -l | tr -d ' '`
+- **Recent commits**: !`git log --oneline -10`
+- **Current PR (if any)**: !`gh pr view --json number,title,url 2>/dev/null || echo "No PR found for current branch"`
 
 ## Usage
 
@@ -21,44 +23,134 @@ Task(cms-cultivator:workflow-specialist:workflow-specialist,
 
 ---
 
-## How It Works
+## Phase 1: Analysis
 
-This command spawns the **workflow-specialist** agent, which orchestrates release preparation by:
+**Goal**: Understand changes since last release
 
-1. **Analyzing changes** - Reviews commits since last release/tag
-2. **Categorizing commits** - Groups by conventional commit type (feat, fix, etc.)
-3. **Generating changelog** - Creates Keep a Changelog formatted entry
-4. **Present changelog for your approval or edits** - Review and modify before proceeding
-5. **Creating deployment checklist** - Platform-specific deployment steps
-6. **Present checklist for your approval or edits** - Review and modify deployment steps
-7. **Updating PR description** - Adds deploy notes and version info
-8. **Present PR updates for your approval or edits** - Review final changes
-9. **Recommending version bump** - Suggests major/minor/patch based on changes
-10. **Create release PR with approved content** - Execute with all approved artifacts
+**Tool Usage in this phase:**
+- ✅ Read context provided above (tags, commits, files)
+- ✅ Run git log and git diff to analyze changes
+- ✅ Detect CMS-specific changes (config, migrations, etc.)
+- ✅ Categorize commits by conventional commit type
+- ❌ Do not generate changelog yet
+- ❌ Do not update PR yet
 
-### The Workflow Specialist Will Generate
+Spawn the **workflow-specialist** agent with:
 
-**1. Changelog Entry** - Following [Keep a Changelog](https://keepachangelog.com/) format:
-- Added - New features/functionality
-- Changed - Updates to existing functionality
-- Deprecated - Marked for future removal
-- Removed - Deleted features/functionality
-- Fixed - Bug fixes
-- Security - Security-related changes
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Analyze changes for release preparation. Review commits since last tag, categorize by conventional commit type (feat, fix, breaking), detect CMS-specific changes (Drupal config, WordPress ACF), and assess deployment requirements. User's focus: [use argument if provided, otherwise 'all']. DO NOT generate release artifacts yet - this is analysis phase only.")
+```
 
-**2. Deployment Checklist** - Comprehensive deployment plan:
-- Pre-deployment checks
-- Step-by-step deployment instructions
-- Post-deployment verification
-- Rollback plan
-- CMS-specific upgrade notes (Drupal/WordPress)
+The workflow specialist will:
+1. Analyze commit history since last tag
+2. Categorize commits (Added, Changed, Fixed, Security, Breaking, etc.)
+3. Detect CMS-specific changes (config, migrations, dependencies)
+4. Assess deployment complexity
+5. Recommend version bump (major/minor/patch)
 
-**3. PR Description Update** - Enhanced PR description with:
-- Release version and date
-- Changelog integration
-- Deployment requirements
-- Breaking changes warnings
-- Migration steps
+## Phase 2: Changelog Generation
+
+**Goal**: Create Keep a Changelog formatted entry
+
+**Tool Usage in this phase:**
+- ✅ Generate changelog from analyzed commits
+- ✅ Format per Keep a Changelog specification
+- ✅ Include semantic versioning recommendation
+- ❌ Do not update PR yet
+- ❌ Do not create tags
+
+The workflow specialist will:
+1. Generate changelog entry following [Keep a Changelog](https://keepachangelog.com/) format
+2. Group changes by category (Added, Changed, Fixed, Security, etc.)
+3. Include ticket numbers and references
+4. Add CMS-specific upgrade notes
+5. Suggest semantic version number
+
+## Phase 3: Deployment Checklist Generation
+
+**Goal**: Create comprehensive deployment plan
+
+**Tool Usage in this phase:**
+- ✅ Generate platform-specific deployment steps
+- ✅ Include pre/post deployment checks
+- ✅ Create rollback plan
+- ❌ Do not deploy anything
+- ❌ Do not update PR yet
+
+The workflow specialist will:
+1. Create deployment checklist with:
+   - Pre-deployment checks
+   - Step-by-step deployment instructions
+   - Post-deployment verification
+   - Rollback plan
+   - CMS-specific upgrade notes (Drupal/WordPress)
+
+## Phase 4: Review & Approval
+
+**CRITICAL - DO NOT SKIP**
+
+**Goal**: Get user approval before updating PR
+
+The workflow specialist will:
+1. **Present full changelog** - Complete Keep a Changelog entry
+2. **Present deployment checklist** - All deployment steps
+3. **Present PR update recommendations** - Proposed changes to PR description
+
+4. **Ask user**: "Ready to update PR with these release artifacts? You can request edits or approve."
+
+5. **Wait for explicit approval** - Do not proceed without user confirmation
+
+**Tool Usage in this phase:**
+- ✅ Display generated artifacts to user
+- ✅ Wait for approval
+- ❌ Do not update PR without approval
+- ❌ Do not create tags
+
+## Phase 5: PR Update
+
+**DO NOT START WITHOUT USER APPROVAL**
+
+**Goal**: Update PR description with release information
+
+After user approval, the workflow specialist will:
+1. **Update PR description** (if PR exists) with:
+   - Release version and date
+   - Changelog integration
+   - Deployment requirements
+   - Breaking changes warnings
+   - Migration steps
+
+2. **Provide release artifacts** for manual use:
+   - Changelog entry for CHANGELOG.md
+   - Deployment checklist for ops team
+   - Updated PR description
+
+**Tool Usage in this phase:**
+- ✅ Update PR description via gh CLI (with user permission)
+- ✅ Provide artifacts for manual copying
+- ❌ Do not create release tags (user responsibility)
+- ❌ Do not merge or deploy
+
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn workflow-specialist agent (orchestrator)
+- ✅ Analyze git history and existing CHANGELOG.md
+- ✅ Generate semantic version-based changelog entries
+- ✅ Create deployment checklists with CMS-specific steps
+- ✅ Update PR description via gh CLI (with user confirmation)
+- ✅ Parse semantic versioning from commits and tags
+
+**Not allowed:**
+- ❌ Do not create git tags or releases (user responsibility after review)
+- ❌ Do not merge PR or deploy to production
+- ❌ Do not modify code files
+- ❌ Do not commit changes (provide artifacts for review)
+
+The workflow-specialist orchestrates all release preparation operations.
 
 ---
 
@@ -156,74 +248,6 @@ The workflow specialist generates changelogs in Keep a Changelog format:
 
 ---
 
-## Deployment Checklist Format
-
-The workflow specialist generates platform-specific deployment checklists:
-
-```markdown
-# Deployment Checklist - [Version]
-
-**Target Environment**: Production
-**Estimated Downtime**: None/5min/30min
-**Deployment Date**: YYYY-MM-DD
-
-## Pre-Deployment
-- [ ] All CI/CD checks passing
-- [ ] Code reviewed and approved
-- [ ] Backup database
-- [ ] Backup codebase
-- [ ] Review dependencies (composer.json, package.json)
-- [ ] Run security audits (composer audit, npm audit)
-
-## Deployment Steps
-### 1. Enable Maintenance Mode
-[Platform-specific commands]
-
-### 2. Pull Latest Code
-```bash
-git pull origin main
-git log -1  # Verify commit
-```
-
-### 3. Install/Update Dependencies
-[If composer.json changed]
-[If package.json changed]
-
-### 4. Build Assets
-[If frontend changes]
-
-### 5. CMS-Specific Steps
-**Drupal:**
-- Import config: `drush config:import -y`
-- Run updates: `drush updatedb -y`
-- Entity updates: `drush entity:updates -y`
-- Clear cache: `drush cache:rebuild`
-
-**WordPress:**
-- Run migrations: [specific migrations]
-- Flush permalinks: `wp rewrite flush`
-- Clear cache: `wp cache flush`
-
-### 6. Environment Variables
-[New variables needed]
-
-### 7. Disable Maintenance Mode
-[Platform-specific commands]
-
-## Post-Deployment Verification
-- [ ] Homepage loads
-- [ ] Critical paths work
-- [ ] No PHP errors in logs
-- [ ] Automated tests pass
-- [ ] Performance acceptable
-- [ ] CMS status report clean
-
-## Rollback Plan
-[If deployment fails - step-by-step rollback]
-```
-
----
-
 ## CMS-Specific Detection
 
 ### Drupal Projects
@@ -291,109 +315,8 @@ Generates all three artifacts in a unified report. Prompts for version number if
 
 ---
 
-## What the Workflow Specialist Analyzes
-
-**Commit History:**
-- All commits since last tag: `git log $(git describe --tags --abbrev=0)..HEAD`
-- Or since branching: `git log origin/main..HEAD`
-
-**File Changes:**
-- Config files (Drupal/WordPress)
-- Dependencies (composer.json, package.json)
-- Database migrations and update hooks
-- Template/theme changes
-
-**Change Types:**
-- Features (new functionality)
-- Fixes (bug corrections)
-- Breaking changes (incompatibilities)
-- Security (vulnerabilities patched)
-- Performance (optimizations)
-- Deprecations (marked for removal)
-
-**Deployment Requirements:**
-- Database updates needed
-- Config imports required
-- Assets to rebuild
-- Cache clearing
-- Environment variables
-- Module/plugin activations
-
----
-
-## Output Format
-
-When running `/pr-release` with no focus, the workflow specialist provides:
-
-```markdown
-# Release Preparation - [Version]
-
-## 📋 CHANGELOG ENTRY
-[Full Keep a Changelog formatted entry]
-
----
-
-## 🚀 DEPLOYMENT CHECKLIST
-[Complete deployment checklist with pre/post steps]
-
----
-
-## 📝 PR DESCRIPTION UPDATE
-**Current PR Description**: [If PR exists]
-**Recommended Updates**: [What should change]
-**Updated Description**: [Full updated version]
-
----
-
-## NEXT STEPS
-1. Review changelog - Verify categorization
-2. Review checklist - Add project-specific steps
-3. Update PR description - Apply changes if PR exists
-4. Test on staging - Run checklist on staging first
-5. Communicate - Notify team of deployment plan
-
-**Ready to Deploy**: [✅ Yes | ⚠️ With cautions | ❌ Not ready]
-```
-
----
-
-## Best Practices
-
-The workflow specialist follows industry standards:
-
-1. **Changelog** - Write for humans, be specific, link to issues
-2. **Version Numbers** - Strict semantic versioning
-3. **Deployment** - Comprehensive steps, include rollback
-4. **Communication** - Clear, actionable, prioritized
-5. **Testing** - Test on staging before production
-
----
-
 ## Related Commands
 
 - **[`/pr-create`](pr-create.md)** - Create initial PR
 - **[`/pr-review`](pr-review.md)** - Review changes before release
 - **[`/pr-commit-msg`](pr-commit-msg.md)** - Generate commit messages
-
-## Agent Used
-
-**workflow-specialist** - Orchestrates release artifact generation with changelog formatting, deployment planning, and PR description updates.
-
-## What Makes This Different
-
-**Before (manual release prep):**
-- Manually write changelog from commits
-- Create deployment checklist from memory
-- Miss CMS-specific upgrade steps
-- No version number guidance
-- Inconsistent changelog format
-
-**With workflow-specialist:**
-- ✅ Automated changelog generation from commits
-- ✅ Keep a Changelog compliant formatting
-- ✅ Semantic versioning recommendations
-- ✅ CMS-specific deployment steps detected
-- ✅ Comprehensive pre/post deployment checks
-- ✅ Rollback plan included
-- ✅ PR description auto-updated
-- ✅ Breaking changes highlighted

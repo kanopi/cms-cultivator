@@ -7,6 +7,25 @@ description: Automatically scan code for security vulnerabilities when user asks
 
 Automatically scan code for security vulnerabilities.
 
+## Security Philosophy
+
+Security is a continuous practice, not a one-time fix.
+
+### Core Beliefs
+
+1. **Defense in Depth**: Multiple layers of security controls
+2. **Least Privilege**: Grant minimum access necessary
+3. **Secure by Default**: Safe configurations out of the box
+4. **Fail Securely**: Errors should deny access, not grant it
+
+### Scope Balance
+
+- **Quick checks** (this skill): Fast feedback on specific code patterns (catches common vulnerabilities)
+- **Comprehensive audits** (`/audit-security` command): Full OWASP Top 10 scan with dependency checks
+- **Penetration testing**: Professional security testing (irreplaceable for production systems)
+
+This skill provides rapid feedback during development. For production readiness, use comprehensive audits + professional pentesting.
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -16,6 +35,114 @@ Activate this skill when the user:
 - References XSS, SQL injection, CSRF, or authentication
 - Shows database queries or file operations
 - Asks "could this be exploited?"
+
+## Decision Framework
+
+Before scanning for security issues, assess:
+
+### What's the Attack Surface?
+
+1. **User input** → Check for injection vulnerabilities (SQL, XSS, command injection)
+2. **Authentication** → Check for weak passwords, session handling, brute force protection
+3. **Authorization** → Check for privilege escalation, IDOR, access control
+4. **File operations** → Check for path traversal, unrestricted uploads
+5. **API endpoints** → Check for rate limiting, authentication, CORS
+
+### What's the Risk Level?
+
+**Critical risks** (prioritize first):
+- SQL injection in authentication
+- XSS on admin pages
+- Authentication bypass
+- Remote code execution
+- Data exposure (PII, passwords)
+
+**High risks**:
+- CSRF on state-changing operations
+- Authorization flaws
+- Insecure file uploads
+- Weak session management
+
+**Medium/Low risks**:
+- Information disclosure
+- Missing security headers
+- Weak error messages
+
+### What Type of Code Is This?
+
+**User-facing**:
+- Forms → Check input validation, CSRF tokens
+- Search → Check SQL injection, XSS
+- File uploads → Check file type, size, path validation
+
+**Backend**:
+- Database queries → Check parameterization
+- File system → Check path traversal
+- External API calls → Check credential handling
+
+**Authentication/Authorization**:
+- Login → Check brute force protection, password requirements
+- Sessions → Check secure flags, timeout
+- Permissions → Check role-based access control
+
+### What Platform Standards Apply?
+
+**Drupal**:
+- Use database API (no raw queries)
+- Use Form API (built-in CSRF)
+- Use Render API (auto-escaping)
+- Check permissions with `hasPermission()`
+
+**WordPress**:
+- Use `wpdb->prepare()` for queries
+- Use `wp_nonce_field()` for CSRF
+- Use `esc_html()`, `esc_attr()` for output
+- Check permissions with `current_user_can()`
+
+### Decision Tree
+
+```
+User shows code or asks about security
+    ↓
+Identify attack surface (input/auth/files)
+    ↓
+Assess risk level (Critical/High/Medium)
+    ↓
+Check against OWASP Top 10
+    ↓
+Apply platform-specific patterns
+    ↓
+Report vulnerabilities with fixes
+    ↓
+Prioritize by exploitability and impact
+```
+
+## Best Practices
+
+### DO:
+
+- ✅ Always validate and sanitize user input
+- ✅ Use parameterized queries or ORM for database operations
+- ✅ Escape output based on context (HTML, JavaScript, URL, CSS)
+- ✅ Implement CSRF protection on all state-changing operations
+- ✅ Check permissions before sensitive operations
+- ✅ Use strong, unique API keys and rotate them regularly
+- ✅ Log security-relevant events (failed logins, permission denials)
+- ✅ Keep dependencies updated and scan for CVEs
+- ✅ Use HTTPS for all data transmission
+
+### DON'T:
+
+- ❌ Trust user input without validation
+- ❌ Build SQL queries with string concatenation
+- ❌ Echo user input directly without escaping
+- ❌ Store passwords in plain text or use weak hashing
+- ❌ Hard-code secrets, API keys, or credentials in code
+- ❌ Use `eval()`, `unserialize()`, or `exec()` with user input
+- ❌ Disable security features (CSRF protection, XSS filters)
+- ❌ Expose detailed error messages to end users
+- ❌ Use outdated cryptographic algorithms (MD5, SHA1 for passwords)
+- ❌ Assume data from database or API is safe (defense in depth)
 
 ## Quick Security Checks
 

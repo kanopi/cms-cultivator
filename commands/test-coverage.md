@@ -20,6 +20,27 @@ The testing specialist will:
 
 **Coverage types**: `unit`, `integration`, `e2e`, `critical-paths`
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn testing-specialist agent
+- ✅ Analyze existing test files (PHPUnit, Jest, Cypress)
+- ✅ Run test coverage tools (PHPUnit --coverage, Jest --coverage)
+- ✅ Calculate coverage metrics (line, branch, function coverage)
+- ✅ Identify untested code paths
+- ✅ Generate prioritized test recommendations
+
+**Not allowed:**
+- ❌ Do not write test files (use /test-generate for that)
+- ❌ Do not modify existing tests
+- ❌ Do not commit changes
+
+The testing-specialist agent performs all coverage analysis operations.
+
+---
+
 ## Agent Used
 
 **testing-specialist** - Coverage analysis specialist with gap identification and test recommendation capabilities.

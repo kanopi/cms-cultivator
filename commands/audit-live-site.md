@@ -32,6 +32,26 @@ The live-audit specialist will:
 
 **This is a pure orchestrator** - It delegates all work to the 4 specialists and compiles their findings into a comprehensive assessment.
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn live-audit-specialist orchestrator agent
+- ✅ The orchestrator spawns 4 specialists in parallel (performance, accessibility, security, code-quality)
+- ✅ Synthesize findings from all specialists into unified report
+- ✅ Generate health scores and prioritized remediation roadmaps
+- ✅ Create executive summaries for stakeholders
+
+**Not allowed:**
+- ❌ Do not modify code directly (provide recommendations in report)
+- ❌ Do not run destructive tests
+- ❌ Do not commit changes or create PRs
+
+The live-audit-specialist coordinates all operations by orchestrating the 4 specialist agents.
+
+---
+
 ## Agent Used
 
 **live-audit-specialist** - Pure orchestrator agent that coordinates parallel audits from performance, accessibility, security, and code-quality specialists.

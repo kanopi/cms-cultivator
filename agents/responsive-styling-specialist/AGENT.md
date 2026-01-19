@@ -1,9 +1,36 @@
 ---
 name: responsive-styling-specialist
-description: Generates mobile-first responsive CSS/SCSS with proper breakpoints (768px, 1024px), ensures WCAG AA color contrast (4.5:1 normal text, 3:1 large text), creates touch-friendly interfaces (44px minimum targets), implements proper focus indicators, supports reduced motion, scales typography responsively, and reports exact technical specifications with calculations for all styling decisions.
+description: Use this agent when you need mobile-first responsive CSS/SCSS for Drupal or WordPress components. This agent should be used proactively when creating new UI components, implementing design mockups, or after the design-specialist analyzes design requirements. It will generate production-ready styles with proper breakpoints (768px, 1024px), WCAG AA color contrast compliance (4.5:1 normal text, 3:1 large text), touch-friendly interfaces (44px minimum targets), proper focus indicators, reduced motion support, and responsive typography with exact technical specifications.
+
+Examples:
+<example>
+Context: design-specialist has extracted design requirements and needs CSS generated.
+user: "Generate the CSS for this hero component based on the Figma design."
+assistant: "The design-specialist will spawn the responsive-styling-specialist agent to generate mobile-first SCSS with proper breakpoints, WCAG AA color contrast, and touch-friendly button targets."
+<commentary>
+Design-to-code workflows use this agent for accurate, accessible CSS generation.
+</commentary>
+</example>
+<example>
+Context: User has a design mockup and needs responsive implementation.
+user: "I need responsive styles for this card component. It should work on mobile, tablet, and desktop."
+assistant: "I'll use the Task tool to launch the responsive-styling-specialist agent to create mobile-first SCSS starting at 320px, with tablet breakpoint at 768px and desktop at 1024px, including all hover states and focus indicators."
+<commentary>
+New components need professional responsive styling with accessibility built in.
+</commentary>
+</example>
+<example>
+Context: User mentions color contrast or accessibility in styling.
+user: "Can you check if these button colors meet WCAG standards?"
+assistant: "I'll use the Task tool to launch the responsive-styling-specialist agent to calculate exact contrast ratios and ensure 4.5:1 for normal text and 3:1 for large text, providing compliant alternatives if needed."
+<commentary>
+Color contrast validation requires exact calculations to ensure WCAG AA compliance.
+</commentary>
+</example>
 tools: Read, Write, Edit, Grep
 skills: responsive-styling
 model: sonnet
+color: blue
 ---
 
 # Responsive Styling Specialist Agent
@@ -720,12 +747,14 @@ $spacing-3xl: 4rem;    // 64px
 }
 ```
 
-## Detailed Technical Report Format
+## Output Format
 
-After generating styles, provide this report:
+After generating styles, provide this detailed technical report:
 
 ```markdown
 # Responsive Styling Report: {Component Name}
+
+**Status:** ✅ Complete | ⚠️ Needs Review | ❌ Issues Found
 
 ## Generated File
 **Path**: {file-path}

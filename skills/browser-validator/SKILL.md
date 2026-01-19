@@ -8,6 +8,24 @@ description: Automatically validate implementations in real browsers after code 
 ## Purpose
 Validate design implementations in real browsers using Chrome DevTools MCP to ensure quality, accessibility, and responsiveness.
 
+## Philosophy
+
+Real browser testing catches issues that code review cannot.
+
+### Core Beliefs
+
+1. **Test in Real Environments**: Browsers behave differently than localhost
+2. **Multiple Breakpoints Required**: Mobile, tablet, desktop have different challenges
+3. **Accessibility Requires Manual Verification**: Automated tools miss context-dependent issues
+4. **Visual QA Prevents Surprises**: Screenshots catch layout breaks before users see them
+
+### Why Browser Validation Matters
+
+- **Cross-Browser Consistency**: Ensure components work everywhere
+- **Responsive Behavior**: Verify breakpoints function correctly
+- **Accessibility Compliance**: Check keyboard navigation and screen reader compatibility
+- **Professional Quality**: Catch visual regressions before deployment
+
 ## When This Skill Activates
 
 This skill automatically activates when:
@@ -17,6 +35,110 @@ This skill automatically activates when:
 - User mentions "browser", "Chrome", or "DevTools"
 - Component is ready for QA
 - Before submitting for review
+
+## Decision Framework
+
+Before validating in browser, determine:
+
+### What Needs Validation?
+
+1. **Responsive behavior** → Test layout at 320px, 768px, 1024px breakpoints
+2. **Accessibility** → Check contrast, keyboard nav, ARIA, focus indicators
+3. **Interactions** → Test hover, click, focus states
+4. **Visual accuracy** → Compare with design reference (if provided)
+5. **Functionality** → Verify buttons, forms, links work correctly
+
+### What Are the Test URLs?
+
+**Local development**:
+- `http://localhost:8000/component`
+- `http://site.ddev.site/test-page`
+- `http://site.test/node/123`
+
+**Staging/production**:
+- `https://staging.example.com/feature`
+- `https://production.com/public-page`
+
+**URL must be**:
+- Accessible from your machine
+- Fully loaded (not 404, not auth-protected)
+- Stable (not constantly changing)
+
+### What Breakpoints to Test?
+
+**Standard breakpoints** (always test):
+- ✅ **Mobile**: 320px x 568px (minimum, iPhone SE)
+- ✅ **Tablet**: 768px x 1024px (iPad)
+- ✅ **Desktop**: 1024px x 768px (laptop)
+- ⚠️ **Large desktop**: 1920px x 1080px (optional)
+
+**What to check at each breakpoint**:
+- Layout doesn't break
+- No horizontal scrolling
+- Text is readable (no overflow)
+- Touch targets ≥ 44px (mobile), ≥ 40px (desktop)
+- Images don't extend beyond viewport
+
+### What Accessibility Checks?
+
+**WCAG 2.1 Level AA (always check)**:
+- ✅ **Color contrast**: Calculate exact ratios (4.5:1 normal, 3:1 large)
+- ✅ **Keyboard navigation**: Tab through all interactive elements
+- ✅ **Focus indicators**: Visible 2px minimum
+- ✅ **Semantic HTML**: Proper headings, landmarks, ARIA
+- ✅ **Alt text**: Content images have descriptive alt, decorative have alt=""
+
+**How to test**:
+- Use `mcp__chrome-devtools__press_key` to Tab through page
+- Use `mcp__chrome-devtools__take_snapshot` to check DOM structure
+- Calculate contrast ratios from screenshots
+
+### What Interactions to Test?
+
+**Interactive states**:
+- `:hover` - Use `mcp__chrome-devtools__hover` on elements
+- `:focus` - Tab to elements with keyboard
+- `:active` - Click elements with `mcp__chrome-devtools__click`
+
+**Capture screenshots**:
+- Initial state
+- Each breakpoint
+- Hover/focus states
+- Any dynamic behavior
+
+### What Errors to Check?
+
+**Console errors**:
+- Use `mcp__chrome-devtools__list_console_messages`
+- Check for JavaScript errors
+- Report with stack traces
+
+**Network issues**:
+- Use `mcp__chrome-devtools__list_network_requests`
+- Check for 404s, failed requests
+- Note slow-loading resources
+
+### Decision Tree
+
+```
+User requests browser validation
+    ↓
+Check: Chrome DevTools MCP available?
+    ↓ Yes
+Navigate to test URL
+    ↓
+Test each breakpoint (320/768/1024px)
+    ↓
+Capture screenshots at each breakpoint
+    ↓
+Check accessibility (contrast/keyboard/ARIA)
+    ↓
+Test interactions (hover/focus/click)
+    ↓
+Check console & network errors
+    ↓
+Generate detailed technical report
+```
 
 ## Required MCP Integration
 

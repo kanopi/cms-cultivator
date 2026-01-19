@@ -22,6 +22,27 @@ The code-quality specialist will:
 
 **Standards**: `drupal`, `wordpress`, `psr12`, `eslint`, `prettier`
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn code-quality-specialist agent
+- ✅ Run PHPCS with Drupal or WordPress coding standards
+- ✅ Run ESLint with appropriate configurations
+- ✅ Run Prettier for code formatting checks
+- ✅ Identify violations with file/line locations
+- ✅ Provide auto-fix recommendations
+
+**Not allowed:**
+- ❌ Do not automatically fix violations (provide --fix commands for user)
+- ❌ Do not modify code files
+- ❌ Do not commit changes
+
+The code-quality-specialist agent performs all standards checking operations.
+
+---
+
 ## Agent Used
 
 **code-quality-specialist** - Coding standards specialist with CMS-specific configuration knowledge.

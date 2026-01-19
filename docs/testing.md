@@ -54,7 +54,7 @@ Tests are written using [BATS (Bash Automated Testing System)](https://github.co
 **Optional (for additional validation):**
 
 - `markdownlint` - Markdown linting
-- `mkdocs` - Documentation builds
+- `zensical` - Documentation builds
 
 ## Running Tests
 
@@ -106,15 +106,17 @@ The test suite includes **54 tests** across multiple categories:
 - ✅ Valid YAML syntax
 - ✅ No empty descriptions
 
-### Command Naming Convention Tests (7 tests)
+### Command Naming Convention Tests
 
-- ✅ PR commands: `pr-*` (6 commands)
-- ✅ Accessibility: `a11y-*` or `fix-a11y-*` (5 commands)
-- ✅ Performance: `perf-*` (5 commands)
-- ✅ Security: `security-*` (3 commands)
-- ✅ Testing: `test-*` (3 commands)
-- ✅ Quality: `quality-*` (2 commands)
-- ✅ Documentation: `docs-*` (1 command)
+- ✅ PR commands: `pr-*`
+- ✅ Accessibility: `audit-a11y`
+- ✅ Performance: `audit-perf`
+- ✅ Security: `audit-security`
+- ✅ Testing: `test-*`
+- ✅ Quality: `quality-*`
+- ✅ Documentation: `docs-*`
+- ✅ Design: `design-*`
+- ✅ Live auditing: `audit-live-site`
 
 ### Command Content Tests (3 tests)
 
@@ -130,7 +132,7 @@ The test suite includes **54 tests** across multiple categories:
 ### Documentation Tests (9 tests)
 
 - ✅ README exists with proper badges
-- ✅ MkDocs configuration valid
+- ✅ Zensical configuration valid
 - ✅ All documentation pages exist
 - ✅ GitHub Actions workflow configured
 
@@ -185,10 +187,10 @@ See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob
 
 1. **BATS Tests** - Runs all BATS test suite
 2. **Frontmatter Validation** - Validates command frontmatter
-3. **Documentation Build** - Builds MkDocs site
+3. **Documentation Build** - Builds Zensical site
 4. **Command Count Validation** - Verifies expected counts
 5. **Security Scan** - Checks for secrets and conflicts
-6. **JSON/YAML Validation** - Validates config files
+6. **JSON/YAML/TOML Validation** - Validates config files
 
 ## Test Output
 
@@ -293,12 +295,12 @@ sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/
 sudo chmod +x /usr/local/bin/yq
 ```
 
-### MkDocs build test fails
+### Zensical build test fails
 
-Install MkDocs:
+Install Zensical:
 
 ```bash
-pip install mkdocs-material mkdocs-git-revision-date-localized-plugin
+pip install zensical
 ```
 
 ### Tests pass locally but fail in CI

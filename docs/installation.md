@@ -188,19 +188,21 @@ Open Claude Code in any project and try a command:
 /quality-standards
 ```
 
-All 25 slash commands should now be available!
+All slash commands should now be available!
 
 ### List Available Commands
 
 In Claude Code, type `/` to see all available commands. CMS Cultivator commands are organized by category:
 
-- **PR Workflow**: `/pr-*`
-- **Accessibility**: `/a11y-*`, `/fix-a11y-*`
-- **Performance**: `/perf-*`
-- **Security**: `/security-*`
-- **Testing**: `/test-*`
-- **Quality**: `/quality-*`
-- **Documentation**: `/docs-*`
+- **PR Workflow**: `/pr-create`, `/pr-review`, `/pr-commit-msg`, `/pr-release`
+- **Accessibility**: `/audit-a11y` (with flexible modes)
+- **Performance**: `/audit-perf` (with flexible modes)
+- **Security**: `/audit-security` (with flexible modes)
+- **Live Site Auditing**: `/audit-live-site` (orchestrator)
+- **Design Workflow**: `/design-to-block`, `/design-to-paragraph`, `/design-validate`
+- **Testing**: `/test-generate`, `/test-coverage`, `/test-plan`
+- **Code Quality**: `/quality-analyze`, `/quality-standards`
+- **Documentation**: `/docs-generate`
 
 ---
 

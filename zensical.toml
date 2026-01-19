@@ -1,0 +1,64 @@
+# CMS Cultivator Documentation Configuration
+# Built with Zensical - Modern static site generator for technical documentation
+
+[project]
+site_name = "CMS Cultivator"
+site_description = "Claude Code plugin for Drupal and WordPress development with comprehensive workflow commands"
+site_url = "https://kanopi.github.io/cms-cultivator/"
+site_author = "Kanopi Studios"
+copyright = "Copyright &copy; 2025 Kanopi Studios"
+
+# Directory configuration
+docs_dir = "docs"
+site_dir = "site"
+
+# Navigation structure
+nav = [
+  {"Home" = "index.md"},
+  {"Getting Started" = [
+    "installation.md",
+    "quick-start.md"
+  ]},
+  {"Commands" = [
+    "commands/overview.md",
+    "commands/pr-workflow.md",
+    "commands/accessibility.md",
+    "commands/performance.md",
+    "commands/security.md",
+    "commands/live-site-auditing.md",
+    "commands/design-workflow.md",
+    "commands/documentation.md",
+    "commands/testing.md",
+    "commands/code-quality.md"
+  ]},
+  {"Agents & Skills" = "agents-and-skills.md"},
+  {"Guides" = [
+    "guides/pr-workflow.md",
+    "guides/design-workflow.md",
+    "guides/using-argument-modes.md"
+  ]},
+  {"Kanopi Tools" = [
+    "kanopi-tools/overview.md",
+    "kanopi-tools/composer-scripts.md",
+    "kanopi-tools/ddev-commands.md"
+  ]},
+  {"Testing" = "testing.md"},
+  {"Contributing" = "contributing.md"}
+]
+
+# Theme configuration
+[project.theme]
+variant = "modern"
+
+[project.theme.palette]
+primary = "indigo"
+accent = "indigo"
+
+# Repository information
+[project.extra]
+repo_url = "https://github.com/kanopi/cms-cultivator"
+repo_name = "kanopi/cms-cultivator"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/kanopi/cms-cultivator"

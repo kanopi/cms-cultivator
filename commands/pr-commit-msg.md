@@ -1,29 +1,60 @@
 ---
 description: Generate conventional commit messages from staged changes using workflow specialist
-allowed-tools: Task
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Task
 ---
+
+## Context
+
+- **Current branch**: !`git branch --show-current`
+- **Staged files**: !`git diff --cached --name-only | head -20`
+- **Staged changes summary**: !`git diff --cached --stat`
+- **Last 5 commits**: !`git log --oneline -5`
+- **Recent commit style**: !`git log -1 --pretty=format:%s 2>/dev/null || echo "No previous commits"`
+
+## Your Task
+
+Generate a conventional commit message that:
+1. Follows the existing commit style (see above)
+2. Summarizes all staged changes (see above)
+3. Uses conventional commit format: `type(scope): description`
+4. Focuses on "why" rather than "what"
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Read staged changes context (provided above)
+- ✅ Spawn workflow-specialist agent with commit message generation task
+- ✅ Present generated commit message to user for approval
+
+**Not allowed:**
+- ❌ Do not commit directly (just generate message)
+- ❌ Do not modify files
+- ❌ Do not push to remote
+
+The workflow-specialist agent will perform all generation operations.
+
+## Workflow-Specialist Agent
 
 Spawn the **workflow-specialist** agent using:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Generate a conventional commit message from the user's staged changes. Analyze git status and git diff, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification.")
+     prompt="Generate a conventional commit message from the user's staged changes. Use the context provided above (branch, staged files, commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification.")
 ```
 
 The workflow specialist will:
-1. Analyze your staged changes (`git status`, `git diff`)
-2. Review recent commit style for consistency
-3. Apply the **commit-message-generator** skill
-4. Generate a conventional commit message (feat, fix, refactor, etc.)
-5. Include appropriate scope and detailed body
-6. Add CMS-specific context (Drupal/WordPress patterns)
-7. **Present the FULL commit message for your approval or edits** (not a summary)
-8. Execute commit with approved message (without "Co-Authored-By: Claude...")
-9. **Suggest running `/pr-create`** as the next step to create a pull request
+1. Use the context provided above (git status, diff, history)
+2. Apply the **commit-message-generator** skill
+3. Generate a conventional commit message (feat, fix, refactor, etc.)
+4. Include appropriate scope and detailed body
+5. Add CMS-specific context (Drupal/WordPress patterns)
+6. **Present the FULL commit message for your approval or edits**
+7. Execute commit with approved message (without "Co-Authored-By: Claude...")
+8. **Suggest running `/pr-create`** as the next step
 
 ## How It Works
 
-This command spawns the **workflow-specialist** agent, which uses the **commit-message-generator** Agent Skill to analyze staged changes and create properly formatted commit messages following the [Conventional Commits specification](https://www.conventionalcommits.org/).
+This command uses **shell expansion** (`!`) to inject live git context, then spawns the **workflow-specialist** agent, which uses the **commit-message-generator** Agent Skill.
 
 **For complete technical details about the commit-message-generator skill**, see:
 → [`skills/commit-message-generator/SKILL.md`](../skills/commit-message-generator/SKILL.md)
@@ -55,7 +86,3 @@ feat(auth): add two-factor authentication support
 
 - **[`/pr-create`](pr-create.md)** - Create PR with generated description
 - **[`/pr-review self`](pr-review.md)** - Review your changes before committing
-
-## Agent Used
-
-**workflow-specialist** - Orchestrates commit message generation using the commit-message-generator skill.

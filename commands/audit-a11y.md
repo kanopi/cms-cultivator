@@ -1,14 +1,101 @@
 ---
 description: Comprehensive accessibility audit with WCAG 2.1 Level AA compliance using accessibility specialist
-argument-hint: "[focus-area]"
-allowed-tools: Task
+argument-hint: "[options]"
+allowed-tools: Task, Bash(git:*)
 ---
 
 Spawn the **accessibility-specialist** agent using:
 
 ```
 Task(cms-cultivator:accessibility-specialist:accessibility-specialist,
-     prompt="Perform a comprehensive WCAG 2.1 Level AA accessibility audit. Focus area: [use argument if provided, otherwise 'complete audit']. Check semantic HTML, ARIA, keyboard navigation, color contrast, and screen reader compatibility for both Drupal and WordPress patterns.")
+     prompt="Perform a comprehensive WCAG 2.1 Level AA accessibility audit with the following parameters:
+       - Depth mode: [quick/standard/comprehensive - parsed from arguments, default: standard]
+       - Scope: [current-pr/module/file/entire - parsed from arguments, default: entire]
+       - Format: [report/json/summary/checklist - parsed from arguments, default: report]
+       - Focus area: [use legacy focus argument if provided, otherwise 'complete audit']
+       - Files to analyze: [file list based on scope]
+     Check semantic HTML, ARIA, keyboard navigation, color contrast, and screen reader compatibility for both Drupal and WordPress patterns.")
+```
+
+## Arguments
+
+This command supports flexible argument modes for different use cases:
+
+### Depth Modes
+- `--quick` - Critical WCAG AA failures only (~5 min) - Focus on Level A violations and high-severity issues
+- `--standard` - Full WCAG AA audit (default, ~15 min) - Comprehensive Level AA compliance check
+- `--comprehensive` - WCAG AA + AAA + best practices (~30 min) - Deep analysis including AAA and recommendations
+
+### Scope Control
+- `--scope=current-pr` - Only files changed in current PR (uses git diff)
+- `--scope=module=<name>` - Specific module/directory (e.g., `--scope=module=src/components`)
+- `--scope=file=<path>` - Single file (e.g., `--scope=file=src/Button.tsx`)
+- `--scope=entire` - Full codebase (default)
+
+### Output Formats
+- `--format=report` - Detailed markdown report with examples and recommendations (default)
+- `--format=json` - Structured JSON for CI/CD integration
+- `--format=summary` - Executive summary with high-level findings
+- `--format=checklist` - Simple pass/fail checklist with issue counts
+
+### Legacy Focus Areas (Still Supported)
+For backward compatibility, single-word focus areas without `--` prefix are treated as legacy focus filters:
+- `contrast` - Focus on color contrast checks (WCAG 1.4.3)
+- `keyboard` - Focus on keyboard navigation checks
+- `aria` - Focus on ARIA usage checks
+- `semantic-html` - Focus on HTML structure checks
+- `headings` - Focus on heading hierarchy
+- `forms` - Focus on form accessibility
+- `alt-text` - Focus on image alt text
+
+## Usage Examples
+
+### Quick Checks
+```bash
+# Quick pre-commit check on your changes
+/audit-a11y --quick --scope=current-pr
+
+# Quick check with checklist output
+/audit-a11y --quick --scope=current-pr --format=checklist
+
+# Quick check on specific module
+/audit-a11y --quick --scope=module=user-profile
+```
+
+### Standard Audits
+```bash
+# Standard audit (same as legacy `/audit-a11y`)
+/audit-a11y
+
+# Standard audit on PR changes
+/audit-a11y --scope=current-pr
+
+# Standard audit with JSON output for CI/CD
+/audit-a11y --standard --format=json
+```
+
+### Comprehensive Audits
+```bash
+# Comprehensive pre-release audit
+/audit-a11y --comprehensive
+
+# Comprehensive audit with executive summary
+/audit-a11y --comprehensive --format=summary
+
+# Comprehensive audit on specific file
+/audit-a11y --comprehensive --scope=file=src/components/Header.tsx
+```
+
+### Legacy Syntax (Still Works)
+```bash
+# Focus on specific area (legacy)
+/audit-a11y contrast
+/audit-a11y keyboard
+/audit-a11y aria
+
+# Combine legacy focus with new modes
+/audit-a11y contrast --quick
+/audit-a11y forms --scope=current-pr
 ```
 
 ## Usage
@@ -34,9 +121,86 @@ For quick accessibility checks on specific buttons, forms, or elements during co
 
 ---
 
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn accessibility-specialist agent
+- ✅ Read code files for semantic HTML analysis
+- ✅ Run automated accessibility tools (pa11y, axe-core, Lighthouse)
+- ✅ Analyze color contrast ratios
+- ✅ Test keyboard navigation patterns
+- ✅ Generate WCAG compliance reports
+
+**Not allowed:**
+- ❌ Do not modify code directly (provide fixes in report)
+- ❌ Do not commit changes
+- ❌ Do not install accessibility tools (suggest installation if needed)
+
+The accessibility-specialist agent performs all audit operations.
+
+---
+
 ## How It Works
 
 This command spawns the **accessibility-specialist** agent, which uses the **accessibility-checker** skill and performs comprehensive WCAG 2.1 Level AA audits.
+
+### 1. Parse Arguments
+
+The command first parses the arguments to determine the audit parameters:
+
+**Depth mode:**
+- Check for `--quick`, `--standard`, or `--comprehensive` flags
+- Default: `--standard` (if not specified)
+
+**Scope:**
+- Check for `--scope=<value>` flag
+- If `--scope=current-pr`: Get changed files using `git diff --name-only origin/main...HEAD`
+- If `--scope=module=<name>`: Target specific directory
+- If `--scope=file=<path>`: Target single file
+- Default: `--scope=entire` (analyze entire codebase)
+
+**Format:**
+- Check for `--format=<value>` flag
+- Options: `report` (default), `json`, `summary`, `checklist`
+- Default: `--format=report`
+
+**Legacy focus area:**
+- If argument doesn't start with `--`, treat as legacy focus area
+- Examples: `contrast`, `keyboard`, `aria`, `forms`, `headings`, `alt-text`
+- Can be combined with new flags: `/audit-a11y contrast --quick`
+
+### 2. Determine Files to Analyze
+
+Based on the scope parameter:
+
+**For `current-pr`:**
+```bash
+git diff --name-only origin/main...HEAD | grep -E '\.(php|tsx?|jsx?|twig|html|css|scss)$'
+```
+
+**For `module=<name>`:**
+```bash
+find <module-path> -type f -name "*.php" -o -name "*.tsx" -o -name "*.jsx" -o -name "*.twig"
+```
+
+**For `file=<path>`:**
+Analyze the single specified file.
+
+**For `entire`:**
+Analyze all relevant files in the codebase.
+
+### 3. Spawn Accessibility Specialist
+
+Pass all parsed parameters to the agent:
+```
+Task(cms-cultivator:accessibility-specialist:accessibility-specialist,
+     prompt="Run WCAG 2.1 Level AA accessibility audit with:
+       - Depth mode: {depth}
+       - Scope: {scope}
+       - Format: {format}
+       - Focus area: {focus or 'complete audit'}
+       - Files to analyze: {file_list}")
+```
 
 ### The Accessibility Specialist Will
 

@@ -4,7 +4,7 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 ## Project Overview
 
-**CMS Cultivator** is a Claude Code plugin providing **14 specialized slash commands** and **9 Agent Skills** for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
+**CMS Cultivator** is a Claude Code plugin providing specialized slash commands and Agent Skills for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
 
 ### Architecture: "Agents Orchestrate, Skills Guide, Commands Interface"
 
@@ -18,20 +18,20 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 **Three complementary systems:**
 
-1. **Specialist Agents** (8 agents in `/agents/`)
+1. **Specialist Agents** (`/agents/`)
    - Autonomous agents spawned by commands or other agents
    - Orchestrate complex workflows with parallel execution
    - Each agent has a specific domain expertise
    - **IMPORTANT:** When agents reference other agents via the Task tool, use fully qualified names: `cms-cultivator:agent-name:agent-name`
    - Examples: accessibility-specialist, security-specialist, performance-specialist, etc.
 
-2. **Agent Skills** (9 skills in `/skills/`)
+2. **Agent Skills** (`/skills/`)
    - Model-invoked (Claude decides when to use)
    - Complete technical documentation
    - Detailed workflows, examples, best practices
    - **Single source of truth** for implementation details
 
-3. **Slash Commands** (14 commands in `/commands/`)
+3. **Slash Commands** (`/commands/`)
    - User-invoked (explicit `/command` triggering)
    - Quick start guides
    - Reference agents and/or skills for detailed instructions
@@ -64,6 +64,58 @@ This command uses the **skill-name** Agent Skill.
 - Example: Allow both `composer` and `ddev composer` in `allowed-tools`
 - Platform-agnostic: Commands work for both Drupal and WordPress projects
 - Commands are concise (90-200 lines), skills are comprehensive (150-300 lines)
+
+### Flexible Argument Mode System (v0.6.0+)
+
+Four audit/quality commands support flexible argument modes for different use cases:
+
+**Commands with flexible modes:**
+- `/audit-a11y [options]`
+- `/audit-perf [options]`
+- `/audit-security [options]`
+- `/quality-analyze [options]`
+
+**Argument categories:**
+
+1. **Depth Modes** - Control thoroughness:
+   - `--quick` - Fast checks, critical issues only (~5 min)
+   - `--standard` - Comprehensive analysis (default, ~15 min)
+   - `--comprehensive` - Deep dive with best practices (~30 min)
+
+2. **Scope Control** - Limit what's analyzed:
+   - `--scope=current-pr` - Only files in current PR (requires `Bash(git:*)`)
+   - `--scope=module=<name>` - Specific module/directory
+   - `--scope=file=<path>` - Single file
+   - `--scope=entire` - Full codebase (default)
+   - Command-specific scopes (e.g., `--scope=frontend`, `--scope=auth`)
+
+3. **Output Formats** - Control presentation:
+   - `--format=report` - Detailed markdown (default)
+   - `--format=json` - Machine-readable for CI/CD
+   - `--format=summary` - Executive summary
+   - `--format=checklist` - Simple pass/fail list
+   - Command-specific formats (e.g., `--format=sarif` for security)
+
+4. **Thresholds** - Quality gates:
+   - Performance: `--target=good|needs-improvement`
+   - Security: `--min-severity=high|medium|low`
+   - Quality: `--max-complexity=N`, `--min-grade=A|B|C`
+
+5. **Legacy Focus Areas** - Backward compatible:
+   - Single-word arguments without `--` prefix still work
+   - Examples: `/audit-a11y contrast`, `/audit-perf queries`, `/audit-security xss`
+   - Can be combined with new modes: `/audit-a11y contrast --quick --scope=current-pr`
+
+**Agent Mode Handling:**
+
+When agents receive mode parameters, they must:
+- Parse depth mode and adjust analysis thoroughness
+- Apply scope filters to file selection
+- Format output according to specified format
+- Apply threshold filters to results
+- Include mode handling in "How It Works" section
+
+See `docs/guides/using-argument-modes.md` for complete usage guide.
 
 ### Agent Structure
 
@@ -127,10 +179,11 @@ Commands automatically reference Kanopi-specific tools when available:
 
 ### Documentation Site
 
-- Built with MkDocs Material theme
+- Built with Zensical (modern static site generator from the creators of Material for MkDocs)
 - Organized into 7 main sections
 - Follows same pattern as Kanopi's DDEV add-on documentation
 - Deployed to GitHub Pages via Actions workflow
+- Configuration in `zensical.toml` (TOML format)
 
 ## Development Workflow
 
@@ -185,8 +238,8 @@ allowed-tools: Bash(composer:*), Bash(ddev composer:*), Bash(npm:*), Bash(ddev e
 ### Documentation Updates
 
 1. **Edit files** in `/docs/`
-2. **Test locally**: `mkdocs serve`
-3. **Build**: `mkdocs build --strict` (catches broken links)
+2. **Test locally**: `zensical serve`
+3. **Build**: `zensical build --clean` (catches broken links)
 4. **Commit**: Automatically deploys to GitHub Pages on push to main
 
 ### Agent Skill Best Practices
@@ -259,7 +312,7 @@ cms-cultivator/
 ├── .claude-plugin/
 │   └── plugin.json          # Claude Code plugin metadata (version, description)
 ├── .github/workflows/
-│   ├── docs.yml             # MkDocs deployment
+│   ├── docs.yml             # Zensical deployment
 │   └── test.yml             # BATS test automation
 ├── commands/                # 14 slash command files (*.md)
 │   ├── pr-*.md              # PR workflow commands
@@ -267,7 +320,7 @@ cms-cultivator/
 │   ├── test-*.md            # Testing commands
 │   ├── quality-*.md         # Quality commands
 │   └── docs-generate.md     # Documentation command
-├── skills/                  # 9 Agent Skill directories
+├── skills/                  # Agent Skill directories
 │   ├── commit-message-generator/
 │   ├── code-standards-checker/
 │   ├── test-scaffolding/
@@ -278,7 +331,7 @@ cms-cultivator/
 │   ├── security-scanner/
 │   ├── coverage-analyzer/
 │   └── README.md            # Skills overview
-├── docs/                    # MkDocs documentation site
+├── docs/                    # Zensical documentation site
 │   ├── commands/            # Command category pages
 │   ├── kanopi-tools/        # Kanopi integration docs
 │   ├── agent-skills.md      # Agent Skills guide
@@ -287,7 +340,7 @@ cms-cultivator/
 │   └── contributing.md      # Contribution guidelines
 ├── tests/
 │   └── test-plugin.bats     # 54 BATS tests
-├── mkdocs.yml               # MkDocs configuration
+├── zensical.toml            # Zensical configuration
 ├── CHANGELOG.md             # Version history (Keep a Changelog format)
 ├── CLAUDE.md                # This file (AI assistant context)
 └── README.md                # Project overview, points to docs site
@@ -307,7 +360,13 @@ cms-cultivator/
 - Use `###  Heading 3` for subsections
 - Include code examples with proper syntax highlighting (```bash, ```php, ```javascript)
 - Provide both Drupal AND WordPress examples where applicable
-- Document all focus parameters and their options
+- For flexible mode commands, document all argument options:
+  - Depth modes (--quick, --standard, --comprehensive)
+  - Scope control options
+  - Output format options
+  - Command-specific thresholds
+  - Legacy focus areas (for backward compatibility)
+- For simple commands, document all focus parameters and their options
 
 ### Documentation
 
@@ -321,10 +380,13 @@ cms-cultivator/
 
 **Description**: Brief imperative statement (e.g., "Generate PR description from git changes")
 
-**Argument-hint**: Show optional args in square brackets: `[focus-area]`, `[ticket-number]`
+**Argument-hint**: Show optional args in square brackets:
+- For flexible mode commands: `[options]` (audit-a11y, audit-perf, audit-security, quality-analyze)
+- For simple focus commands: `[focus-area]`
+- For commands with specific args: `[ticket-number]`, `[file-path]`, etc.
 
 **Allowed-tools**: List all tools, including both variants:
-- Git operations: `Bash(git:*)`
+- Git operations: `Bash(git:*)` (required for `--scope=current-pr`)
 - GitHub CLI: `Bash(gh:*)`
 - Composer: `Bash(composer:*), Bash(ddev composer:*)`
 - File operations: `Read, Glob, Grep, Write, Edit`
@@ -346,8 +408,8 @@ cms-cultivator/
 ### Documentation Testing
 
 ```bash
-mkdocs build --strict  # Catches broken links, missing pages
-mkdocs serve          # Preview at http://localhost:8000
+zensical build --clean  # Catches broken links, missing pages
+zensical serve          # Preview at http://localhost:8000
 ```
 
 ### Cross-Platform Testing
@@ -393,7 +455,60 @@ For projects without Kanopi tooling, analyze files directly:
 ...
 ```
 
-### Focus Parameter Pattern
+### Argument Mode Pattern (Audit/Quality Commands)
+
+For commands with flexible argument modes (`/audit-a11y`, `/audit-perf`, `/audit-security`, `/quality-analyze`):
+
+```markdown
+## Usage
+
+**Quick checks (pre-commit):**
+```bash
+/audit-a11y --quick --scope=current-pr
+```
+
+**Standard analysis (PR review, default):**
+```bash
+/audit-a11y --standard --scope=current-pr
+# or simply:
+/audit-a11y --scope=current-pr
+```
+
+**Comprehensive audit (pre-release):**
+```bash
+/audit-a11y --comprehensive --format=summary
+```
+
+**CI/CD integration:**
+```bash
+/audit-a11y --standard --format=json > results.json
+```
+
+## Arguments
+
+### Depth Modes
+- `--quick` - Critical issues only (~5 min)
+- `--standard` - Full audit (default, ~15 min)
+- `--comprehensive` - Deep analysis (~30 min)
+
+### Scope Control
+- `--scope=current-pr` - Only PR files
+- `--scope=module=<name>` - Specific module
+- `--scope=entire` - Full codebase (default)
+
+### Output Formats
+- `--format=report` - Detailed markdown (default)
+- `--format=json` - JSON for CI/CD
+- `--format=summary` - Executive summary
+
+### Legacy Focus Areas (Still Supported)
+- `focus1`, `focus2`, `focus3` - Single-word focus areas
+- Can combine with new modes: `/command focus1 --quick`
+```
+
+### Simple Focus Parameter Pattern (Other Commands)
+
+For commands without flexible modes:
 
 ```markdown
 ## Usage
@@ -418,17 +533,16 @@ For projects without Kanopi tooling, analyze files directly:
 ### Documentation Build Dependencies
 
 - Python 3.x
-- mkdocs-material
-- mkdocs-git-revision-date-localized-plugin
+- Zensical
 
-Install: `pip install mkdocs-material mkdocs-git-revision-date-localized-plugin`
+Install: `pip install zensical`
 
 ## Resources
 
 ### External Documentation
 
 - [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)
-- [MkDocs Material](https://squidfunk.github.io/mkdocs-material/)
+- [Zensical](https://zensical.org/)
 - [Kanopi DDEV Drupal Add-on](https://github.com/kanopi/ddev-kanopi-drupal)
 - [Kanopi DDEV WordPress Add-on](https://github.com/kanopi/ddev-kanopi-wp)
 
@@ -455,10 +569,11 @@ Install: `pip install mkdocs-material mkdocs-git-revision-date-localized-plugin`
 
 ### When documentation builds fail
 
-- Run `mkdocs build --strict` to see errors
-- Check for broken links in navigation (`mkdocs.yml`)
+- Run `zensical build --clean` to see errors
+- Check for broken links in navigation (`zensical.toml`)
 - Verify all referenced files exist in `docs/`
 - Check frontmatter YAML syntax in command files
+- Verify TOML syntax in `zensical.toml`
 
 ## Future Enhancements
 
@@ -473,4 +588,4 @@ Ideas for future development:
 
 ---
 
-Last updated: 2025-10-13
+Last updated: 2026-01-19

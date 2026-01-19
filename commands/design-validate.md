@@ -149,6 +149,29 @@ Generate detailed technical report with this structure:
 Provide exact file paths, line numbers, contrast ratio calculations, code snippets, and actionable remediation steps.")
 ```
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn browser-validator-specialist agent
+- ✅ Navigate to test URLs using Chrome DevTools MCP
+- ✅ Resize viewport to test multiple breakpoints (320px, 768px, 1024px)
+- ✅ Capture screenshots at each breakpoint
+- ✅ Check color contrast ratios
+- ✅ Test keyboard navigation and focus indicators
+- ✅ Analyze console errors and network requests
+- ✅ Generate detailed validation reports
+
+**Not allowed:**
+- ❌ Do not modify code files (provide fixes in report)
+- ❌ Do not click buttons or submit forms (read-only validation)
+- ❌ Do not install Chrome or DevTools (require Chrome DevTools MCP connection)
+
+The browser-validator-specialist performs all validation operations using Chrome DevTools MCP.
+
+---
+
 ## How It Works
 
 This command spawns the **browser-validator-specialist** agent, which:

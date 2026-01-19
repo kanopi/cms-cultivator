@@ -22,6 +22,27 @@ The testing specialist will:
 
 **Focus areas**: `functional`, `security`, `performance`, `accessibility`, `regression`
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn testing-specialist agent
+- ✅ Analyze git changes and code modifications
+- ✅ Generate test scenarios (functional, security, performance, accessibility)
+- ✅ Create QA test checklists with step-by-step instructions
+- ✅ Define acceptance criteria and pass/fail conditions
+- ✅ Include CMS-specific test scenarios
+
+**Not allowed:**
+- ❌ Do not execute tests (provide test plan for QA team)
+- ❌ Do not modify code
+- ❌ Do not commit changes
+
+The testing-specialist agent performs all test plan generation operations.
+
+---
+
 ## Agent Used
 
 **testing-specialist** - QA planning specialist with CMS-specific testing knowledge.

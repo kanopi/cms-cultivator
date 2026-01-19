@@ -1,12 +1,12 @@
 # Commands Overview
 
-CMS Cultivator provides 14 specialized commands organized into 8 categories. Each command integrates seamlessly with Drupal and WordPress projects.
+CMS Cultivator provides specialized commands organized into categories. Each command integrates seamlessly with Drupal and WordPress projects.
 
 ---
 
 ## Command Categories
 
-### 🔄 [PR Workflow](pr-workflow.md) (4 commands)
+### 🔄 [PR Workflow](pr-workflow.md)
 
 Streamline pull request creation, review, and deployment.
 
@@ -19,7 +19,7 @@ Streamline pull request creation, review, and deployment.
 
 ---
 
-### ♿ [Accessibility](accessibility.md) (1 command)
+### ♿ [Accessibility](accessibility.md)
 
 Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
@@ -36,7 +36,7 @@ Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
 ---
 
-### ⚡ [Performance](performance.md) (1 command)
+### ⚡ [Performance](performance.md)
 
 Optimize site speed and improve Core Web Vitals.
 
@@ -54,7 +54,7 @@ Optimize site speed and improve Core Web Vitals.
 
 ---
 
-### 🔒 [Security](security.md) (1 command)
+### 🔒 [Security](security.md)
 
 Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
@@ -69,7 +69,7 @@ Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
 ---
 
-### 📝 [Documentation](documentation.md) (1 command)
+### 📝 [Documentation](documentation.md)
 
 Generate and maintain project documentation.
 
@@ -81,7 +81,7 @@ Generate and maintain project documentation.
 
 ---
 
-### 🧪 [Testing](testing.md) (3 commands)
+### 🧪 [Testing](testing.md)
 
 Generate tests and analyze test coverage.
 
@@ -95,7 +95,7 @@ Generate tests and analyze test coverage.
 
 ---
 
-### 📊 [Code Quality](code-quality.md) (2 commands)
+### 📊 [Code Quality](code-quality.md)
 
 Maintain code quality and reduce technical debt.
 
@@ -108,7 +108,7 @@ Maintain code quality and reduce technical debt.
 
 ---
 
-### 🔍 [Live Site Auditing](live-site-auditing.md) (1 command)
+### 🔍 [Live Site Auditing](live-site-auditing.md)
 
 Comprehensive audits of live websites using Chrome DevTools.
 

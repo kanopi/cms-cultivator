@@ -22,6 +22,27 @@ The testing specialist will:
 
 **Test types**: `unit`, `integration`, `e2e`, `security`, `accessibility`
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn testing-specialist agent
+- ✅ Agent spawns security-specialist for security test scenarios
+- ✅ Agent spawns accessibility-specialist for a11y test scenarios
+- ✅ Generate test files (PHPUnit, Jest, Cypress)
+- ✅ Create test cases (unit, integration, e2e)
+- ✅ Write test scaffolding with descriptive test names
+
+**Not allowed:**
+- ❌ Do not modify existing test files
+- ❌ Do not run tests (provide instructions to run tests)
+- ❌ Do not commit generated tests (provide for review)
+
+The testing-specialist agent performs all test generation operations and orchestrates specialized testing agents.
+
+---
+
 ## Agent Used
 
 **testing-specialist** - Test generation specialist with ability to orchestrate security and accessibility testing.

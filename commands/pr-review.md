@@ -1,15 +1,23 @@
 ---
 description: Review a pull request or analyze your own changes using workflow specialist
 argument-hint: "[pr-number|self] [focus-area]"
-allowed-tools: Task
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(gh pr view:*), Bash(gh pr diff:*), Task
 ---
 
-Spawn the **workflow-specialist** agent using:
+## Context
 
-```
-Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Review changes comprehensively. Target: [first argument - PR number or 'self']. Focus area: [second argument if provided, otherwise 'all aspects']. Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
-```
+### For Self-Review Mode
+
+- **Current branch**: !`git branch --show-current`
+- **Files changed vs main**: !`git diff --name-only origin/main...HEAD 2>/dev/null | wc -l | tr -d ' '`
+- **Lines changed vs main**: !`git diff --stat origin/main...HEAD 2>/dev/null | tail -1`
+- **Commits since branching**: !`git log --oneline origin/main..HEAD 2>/dev/null | wc -l | tr -d ' '`
+- **Last 10 commits**: !`git log --oneline -10`
+- **Modified file types**: !`git diff --name-only origin/main...HEAD 2>/dev/null | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -5`
+
+### For PR Review Mode
+
+- **Open PRs in this repo**: !`gh pr list --limit 10 --json number,title,author 2>/dev/null || echo "Run gh auth login first"`
 
 ## Usage
 
@@ -29,16 +37,43 @@ Task(cms-cultivator:workflow-specialist:workflow-specialist,
 
 ---
 
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Read context provided above (commits, files, stats)
+- ✅ Run gh pr view and gh pr diff for PR reviews
+- ✅ Run git diff and git log for self-reviews
+- ✅ Spawn workflow-specialist agent
+- ✅ Spawn specialist agents (security, testing, accessibility) in parallel
+
+**Not allowed:**
+- ❌ Do not submit review comments (just generate review)
+- ❌ Do not merge or close PRs
+- ❌ Do not modify files
+
+The workflow-specialist agent will perform all review operations.
+
+---
+
+## Workflow-Specialist Agent
+
+Spawn the **workflow-specialist** agent using:
+
+```
+Task(cms-cultivator:workflow-specialist:workflow-specialist,
+     prompt="Review changes comprehensively. Target: [first argument - PR number or 'self']. Focus area: [second argument if provided, otherwise 'all aspects']. Use the context provided above. Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
+```
+
 ## How It Works
 
 This command spawns the **workflow-specialist** agent, which orchestrates a comprehensive code review process by:
 
-1. **Fetching PR details** (or analyzing local changes for self-review)
+1. **Fetching PR details** (or analyzing local changes for self-review using context above)
 2. **Identifying review areas** - Security, testing, accessibility, performance, code quality
 3. **Spawning relevant specialists in parallel**:
-   - **security-specialist** - OWASP vulnerabilities, input validation, SQL injection
-   - **testing-specialist** - Test coverage analysis and test plan generation
-   - **accessibility-specialist** - WCAG compliance for UI changes
+   - **cms-cultivator:security-specialist:security-specialist** - OWASP vulnerabilities, input validation, SQL injection
+   - **cms-cultivator:testing-specialist:testing-specialist** - Test coverage analysis and test plan generation
+   - **cms-cultivator:accessibility-specialist:accessibility-specialist** - WCAG compliance for UI changes
 4. **Compiling unified review** - Synthesizes all specialist findings into actionable report
 
 ### Review Modes
@@ -51,7 +86,7 @@ This command spawns the **workflow-specialist** agent, which orchestrates a comp
 - Can optionally submit review via `gh pr review`
 
 **Self-Review Mode (`/pr-review self`):**
-- Analyzes local uncommitted/unpushed changes
+- Analyzes local uncommitted/unpushed changes (uses context above)
 - Compares current branch against main
 - Same specialist delegation as PR review
 - Identifies issues before PR creation
@@ -263,67 +298,6 @@ These would improve the code but aren't blockers:
 
 ---
 
-## Quick Start (Kanopi Projects)
-
-### Pre-Review Quality Checks
-
-Before reviewing, run Kanopi's quality checks:
-
-```bash
-# Drupal - Run all checks
-ddev composer code-check    # phpstan + rector + code-sniff
-
-# WordPress - Run checks individually
-ddev composer phpstan       # Static analysis
-ddev composer phpcs         # Code standards
-ddev composer rector-check  # Modernization
-
-# Both platforms - Check dependencies
-ddev composer audit         # PHP vulnerabilities
-ddev exec npm audit         # JavaScript vulnerabilities
-```
-
-### Include in Test Plan
-
-```bash
-# Quality checks
-ddev composer code-check     # Drupal
-ddev composer phpstan        # WordPress
-ddev composer phpcs          # WordPress
-
-# Security checks
-ddev composer audit
-ddev exec npm audit
-
-# End-to-end tests
-ddev cypress-run
-
-# Performance tests
-ddev critical-run
-```
-
----
-
-## Agent Orchestration
-
-The workflow specialist intelligently delegates to other specialists:
-
-**For PR Reviews:**
-- Analyzes PR to identify concerns
-- Spawns specialists in parallel based on findings:
-  - Security-critical code → `security-specialist`
-  - Test coverage gaps → `testing-specialist`
-  - UI/frontend changes → `accessibility-specialist`
-- Compiles unified review from all findings
-
-**For Self-Reviews:**
-- Analyzes local changes against main branch
-- Same specialist delegation as PR reviews
-- Provides "ready for PR" assessment
-- Lists priority actions before PR creation
-
----
-
 ## Size Categories
 
 The workflow specialist uses these categories to assess PR size:
@@ -341,56 +315,8 @@ The workflow specialist uses these categories to assess PR size:
 
 ---
 
-## Red Flags
-
-The workflow specialist watches for:
-
-### Security Red Flags
-- Hardcoded credentials or API keys
-- SQL queries without parameterization
-- Unescaped output (XSS risk)
-- Missing access control checks
-- Unsafe deserialization
-
-### Code Quality Red Flags
-- Commented-out code without explanation
-- TODOs without tickets
-- Console.log in production code
-- Changes to core files (Drupal/WordPress)
-- Missing error handling
-
-### Size Red Flags
-- **> 1000 lines**: Too large to review effectively
-- **> 30 files**: Too broad scope
-- **Multiple unrelated domains**: Should be separate PRs
-- **Review would take > 2 hours**: Too much cognitive load
-
----
-
 ## Related Commands
 
 - **[`/pr-create`](pr-create.md)** - Create PR after self-review
 - **[`/pr-commit-msg`](pr-commit-msg.md)** - Generate commit message
 - **[`/audit-security`](audit-security.md)** - Deep security audit
-
-## Agent Used
-
-**workflow-specialist** - Orchestrates comprehensive PR reviews with parallel specialist delegation for security, testing, and accessibility analysis.
-
-## What Makes This Different
-
-**Before (manual PR review):**
-- Review code yourself line by line
-- Manually check for security issues
-- Guess at test coverage needs
-- Miss accessibility concerns
-- No size/complexity guidance
-
-**With workflow-specialist:**
-- ✅ Automated multi-dimensional analysis
-- ✅ Parallel specialist checks (security, testing, a11y)
-- ✅ Size/complexity assessment with split recommendations
-- ✅ Breaking changes detection
-- ✅ CMS-specific pattern validation
-- ✅ Structured, actionable output
-- ✅ "Ready for PR" assessment for self-reviews
