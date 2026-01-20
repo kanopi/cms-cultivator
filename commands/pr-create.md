@@ -4,15 +4,6 @@ argument-hint: "[ticket-number] [--concise]"
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(gh pr view:*), Task
 ---
 
-## Context
-
-- **Current branch**: !`git branch --show-current`
-- **Main branch**: !`git remote show origin | grep 'HEAD branch' | cut -d' ' -f5`
-- **Commits since branching**: !`git log --oneline origin/main..HEAD 2>/dev/null | wc -l | tr -d ' '`
-- **Files changed**: !`git diff --name-only origin/main...HEAD 2>/dev/null | wc -l | tr -d ' '`
-- **Last 10 commits**: !`git log --oneline -10`
-- **Branch status**: !`git status --porcelain=v1 2>/dev/null`
-
 ## Phase 1: Analysis
 
 **Goal**: Understand changes to include in PR
@@ -21,12 +12,12 @@ Spawn the **workflow-specialist** agent with:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Analyze changes for PR creation. Review all commits since branch divergence from main, identify CMS-specific modifications (Drupal config, WordPress blocks), and assess what quality checks are needed. Arguments: [use ticket number and --concise flag if provided]. DO NOT create the PR yet - this is analysis phase only.")
+     prompt="Analyze changes for PR creation. First, gather git context: current branch, main branch, commits since branching, files changed, branch status. Review all commits since branch divergence from main, identify CMS-specific modifications (Drupal config, WordPress blocks), and assess what quality checks are needed. Arguments: [use ticket number and --concise flag if provided]. DO NOT create the PR yet - this is analysis phase only.")
 ```
 
 **Tool Usage in this phase:**
-- ✅ Read context provided above (commits, files, branch info)
-- ✅ Run git commands to analyze changes
+- ✅ Gather git context (branch info, commits, diffs, status)
+- ✅ Analyze changes and detect CMS-specific patterns
 - ✅ Detect Drupal/WordPress specific changes
 - ❌ Do not create PR yet
 - ❌ Do not push to remote yet

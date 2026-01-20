@@ -33,45 +33,51 @@ CMS Cultivator can analyze designs from two sources:
 
 **What gets analyzed:**
 
-1. **Colors**
-   - Brand colors (primary, secondary, accent)
-   - Text colors
-   - Background colors
-   - Gradient definitions
-   - Color contrast ratios (WCAG AA validation)
+### Colors
 
-2. **Typography**
-   - Font families
-   - Font sizes (responsive scaling)
-   - Line heights
-   - Font weights
-   - Letter spacing
-   - Text transforms
+- Brand colors (primary, secondary, accent)
+- Text colors
+- Background colors
+- Gradient definitions
+- Color contrast ratios (WCAG AA validation)
 
-3. **Spacing**
-   - Margins (responsive)
-   - Padding (responsive)
-   - Gap values (for flexbox/grid)
-   - Container widths
+### Typography
 
-4. **Layout**
-   - Flexbox or Grid usage
-   - Alignment patterns
-   - Responsive breakpoints (768px, 1024px)
-   - Stacking behavior on mobile
+- Font families
+- Font sizes (responsive scaling)
+- Line heights
+- Font weights
+- Letter spacing
+- Text transforms
 
-5. **Interactive Elements**
-   - Hover states
-   - Focus indicators
-   - Active states
-   - Touch targets (44px minimum)
+### Spacing
 
-6. **Accessibility Requirements**
-   - Color contrast (4.5:1 for normal text, 3:1 for large)
-   - ARIA labels
-   - Semantic HTML structure
-   - Keyboard navigation patterns
-   - Screen reader considerations
+- Margins (responsive)
+- Padding (responsive)
+- Gap values (for flexbox/grid)
+- Container widths
+
+### Layout
+
+- Flexbox or Grid usage
+- Alignment patterns
+- Responsive breakpoints (768px, 1024px)
+- Stacking behavior on mobile
+
+### Interactive Elements
+
+- Hover states
+- Focus indicators
+- Active states
+- Touch targets (44px minimum)
+
+### Accessibility Requirements
+
+- Color contrast (4.5:1 for normal text, 3:1 for large)
+- ARIA labels
+- Semantic HTML structure
+- Keyboard navigation patterns
+- Screen reader considerations
 
 ---
 
@@ -93,36 +99,41 @@ Create block patterns from designs for WordPress sites.
 
 **What it creates:**
 
-1. **Block Pattern PHP File**
-   - Location: `wp-content/themes/your-theme/patterns/`
-   - File name: Descriptive, kebab-case (e.g., `hero-with-cta.php`)
-   - Pattern header with metadata
+#### Block Pattern PHP File
 
-2. **HTML Structure**
-   - Core blocks (Group, Columns, Heading, Paragraph, Button)
-   - Semantic HTML5 elements
-   - Proper nesting and hierarchy
-   - ARIA attributes where needed
+- Location: `wp-content/themes/your-theme/patterns/`
+- File name: Descriptive, kebab-case (e.g., `hero-with-cta.php`)
+- Pattern header with metadata
 
-3. **Inline Styles**
-   - Mobile-first responsive CSS
-   - Custom properties for colors
-   - Proper spacing units (rem, em)
-   - Focus indicators
-   - Hover states
+#### HTML Structure
 
-4. **Responsive Behavior**
-   - Mobile layout (< 768px)
-   - Tablet layout (768px - 1024px)
-   - Desktop layout (> 1024px)
-   - Proper stacking on small screens
+- Core blocks (Group, Columns, Heading, Paragraph, Button)
+- Semantic HTML5 elements
+- Proper nesting and hierarchy
+- ARIA attributes where needed
 
-5. **Accessibility Features**
-   - WCAG AA color contrast
-   - Touch-friendly targets (44px min)
-   - Keyboard navigation
-   - Screen reader text where needed
-   - Proper heading hierarchy
+#### Inline Styles
+
+- Mobile-first responsive CSS
+- Custom properties for colors
+- Proper spacing units (rem, em)
+- Focus indicators
+- Hover states
+
+#### Responsive Behavior
+
+- Mobile layout (< 768px)
+- Tablet layout (768px - 1024px)
+- Desktop layout (> 1024px)
+- Proper stacking on small screens
+
+#### Accessibility Features
+
+- WCAG AA color contrast
+- Touch-friendly targets (44px min)
+- Keyboard navigation
+- Screen reader text where needed
+- Proper heading hierarchy
 
 **Example Output:**
 
@@ -264,39 +275,44 @@ Create paragraph types from designs for Drupal sites.
 
 **What it creates:**
 
-1. **Field Configuration**
-   - Field machine names
-   - Field types (text, formatted text, image, link, etc.)
-   - Field labels
-   - Help text
-   - Required fields
-   - Cardinality settings
+#### Field Configuration
 
-2. **Paragraph Type Structure**
-   - Paragraph type machine name
-   - Display name
-   - Description
-   - Field groupings
+- Field machine names
+- Field types (text, formatted text, image, link, etc.)
+- Field labels
+- Help text
+- Required fields
+- Cardinality settings
 
-3. **Twig Template**
-   - Location: `templates/paragraph/paragraph--hero-section.html.twig`
-   - Semantic HTML structure
-   - Field rendering with proper escaping
-   - BEM class naming convention
-   - ARIA attributes
+#### Paragraph Type Structure
 
-4. **SCSS/CSS Styles**
-   - Location: `css/paragraphs/hero-section.scss`
-   - Mobile-first responsive styles
-   - CSS custom properties
-   - Proper nesting
-   - Breakpoint mixins
+- Paragraph type machine name
+- Display name
+- Description
+- Field groupings
 
-5. **Implementation Guide**
-   - Drush commands for field creation
-   - Configuration export instructions
-   - Template suggestions
-   - Cache considerations
+#### Twig Template
+
+- Location: `templates/paragraph/paragraph--hero-section.html.twig`
+- Semantic HTML structure
+- Field rendering with proper escaping
+- BEM class naming convention
+- ARIA attributes
+
+#### SCSS/CSS Styles
+
+- Location: `css/paragraphs/hero-section.scss`
+- Mobile-first responsive styles
+- CSS custom properties
+- Proper nesting
+- Breakpoint mixins
+
+#### Implementation Guide
+
+- Drush commands for field creation
+- Configuration export instructions
+- Template suggestions
+- Cache considerations
 
 **Example Output:**
 
@@ -597,82 +613,93 @@ ddev launch
 
 Tests at three breakpoints:
 
-1. **Mobile (320px width)**
-   - Content stacking
-   - Touch target sizes (minimum 44×44px)
-   - Readable font sizes (minimum 16px)
-   - Horizontal scrolling issues
-   - Proper spacing in tight layouts
+#### Mobile (320px width)
 
-2. **Tablet (768px width)**
-   - Layout transitions
-   - Content reflow
-   - Navigation patterns
-   - Image scaling
-   - Grid/flexbox behavior
+- Content stacking
+- Touch target sizes (minimum 44×44px)
+- Readable font sizes (minimum 16px)
+- Horizontal scrolling issues
+- Proper spacing in tight layouts
 
-3. **Desktop (1024px+ width)**
-   - Maximum content width
-   - Multi-column layouts
-   - Hover states
-   - Focus indicators
-   - Full design implementation
+#### Tablet (768px width)
+
+- Layout transitions
+- Content reflow
+- Navigation patterns
+- Image scaling
+- Grid/flexbox behavior
+
+#### Desktop (1024px+ width)
+
+- Maximum content width
+- Multi-column layouts
+- Hover states
+- Focus indicators
+- Full design implementation
 
 ### Accessibility Compliance (WCAG AA)
 
-1. **Color Contrast**
-   - Normal text: 4.5:1 minimum
-   - Large text (18pt+): 3:1 minimum
-   - Interactive elements: 3:1 minimum
-   - Reports exact ratios and pass/fail status
+#### Color Contrast
 
-2. **Keyboard Navigation**
-   - Tab order is logical
-   - All interactive elements focusable
-   - Focus indicators visible (2px minimum)
-   - No keyboard traps
-   - Skip links present
+- Normal text: 4.5:1 minimum
+- Large text (18pt+): 3:1 minimum
+- Interactive elements: 3:1 minimum
+- Reports exact ratios and pass/fail status
 
-3. **ARIA Usage**
-   - Proper landmark roles
-   - Correct ARIA labels
-   - Valid ARIA attributes
-   - No ARIA conflicts with native semantics
-   - Live regions configured properly
+#### Keyboard Navigation
 
-4. **Semantic HTML**
-   - Proper heading hierarchy (h1 → h2 → h3)
-   - Form labels associated with inputs
-   - Alt text on images
-   - List markup for lists
-   - Button vs. link usage
+- Tab order is logical
+- All interactive elements focusable
+- Focus indicators visible (2px minimum)
+- No keyboard traps
+- Skip links present
 
-5. **Screen Reader Compatibility**
-   - Meaningful text alternatives
-   - Descriptive link text
-   - Form error messages
-   - Status announcements
-   - Hidden content handled properly
+#### ARIA Usage
+
+- Proper landmark roles
+- Correct ARIA labels
+- Valid ARIA attributes
+- No ARIA conflicts with native semantics
+- Live regions configured properly
+
+#### Semantic HTML
+
+- Proper heading hierarchy (h1 → h2 → h3)
+- Form labels associated with inputs
+- Alt text on images
+- List markup for lists
+- Button vs. link usage
+
+#### Screen Reader Compatibility
+
+- Meaningful text alternatives
+- Descriptive link text
+- Form error messages
+- Status announcements
+- Hidden content handled properly
 
 ### Interactions
 
-1. **Click Targets**
-   - Minimum 44×44px touch targets
-   - Adequate spacing between targets
-   - Clear hover states
-   - Visual feedback on click
+#### Click Targets
 
-2. **Forms**
-   - Labels visible and associated
-   - Error messages clear
-   - Required field indicators
-   - Autocomplete attributes
+- Minimum 44×44px touch targets
+- Adequate spacing between targets
+- Clear hover states
+- Visual feedback on click
 
-3. **Animations**
-   - Respects `prefers-reduced-motion`
-   - No excessive motion
-   - Transitions enhance UX
-   - Performance implications noted
+#### Forms
+
+- Labels visible and associated
+- Error messages clear
+- Required field indicators
+- Autocomplete attributes
+
+#### Animations
+
+- Respects `prefers-reduced-motion`
+- No excessive motion
+- Transitions enhance UX
+- Performance implications noted
 
 **Example Validation Report:**
 

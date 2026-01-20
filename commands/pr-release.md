@@ -4,15 +4,6 @@ argument-hint: "[version-or-focus]"
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git tag:*), Bash(git describe:*), Bash(gh pr view:*), Bash(gh pr view:*), Task
 ---
 
-## Context
-
-- **Current branch**: !`git branch --show-current`
-- **Last tag/version**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
-- **Commits since last tag**: !`git log $(git describe --tags --abbrev=0 2>/dev/null || echo "HEAD~10")..HEAD --oneline | wc -l | tr -d ' '`
-- **Files changed since last tag**: !`git diff --name-only $(git describe --tags --abbrev=0 2>/dev/null || echo "HEAD~10")..HEAD | wc -l | tr -d ' '`
-- **Recent commits**: !`git log --oneline -10`
-- **Current PR (if any)**: !`gh pr view --json number,title,url 2>/dev/null || echo "No PR found for current branch"`
-
 ## Usage
 
 - `/pr-release` - Generate all release artifacts (changelog, deploy checklist, update PR)
@@ -28,7 +19,7 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git t
 **Goal**: Understand changes since last release
 
 **Tool Usage in this phase:**
-- ✅ Read context provided above (tags, commits, files)
+- ✅ Gather git context (current branch, tags, commits, PR info)
 - ✅ Run git log and git diff to analyze changes
 - ✅ Detect CMS-specific changes (config, migrations, etc.)
 - ✅ Categorize commits by conventional commit type
@@ -39,7 +30,7 @@ Spawn the **workflow-specialist** agent with:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Analyze changes for release preparation. Review commits since last tag, categorize by conventional commit type (feat, fix, breaking), detect CMS-specific changes (Drupal config, WordPress ACF), and assess deployment requirements. User's focus: [use argument if provided, otherwise 'all']. DO NOT generate release artifacts yet - this is analysis phase only.")
+     prompt="Analyze changes for release preparation. First, gather git context: current branch, last tag/version, commits since last tag, recent commits, and current PR status. Review commits since last tag, categorize by conventional commit type (feat, fix, breaking), detect CMS-specific changes (Drupal config, WordPress ACF), and assess deployment requirements. User's focus: [use argument if provided, otherwise 'all']. DO NOT generate release artifacts yet - this is analysis phase only.")
 ```
 
 The workflow specialist will:

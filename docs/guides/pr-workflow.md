@@ -130,16 +130,16 @@ git push origin feature/user-notifications
 
 **Generated PR description includes:**
 
-1. **Summary** - Overview of what changed and why
-2. **Changes** - Detailed list of modifications
-3. **Type of Change** - Feature, bug fix, refactoring, etc.
-4. **Testing** - How to test the changes
-5. **Checklist** - Pre-merge checklist items
-6. **Platform-Specific Notes**:
-   - **Drupal**: Configuration changes, database updates, module dependencies
-   - **WordPress**: Theme changes, plugin dependencies, ACF fields
-7. **Breaking Changes** - If any exist
-8. **Deployment Notes** - Special deployment considerations
+- **Summary** - Overview of what changed and why
+- **Changes** - Detailed list of modifications
+- **Type of Change** - Feature, bug fix, refactoring, etc.
+- **Testing** - How to test the changes
+- **Checklist** - Pre-merge checklist items
+- **Platform-Specific Notes**:
+  - **Drupal**: Configuration changes, database updates, module dependencies
+  - **WordPress**: Theme changes, plugin dependencies, ACF fields
+- **Breaking Changes** - If any exist
+- **Deployment Notes** - Special deployment considerations
 
 **Example:**
 
