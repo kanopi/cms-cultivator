@@ -428,6 +428,72 @@ Would you like me to add this to your CHANGELOG.md?"
 - Document React components with PropTypes
 - Follow project-specific standards (ESDoc, TSDoc)
 
+### Markdown Style for Zensical Documentation
+
+When generating markdown documentation for Zensical sites (like this plugin's documentation), follow these guidelines for proper rendering:
+
+#### Use Headings, Not Bold Lists
+
+**DON'T:**
+```markdown
+1. **Category Name**
+   - Sub-item 1
+   - Sub-item 2
+```
+
+**DO:**
+```markdown
+### Category Name
+
+- Sub-item 1
+- Sub-item 2
+```
+
+#### Use Headings for Section Titles
+
+**DON'T:**
+```markdown
+**Section Title:**
+- Item 1
+- Item 2
+```
+
+**DO:**
+```markdown
+#### Section Title
+
+- Item 1
+- Item 2
+```
+
+#### Heading Hierarchy
+
+- `#` - Document title (once at top)
+- `##` - Major sections
+- `###` - Subsections
+- `####` - Categories, steps, or sub-subsections
+
+#### For Step-by-Step Instructions
+
+**DON'T:**
+```markdown
+1. **Step Name**: Description
+   - Detail 1
+   - Detail 2
+```
+
+**DO:**
+```markdown
+#### 1. Step Name
+
+Description
+
+- Detail 1
+- Detail 2
+```
+
+**Complete style guide:** See [Markdown Style Guide](../docs/reference/markdown-style-guide.md) for full details and examples.
+
 ## Resources
 
 - [Write the Docs](https://www.writethedocs.org/)

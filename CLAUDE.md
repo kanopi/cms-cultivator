@@ -376,6 +376,36 @@ cms-cultivator/
 - Link between related docs
 - Use emoji sparingly (only in headings for visual navigation)
 
+### Markdown Style for Zensical
+
+**IMPORTANT:** Follow the [Markdown Style Guide](docs/reference/markdown-style-guide.md) when creating or updating documentation.
+
+**Key rules for proper Zensical rendering:**
+
+1. **Use headings, not bold text for structure:**
+   - ❌ DON'T: `1. **Category Name**` with sub-bullets
+   - ✅ DO: `### Category Name` with bullet list
+
+2. **Use headings for section titles:**
+   - ❌ DON'T: `**Section Title:**` followed by list
+   - ✅ DO: `#### Section Title` followed by list
+
+3. **Heading hierarchy:**
+   - `#` - Document title (once at top)
+   - `##` - Major sections
+   - `###` - Subsections
+   - `####` - Categories, steps, or sub-subsections
+
+4. **Step-by-step instructions:**
+   - ❌ DON'T: `1. **Step Name**: Description` with sub-bullets
+   - ✅ DO: `#### 1. Step Name` with description and bullet list
+
+5. **Code blocks:**
+   - Always specify language: ` ```bash `, ` ```php `, ` ```yaml `
+   - Add context before code blocks
+
+**See the complete guide for detailed examples and conversion patterns.**
+
 ### Frontmatter Standards
 
 **Description**: Brief imperative statement (e.g., "Generate PR description from git changes")

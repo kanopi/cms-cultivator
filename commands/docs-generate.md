@@ -25,6 +25,20 @@ The documentation specialist will:
 
 ---
 
+## Markdown Style for Zensical
+
+When generating documentation for Zensical sites, follow the [Markdown Style Guide](../docs/reference/markdown-style-guide.md) to ensure proper rendering.
+
+**Key points:**
+- Use headings (###, ####) instead of bold text for categories
+- Avoid numbered lists with bold items and sub-bullets
+- Use proper heading hierarchy for step-by-step instructions
+- Always specify language in code blocks
+
+See the complete guide for examples and conversion patterns.
+
+---
+
 ## Tool Usage
 
 **Allowed operations:**
