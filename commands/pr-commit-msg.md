@@ -30,7 +30,7 @@ Spawn the **workflow-specialist** agent using:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Generate a conventional commit message from the user's staged changes. First, gather git context by running: git status, git diff --cached (for staged changes), git log (for recent commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification.")
+     prompt="Generate a conventional commit message from the user's staged changes. First, gather git context by running: git status, git diff --cached (for staged changes), git log (for recent commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification. Format your FINAL output with ONLY the commit message - NO summaries, NO explanations, ONLY the complete commit message and approval request.")
 ```
 
 The workflow specialist will:
@@ -39,7 +39,7 @@ The workflow specialist will:
 3. Generate a conventional commit message (feat, fix, refactor, etc.)
 4. Include appropriate scope and detailed body
 5. Add CMS-specific context (Drupal/WordPress patterns)
-6. **Present the FULL commit message for your approval or edits**
+6. **Present ONLY the complete commit message** - NO summaries, NO explanations, ONLY the message and approval request
 7. Execute commit with approved message (without "Co-Authored-By: Claude...")
 8. **Suggest running `/pr-create`** as the next step
 

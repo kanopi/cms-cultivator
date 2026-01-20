@@ -20,7 +20,7 @@ Spawn the **workflow-specialist** agent to handle the complete release preparati
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Prepare release artifacts for the current branch. User's focus: [use argument if provided, otherwise 'all']. Follow the complete release workflow: (1) Analyze changes since last release, categorize commits by conventional commit type, detect CMS-specific changes and deployment requirements, (2) Generate changelog following Keep a Changelog format, (3) Create comprehensive deployment checklist with pre/post checks and rollback plan, (4) Present FULL changelog, deployment checklist, and PR update recommendations to user for approval, (5) After approval, update PR description via gh CLI and provide artifacts for manual use.")
+     prompt="Prepare release artifacts for the current branch. User's focus: [use argument if provided, otherwise 'all']. Follow the complete release workflow: (1) Analyze changes since last release, categorize commits by conventional commit type, detect CMS-specific changes and deployment requirements, (2) Generate changelog following Keep a Changelog format, (3) Create comprehensive deployment checklist with pre/post checks and rollback plan, (4) Format your FINAL output with ONLY the artifacts (changelog, deployment checklist, PR updates) - NO summaries, NO explanations, ONLY the complete artifacts and approval request, (5) After approval, update PR description via gh CLI and provide artifacts for manual use.")
 ```
 
 ### Workflow Steps (Automated)
@@ -50,11 +50,13 @@ The workflow specialist automatically executes these steps:
   - CMS-specific upgrade notes (Drupal: config import, WordPress: permalink flush)
 
 #### 4. User Approval (CRITICAL)
-- **Present full changelog** - Complete Keep a Changelog entry
-- **Present deployment checklist** - All deployment steps
-- **Present PR update recommendations** - Proposed changes to PR description
+- **Present ONLY the artifacts** - NO summaries, NO context, NO explanations
+- Show complete changelog (Keep a Changelog format)
+- Show complete deployment checklist (all steps)
+- Show complete PR update recommendations
+- Format: Clear section headers for each artifact
 - **Wait for explicit approval** before proceeding
-- Allow user to request edits or approve as-is
+- Allow user to approve or provide edits
 
 #### 5. PR Update
 - Update PR description (if PR exists) with release information

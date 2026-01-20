@@ -8,7 +8,7 @@ Spawn the **live-audit-specialist** agent using:
 
 ```
 Task(cms-cultivator:live-audit-specialist:live-audit-specialist,
-     prompt="Perform a comprehensive site audit by orchestrating performance-specialist, accessibility-specialist, security-specialist, and code-quality-specialist in parallel. Site URL: [use argument if provided]. Synthesize findings into unified report with health score, prioritized issues, and remediation roadmap.")
+     prompt="Perform a comprehensive site audit by orchestrating performance-specialist, accessibility-specialist, security-specialist, and code-quality-specialist in parallel. Site URL: [use argument if provided]. Synthesize findings into unified report with health score, prioritized issues, and remediation roadmap. Save the comprehensive audit report to a file (audit-live-site-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 The live-audit specialist will:
@@ -25,6 +25,7 @@ The live-audit specialist will:
    - Estimated effort and business impact
 
 3. **Generate deliverables**:
+   - **Audit report file** (audit-live-site-YYYY-MM-DD-HHMM.md)
    - Technical audit report (for developers)
    - Executive summary (for stakeholders)
    - Prioritized action plan with timelines
@@ -71,3 +72,4 @@ The live-audit-specialist coordinates all operations by orchestrating the 4 spec
 - ✅ Comprehensive health score
 - ✅ Actionable remediation roadmap
 - ✅ Executive + technical reports
+- ✅ **Audit report saved to file** for reference and stakeholder sharing

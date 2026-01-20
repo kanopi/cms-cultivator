@@ -8,7 +8,7 @@ Spawn the **code-quality-specialist** agent using:
 
 ```
 Task(cms-cultivator:code-quality-specialist:code-quality-specialist,
-     prompt="Check code against coding standards. Standard: [use argument if provided, otherwise 'auto-detect']. Run PHPCS, ESLint, and Prettier checks. Apply CMS-specific standards (Drupal Coding Standards or WordPress Coding Standards). Report violations with file/line locations.")
+     prompt="Check code against coding standards. Standard: [use argument if provided, otherwise 'auto-detect']. Run PHPCS, ESLint, and Prettier checks. Apply CMS-specific standards (Drupal Coding Standards or WordPress Coding Standards). Report violations with file/line locations. Save the comprehensive audit report to a file (quality-analyze-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 The code-quality specialist will:

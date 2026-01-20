@@ -10,7 +10,7 @@ Spawn the **workflow-specialist** agent to handle the complete PR creation workf
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Create a pull request from the current branch. Arguments: [use ticket number and --concise flag if provided]. Follow the complete PR creation workflow: (1) Analyze git changes and detect CMS-specific modifications, (2) Run quality checks as needed (skip in --concise mode unless critical), (3) Generate comprehensive PR description following the project template, (4) Present FULL PR title and description to user for approval, (5) After approval, create the PR using gh CLI.")
+     prompt="Create a pull request from the current branch. Arguments: [use ticket number and --concise flag if provided]. Follow the complete PR creation workflow: (1) Analyze git changes and detect CMS-specific modifications, (2) Run quality checks as needed (skip in --concise mode unless critical), (3) Generate comprehensive PR description following the project template, (4) Format your FINAL output with ONLY the PR title and full description using the '=== PULL REQUEST READY FOR APPROVAL ===' format - NO summaries, NO explanations, ONLY the title, complete description, and approval request, (5) Wait for user approval, then create the PR using gh CLI.")
 ```
 
 ### Workflow Steps (Automated)
@@ -41,9 +41,11 @@ The workflow specialist automatically executes these steps:
   - Compiled specialist findings (if any)
 
 #### 4. User Approval (CRITICAL)
-- **Present FULL PR title and description** for review
+- **Present ONLY the PR title and full description** - NO summaries, NO context, NO explanations
+- Format: `=== PULL REQUEST READY FOR APPROVAL ===` header, title, complete description, approval request
+- Same presentation format whether `--concise` flag is used or not (flag only affects description verbosity)
 - **Wait for explicit approval** before proceeding
-- Allow user to request edits or approve as-is
+- Allow user to approve or provide edits
 
 #### 5. PR Creation
 - Verify prerequisites (gh CLI auth, branch status, commits exist)
