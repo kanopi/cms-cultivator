@@ -4,21 +4,6 @@ argument-hint: "[pr-number|self] [focus-area]"
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(gh pr view:*), Bash(gh pr diff:*), Task
 ---
 
-## Context
-
-### For Self-Review Mode
-
-- **Current branch**: !`git branch --show-current`
-- **Files changed vs main**: !`git diff --name-only origin/main...HEAD 2>/dev/null | wc -l | tr -d ' '`
-- **Lines changed vs main**: !`git diff --stat origin/main...HEAD 2>/dev/null | tail -1`
-- **Commits since branching**: !`git log --oneline origin/main..HEAD 2>/dev/null | wc -l | tr -d ' '`
-- **Last 10 commits**: !`git log --oneline -10`
-- **Modified file types**: !`git diff --name-only origin/main...HEAD 2>/dev/null | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -5`
-
-### For PR Review Mode
-
-- **Open PRs in this repo**: !`gh pr list --limit 10 --json number,title,author 2>/dev/null || echo "Run gh auth login first"`
-
 ## Usage
 
 **Review someone else's PR:**
@@ -40,7 +25,7 @@ allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git b
 ## Tool Usage
 
 **Allowed operations:**
-- ✅ Read context provided above (commits, files, stats)
+- ✅ Gather git context (for self-reviews) or fetch PR details (for PR reviews)
 - ✅ Run gh pr view and gh pr diff for PR reviews
 - ✅ Run git diff and git log for self-reviews
 - ✅ Spawn workflow-specialist agent
@@ -61,7 +46,7 @@ Spawn the **workflow-specialist** agent using:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Review changes comprehensively. Target: [first argument - PR number or 'self']. Focus area: [second argument if provided, otherwise 'all aspects']. Use the context provided above. Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
+     prompt="Review changes comprehensively. Target: [first argument - PR number or 'self']. Focus area: [second argument if provided, otherwise 'all aspects']. First, gather necessary context (for self-reviews: branch info, commits, diffs, file stats; for PR reviews: use gh pr view and gh pr diff). Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
 ```
 
 ## How It Works
@@ -86,7 +71,7 @@ This command spawns the **workflow-specialist** agent, which orchestrates a comp
 - Can optionally submit review via `gh pr review`
 
 **Self-Review Mode (`/pr-review self`):**
-- Analyzes local uncommitted/unpushed changes (uses context above)
+- Gathers git context (branch, commits, diffs, stats)
 - Compares current branch against main
 - Same specialist delegation as PR review
 - Identifies issues before PR creation

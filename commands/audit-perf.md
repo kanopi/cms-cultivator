@@ -15,7 +15,7 @@ Task(cms-cultivator:performance-specialist:performance-specialist,
        - Target threshold: [good/needs-improvement - parsed from arguments, optional]
        - Focus area: [use legacy focus argument if provided, otherwise 'complete analysis']
        - Files to analyze: [file list based on scope]
-     Check database queries, caching strategies, asset optimization, and rendering for both Drupal and WordPress projects.")
+     Check database queries, caching strategies, asset optimization, and rendering for both Drupal and WordPress projects. Save the comprehensive audit report to a file (audit-perf-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 ## Arguments

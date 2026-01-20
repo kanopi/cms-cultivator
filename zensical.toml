@@ -42,6 +42,9 @@ nav = [
     "kanopi-tools/composer-scripts.md",
     "kanopi-tools/ddev-commands.md"
   ]},
+  {"Reference" = [
+    "reference/markdown-style-guide.md"
+  ]},
   {"Testing" = "testing.md"},
   {"Contributing" = "contributing.md"}
 ]

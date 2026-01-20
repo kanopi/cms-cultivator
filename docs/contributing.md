@@ -41,61 +41,69 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 ### Adding a New Command
 
-1. **Create command file** in `/commands/`:
-   ```bash
-   touch commands/my-new-command.md
-   ```
+#### 1. Create command file in `/commands/`
 
-2. **Add frontmatter** at the top:
-   ```yaml
-   ---
-   description: Brief description of what the command does
-   argument-hint: [optional-arg]
-   allowed-tools: Bash(git:*), Read, Glob, Grep, Write
-   ---
-   ```
+```bash
+touch commands/my-new-command.md
+```
 
-3. **Write command documentation**:
-   - Clear usage instructions
-   - Example outputs
-   - Drupal/WordPress-specific considerations
-   - Integration with Kanopi tools (if applicable)
+#### 2. Add frontmatter at the top
 
-4. **Test the command**:
-   ```bash
-   # In Claude Code
-   /my-new-command
-   ```
+```yaml
+---
+description: Brief description of what the command does
+argument-hint: [optional-arg]
+allowed-tools: Bash(git:*), Read, Glob, Grep, Write
+---
+```
 
-5. **Add to documentation**:
-   - Update `docs/commands/overview.md`
-   - Add detailed guide if needed
+#### 3. Write command documentation
+
+- Clear usage instructions
+- Example outputs
+- Drupal/WordPress-specific considerations
+- Integration with Kanopi tools (if applicable)
+
+#### 4. Test the command
+
+```bash
+# In Claude Code
+/my-new-command
+```
+
+#### 5. Add to documentation
+
+- Update `docs/commands/overview.md`
+- Add detailed guide if needed
 
 ### Updating Existing Commands
 
-1. **Modify command file** in `/commands/`
+#### 1. Modify command file in `/commands/`
 
-2. **Test thoroughly**:
-   - Try different arguments
-   - Test with both Drupal and WordPress projects
-   - Verify Kanopi tool integration
+#### 2. Test thoroughly
 
-3. **Update documentation** if behavior changed
+- Try different arguments
+- Test with both Drupal and WordPress projects
+- Verify Kanopi tool integration
+
+#### 3. Update documentation if behavior changed
 
 ### Improving Documentation
 
-1. **Edit files** in `/docs/`
+#### 1. Edit files in `/docs/`
 
-2. **Preview locally**:
-   ```bash
-   zensical serve
-   # Visit http://localhost:8000
-   ```
+#### 2. Preview locally
 
-3. **Build to verify**:
-   ```bash
-   zensical build --clean
-   ```
+```bash
+zensical serve
+# Visit http://localhost:8000
+```
+
+#### 3. Build to verify
+
+```bash
+zensical build --clean
+```
 
 ---
 
@@ -133,43 +141,50 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 ## Pull Request Process
 
-1. **Create a branch** from `main`:
-   ```bash
-   git checkout -b feature/my-new-feature
-   ```
+### 1. Create a branch from `main`
 
-2. **Make your changes**:
-   - Follow coding standards
-   - Add/update documentation
-   - Test thoroughly
+```bash
+git checkout -b feature/my-new-feature
+```
 
-3. **Commit your changes**:
-   ```bash
-   git add .
-   git commit -m "feat: add new command for X"
-   ```
+### 2. Make your changes
 
-   Use [Conventional Commits](https://www.conventionalcommits.org/):
-   - `feat:` - New feature
-   - `fix:` - Bug fix
-   - `docs:` - Documentation changes
-   - `refactor:` - Code refactoring
-   - `test:` - Adding tests
-   - `chore:` - Maintenance
+- Follow coding standards
+- Add/update documentation
+- Test thoroughly
 
-4. **Push to your fork**:
-   ```bash
-   git push origin feature/my-new-feature
-   ```
+### 3. Commit your changes
 
-5. **Create Pull Request** on GitHub:
-   - Provide clear description
-   - Reference any issues
-   - Add screenshots if relevant
+```bash
+git add .
+git commit -m "feat: add new command for X"
+```
 
-6. **Address review feedback**:
-   - Make requested changes
-   - Push updates to same branch
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `refactor:` - Code refactoring
+- `test:` - Adding tests
+- `chore:` - Maintenance
+
+### 4. Push to your fork
+
+```bash
+git push origin feature/my-new-feature
+```
+
+### 5. Create Pull Request on GitHub
+
+- Provide clear description
+- Reference any issues
+- Add screenshots if relevant
+
+### 6. Address review feedback
+
+- Make requested changes
+- Push updates to same branch
 
 ---
 
@@ -177,20 +192,23 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 ### Manual Testing
 
-1. **Install plugin locally**:
-   ```bash
-   claude plugins enable cms-cultivator
-   ```
+#### 1. Install plugin locally
 
-2. **Test command variations**:
-   - Without arguments
-   - With different focus options
-   - In Drupal project
-   - In WordPress project
+```bash
+claude plugins enable cms-cultivator
+```
 
-3. **Verify Kanopi integration**:
-   - Test with `ddev composer` commands
-   - Verify `ddev` custom commands work
+#### 2. Test command variations
+
+- Without arguments
+- With different focus options
+- In Drupal project
+- In WordPress project
+
+#### 3. Verify Kanopi integration
+
+- Test with `ddev composer` commands
+- Verify `ddev` custom commands work
 
 ### Documentation Testing
 

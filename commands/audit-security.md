@@ -15,7 +15,7 @@ Task(cms-cultivator:security-specialist:security-specialist,
        - Minimum severity: [high/medium/low - parsed from arguments, default: medium]
        - Focus area: [use legacy focus argument if provided, otherwise 'complete audit']
        - Files to analyze: [file list based on scope]
-     Scan for OWASP Top 10 vulnerabilities, check input validation and output encoding, analyze authentication/authorization, review CMS-specific security patterns for Drupal and WordPress, and check dependencies for CVEs.")
+     Scan for OWASP Top 10 vulnerabilities, check input validation and output encoding, analyze authentication/authorization, review CMS-specific security patterns for Drupal and WordPress, and check dependencies for CVEs. Save the comprehensive audit report to a file (audit-security-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 ## Arguments

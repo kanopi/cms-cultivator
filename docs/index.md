@@ -72,33 +72,38 @@
 
 ### For Developers
 
-**Natural Language (Agent Skills auto-activate):**
+#### Natural Language (Agent Skills auto-activate)
+
 - "I need to commit my changes" → Generates commit message
 - "Is this button accessible?" → Checks accessibility
 - "This query is slow" → Analyzes performance
 - "Does this follow WordPress standards?" → Checks code standards
 - "I need tests for this class" → Generates test scaffolding
 
-**Explicit Commands:**
+#### Explicit Commands
+
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
 - **Full audits**: `/audit-perf`, `/audit-a11y`, `/audit-security` - Comprehensive analysis
 
 ### For Tech Leads
 
-**Natural Language:**
+#### Natural Language
+
 - "What code isn't tested?" → Coverage analysis
 - "Is this secure?" → Security check
 - "What should QA test?" → Test plan generation
 
-**Explicit Commands:**
+#### Explicit Commands
+
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
 - **Performance audits**: `/audit-perf` - Identify bottlenecks
 - **Quality analysis**: `/quality-analyze` - Technical debt assessment
 
 ### For Project Managers
 
-**Explicit Commands (Reports):**
+#### Explicit Commands (Reports)
+
 - **Stakeholder reports**: `/audit-perf report` - Executive-friendly reports
 - **Compliance reports**: `/audit-a11y report` - Accessibility documentation
 - **Security reports**: `/audit-security report` - Security posture and compliance

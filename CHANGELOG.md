@@ -7,6 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-01-20
+
+### Fixed
+- **Workflow Specialist Agent** - Improved user approval workflow
+  - Removed deprecated `AskUserQuestion` tool reference
+  - Standardized to continuous workflow with formatted output approval pattern
+  - Use `=== SECTION READY FOR APPROVAL ===` header format for all outputs
+  - Commit messages and PR descriptions now presented as formatted output blocks
+  - Users approve by responding naturally, no structured options needed
+
+- **Audit Specialists** - Standardized report file creation
+  - All audit specialists now create persistent markdown report files
+  - File naming convention: `audit-[type]-YYYY-MM-DD-HHMM.md`
+  - Reports saved to current directory or `reports/` subdirectory
+  - Executive summary presented to terminal + file path provided
+  - Added Write/Edit tools to all specialist agents
+  - Commands updated to require file creation in prompts
+
+### Added
+- **Markdown Style Guide** - New comprehensive documentation reference
+  - Complete guide at `docs/reference/markdown-style-guide.md`
+  - Documents proper Zensical rendering patterns
+  - Conversion examples for common markdown issues
+  - Testing checklist for documentation changes
+  - Fixes heading vs. bold text structure issues
+  - Referenced in CLAUDE.md, commands/docs-generate.md, and documentation-generator skill
+
+### Changed
+- **PR Workflow Commands** - Improved command structure and documentation
+  - `/pr-create` - Changed to "How It Works" section with continuous workflow
+  - `/pr-release` - Changed to "How It Works" section with continuous workflow
+  - Removed confusing "Phase" structure with "DO NOT create yet" language
+  - Clarified automated workflow steps happen in single agent invocation
+  - Simplified Tool Usage sections with clear prerequisites
+  - Agents now generate and present full descriptions before waiting for approval
+
+- **Documentation Formatting** - Better heading hierarchy and list structure
+  - Removed shell expansion (!command) from PR workflow commands
+  - Updated workflow-specialist prompts to gather git context directly
+  - Improved documentation structure in contributing guide
+  - Enhanced list formatting in design workflow guide
+  - Simplified index page categorization with proper subheadings
+  - Better heading structure replaces bold text in nested lists
+
+- **File Creation Requirements** - Standardized across audit commands
+  - `/audit-a11y` - Updated to require file creation
+  - `/audit-live-site` - Updated to require file creation
+  - `/audit-perf` - Updated to require file creation
+  - `/audit-security` - Updated to require file creation
+  - `/quality-analyze` - Updated to require file creation
+  - `/quality-standards` - Updated to require file creation
+
+### Breaking Changes
+
+**BREAKING CHANGE: Audit specialists output format changed**
+
+All audit specialist agents now create persistent report files as primary output instead of terminal-only display. This affects:
+- `accessibility-specialist`
+- `security-specialist`
+- `performance-specialist`
+- `code-quality-specialist`
+- `live-audit-specialist`
+
+**Migration:** Users relying on terminal-only output will now receive a file path. The executive summary is still displayed to terminal, but full reports are in markdown files.
+
 ## [0.6.0] - 2026-01-18
 
 ### Added
@@ -493,7 +558,9 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.4.2...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.6.1...HEAD
+[0.6.1]: https://github.com/kanopi/cms-cultivator/compare/0.6.0...0.6.1
+[0.6.0]: https://github.com/kanopi/cms-cultivator/compare/0.4.2...0.6.0
 [0.4.2]: https://github.com/kanopi/cms-cultivator/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/kanopi/cms-cultivator/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/kanopi/cms-cultivator/compare/0.3.1...0.4.0

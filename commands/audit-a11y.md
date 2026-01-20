@@ -14,7 +14,7 @@ Task(cms-cultivator:accessibility-specialist:accessibility-specialist,
        - Format: [report/json/summary/checklist - parsed from arguments, default: report]
        - Focus area: [use legacy focus argument if provided, otherwise 'complete audit']
        - Files to analyze: [file list based on scope]
-     Check semantic HTML, ARIA, keyboard navigation, color contrast, and screen reader compatibility for both Drupal and WordPress patterns.")
+     Check semantic HTML, ARIA, keyboard navigation, color contrast, and screen reader compatibility for both Drupal and WordPress patterns. Save the comprehensive audit report to a file (audit-a11y-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 ## Arguments

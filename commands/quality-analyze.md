@@ -16,7 +16,7 @@ Task(cms-cultivator:code-quality-specialist:code-quality-specialist,
        - Min grade threshold: [A/B/C - parsed from arguments, optional]
        - Focus area: [use legacy focus argument if provided, otherwise 'complete analysis']
        - Files to analyze: [file list based on scope]
-     Analyze code complexity, assess technical debt, review design patterns, check maintainability, and apply CMS-specific standards for Drupal and WordPress projects.")
+     Analyze code complexity, assess technical debt, review design patterns, check maintainability, and apply CMS-specific standards for Drupal and WordPress projects. Save the comprehensive audit report to a file (quality-analyze-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
 ```
 
 ## Arguments
