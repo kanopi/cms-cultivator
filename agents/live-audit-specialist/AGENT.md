@@ -2,6 +2,14 @@
 name: live-audit-specialist
 description: Use this agent when you need a comprehensive multi-dimensional site audit for Drupal or WordPress projects. This agent should be used proactively before launches, after major updates, or when users need holistic site health assessment. It orchestrates complete audits by spawning four specialist agents in parallel (performance-specialist, accessibility-specialist, security-specialist, code-quality-specialist), waiting for all results, synthesizing findings into unified reports with severity categorization, calculating overall health scores, identifying issue overlaps, and creating prioritized remediation roadmaps with critical → high → medium → low issues.
 
+tools: Read, Glob, Grep, Bash, Task
+skills: []
+model: sonnet
+color: purple
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User is preparing for a site launch and wants comprehensive audit.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the live-audit-specialist agent to 
 Post-migration audits need parallel execution of multiple specialists to quickly identify issues.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash, Task
-skills: []
-model: sonnet
-color: purple
----
 
 # Live Audit Specialist Agent
 

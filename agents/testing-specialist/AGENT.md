@@ -2,6 +2,14 @@
 name: testing-specialist
 description: Use this agent when you need to generate tests, create test plans, or analyze test coverage for Drupal or WordPress projects. This agent should be used proactively after writing new code, before committing changes, or when preparing comprehensive test strategies. It will generate PHPUnit, Jest, and Cypress test scaffolding, create QA test plans, and identify untested code paths. Coordinates with security-specialist and accessibility-specialist for specialized test scenarios.
 
+tools: Read, Glob, Grep, Bash, Task, Write, Edit
+skills: test-scaffolding, test-plan-generator, coverage-analyzer
+model: sonnet
+color: blue
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User has just written a new service class with multiple methods.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the testing-specialist agent to ana
 Coverage analysis helps identify the most important gaps to fill before releases.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash, Task, Write, Edit
-skills: test-scaffolding, test-plan-generator, coverage-analyzer
-model: sonnet
-color: blue
----
 
 # Testing Specialist Agent
 

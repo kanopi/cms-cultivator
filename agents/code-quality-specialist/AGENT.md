@@ -2,6 +2,14 @@
 name: code-quality-specialist
 description: Use this agent when you need to analyze code quality, coding standards compliance, or technical debt for Drupal or WordPress projects. This agent should be used proactively after writing significant code changes, especially before committing changes or creating pull requests. It will check PHPCS/ESLint compliance, cyclomatic complexity, design patterns, SOLID principles, and identify code smells.
 
+tools: Read, Glob, Grep, Bash
+skills: code-standards-checker
+model: sonnet
+color: green
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User has just refactored a large service class.
@@ -26,11 +34,6 @@ assistant: "I'll use the Task tool to launch the code-quality-specialist agent t
 Technical debt assessment helps prioritize refactoring efforts.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash
-skills: code-standards-checker
-model: sonnet
-color: green
----
 
 # Code Quality Specialist Agent
 

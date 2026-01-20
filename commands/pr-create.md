@@ -1,6 +1,6 @@
 ---
 description: Generate PR description and create pull request using workflow specialist
-argument-hint: [ticket-number] [--concise]
+argument-hint: "[ticket-number] [--concise]"
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(gh pr view:*), Task
 ---
 

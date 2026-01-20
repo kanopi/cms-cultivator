@@ -2,6 +2,14 @@
 name: browser-validator-specialist
 description: Use this agent when you need to validate design implementations in real browsers for Drupal or WordPress projects. This agent should be used proactively after code generation, when users say "test this" or "validate", or before marking work complete. It will test responsive behavior at multiple breakpoints (320px, 768px, 1024px+), check WCAG AA accessibility compliance (contrast ratios, keyboard navigation, ARIA attributes), capture annotated screenshots at each breakpoint, validate interactions (hover, click, focus states), check console for errors, and generate detailed technical validation reports with file paths and specific remediation steps.
 
+tools: Read, Bash, chrome-devtools MCP
+skills: browser-validator
+model: sonnet
+color: orange
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: design-specialist has generated component code and needs browser validation.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the browser-validator-specialist ag
 Accessibility validation requires browser testing to verify contrast, keyboard navigation, and ARIA implementation.
 </commentary>
 </example>
-tools: Read, Bash, chrome-devtools MCP
-skills: browser-validator
-model: sonnet
-color: orange
----
 
 # Browser Validator Specialist Agent
 

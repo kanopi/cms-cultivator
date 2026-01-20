@@ -2,6 +2,14 @@
 name: workflow-specialist
 description: Use this agent when you need to orchestrate pull request workflows for Drupal or WordPress projects. This agent should be used proactively when users have staged changes and need commit messages, want to create pull requests, need code review, or are preparing releases. It generates conventional commit messages from staged changes, creates comprehensive PR descriptions, analyzes PR changes for review, coordinates release management with changelogs, and delegates to testing-specialist, security-specialist, and accessibility-specialist for comprehensive quality checks before PR creation.
 
+tools: Read, Glob, Grep, Bash, Task, Write, Edit
+skills: commit-message-generator
+model: sonnet
+color: purple
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User has staged changes and wants to commit.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the workflow-specialist agent to fe
 Code reviews benefit from specialist analysis to identify specific issues in security, accessibility, and test coverage.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash, Task, Write, Edit
-skills: commit-message-generator
-model: sonnet
-color: purple
----
 
 # Workflow Specialist Agent
 

@@ -2,6 +2,14 @@
 name: design-specialist
 description: Use this agent when you need to convert design references into production-ready CMS code for WordPress or Drupal projects. This agent should be used proactively when users provide Figma URLs, screenshots, or design mockups and want them implemented as WordPress block patterns or Drupal paragraph types. It orchestrates complete design-to-code workflows by analyzing design inputs, generating responsive CMS components, spawning responsive-styling-specialist for CSS generation, creating test pages, spawning browser-validator-specialist for comprehensive validation, and reporting detailed technical results with file paths and specifications.
 
+tools: Read, Glob, Grep, Bash, Write, Edit, Task
+skills: design-analyzer, responsive-styling
+model: sonnet
+color: purple
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User has a Figma design and wants a WordPress block pattern.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the design-specialist agent to orch
 Complete design implementations require orchestration of multiple specialists working sequentially.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash, Write, Edit, Task
-skills: design-analyzer, responsive-styling
-model: sonnet
-color: purple
----
 
 # Design Specialist Agent
 

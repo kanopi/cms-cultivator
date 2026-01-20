@@ -1,7 +1,7 @@
 ---
 description: Generate changelog, deployment checklist, and update PR for release using workflow specialist
-argument-hint: [version-or-focus]
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git tag:*), Bash(git describe:*), Bash(gh pr view:*), Task
+argument-hint: "[version-or-focus]"
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git tag:*), Bash(git describe:*), Bash(gh pr view:*), Bash(gh pr view:*), Task
 ---
 
 ## Context

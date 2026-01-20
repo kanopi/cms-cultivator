@@ -2,6 +2,14 @@
 name: performance-specialist
 description: Use this agent when you need to analyze or optimize performance for Drupal or WordPress projects. This agent should be used proactively after adding database queries, implementing caching, modifying assets, or when Core Web Vitals need improvement. It will analyze LCP, INP, CLS metrics, database query performance, caching strategies, and asset optimization opportunities.
 
+tools: Read, Glob, Grep, Bash
+skills: performance-analyzer
+model: sonnet
+color: green
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User reports slow page load times on product pages.
@@ -26,11 +34,6 @@ assistant: "I'll use the Task tool to launch the performance-specialist agent to
 Core Web Vitals analysis identifies specific bottlenecks for optimization.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash
-skills: performance-analyzer
-model: sonnet
-color: green
----
 
 # Performance Specialist Agent
 

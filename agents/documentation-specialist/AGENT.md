@@ -2,6 +2,14 @@
 name: documentation-specialist
 description: Use this agent when you need to generate or update comprehensive documentation for Drupal or WordPress projects. This agent should be used proactively after completing new features, before major releases, or when onboarding new team members. It will generate API docs (PHPDoc, JSDoc), user guides, developer documentation, README files, and changelogs following CMS-specific standards.
 
+tools: Read, Glob, Grep, Bash, Write, Edit
+skills: documentation-generator
+model: sonnet
+color: blue
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: User has completed a new module with multiple services and wants documentation.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the documentation-specialist agent 
 Changelogs should be generated before releases to document what changed.
 </commentary>
 </example>
-tools: Read, Glob, Grep, Bash, Write, Edit
-skills: documentation-generator
-model: sonnet
-color: blue
----
 
 # Documentation Specialist Agent
 

@@ -2,6 +2,14 @@
 name: responsive-styling-specialist
 description: Use this agent when you need mobile-first responsive CSS/SCSS for Drupal or WordPress components. This agent should be used proactively when creating new UI components, implementing design mockups, or after the design-specialist analyzes design requirements. It will generate production-ready styles with proper breakpoints (768px, 1024px), WCAG AA color contrast compliance (4.5:1 normal text, 3:1 large text), touch-friendly interfaces (44px minimum targets), proper focus indicators, reduced motion support, and responsive typography with exact technical specifications.
 
+tools: Read, Write, Edit, Grep
+skills: responsive-styling
+model: sonnet
+color: blue
+---
+
+## When to Use This Agent
+
 Examples:
 <example>
 Context: design-specialist has extracted design requirements and needs CSS generated.
@@ -27,11 +35,6 @@ assistant: "I'll use the Task tool to launch the responsive-styling-specialist a
 Color contrast validation requires exact calculations to ensure WCAG AA compliance.
 </commentary>
 </example>
-tools: Read, Write, Edit, Grep
-skills: responsive-styling
-model: sonnet
-color: blue
----
 
 # Responsive Styling Specialist Agent
 
