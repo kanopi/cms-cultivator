@@ -81,9 +81,11 @@ Automatically generates conventional commit messages when analyzing staged chang
    └─→ Apply concise mode if --concise flag present
 
 4. Present FULL Content to User for Approval (NOT summary)
-   └─→ Use: AskUserQuestion tool
-   └─→ Show: COMPLETE commit message or FULL PR title + description
-   └─→ Allow: User to approve as-is or provide edits
+   └─→ Format your FINAL output with ONLY the PR title and description
+   └─→ NO summaries, NO explanations, NO context before or after
+   └─→ Use the exact format: "=== PULL REQUEST READY FOR APPROVAL ===" header
+   └─→ Show: COMPLETE PR title + full description with all sections
+   └─→ End with: "Reply 'approve' to create this PR, or provide your edits."
 
 5. Detect Code Type & Spawn Specialists (Parallel)
    ├─→ Standard mode: Run all applicable specialists
@@ -131,10 +133,12 @@ Automatically generates conventional commit messages when analyzing staged chang
 
 **For Commit Messages:**
 
-IMPORTANT: Display the ACTUAL commit message to the user, not a summary. Present it exactly as it will appear in git history.
+CRITICAL: Your final output must ONLY contain the commit message - NO summaries, NO explanations, NO context.
+
+Format your final output EXACTLY like this:
 
 ```markdown
-I've analyzed your staged changes and generated this commit message:
+=== COMMIT MESSAGE READY FOR APPROVAL ===
 
 ```
 feat(auth): add two-factor authentication support
@@ -145,57 +149,59 @@ feat(auth): add two-factor authentication support
 - Update user profile settings UI
 ```
 
-Would you like to approve this message or make changes?
+===================================
+
+Reply "approve" to commit with this message, or provide your edits.
 ```
 
-Then use `AskUserQuestion` with:
-- **Question**: "Do you want to use this commit message, or would you like to edit it?"
-- **Header**: "Commit approval"
-- **Options**:
-  1. "Approve and commit" (description: "Use this exact message")
-  2. "Edit message" (description: "I'll provide a modified version")
-
 **CRITICAL**:
+- Your final message should ONLY be the formatted commit message and approval request
+- NO summaries like "I've analyzed your staged changes..."
+- NO explanations like "This commit adds..." before showing the message
+- NO bullet points explaining what you did
+- ONLY the commit message and approval request
 - NEVER add "Co-Authored-By: Claude..." to commit messages
-- Show the FULL commit message, not a summary
 - After successful commit, suggest running `/pr-create` as the next step
-
-If user selects "Other", they'll provide their edited version. Use that for the commit.
 
 **For PR Descriptions:**
 
-IMPORTANT: Display the ACTUAL PR title and description to the user, not a summary. Show exactly what will be used in the GitHub PR.
+CRITICAL: Your final output must ONLY contain the PR title and description - NO summaries, NO explanations, NO context.
+
+Format your final output EXACTLY like this:
 
 ```markdown
-I've analyzed your changes and generated this pull request:
+=== PULL REQUEST READY FOR APPROVAL ===
 
 **Title:** feat(auth): Add two-factor authentication support
 
 **Description:**
-```
+
 ## Description
 Teamwork Ticket(s): [PROJ-123](link)
 - [ ] Was AI used in this pull request?
 
 > As a developer, I need to implement two-factor authentication to improve account security.
 
-[Full PR description content here - show everything]
-```
+[Include the COMPLETE PR description with ALL sections:
+- Description
+- Acceptance Criteria
+- Assumptions
+- Steps to Validate
+- Affected URL
+- Deploy Notes]
 
-Would you like to approve this PR description or make changes?
-```
+===================================
 
-Then use `AskUserQuestion` with:
-- **Question**: "Do you want to create the PR with this description, or would you like to edit it?"
-- **Header**: "PR approval"
-- **Options**:
-  1. "Approve and create PR" (description: "Create PR with this exact description")
-  2. "Edit description" (description: "I'll provide modifications")
+Reply "approve" to create this PR, or provide your edits.
+```
 
 **CRITICAL**:
-- Show the FULL PR title and description, not a summary
-- Include all sections (Description, Acceptance Criteria, Steps to Validate, etc.)
-- For --concise mode, reduce verbosity while keeping all required sections
+- Your final message should ONLY be the formatted PR (title + description) and approval request
+- NO summaries like "I've analyzed your changes and found..."
+- NO explanations like "This PR adds..." before showing the actual PR
+- NO bullet points explaining what you did
+- ONLY the PR title, full description, and approval request
+- Same format whether --concise flag is used or not (concise only affects description content, not presentation)
 
 ### Handling User Edits
 
@@ -210,13 +216,32 @@ Then use `AskUserQuestion` with:
 
 ### For PR Releases
 
-When generating release artifacts (changelog, deployment checklist), present each for review:
+When generating release artifacts (changelog, deployment checklist), format your final output with ONLY the artifacts:
 
-1. **Show changelog preview** → Ask for approval/edits
-2. **Show deployment checklist preview** → Ask for approval/edits
-3. **Show PR description updates** → Ask for approval/edits
+```markdown
+=== RELEASE ARTIFACTS READY FOR APPROVAL ===
 
-Use the same `AskUserQuestion` pattern for each artifact.
+## Changelog
+
+[Complete Keep a Changelog formatted entry]
+
+## Deployment Checklist
+
+[Complete deployment checklist with all steps]
+
+## PR Description Updates
+
+[Proposed changes to PR description]
+
+===================================
+
+Reply "approve" to update the PR and use these artifacts, or provide your edits.
+```
+
+**CRITICAL**:
+- NO summaries like "I've analyzed X commits..."
+- NO explanations before showing the artifacts
+- ONLY the complete artifacts and approval request
 
 ## Agent Orchestration
 
@@ -457,9 +482,9 @@ Create release PR with changelog and deployment checklist.
 2. Detect: UI changes present
 3. Spawn: accessibility-specialist (UI check)
 4. Generate: PR description with a11y findings
-5. **Present to user**: Show PR description, use AskUserQuestion
-6. **Get approval**: User approves or provides edits
-7. Execute: `gh pr create` with approved description
+5. **Present to user**: Format final output with ONLY the PR title and description (use === PULL REQUEST READY FOR APPROVAL === format)
+6. **Wait for approval**: User will either approve or provide edits via main Claude instance
+7. Execute: `gh pr create` with approved description (only if user approves)
 
 ### Example 2: Security-Critical PR
 
@@ -472,9 +497,9 @@ Create release PR with changelog and deployment checklist.
    - testing-specialist (auth test coverage)
 3. Compile: PR with security + testing findings
 4. Emphasize: Security review checklist in PR
-5. **Present to user**: Show PR description, use AskUserQuestion
-6. **Get approval**: User approves or provides edits
-7. Execute: `gh pr create` with approved description
+5. **Present to user**: Format final output with ONLY the PR title and description (use === PULL REQUEST READY FOR APPROVAL === format)
+6. **Wait for approval**: User will either approve or provide edits via main Claude instance
+7. Execute: `gh pr create` with approved description (only if user approves)
 
 ### Example 3: Release PR
 
@@ -484,15 +509,11 @@ Create release PR with changelog and deployment checklist.
 1. Get version bump type: Ask user (major/minor/patch)
 2. Analyze commits: Since last tag
 3. Generate changelog: Group by conventional commit type
-4. **Present changelog**: Show preview, use AskUserQuestion
-5. **Get approval**: User approves or edits changelog
-6. Create checklist: Deployment steps
-7. **Present checklist**: Show preview, use AskUserQuestion
-8. **Get approval**: User approves or edits checklist
-9. Update version: package.json, plugin header, etc.
-10. **Present PR description**: Show preview, use AskUserQuestion
-11. **Get approval**: User approves or edits
-12. Create PR: Release branch → main with approved content
+4. Create deployment checklist: All deployment steps
+5. Prepare PR updates: Proposed description changes
+6. **Present artifacts**: Format final output with ONLY changelog, deployment checklist, and PR updates (use === RELEASE ARTIFACTS READY FOR APPROVAL === format)
+7. **Wait for approval**: User will either approve or provide edits via main Claude instance
+8. Execute: Update PR description, provide artifacts for manual use (only if user approves)
 
 ## Error Recovery
 
