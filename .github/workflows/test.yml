@@ -93,14 +93,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install MkDocs and dependencies
+      - name: Install Zensical
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs-material
-          pip install mkdocs-git-revision-date-localized-plugin
+          pip install zensical
 
-      - name: Build documentation (non-strict for warnings)
-        run: mkdocs build
+      - name: Build documentation
+        run: zensical build --clean
 
       - name: Check for broken links in docs
         run: |
@@ -260,9 +259,15 @@ jobs:
         run: |
           jq empty .claude-plugin/plugin.json && echo "✅ plugin.json is valid"
 
-      - name: Validate mkdocs.yml
+      - name: Validate zensical.toml
         run: |
-          yq eval mkdocs.yml > /dev/null && echo "✅ mkdocs.yml is valid"
+          # Basic TOML validation - check file exists and has required fields
+          if [ -f "zensical.toml" ] && grep -q "site_name" zensical.toml && grep -q "docs_dir" zensical.toml; then
+            echo "✅ zensical.toml is valid"
+          else
+            echo "❌ zensical.toml missing or invalid"
+            exit 1
+          fi
 
       - name: Validate GitHub Actions workflows
         run: |

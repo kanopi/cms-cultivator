@@ -1,10 +1,40 @@
 ---
 name: testing-specialist
-description: Testing specialist that generates test scaffolding (PHPUnit, Jest, Cypress), creates comprehensive test plans, and analyzes test coverage. Delegates to security and accessibility specialists for specialized test scenarios.
+description: Use this agent when you need to generate tests, create test plans, or analyze test coverage for Drupal or WordPress projects. This agent should be used proactively after writing new code, before committing changes, or when preparing comprehensive test strategies. It will generate PHPUnit, Jest, and Cypress test scaffolding, create QA test plans, and identify untested code paths. Coordinates with security-specialist and accessibility-specialist for specialized test scenarios.
+
 tools: Read, Glob, Grep, Bash, Task, Write, Edit
 skills: test-scaffolding, test-plan-generator, coverage-analyzer
 model: sonnet
+color: blue
 ---
+
+## When to Use This Agent
+
+Examples:
+<example>
+Context: User has just written a new service class with multiple methods.
+user: "I've written a UserManager service but haven't added tests yet. Can you help?"
+assistant: "I'll use the Task tool to launch the testing-specialist agent to analyze your service and generate PHPUnit tests covering unit tests for business logic and integration tests for database operations."
+<commentary>
+New code needs test coverage before committing to prevent regressions.
+</commentary>
+</example>
+<example>
+Context: User is preparing to test a new feature with form handling.
+user: "We're launching a multi-step checkout flow. Need a comprehensive test plan."
+assistant: "I'll use the Task tool to launch the testing-specialist agent to create a QA test plan. The agent will coordinate with security-specialist for payment security tests and accessibility-specialist for form navigation tests."
+<commentary>
+Complex features need comprehensive test plans covering functional, security, and accessibility scenarios.
+</commentary>
+</example>
+<example>
+Context: User wants to improve test coverage before a release.
+user: "Our test coverage is at 60%. What should we test next?"
+assistant: "I'll use the Task tool to launch the testing-specialist agent to analyze your test coverage, identify untested critical paths, and recommend specific tests to add prioritized by risk."
+<commentary>
+Coverage analysis helps identify the most important gaps to fill before releases.
+</commentary>
+</example>
 
 # Testing Specialist Agent
 

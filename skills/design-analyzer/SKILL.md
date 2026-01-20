@@ -8,6 +8,24 @@ description: Automatically extract technical requirements from design references
 ## Purpose
 Extract technical requirements from design references (Figma URLs, screenshots, mockups) for CMS component implementation.
 
+## Philosophy
+
+Accurate design-to-code translation requires systematic extraction of technical specifications.
+
+### Core Beliefs
+
+1. **Precision Over Interpretation**: Extract exact values, don't guess or estimate
+2. **Accessibility from the Start**: Check contrast and touch targets during analysis
+3. **Responsive by Default**: Design for mobile first, enhance for desktop
+4. **Document Technical Decisions**: Record exact colors, spacing, typography for reproducibility
+
+### Why Design Analysis Matters
+
+- **Pixel-Perfect Implementation**: Faithful translation of designer intent
+- **Consistent Experiences**: Same colors, spacing, typography across components
+- **Accessibility Compliance**: Catch contrast and touch target issues early
+- **Developer Efficiency**: Clear specs eliminate guesswork
+
 ## When This Skill Activates
 
 This skill automatically activates when:
@@ -20,6 +38,87 @@ This skill automatically activates when:
   - "convert this design to [WordPress/Drupal]"
 - User asks to analyze visual design elements
 - User references a "screenshot" or "wireframe"
+
+## Decision Framework
+
+Before analyzing a design, determine:
+
+### What's the Design Source?
+
+1. **Figma URL** → Extract artboard structure, exact values from design tokens
+2. **Screenshot/Image** → Visual analysis, estimate values, measure ratios
+3. **Wireframe** → Structure only, minimal styling details
+4. **Partial mockup** → Analyze what's visible, note missing context
+
+### What's the Target Platform?
+
+**WordPress**:
+- Map to **native blocks** (Group, Heading, Paragraph, Buttons, Image, Columns)
+- Output: Block pattern PHP file + SCSS
+- Focus: Block composition and responsive classes
+
+**Drupal**:
+- Map to **paragraph fields** (text, image, link, entity reference)
+- Output: Paragraph type YAML + Twig + SCSS
+- Focus: Field structure and view modes
+
+### What Components Are Visible?
+
+**Layout patterns**:
+- Hero sections → Full-width container with content overlay
+- Card grids → Repeating cards with consistent spacing
+- Feature lists → Icon + heading + text patterns
+- Navigation → Header with menu items
+
+**Interactive elements**:
+- Buttons → Identify all button states (default, hover, focus, active)
+- Forms → Note input types, labels, validation states
+- Links → Check text links vs. button styles
+
+### What Technical Specs Are Needed?
+
+**Always extract**:
+- ✅ **Colors** - Hex values, opacity, contrast ratios
+- ✅ **Typography** - Font families, sizes, weights, line heights
+- ✅ **Spacing** - Margins, padding, gaps (in px or rem)
+- ✅ **Layout** - Grid columns, flex direction, alignment
+
+**Check for accessibility**:
+- ✅ **Contrast ratios** - Calculate for all text (4.5:1 minimum)
+- ✅ **Touch targets** - Verify buttons ≥ 44x44px on mobile
+- ✅ **Focus indicators** - Note if visible focus states exist
+
+### What Responsive Behavior?
+
+**Analyze breakpoints**:
+- **Mobile (< 768px)** - Stacked layout, larger touch targets
+- **Tablet (768-1023px)** - Mixed layout, medium spacing
+- **Desktop (1024px+)** - Full layout, smaller relative spacing
+
+**Common responsive patterns**:
+- Columns → Stack on mobile, side-by-side on desktop
+- Font sizes → Smaller base on mobile, larger on desktop
+- Images → Full width on mobile, constrained on desktop
+
+### Decision Tree
+
+```
+User provides design reference
+    ↓
+Identify source type (Figma/image/wireframe)
+    ↓
+Determine target platform (WordPress/Drupal)
+    ↓
+Extract visual specs (colors/typography/spacing)
+    ↓
+Check accessibility (contrast/touch targets)
+    ↓
+Map to CMS components (blocks/paragraphs)
+    ↓
+Document responsive behavior
+    ↓
+Output structured technical spec
+```
 
 ## Capabilities
 

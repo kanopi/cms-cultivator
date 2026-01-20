@@ -7,6 +7,24 @@ description: Automatically analyze test coverage when user asks which code is te
 
 Automatically analyze test coverage and identify untested code.
 
+## Philosophy
+
+Knowing what's tested gives confidence to refactor and prevents regressions.
+
+### Core Beliefs
+
+1. **Visibility Drives Action**: Can't improve what you can't measure
+2. **Not All Code Needs 100% Coverage**: Prioritize critical paths over getters/setters
+3. **Coverage ≠ Quality**: 100% coverage doesn't guarantee bug-free code
+4. **Gap Analysis Guides Testing**: Knowing what's untested helps prioritize test writing
+
+### Why Coverage Analysis Matters
+
+- **Identify Risks**: Find critical code without test protection
+- **Prioritize Effort**: Focus testing where it matters most
+- **Prevent Regressions**: Tests catch bugs before they reach users
+- **Enable Refactoring**: Good coverage allows confident code changes
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -16,6 +34,71 @@ Activate this skill when the user:
 - Shows code and asks "is this tested?"
 - References "untested code paths"
 - Asks "what's my coverage percentage?"
+
+## Decision Framework
+
+Before analyzing coverage, consider:
+
+### What's the Goal?
+
+1. **Find coverage gaps** → Identify untested code
+2. **Measure current coverage** → Run coverage tools and report percentages
+3. **Prioritize testing** → Focus on critical paths first
+4. **Improve coverage** → Recommend specific tests to write
+
+### What's the Scope?
+
+- **Specific file** - User shows code → Analyze that file's coverage
+- **Component/module** - User mentions feature → Check component tests
+- **Recent changes** - User says "my code" → Check coverage of git diff
+- **Entire project** - User says "overall coverage" → Run project-wide analysis
+
+### What Test Types Exist?
+
+**Check for**:
+- PHPUnit tests (PHP) → Run `phpunit --coverage-text`
+- Jest tests (JavaScript) → Run `jest --coverage`
+- Cypress tests (E2E) → Integration coverage only
+- Manual test documentation → Note gaps
+
+### What Coverage Metrics Matter?
+
+**Primary metrics**:
+- **Line coverage** - Percentage of lines executed
+- **Branch coverage** - Percentage of decision branches taken
+- **Function coverage** - Percentage of functions called
+
+**Priority order**:
+1. Critical paths (auth, payments, data writes)
+2. Public APIs
+3. Security-sensitive code
+4. Business logic
+5. Getters/setters (lowest priority)
+
+### What's a Good Target?
+
+- **Critical code** - Aim for 90%+ coverage
+- **Business logic** - Aim for 80%+ coverage
+- **Overall project** - Aim for 70%+ coverage
+- **Getters/setters** - Can skip, focus on behavior
+
+### Decision Tree
+
+```
+User asks about coverage
+    ↓
+Determine scope (file/component/project)
+    ↓
+Check for existing test files
+    ↓
+Run coverage tool (PHPUnit/Jest/Cypress)
+    ↓
+Analyze gaps (prioritize critical paths)
+    ↓
+Report coverage with recommendations
+    ↓
+Suggest specific tests for gaps
+```
 
 ## Quick Coverage Analysis
 

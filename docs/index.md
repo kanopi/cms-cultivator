@@ -1,24 +1,25 @@
 # CMS Cultivator
 
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
-[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://kanopi.github.io/cms-cultivator/)
+[![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing **14 specialized commands** and **9 Agent Skills** for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing specialized slash commands and auto-invoked Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
 ### Slash Commands (User-Invoked)
-- **🔄 4 PR Workflow Commands** - Streamline pull requests from commit to deployment
-- **♿ 1 Accessibility Command** - Ensure WCAG 2.1 Level AA compliance
-- **⚡ 1 Performance Command** - Optimize Core Web Vitals and page speed
-- **🔒 1 Security Command** - Scan for vulnerabilities and security issues
-- **🔍 1 Live Site Audit Command** - Comprehensive audits using Chrome DevTools
-- **📝 1 Documentation Command** - Generate comprehensive project documentation
-- **🧪 3 Testing Commands** - Create tests and analyze coverage
-- **📊 2 Code Quality Commands** - Maintain standards and reduce technical debt
+- **🔄 PR Workflow** - Streamline pull requests from commit to deployment
+- **♿ Accessibility** - Ensure WCAG 2.1 Level AA compliance
+- **⚡ Performance** - Optimize Core Web Vitals and page speed
+- **🔒 Security** - Scan for vulnerabilities and security issues
+- **🎨 Design Workflow** - Figma to WordPress blocks and Drupal paragraphs
+- **🔍 Live Site Auditing** - Comprehensive audits using Chrome DevTools
+- **📝 Documentation** - Generate comprehensive project documentation
+- **🧪 Testing** - Create tests and analyze coverage
+- **📊 Code Quality** - Maintain standards and reduce technical debt
 
 ### Agent Skills (Auto-Invoked)
-- **🤖 9 Intelligent Skills** - Claude automatically helps during conversation
+- **🤖 Intelligent Skills** - Claude automatically helps during conversation
   - Commit message generation
   - Code standards checking
   - Test scaffolding
@@ -37,8 +38,8 @@
 |---------|-------------|
 | **[Getting Started](installation.md)** | Installation and initial setup |
 | **[Quick Start](quick-start.md)** | Common workflows and examples |
-| **[Commands](commands/overview.md)** | Complete command reference (14 commands) |
-| **[Agents & Skills](agents-and-skills.md)** | 8 specialist agents + 9 auto-invoked skills |
+| **[Commands](commands/overview.md)** | Complete command reference |
+| **[Agents & Skills](agents-and-skills.md)** | Specialist agents and auto-invoked skills |
 | **[Kanopi Tools](kanopi-tools/overview.md)** | Integration with Kanopi's DDEV add-ons |
 
 ---
@@ -158,9 +159,5 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Commands](commands/overview.md)** - Discover all 14 commands
+3. **[Explore Commands](commands/overview.md)** - Discover all available commands
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons
-
----
-
-**Total Commands**: 14 (4 PR + 1 A11y + 1 Perf + 1 Security + 1 Live Audit + 1 Docs + 3 Testing + 2 Quality)

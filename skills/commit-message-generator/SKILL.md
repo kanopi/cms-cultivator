@@ -7,6 +7,24 @@ description: Automatically generate conventional commit messages when user has s
 
 Automatically generate conventional commit messages for staged changes.
 
+## Philosophy
+
+Commit messages are the history and documentation of your code's evolution.
+
+### Core Beliefs
+
+1. **Commits Tell a Story**: Each commit should explain what changed and why
+2. **Conventional Format Enables Automation**: Structured messages power changelogs and semantic versioning
+3. **Clarity Over Brevity**: A clear 2-line message beats a cryptic 5-word one
+4. **Context Matters**: Messages should be understandable months later without additional context
+
+### Why Conventional Commits
+
+- **Automated Changelogs**: Generate release notes from commit history
+- **Semantic Versioning**: Determine version bumps (major/minor/patch) automatically
+- **Better Searchability**: Find specific types of changes quickly
+- **Team Communication**: Consistent format aids code review and collaboration
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -15,6 +33,55 @@ Activate this skill when the user:
 - Asks "what should my commit message be?"
 - Says "I need to commit my changes"
 - Asks for help writing commit messages
+
+## Decision Framework
+
+Before generating a commit message, ask yourself:
+
+### Is This Ready to Commit?
+
+- ✅ **Yes** - Staged changes represent a single logical unit of work
+- ❌ **No** - Multiple unrelated changes staged → Suggest splitting into separate commits
+- ⚠️ **Maybe** - Large changeset → Review to ensure it's cohesive
+
+### What Type of Change Is This?
+
+1. **New functionality** → `feat` type
+2. **Bug fix** → `fix` type
+3. **Code improvement without behavior change** → `refactor` type
+4. **Documentation only** → `docs` type
+5. **Tests only** → `test` type
+6. **Multiple types** → Suggest splitting commits
+
+### What Scope Makes Sense?
+
+- **Module/component name** - For focused changes (e.g., `auth`, `api`, `ui`)
+- **Feature area** - For cross-cutting changes (e.g., `validation`, `logging`)
+- **No scope** - For global changes (e.g., dependencies, config)
+
+### Should This Be Multiple Commits?
+
+Split if staged changes include:
+- ✅ Unrelated features or fixes
+- ✅ Refactoring + new feature (split: refactor first, feature second)
+- ✅ Multiple bug fixes
+- ❌ Feature + tests (keep together)
+- ❌ Feature + documentation (keep together)
+
+### Decision Tree
+
+```
+User mentions commit
+    ↓
+Check: Staged changes?
+    ↓ Yes
+Check: Multiple unrelated changes?
+    ↓ No
+Check: Follows conventional commits pattern?
+    ↓ Generate message
+    ↓
+Review with user → Commit
+```
 
 ## Workflow
 

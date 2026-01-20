@@ -2,13 +2,13 @@
 
 CMS Cultivator features a three-tier architecture:
 
-1. **8 Specialist Agents** - Orchestrate complex workflows (spawned by commands)
-2. **14 Slash Commands** - User-facing interfaces (you invoke explicitly)
-3. **9 Agent Skills** - Knowledge base (Claude invokes automatically during conversation)
+1. **Specialist Agents** - Orchestrate complex workflows (spawned by commands)
+2. **Slash Commands** - User-facing interfaces (you invoke explicitly)
+3. **Agent Skills** - Knowledge base (Claude invokes automatically during conversation)
 
 ---
 
-## 8 Specialist Agents
+## Specialist Agents
 
 Agents are specialized AI assistants that handle complex, multi-step workflows. When you run a command, it spawns the appropriate agent to coordinate the work.
 
@@ -133,7 +133,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 
 ---
 
-## 9 Agent Skills
+## Agent Skills
 
 Agent Skills are **model-invoked** capabilities—Claude decides when to use them based on your conversation context, without you needing to remember specific command names.
 
@@ -146,9 +146,9 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 | **Execution** | Spawns an agent | Coordinates workflow | Provides knowledge |
 | **Example** | `/pr-create PROJ-123` | workflow-specialist orchestrates PR creation | "I need to commit my changes" |
 
-## Available Agent Skills
+### Available Skills
 
-### 1. commit-message-generator
+#### 1. commit-message-generator
 
 **Automatically triggers when you:**
 - Say "I need to commit" or "ready to commit"

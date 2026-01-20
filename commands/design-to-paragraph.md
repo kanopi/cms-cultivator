@@ -123,6 +123,29 @@ Based on design analysis:
    - Next steps")
 ```
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn design-specialist agent (orchestrator)
+- ✅ Agent spawns responsive-styling-specialist for CSS generation (sequential)
+- ✅ Agent spawns browser-validator-specialist for testing (sequential)
+- ✅ Generate Drupal paragraph type YAML configuration
+- ✅ Generate field definitions and entity view modes
+- ✅ Generate Twig templates
+- ✅ Generate responsive CSS/SCSS
+- ✅ Create test nodes for validation (if Drupal MCP available)
+
+**Not allowed:**
+- ❌ Do not enable modules or import config (provide manual instructions if Drupal MCP unavailable)
+- ❌ Do not modify existing paragraph types
+- ❌ Do not commit or push changes
+
+The design-specialist orchestrates all operations sequentially (analysis → config → template → styling → validation).
+
+---
+
 ## How It Works
 
 This command spawns the **design-specialist** agent with Drupal focus. The agent orchestrates the complete workflow with **optional Drupal MCP** support:

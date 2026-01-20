@@ -7,6 +7,24 @@ description: Automatically check code against PHPCS, ESLint, WordPress Coding St
 
 Automatically check code against coding standards and style guides.
 
+## Philosophy
+
+Consistent code style makes collaboration seamless and reduces cognitive load.
+
+### Core Beliefs
+
+1. **Standards Reduce Friction**: Consistent style means less time debating formatting
+2. **Automated Enforcement Saves Time**: Tools catch style issues faster than humans
+3. **Community Standards Build Better Software**: Following established patterns improves code quality
+4. **Readability is Paramount**: Code is read far more often than it's written
+
+### Why Coding Standards Matter
+
+- **Team Collaboration**: Everyone writes code the same way
+- **Easier Maintenance**: Consistent patterns are easier to understand and modify
+- **Fewer Bugs**: Many standards prevent common mistakes
+- **Professional Quality**: Shows attention to detail and best practices
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -16,6 +34,61 @@ Activate this skill when the user:
 - References "PHPCS", "ESLint", "WordPress Coding Standards", or "Drupal Coding Standards"
 - Shows code and asks if it's properly formatted
 - Asks "should I lint this?"
+
+## Decision Framework
+
+Before running standards checks, consider:
+
+### What Platform Is This?
+
+1. **Drupal** → Use Drupal Coding Standards (via PHPCS)
+2. **WordPress** → Use WordPress Coding Standards (via PHPCS)
+3. **Generic PHP** → Use PSR-12 (via PHPCS)
+4. **JavaScript** → Use ESLint with project config
+5. **Mixed** → Run both PHP and JavaScript checks
+
+### What's the Scope?
+
+- **Specific file(s)** - User shows code or mentions file → Check that file
+- **Recent changes** - User mentions "my changes" → Check git diff
+- **Entire project** - User says "whole project" → Run project-wide check
+- **Directory** - User mentions component/module → Check that directory
+
+### What Standard Should Apply?
+
+**Automatic detection**:
+- Drupal project → Drupal Coding Standards
+- WordPress project → WordPress Coding Standards
+- .eslintrc present → Use project's ESLint config
+- composer.json with PHPCS → Use configured standard
+
+**User-specified**:
+- User mentions specific standard → Use that standard
+- No config found → Suggest installing standards tools
+
+### Should This Auto-Fix?
+
+- ✅ **Yes** - User asks "can you fix these?" → Provide `--fix` commands
+- ❌ **No** - Just checking compliance → Report violations only
+- ⚠️ **Ask** - Many violations found → Suggest auto-fix option
+
+### Decision Tree
+
+```
+User asks about standards
+    ↓
+Detect platform (Drupal/WordPress/Generic)
+    ↓
+Determine scope (file/changes/project)
+    ↓
+Check for existing config (.phpcs.xml, .eslintrc)
+    ↓
+Run appropriate tool
+    ↓
+Report violations
+    ↓
+Auto-fix? → Provide --fix commands if requested
+```
 
 ## Workflow
 

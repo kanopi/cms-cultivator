@@ -1,14 +1,113 @@
 ---
 description: Comprehensive performance analysis and Core Web Vitals optimization using performance specialist
-argument-hint: "[focus-area]"
-allowed-tools: Task
+argument-hint: "[options]"
+allowed-tools: Task, Bash(git:*)
 ---
 
 Spawn the **performance-specialist** agent using:
 
 ```
 Task(cms-cultivator:performance-specialist:performance-specialist,
-     prompt="Analyze performance and optimize Core Web Vitals (LCP, INP, CLS). Focus area: [use argument if provided, otherwise 'complete analysis']. Check database queries, caching strategies, asset optimization, and rendering for both Drupal and WordPress projects.")
+     prompt="Analyze performance and optimize Core Web Vitals (LCP, INP, CLS) with the following parameters:
+       - Depth mode: [quick/standard/comprehensive - parsed from arguments, default: standard]
+       - Scope: [current-pr/module/file/entire - parsed from arguments, default: entire]
+       - Format: [report/json/summary/checklist - parsed from arguments, default: report]
+       - Target threshold: [good/needs-improvement - parsed from arguments, optional]
+       - Focus area: [use legacy focus argument if provided, otherwise 'complete analysis']
+       - Files to analyze: [file list based on scope]
+     Check database queries, caching strategies, asset optimization, and rendering for both Drupal and WordPress projects.")
+```
+
+## Arguments
+
+This command supports flexible argument modes for different use cases:
+
+### Depth Modes
+- `--quick` - Core Web Vitals only (~5 min) - LCP, INP, CLS status check
+- `--standard` - CWV + major bottlenecks (default, ~15 min) - Comprehensive performance audit
+- `--comprehensive` - Full profiling + recommendations (~30 min) - Deep analysis with detailed optimizations
+
+### Scope Control
+- `--scope=current-pr` - Only files changed in current PR (uses git diff)
+- `--scope=module=<name>` - Specific module/directory (e.g., `--scope=module=src/api`)
+- `--scope=file=<path>` - Single file (e.g., `--scope=file=src/queries.php`)
+- `--scope=frontend` - Only frontend files (assets, CSS, JS, images)
+- `--scope=backend` - Only backend files (database queries, caching, API)
+- `--scope=entire` - Full codebase (default)
+
+### Output Formats
+- `--format=report` - Detailed report with metrics and recommendations (default)
+- `--format=json` - Structured JSON for CI/CD integration
+- `--format=summary` - Executive summary with key findings
+- `--format=metrics` - Core Web Vitals metrics only (LCP, INP, CLS scores)
+
+### Target Thresholds
+- `--target=good` - Report only if metrics fail "good" thresholds (LCP > 2.5s, INP > 200ms, CLS > 0.1)
+- `--target=needs-improvement` - Report if metrics need improvement (LCP > 4.0s, INP > 500ms, CLS > 0.25)
+
+### Legacy Focus Areas (Still Supported)
+For backward compatibility, single-word focus areas without `--` prefix are treated as legacy focus filters:
+- `queries` - Focus on database query optimization
+- `n+1` - Focus on N+1 query detection
+- `assets` - Focus on asset optimization (images, fonts, CSS, JS)
+- `bundles` - Focus on JavaScript bundle analysis
+- `caching` - Focus on caching strategy review
+- `vitals` - Focus on Core Web Vitals (LCP, INP, CLS)
+- `lcp` - Focus on Largest Contentful Paint
+- `inp` - Focus on Interaction to Next Paint
+- `cls` - Focus on Cumulative Layout Shift
+
+## Usage Examples
+
+### Quick Checks
+```bash
+# Quick Core Web Vitals check on your changes
+/audit-perf --quick --scope=current-pr
+
+# Quick metrics check with JSON output
+/audit-perf --quick --format=metrics
+
+# Quick frontend performance check
+/audit-perf --quick --scope=frontend
+```
+
+### Standard Audits
+```bash
+# Standard audit (same as legacy `/audit-perf`)
+/audit-perf
+
+# Standard audit on PR changes
+/audit-perf --scope=current-pr
+
+# Standard audit with JSON for CI/CD
+/audit-perf --standard --format=json
+
+# Backend performance audit
+/audit-perf --standard --scope=backend
+```
+
+### Comprehensive Audits
+```bash
+# Comprehensive pre-release audit
+/audit-perf --comprehensive
+
+# Comprehensive audit with executive summary
+/audit-perf --comprehensive --format=summary
+
+# Comprehensive audit with target threshold
+/audit-perf --comprehensive --target=good
+```
+
+### Legacy Syntax (Still Works)
+```bash
+# Focus on specific area (legacy)
+/audit-perf queries
+/audit-perf vitals
+/audit-perf assets
+
+# Combine legacy focus with new modes
+/audit-perf queries --quick
+/audit-perf vitals --scope=current-pr
 ```
 
 ## Usage
@@ -39,9 +138,99 @@ For quick performance analysis of specific queries or functions during conversat
 
 ---
 
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn performance-specialist agent
+- ✅ Run Lighthouse for Core Web Vitals analysis
+- ✅ Analyze database queries and caching strategies
+- ✅ Check asset optimization (CSS, JS, images)
+- ✅ Review code for performance anti-patterns
+- ✅ Generate performance reports with optimization recommendations
+
+**Not allowed:**
+- ❌ Do not modify code directly (provide optimizations in report)
+- ❌ Do not run load testing or stress testing
+- ❌ Do not install performance tools (suggest installation if needed)
+
+The performance-specialist agent performs all audit operations.
+
+---
+
 ## How It Works
 
 This command spawns the **performance-specialist** agent, which uses the **performance-analyzer** skill and performs comprehensive performance audits focused on Core Web Vitals.
+
+### 1. Parse Arguments
+
+The command first parses the arguments to determine the audit parameters:
+
+**Depth mode:**
+- Check for `--quick`, `--standard`, or `--comprehensive` flags
+- Default: `--standard` (if not specified)
+
+**Scope:**
+- Check for `--scope=<value>` flag
+- If `--scope=current-pr`: Get changed files using `git diff --name-only origin/main...HEAD`
+- If `--scope=frontend`: Target CSS, JS, images, fonts
+- If `--scope=backend`: Target PHP, database queries, caching
+- If `--scope=module=<name>`: Target specific directory
+- If `--scope=file=<path>`: Target single file
+- Default: `--scope=entire` (analyze entire codebase)
+
+**Format:**
+- Check for `--format=<value>` flag
+- Options: `report` (default), `json`, `summary`, `metrics`
+- Default: `--format=report`
+
+**Target threshold:**
+- Check for `--target=<value>` flag
+- Options: `good` (strict), `needs-improvement` (moderate)
+- Used for CI/CD pass/fail criteria
+
+**Legacy focus area:**
+- If argument doesn't start with `--`, treat as legacy focus area
+- Examples: `queries`, `n+1`, `assets`, `vitals`, `lcp`, `inp`, `cls`
+- Can be combined with new flags: `/audit-perf queries --quick`
+
+### 2. Determine Files to Analyze
+
+Based on the scope parameter:
+
+**For `current-pr`:**
+```bash
+git diff --name-only origin/main...HEAD | grep -E '\.(php|tsx?|jsx?|css|scss|sql)$'
+```
+
+**For `frontend`:**
+```bash
+find . -type f \( -name "*.css" -o -name "*.scss" -o -name "*.js" -o -name "*.tsx" -o -name "*.jsx" \)
+```
+
+**For `backend`:**
+```bash
+find . -type f \( -name "*.php" -o -name "*.sql" \)
+```
+
+**For `module=<name>` or `file=<path>`:**
+Analyze the specified directory or single file.
+
+**For `entire`:**
+Analyze all relevant files in the codebase.
+
+### 3. Spawn Performance Specialist
+
+Pass all parsed parameters to the agent:
+```
+Task(cms-cultivator:performance-specialist:performance-specialist,
+     prompt="Run performance audit focused on Core Web Vitals with:
+       - Depth mode: {depth}
+       - Scope: {scope}
+       - Format: {format}
+       - Target threshold: {target or 'none'}
+       - Focus area: {focus or 'complete analysis'}
+       - Files to analyze: {file_list}")
+```
 
 ### The Performance Specialist Will
 

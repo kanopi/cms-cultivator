@@ -230,29 +230,46 @@ git commit -m "[selected message]"
 ### ♿ Accessibility
 
 ```bash
-/audit-a11y                 # Comprehensive WCAG audit
-/audit-a11y report          # Generate compliance report
-/audit-a11y checklist       # WCAG 2.1 AA checklist
-/audit-a11y [focus]         # Check specific aspects (contrast, aria, headings, forms, alt-text, keyboard)
-/audit-a11y fix             # Generate code fixes
+/audit-a11y                        # Comprehensive WCAG audit
+/audit-a11y --quick                # Fast critical issues check
+/audit-a11y --scope=current-pr     # Analyze only PR files
+/audit-a11y --format=summary       # Executive summary
+/audit-a11y contrast               # Focus on color contrast
 ```
 
 ### ⚡ Performance
 
 ```bash
-/audit-perf                 # Full-stack performance analysis
-/audit-perf lighthouse      # Lighthouse audit
-/audit-perf report          # Executive performance report
-/audit-perf [focus]         # Focused analysis (queries, n+1, assets, bundles, caching)
-/audit-perf [metric]        # Core Web Vitals optimization (lcp, inp, fid, cls)
+/audit-perf                        # Full-stack performance analysis
+/audit-perf --quick                # Fast critical issues check
+/audit-perf --scope=current-pr     # Analyze only PR files
+/audit-perf --format=json          # Machine-readable output
+/audit-perf queries                # Focus on database queries
 ```
 
 ### 🔒 Security
 
 ```bash
-/audit-security             # Comprehensive security audit
-/audit-security [focus]     # Focused scans (deps, secrets, permissions)
-/audit-security report      # Security compliance report
+/audit-security                    # Comprehensive security audit
+/audit-security --quick            # Fast critical issues scan
+/audit-security --scope=current-pr # Scan only PR files
+/audit-security --format=sarif     # SARIF format for CI/CD
+/audit-security deps               # Focus on dependencies
+```
+
+### 🎨 Design Workflow
+
+```bash
+/design-to-block              # Create WordPress block pattern from design
+/design-to-paragraph          # Create Drupal paragraph type from design
+/design-validate              # Validate design implementation in browser
+```
+
+### 🔍 Live Site Auditing
+
+```bash
+/audit-live-site              # Comprehensive live site audit (orchestrator)
+                              # Runs performance, accessibility, security, and quality checks in parallel
 ```
 
 ### 📝 Documentation
@@ -282,9 +299,52 @@ git commit -m "[selected message]"
 
 ---
 
+## Argument Modes (Advanced)
+
+Audit and quality commands support flexible argument modes for different use cases:
+
+### Depth Modes
+```bash
+--quick                    # Fast critical issues only (~5 min)
+--standard                 # Full analysis (default, ~15 min)
+--comprehensive            # Deep dive with best practices (~30 min)
+```
+
+### Scope Control
+```bash
+--scope=current-pr         # Only files in current PR
+--scope=module=<name>      # Specific module/directory
+--scope=file=<path>        # Single file
+--scope=entire             # Full codebase (default)
+```
+
+### Output Formats
+```bash
+--format=report            # Detailed markdown (default)
+--format=json              # Machine-readable for CI/CD
+--format=summary           # Executive summary
+--format=checklist         # Simple pass/fail list
+```
+
+### Example Combinations
+```bash
+# Pre-commit check (fast)
+/audit-a11y --quick --scope=current-pr
+
+# CI/CD integration
+/audit-security --standard --format=json > results.json
+
+# Executive report
+/audit-perf --comprehensive --format=summary
+```
+
+See [Using Argument Modes](guides/using-argument-modes.md) for complete guide.
+
+---
+
 ## Focus Parameters
 
-Many commands accept optional focus parameters to analyze specific areas:
+Many commands also accept legacy focus parameters to analyze specific areas:
 
 ### PR Review Focus
 ```bash

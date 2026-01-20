@@ -86,6 +86,28 @@ Examples:
    - Next steps")
 ```
 
+---
+
+## Tool Usage
+
+**Allowed operations:**
+- ✅ Spawn design-specialist agent (orchestrator)
+- ✅ Agent spawns responsive-styling-specialist for CSS generation (sequential)
+- ✅ Agent spawns browser-validator-specialist for testing (sequential)
+- ✅ Generate WordPress block pattern PHP files
+- ✅ Generate responsive SCSS stylesheets
+- ✅ Create test pages for validation
+- ✅ Capture screenshots at multiple breakpoints
+
+**Not allowed:**
+- ❌ Do not activate themes or plugins
+- ❌ Do not modify existing theme files (only create new pattern files)
+- ❌ Do not commit or push changes
+
+The design-specialist orchestrates all operations sequentially (analysis → code → styling → validation).
+
+---
+
 ## How It Works
 
 This command spawns the **design-specialist** agent with WordPress focus. The agent orchestrates the complete workflow:

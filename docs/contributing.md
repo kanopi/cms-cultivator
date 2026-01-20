@@ -9,7 +9,7 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 ### Prerequisites
 
 - Git
-- Python 3.x (for MkDocs documentation)
+- Python 3.x (for Zensical documentation)
 - Claude Code CLI (for testing commands)
 - Basic knowledge of Markdown
 
@@ -23,10 +23,9 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
    cd cms-cultivator
    ```
 
-3. **Install MkDocs** (for documentation):
+3. **Install Zensical** (for documentation):
    ```bash
-   pip install mkdocs-material
-   pip install mkdocs-git-revision-date-localized-plugin
+   pip install zensical
    ```
 
 4. **Test the plugin locally**:
@@ -89,13 +88,13 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 2. **Preview locally**:
    ```bash
-   mkdocs serve
+   zensical serve
    # Visit http://localhost:8000
    ```
 
 3. **Build to verify**:
    ```bash
-   mkdocs build --strict
+   zensical build --clean
    ```
 
 ---
@@ -197,10 +196,10 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 ```bash
 # Build docs locally
-mkdocs build --strict
+zensical build --clean
 
 # Serve docs locally
-mkdocs serve
+zensical serve
 ```
 
 ---

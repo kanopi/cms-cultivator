@@ -7,11 +7,111 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-01-18
+
 ### Added
-- TBD
+- **Flexible Argument Modes** - Major feature addition for audit and quality commands
+  - **Depth modes:** `--quick` (~5 min), `--standard` (~15 min), `--comprehensive` (~30 min)
+  - **Scope control:** `--scope=current-pr`, `--scope=module=<name>`, `--scope=file=<path>`, `--scope=entire`
+  - **Output formats:** `--format=report`, `--format=json`, `--format=summary`, `--format=checklist`
+  - **Threshold controls:** Command-specific quality gates and severity filters
+  - **Backward compatibility:** Legacy focus area arguments still supported (e.g., `/audit-a11y contrast`)
+
+- **Command Enhancements** - 4 commands updated with flexible argument modes:
+  - `/audit-a11y [options]` - Accessibility audits with WCAG compliance
+    - New: `--quick`, `--standard`, `--comprehensive` depth modes
+    - New: `--scope=current-pr|module|file|entire` scope control
+    - New: `--format=report|json|summary|checklist` output formats
+    - Legacy: Focus areas (`contrast`, `keyboard`, `aria`) still supported
+
+  - `/audit-perf [options]` - Performance audits with Core Web Vitals
+    - New: `--quick`, `--standard`, `--comprehensive` depth modes
+    - New: `--scope=current-pr|frontend|backend|module|file|entire` scope control
+    - New: `--format=report|json|summary|metrics` output formats
+    - New: `--target=good|needs-improvement` threshold controls
+    - Legacy: Focus areas (`queries`, `assets`, `vitals`, `lcp`) still supported
+
+  - `/audit-security [options]` - Security audits with OWASP Top 10
+    - New: `--quick`, `--standard`, `--comprehensive` depth modes
+    - New: `--scope=current-pr|user-input|auth|api|module|file|entire` scope control
+    - New: `--format=report|json|summary|sarif` output formats (SARIF for security tools)
+    - New: `--min-severity=high|medium|low` severity filtering
+    - Legacy: Focus areas (`injection`, `xss`, `csrf`, `auth`) still supported
+
+  - `/quality-analyze [options]` - Code quality and technical debt analysis
+    - New: `--quick`, `--standard`, `--comprehensive` depth modes
+    - New: `--scope=current-pr|recent-changes|module|file|entire` scope control
+    - New: `--format=report|json|summary|refactoring-plan` output formats
+    - New: `--max-complexity=N`, `--min-grade=A|B|C` quality thresholds
+    - Legacy: Focus areas (`complexity`, `debt`, `patterns`) still supported
+
+- **Agent Updates** - 4 specialist agents enhanced with mode handling:
+  - **accessibility-specialist** - Added mode handling section with JSON output structure
+  - **performance-specialist** - Added mode handling with CWV-specific guidance
+  - **security-specialist** - Added mode handling with SARIF format support
+  - **code-quality-specialist** - Added mode handling with refactoring plan support
+
+- **Documentation**
+  - New comprehensive guide: `docs/guides/using-argument-modes.md`
+  - Updated command documentation: `docs/commands/accessibility.md`, `performance.md`, `security.md`, `code-quality.md`
+  - Updated README.md with "Flexible Audit Modes" section
+  - CI/CD integration examples with GitHub Actions
+  - Common workflow recipes (pre-commit, PR review, pre-release)
 
 ### Changed
-- TBD
+- **Command Frontmatter** - Updated argument hints from `[focus-area]` to `[options]`
+- **Allowed Tools** - Added `Bash(git:*)` to audit commands for scope=current-pr support
+- **Default Behavior** - Commands without arguments now default to `--standard --scope=entire --format=report`
+
+### Benefits
+- ⚡ **Faster development workflow** - Quick checks in ~5 minutes vs 15-30 minutes
+- 💰 **Cost control** - Scope limiting reduces token usage significantly
+- 🤖 **CI/CD ready** - JSON and SARIF outputs for automated pipelines
+- 🎯 **Flexible targeting** - Analyze only what matters (PR files, specific modules, etc.)
+- 📊 **Multiple audiences** - Different formats for developers, stakeholders, and tools
+- ✅ **Backward compatible** - All existing command usage still works
+
+### Migration Guide
+No breaking changes. All existing command usage continues to work:
+```bash
+# Old syntax still works
+/audit-a11y contrast
+/audit-perf queries
+/audit-security xss
+
+# New syntax available
+/audit-a11y --quick --scope=current-pr
+/audit-perf --standard --scope=backend --format=json
+/audit-security --comprehensive --min-severity=high
+```
+
+---
+
+### Added
+- **Concise Mode for PR Creation** - New `--concise` flag for `/pr-create` command
+  - Generates shorter, more focused PR descriptions for smaller tasks
+  - Reduces verbosity while maintaining all required template sections
+  - Skips comprehensive specialist checks unless critical issues detected
+  - Ideal for simple bug fixes, minor features, and support tickets
+  - Usage: `/pr-create PROJ-123 --concise`
+
+### Changed
+- **workflow-specialist Agent** - Major improvements to commit and PR workflows
+  - **Present FULL content, not summaries** - Users now see complete commit messages and PR descriptions
+  - **Removed "Co-Authored-By: Claude..." footer** - No longer adds AI attribution to commits
+  - **Next step suggestions** - After commits, suggests running `/pr-create` to create pull request
+  - Added argument parsing for `--concise` flag in PR creation
+  - Updated approval prompts to be clearer about showing full content
+  - Improved PR creation flow to support both standard and concise modes
+- **Command Updates**
+  - `/pr-commit-msg` - Now shows full message and suggests `/pr-create` as next step
+  - `/pr-create` - Added `--concise` flag support and comprehensive mode documentation
+  - Updated workflow descriptions to clarify "FULL content" vs "summary" presentation
+
+### Fixed
+- **Commit Message Presentation** - Fixed issue where users saw summaries instead of actual messages (pr-commit-msg.md:20)
+- **PR Description Presentation** - Fixed issue where users saw summaries instead of full PR content (pr-create.md:28)
+- **Co-Authored-By Footer** - Removed unwanted Claude attribution from commit messages (workflow-specialist/AGENT.md:121)
 
 ## [0.4.2] - 2026-01-04
 

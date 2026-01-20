@@ -688,30 +688,29 @@ setup() {
 }
 
 @test "README has documentation badge" {
-  grep -q "docs-mkdocs" README.md
+  grep -q "docs-zensical" README.md
 }
 
 @test "README links to documentation site" {
   grep -q "kanopi.github.io/cms-cultivator" README.md
 }
 
-@test "mkdocs.yml exists" {
-  [ -f "mkdocs.yml" ]
+@test "zensical.toml exists" {
+  [ -f "zensical.toml" ]
 }
 
-@test "mkdocs.yml is valid YAML" {
-  # MkDocs YAML contains Python-specific tags that safe_load can't handle
-  # We just verify the file exists and is readable
-  if [ -f "mkdocs.yml" ] && [ -r "mkdocs.yml" ]; then
+@test "zensical.toml is valid TOML" {
+  # Verify the file exists and is readable
+  if [ -f "zensical.toml" ] && [ -r "zensical.toml" ]; then
     # Basic syntax check - ensure it has required keys
-    if grep -q "^site_name:" mkdocs.yml && grep -q "^theme:" mkdocs.yml; then
+    if grep -q "site_name" zensical.toml && grep -q "docs_dir" zensical.toml; then
       return 0
     else
-      echo "mkdocs.yml missing required fields"
+      echo "zensical.toml missing required fields"
       return 1
     fi
   else
-    echo "mkdocs.yml not found or not readable"
+    echo "zensical.toml not found or not readable"
     return 1
   fi
 }
@@ -724,20 +723,17 @@ setup() {
   [ -f "docs/index.md" ]
 }
 
-@test "all mkdocs nav pages exist" {
-  # Extract file paths from nav section
-  if command -v yq &> /dev/null; then
-    nav_files=$(yq eval '.nav' mkdocs.yml -o json | jq -r '.. | select(type == "string" and endswith(".md"))')
+@test "all zensical nav pages exist" {
+  # Extract file paths from nav section in zensical.toml
+  # Parse TOML nav array and check each .md file exists
+  nav_files=$(grep -E '\.md"' zensical.toml | sed 's/.*"\(.*\.md\)".*/\1/' | grep -v '^\s*#')
 
-    for file in $nav_files; do
-      if [ ! -f "docs/$file" ]; then
-        echo "Missing nav file: docs/$file"
-        return 1
-      fi
-    done
-  else
-    skip "yq not available for nav validation"
-  fi
+  for file in $nav_files; do
+    if [ ! -f "docs/$file" ]; then
+      echo "Missing nav file: docs/$file"
+      return 1
+    fi
+  done
 }
 
 @test "GitHub Actions workflow exists" {
@@ -913,13 +909,13 @@ setup() {
 # INTEGRATION TESTS (Optional - require external tools)
 # ==============================================================================
 
-@test "MkDocs can build documentation" {
-  if command -v mkdocs &> /dev/null; then
-    run mkdocs build --strict
-    # Allow warnings but not errors
-    [ "$status" -eq 0 ] || [ "$status" -eq 1 ]
+@test "Zensical can build documentation" {
+  if command -v zensical &> /dev/null; then
+    run zensical build --clean
+    # Should build successfully
+    [ "$status" -eq 0 ]
   else
-    skip "MkDocs not installed"
+    skip "Zensical not installed"
   fi
 }
 

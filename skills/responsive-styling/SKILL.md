@@ -8,6 +8,24 @@ description: Automatically generate mobile-first responsive CSS/SCSS when creati
 ## Purpose
 Generate mobile-first, responsive CSS/SCSS that works across all devices and follows accessibility best practices.
 
+## Philosophy
+
+Responsive design is accessibility. Mobile-first is user-first.
+
+### Core Beliefs
+
+1. **Mobile First is Performance First**: Start with constraints, enhance progressively
+2. **Accessibility is Non-Negotiable**: WCAG AA compliance is the baseline, not a bonus
+3. **Exact Specifications Build Confidence**: Calculate exact contrast ratios, don't estimate
+4. **Touch-Friendly by Default**: 44px minimum targets prevent user frustration
+
+### Why Mobile-First Responsive Styling Matters
+
+- **User Experience**: Most users access sites on mobile devices
+- **Performance**: Smaller initial payload, enhance for larger screens
+- **Accessibility**: Ensures usability for all users and devices
+- **Professional Quality**: Shows attention to detail and best practices
+
 ## When This Skill Activates
 
 This skill automatically activates when:
@@ -16,6 +34,92 @@ This skill automatically activates when:
 - Creating styles for a component
 - User asks about media queries
 - Responsive design is needed for implementation
+
+## Decision Framework
+
+Before generating responsive styles, determine:
+
+### What's the Component Type?
+
+1. **Layout container** → Focus on width, padding, grid/flex
+2. **Content block** → Focus on typography, spacing, images
+3. **Interactive element** (button, form) → Focus on touch targets, states, transitions
+4. **Navigation** → Focus on mobile menu, breakpoint behavior
+5. **Media** (images, video) → Focus on aspect ratios, object-fit
+
+### What Are the Breakpoints?
+
+**Standard mobile-first breakpoints**:
+- **Base styles** (320px+) - Mobile default
+- **Tablet** (768px+) - `@media (min-width: 768px)`
+- **Desktop** (1024px+) - `@media (min-width: 1024px)`
+- **Large desktop** (1440px+) - Optional for max-width constraints
+
+**When to add breakpoints**:
+- ✅ Layout changes significantly (columns stack/unstack)
+- ✅ Typography scales (mobile 16px → desktop 18px)
+- ✅ Touch targets adjust (mobile 44px → desktop 40px)
+- ❌ Minor pixel adjustments (avoid breakpoint bloat)
+
+### What Accessibility Requirements?
+
+**WCAG 2.1 Level AA compliance**:
+- ✅ **Color contrast**: 4.5:1 for normal text, 3:1 for large text (calculate exactly)
+- ✅ **Touch targets**: ≥ 44x44px on mobile, ≥ 40x40px on desktop
+- ✅ **Focus indicators**: 2px outline minimum, distinct from hover
+- ✅ **Motion sensitivity**: `@media (prefers-reduced-motion: reduce)`
+
+### What States Are Needed?
+
+**Interactive states** (buttons, links):
+- `:hover` - Mouse pointer over element
+- `:focus` - Keyboard navigation focus
+- `:focus-visible` - Keyboard focus (not mouse click)
+- `:active` - During click/tap
+- `:disabled` - Inactive state
+
+**Priority**: Focus states more important than hover (accessibility)
+
+### What Typography Scale?
+
+**Mobile-first sizing**:
+- **Body text**: Start 16px (never below, readability)
+- **Headings**: Use `clamp()` for fluid scaling
+  - Example: `font-size: clamp(1.5rem, 5vw, 2.5rem);`
+- **Line height**: 1.5 for body, 1.2-1.3 for headings
+- **Font weights**: Use actual weights, not relative (400, 600, 700)
+
+### What Spacing System?
+
+**Consistent spacing scale** (choose one):
+- **8px grid**: 8px, 16px, 24px, 32px, 40px, 48px, 64px
+- **rem-based**: 0.5rem, 1rem, 1.5rem, 2rem, 3rem, 4rem
+
+**Apply consistently**:
+- Margins, padding, gaps use same scale
+- Avoid arbitrary values (17px, 23px)
+
+### Decision Tree
+
+```
+User requests responsive styles
+    ↓
+Determine component type
+    ↓
+Define mobile-first base styles (320px+)
+    ↓
+Calculate contrast ratios (WCAG AA)
+    ↓
+Add tablet breakpoint (768px+) if layout changes
+    ↓
+Add desktop breakpoint (1024px+) if needed
+    ↓
+Add all interactive states (focus > hover)
+    ↓
+Add reduced motion support
+    ↓
+Output mobile-first SCSS with exact values
+```
 
 ## Core Principles
 

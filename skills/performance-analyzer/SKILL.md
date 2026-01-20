@@ -7,6 +7,24 @@ description: Automatically analyze performance issues when user mentions slow pa
 
 Automatically analyze and suggest performance improvements for specific code.
 
+## Philosophy
+
+Fast code is user-friendly code. Every millisecond counts.
+
+### Core Beliefs
+
+1. **Measure Before Optimizing**: Profile to find actual bottlenecks, don't guess
+2. **User Perception Matters Most**: A 100ms delay feels instant, 1s feels slow
+3. **Progressive Enhancement**: Start fast (mobile), enhance for desktop
+4. **Performance is a Feature**: Users notice and appreciate speed
+
+### Why Performance Matters
+
+- **User Experience**: Fast sites feel professional and responsive
+- **Conversion Rates**: Every 100ms delay costs conversions
+- **SEO Rankings**: Core Web Vitals directly impact search visibility
+- **Accessibility**: Performance improvements help users on slow connections/devices
+
 ## When to Use This Skill
 
 Activate this skill when the user:
@@ -16,6 +34,74 @@ Activate this skill when the user:
 - Asks "why is this query slow?"
 - References "N+1 problem", "caching", or "optimization"
 - Shows performance profiler output
+
+## Decision Framework
+
+Before analyzing performance, determine:
+
+### What's Slow?
+
+1. **Page load** → Check Core Web Vitals (LCP, INP, CLS)
+2. **Database queries** → Check query count, N+1 problems
+3. **API calls** → Check response times, external dependencies
+4. **Asset loading** → Check CSS/JS/image sizes
+5. **Server processing** → Check PHP/Node execution time
+
+### What's the Baseline?
+
+**Measure first**:
+- Run Lighthouse for Core Web Vitals
+- Profile with browser DevTools
+- Check database query logs
+- Measure actual load times
+
+**Don't optimize without data** - Profile to find real bottlenecks
+
+### What's the Target?
+
+**Core Web Vitals targets**:
+- **LCP** (Largest Contentful Paint): < 2.5s (good), < 4.0s (needs improvement)
+- **INP** (Interaction to Next Paint): < 200ms (good), < 500ms (needs improvement)
+- **CLS** (Cumulative Layout Shift): < 0.1 (good), < 0.25 (needs improvement)
+
+**General targets**:
+- **Page load**: < 3s ideal, < 5s acceptable
+- **API response**: < 100ms ideal, < 500ms acceptable
+- **Database query**: < 50ms ideal, < 200ms acceptable
+
+### What's the Impact?
+
+**Prioritize fixes by impact**:
+1. **High** - Affects all users on every page load
+2. **Medium** - Affects specific user flows or features
+3. **Low** - Edge cases or infrequent operations
+
+### What Optimizations Apply?
+
+**Common patterns**:
+- **N+1 queries** → Add eager loading
+- **Large assets** → Compress, lazy load, CDN
+- **No caching** → Add caching layers
+- **Blocking resources** → Async/defer scripts
+- **Unoptimized images** → Compress, WebP, responsive images
+- **Too many HTTP requests** → Combine, bundle
+- **Slow external APIs** → Cache, background jobs
+
+### Decision Tree
+
+```
+User reports performance issue
+    ↓
+Measure baseline (Lighthouse, profiler)
+    ↓
+Identify bottleneck (queries/assets/processing)
+    ↓
+Assess impact (all users vs. edge case)
+    ↓
+Recommend specific optimizations
+    ↓
+Provide before/after metrics
+```
 
 ## Quick Analysis Types
 
