@@ -71,9 +71,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (17)" {
+@test "command count matches expected (21)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 17 ]
+  [ "$count" -eq 21 ]
 }
 
 # ==============================================================================
@@ -257,7 +257,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 11 ]
+  [ "$count" -eq 13 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -269,9 +269,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (11)" {
+@test "agent count matches expected (13)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 11 ]
+  [ "$count" -eq 13 ]
 }
 
 @test "expected agent directories exist" {
@@ -281,6 +281,8 @@ setup() {
     "code-quality-specialist"
     "design-specialist"
     "documentation-specialist"
+    "drupalorg-issue-specialist"
+    "drupalorg-mr-specialist"
     "live-audit-specialist"
     "performance-specialist"
     "responsive-styling-specialist"
@@ -927,4 +929,100 @@ setup() {
   else
     skip "markdownlint not installed"
   fi
+}
+
+# ==============================================================================
+# DRUPAL.ORG INTEGRATION STRUCTURE TESTS
+# ==============================================================================
+
+@test "drupal commands exist (4 files)" {
+  drupal_count=$(find commands -maxdepth 1 -name "drupal-*.md" | wc -l)
+  [ "$drupal_count" -eq 4 ]
+}
+
+@test "drupal commands have correct names" {
+  expected_commands=(
+    "drupal-issue"
+    "drupal-mr"
+    "drupal-contribute"
+    "drupal-cleanup"
+  )
+
+  for cmd in "${expected_commands[@]}"; do
+    if [ ! -f "commands/${cmd}.md" ]; then
+      echo "Missing drupal command: commands/${cmd}.md"
+      return 1
+    fi
+  done
+}
+
+@test "drupalorg agents exist" {
+  [ -f "agents/drupalorg-issue-specialist/AGENT.md" ]
+  [ -f "agents/drupalorg-mr-specialist/AGENT.md" ]
+}
+
+@test "drupalorg skills exist" {
+  [ -f "skills/drupalorg-issue-helper/SKILL.md" ]
+  [ -f "skills/drupalorg-contribution-helper/SKILL.md" ]
+}
+
+@test "drupalorg agents have chrome-devtools MCP in tools" {
+  for agent in agents/drupalorg-*/AGENT.md; do
+    if ! grep -q "chrome-devtools MCP" "$agent"; then
+      echo "Missing chrome-devtools MCP in $agent"
+      return 1
+    fi
+  done
+}
+
+@test "drupal-mr command has git and glab in allowed-tools" {
+  tools=$(sed -n 's/^allowed-tools: *//p' commands/drupal-mr.md)
+  echo "$tools" | grep -q "git:" || return 1
+  echo "$tools" | grep -q "glab:" || return 1
+}
+
+@test "drupal-cleanup command has valid structure" {
+  [ -f "commands/drupal-cleanup.md" ]
+  grep -q "^description:" commands/drupal-cleanup.md
+  grep -q "^allowed-tools:" commands/drupal-cleanup.md
+}
+
+@test "drupalorg agents reference correct skills" {
+  # Issue specialist should reference drupalorg-issue-helper
+  if ! grep -q "drupalorg-issue-helper" agents/drupalorg-issue-specialist/AGENT.md; then
+    echo "drupalorg-issue-specialist missing drupalorg-issue-helper skill"
+    return 1
+  fi
+
+  # MR specialist should reference drupalorg-contribution-helper
+  if ! grep -q "drupalorg-contribution-helper" agents/drupalorg-mr-specialist/AGENT.md; then
+    echo "drupalorg-mr-specialist missing drupalorg-contribution-helper skill"
+    return 1
+  fi
+}
+
+@test "drupal-contribute references both agents" {
+  cmd="commands/drupal-contribute.md"
+  grep -qi "drupalorg-issue-specialist\|drupalorg issue specialist" "$cmd" || {
+    echo "drupal-contribute should reference drupalorg-issue-specialist"
+    return 1
+  }
+  grep -qi "drupalorg-mr-specialist\|drupalorg mr specialist" "$cmd" || {
+    echo "drupal-contribute should reference drupalorg-mr-specialist"
+    return 1
+  }
+}
+
+@test "drupalorg agents are leaf specialists (no Task tool)" {
+  for agent in agents/drupalorg-*/AGENT.md; do
+    tools=$(sed -n 's/^tools: *//p' "$agent")
+    if echo "$tools" | grep -q "Task"; then
+      echo "drupalorg agent $agent should not have Task tool (leaf specialist)"
+      return 1
+    fi
+  done
+}
+
+@test "drupal documentation exists" {
+  [ -f "docs/drupal-contribution.md" ]
 }

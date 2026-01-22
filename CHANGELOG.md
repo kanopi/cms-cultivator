@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Drupal.org Integration** - New commands and agents for contributing to drupal.org projects
+  - `/drupal-issue` - Create, update, or list issues on drupal.org using browser automation
+  - `/drupal-mr` - Create or list merge requests on git.drupalcode.org via glab CLI
+  - `/drupal-contribute` - Full workflow orchestrator combining issue creation and MR setup
+  - `/drupal-cleanup` - List and cleanup cloned repositories in `~/.cache/drupal-contrib/`
+  - `drupalorg-issue-specialist` agent - Browser automation for issue management
+  - `drupalorg-mr-specialist` agent - Git operations and glab CLI for merge requests
+  - `drupalorg-issue-helper` skill - Quick help with issue templates and formatting
+  - `drupalorg-contribution-helper` skill - Quick help with git workflow and branch naming
+  - Credential storage support at `~/.config/drupalorg/credentials.yml` for auto-login
+  - Integration with `drupalorg-cli` tool (https://github.com/mglaman/drupalorg-cli) when available
+  - Comprehensive documentation at `docs/drupal-contribution.md`
+  - New BATS test file `tests/test-drupalorg-integration.bats` for integration testing
+
 ## [0.6.1] - 2026-01-20
 
 ### Fixed
