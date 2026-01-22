@@ -1,7 +1,7 @@
 ---
-description: Create, update, or list issues on drupal.org using browser automation
+description: Create, update, or list issues on drupal.org using guided manual workflow
 argument-hint: "[create|update|list] [project] [issue-number]"
-allowed-tools: Read, Glob, Grep, Bash, Bash(drupalorg:*), chrome-devtools MCP, Task
+allowed-tools: Read, Glob, Grep, Bash, Bash(drupalorg:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Bash(wl-copy:*), Task
 ---
 
 ## How It Works
@@ -10,34 +10,30 @@ Spawn the **drupalorg-issue-specialist** agent to handle drupal.org issue operat
 
 ```
 Task(cms-cultivator:drupalorg-issue-specialist:drupalorg-issue-specialist,
-     prompt="Execute the drupal-issue command with arguments: [arguments]. Check Chrome DevTools MCP availability, verify drupal.org login status, then perform the requested operation (create, update, or list). Present issue content for approval before submission. Return issue URL on success.")
+     prompt="Execute the drupal-issue command with arguments: [arguments]. Generate properly formatted issue content using drupal.org HTML templates, copy the title to clipboard, open the issue form in the browser, and guide the user through submission. Request the issue number from the user after creation.")
 ```
 
-### Workflow Steps (Automated)
+### Workflow Steps (Guided Manual)
 
-The drupalorg-issue-specialist automatically executes these steps:
+The drupalorg-issue-specialist uses a **clipboard + browser launch** approach because drupal.org has no write API and uses CAPTCHA protection:
 
-#### 1. Prerequisites Check
-- Verify Chrome DevTools MCP is available
-- Navigate to drupal.org
-- Check login status (guide user to log in if needed)
+#### 1. Generate Issue Content
+- Gather issue details (type, title, description, version, priority)
+- Format using official drupal.org HTML template structure
+- Generate all standard sections (Problem/Motivation, Proposed resolution, etc.)
 
-#### 2. Execute Operation
+#### 2. Copy Title to Clipboard
+- Automatically copies the issue title to your clipboard
+- Works on macOS (pbcopy), Linux (xclip/wl-copy), and WSL (clip.exe)
 
-**Create Issue**:
-1. Navigate to issue creation page: `https://www.drupal.org/node/add/project-issue/{project}`
-2. Fill form fields (title, description, version, category, priority)
-3. Present content for user approval
-4. Submit and return issue URL
+#### 3. Open Browser to Issue Form
+- Opens `https://www.drupal.org/node/add/project-issue/{project}` in your default browser
+- Uses `open` (macOS), `xdg-open` (Linux), or displays URL if browser launch unavailable
 
-**Update Issue**:
-1. Navigate to issue page
-2. Find and modify requested field (status, comment, etc.)
-3. Submit change
-
-**List Issues**:
-1. Navigate to issue list page
-2. Parse and display results
+#### 4. Guide User Through Submission
+- Displays the complete issue description for you to copy/paste
+- Lists the form settings to select (version, category, priority)
+- Requests the issue number after you submit
 
 ---
 
@@ -70,16 +66,17 @@ The drupalorg-issue-specialist automatically executes these steps:
 
 The agent will:
 1. Ask for issue details (type, title, description, version, priority)
-2. Navigate to drupal.org issue form
-3. Fill in the form
-4. Present for your approval
-5. Submit and return the issue URL
+2. Generate properly formatted HTML content
+3. Copy title to clipboard
+4. Open the issue creation page in your browser
+5. Guide you to paste the content and submit
+6. Request the issue number from you
 
 **Example**:
 ```bash
 /drupal-issue create paragraphs
-# Agent prompts for: title, description, version, type, priority
-# Returns: https://www.drupal.org/project/paragraphs/issues/3456789
+# Agent generates content, copies title, opens browser
+# You paste and submit, then reply with: 3456789
 ```
 
 ### Update Issue Status
@@ -89,10 +86,9 @@ The agent will:
 ```
 
 The agent will:
-1. Navigate to the issue
-2. Ask which field to update
-3. Make the change
-4. Confirm success
+1. Open the issue page in your browser
+2. Guide you through changing the status
+3. Confirm when done
 
 **Status options**: Active, Needs work, Needs review, Fixed, Closed
 
@@ -103,10 +99,10 @@ The agent will:
 ```
 
 The agent will:
-1. Navigate to the issue
-2. Ask for your comment
-3. Post the comment
-4. Confirm success
+1. Generate your comment
+2. Copy it to clipboard
+3. Open the issue page
+4. Guide you to paste and submit
 
 ### List Issues
 
@@ -118,66 +114,57 @@ The agent will:
 /drupal-issue list {project}
 ```
 
+Uses `drupalorg-cli` if available, or opens the issue queue in your browser.
+
 ## Prerequisites
-
-### Chrome DevTools MCP
-
-This command requires Chrome DevTools MCP for browser automation. Drupal.org's issue tracker has no write API.
-
-**Setup**:
-1. Ensure Chrome is running with DevTools enabled
-2. Chrome DevTools MCP must be configured in Claude Code
 
 ### drupal.org Account
 
-You need a drupal.org account. The agent will:
-1. Check if you're logged in
-2. If not logged in and credentials are saved, auto-login
-3. If no saved credentials, prompt you to log in manually
+You need a drupal.org account. Log in via your browser when the agent opens the issue pages.
 
-**Save credentials for auto-login** (recommended):
+### drupalorg-cli (Optional)
+
+For listing issues, install `drupalorg-cli`:
+
 ```bash
-mkdir -p ~/.config/drupalorg
-cat > ~/.config/drupalorg/credentials.yml << 'EOF'
-username: your-username
-password: your-password
-EOF
-chmod 600 ~/.config/drupalorg/credentials.yml
+curl -LO https://github.com/mglaman/drupalorg-cli/releases/latest/download/drupalorg.phar
+chmod +x drupalorg.phar
+sudo mv drupalorg.phar /usr/local/bin/drupalorg
 ```
 
 ## Issue Templates
 
-The agent uses these templates when creating issues:
+The agent uses the **official drupal.org HTML template format**:
 
 ### Bug Report
-```markdown
-## Problem/Motivation
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
 {What's wrong?}
 
-## Steps to Reproduce
+<h4 id="summary-steps-reproduce">Steps to reproduce</h4>
 1. {Step 1}
 2. {Step 2}
 
-## Expected vs Actual Behavior
-{What should happen vs what does happen}
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+{How to fix it}
 
-## Environment
-- Drupal: {version}
-- Module: {version}
-- PHP: {version}
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Confirm the bug
+- [ ] Write fix
+- [ ] Add tests
+
+<h3 id="summary-ui-changes">User interface changes</h3>
+None
+
+<h3 id="summary-api-changes">API changes</h3>
+None
+
+<h3 id="summary-data-model-changes">Data model changes</h3>
+None
 ```
 
 ### Feature Request
-```markdown
-## Problem/Motivation
-{Why is this needed?}
-
-## Proposed Resolution
-{How should it work?}
-
-## API/UI Changes
-{What changes are required?}
-```
+Similar structure focusing on Problem/Motivation and Proposed resolution sections.
 
 ## Output
 
@@ -202,18 +189,17 @@ The agent uses these templates when creating issues:
 | 3456790 | webform | Add export feature | Needs review |
 ```
 
-## Error Handling
+## Why Guided Manual Workflow?
 
-### Not Logged In
-The agent will guide you to log in:
-1. Open https://www.drupal.org/user/login
-2. Log in with your credentials
-3. Let the agent know when done
+drupal.org:
+- Has **no write API** - all issue creation/updates require the web UI
+- Uses **PerimeterX CAPTCHA** protection that blocks automated browser access
 
-### Chrome DevTools MCP Unavailable
-The agent provides manual instructions with pre-filled content:
-- Direct link to issue form
-- Pre-formatted description to copy/paste
+The guided manual workflow:
+- Works regardless of CAPTCHA or bot protection
+- Uses your existing authenticated browser session
+- Minimal manual effort (paste + click)
+- More reliable than browser automation
 
 ## Related Commands
 

@@ -16,23 +16,44 @@ Activate this skill when the user:
 - Asks about issue categories or priorities
 - Wants to understand drupal.org issue best practices
 
-## Quick Auth Note
+## Quick Note on Creating Issues
 
-**drupal.org has no write API** - issue creation requires browser automation.
+**drupal.org has no write API** - issue creation requires the web UI.
 
-**Save credentials for auto-login** (one-time setup):
-```bash
-mkdir -p ~/.config/drupalorg
-cat > ~/.config/drupalorg/credentials.yml << 'EOF'
-username: your-username
-password: your-password
-EOF
-chmod 600 ~/.config/drupalorg/credentials.yml
-```
-
-Then use `/drupal-issue create {project}` - the agent will auto-login if needed.
+Use `/drupal-issue create {project}` for a guided workflow that:
+1. Generates properly formatted HTML content
+2. Copies title to clipboard
+3. Opens browser to the issue form
+4. Guides you through submission
 
 Or manually create issues at: `https://www.drupal.org/node/add/project-issue/{project}`
+
+## Official drupal.org HTML Issue Template
+
+drupal.org expects issue descriptions in **HTML format** with specific headings. Use this exact structure:
+
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
+{problem_description}
+
+<h4 id="summary-steps-reproduce">Steps to reproduce</h4>
+{steps_if_bug}
+
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+{proposed_solution}
+
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+{remaining_tasks_checklist}
+
+<h3 id="summary-ui-changes">User interface changes</h3>
+{ui_changes_or_none}
+
+<h3 id="summary-api-changes">API changes</h3>
+{api_changes_or_none}
+
+<h3 id="summary-data-model-changes">Data model changes</h3>
+{data_model_changes_or_none}
+```
 
 ## Issue Categories
 
@@ -55,37 +76,35 @@ Or manually create issues at: `https://www.drupal.org/node/add/project-issue/{pr
 
 ## Bug Report Template
 
-```markdown
-## Problem/Motivation
+Use this complete template for bug reports:
 
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
 {Clearly describe what's wrong. What did you expect to happen vs. what actually happened?}
 
-## Steps to Reproduce
-
+<h4 id="summary-steps-reproduce">Steps to reproduce</h4>
 1. {First step - be specific}
 2. {Second step}
 3. {Third step}
 4. {Observe the bug}
 
-## Expected Behavior
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+{How should this be fixed?}
 
-{What should happen when following the steps above?}
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Confirm the bug can be reproduced
+- [ ] Write the fix
+- [ ] Add test coverage
+- [ ] Review and merge
 
-## Actual Behavior
+<h3 id="summary-ui-changes">User interface changes</h3>
+None
 
-{What actually happens? Include any error messages.}
+<h3 id="summary-api-changes">API changes</h3>
+None
 
-## Environment
-
-- **Drupal version**: 10.3.x
-- **Module version**: 2.0.x
-- **PHP version**: 8.2
-- **Web server**: Apache/Nginx
-- **Database**: MySQL 8.0 / MariaDB 10.x / PostgreSQL
-
-## Additional Context
-
-{Screenshots, error logs, configuration details, etc.}
+<h3 id="summary-data-model-changes">Data model changes</h3>
+None
 ```
 
 ### Bug Report Best Practices
@@ -99,34 +118,27 @@ Or manually create issues at: `https://www.drupal.org/node/add/project-issue/{pr
 
 ## Feature Request Template
 
-```markdown
-## Problem/Motivation
-
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
 {Why is this feature needed? What problem does it solve?}
 
-## Proposed Resolution
-
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
 {How should this feature work? Be as specific as possible.}
 
-## User Interface Changes
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Design the approach
+- [ ] Implement the feature
+- [ ] Add test coverage
+- [ ] Update documentation
 
+<h3 id="summary-ui-changes">User interface changes</h3>
 {Will there be new admin pages, form fields, or UI elements?}
 
-## API Changes
-
+<h3 id="summary-api-changes">API changes</h3>
 {Any new hooks, services, or public methods?}
 
-## Data Model Changes
-
+<h3 id="summary-data-model-changes">Data model changes</h3>
 {New database tables, fields, or configuration schema?}
-
-## Alternatives Considered
-
-{What other approaches did you consider and why didn't you choose them?}
-
-## Additional Context
-
-{Mockups, examples from other modules, user stories, etc.}
 ```
 
 ### Feature Request Best Practices
@@ -139,59 +151,60 @@ Or manually create issues at: `https://www.drupal.org/node/add/project-issue/{pr
 
 ## Task Template
 
-```markdown
-## Summary
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
+{What needs to be done and why?}
 
-{What needs to be done?}
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+{Approach to completing the task}
 
-## Detailed Description
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] {Specific, testable task 1}
+- [ ] {Specific, testable task 2}
+- [ ] {Specific, testable task 3}
+- [ ] Tests pass
+- [ ] Documentation updated
 
-{Provide more context and background}
+<h3 id="summary-ui-changes">User interface changes</h3>
+{If applicable, or "None"}
 
-## Acceptance Criteria
+<h3 id="summary-api-changes">API changes</h3>
+{If applicable, or "None"}
 
-- [ ] {Specific, testable criterion}
-- [ ] {Another criterion}
-- [ ] {Tests pass}
-- [ ] {Documentation updated}
-
-## Related Issues
-
-- #{related_issue_number}: {brief description}
+<h3 id="summary-data-model-changes">Data model changes</h3>
+{If applicable, or "None"}
 ```
 
 ## Support Request Template
 
-```markdown
-## What I'm Trying to Do
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
+{What are you trying to do? What's not working as expected?}
 
-{Describe your goal, not just your problem}
-
-## What I've Tried
-
-1. {First approach}
-2. {Second approach}
-3. {Third approach}
-
-## Current Behavior
-
-{What's happening now?}
-
-## Environment
-
+**Environment**:
 - Drupal version: {version}
 - Module version: {version}
-- Other relevant modules: {list}
+- PHP version: {version}
 
-## Code/Configuration
+**What I've tried**:
+1. {Approach 1}
+2. {Approach 2}
 
-```php
-// Relevant code snippet if applicable
-```
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+{What specific help or guidance do you need?}
 
-## Screenshots
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Get answer/guidance
+- [ ] Implement solution
 
-{Attach if helpful}
+<h3 id="summary-ui-changes">User interface changes</h3>
+N/A
+
+<h3 id="summary-api-changes">API changes</h3>
+N/A
+
+<h3 id="summary-data-model-changes">Data model changes</h3>
+N/A
 ```
 
 ## Title Best Practices
@@ -246,25 +259,34 @@ Active → Needs work → Needs review → RTBC → Fixed → Closed
 User: "I found a bug where the paragraphs module crashes on save"
 
 Title: WSOD when saving node with nested paragraphs
+```
 
-## Problem/Motivation
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
 Saving a node with more than 3 levels of nested paragraphs causes a white screen of death.
 
-## Steps to Reproduce
+<h4 id="summary-steps-reproduce">Steps to reproduce</h4>
 1. Create a paragraph type with a nested paragraphs field
 2. Create content with 4+ levels of nesting
 3. Click Save
 
-## Expected Behavior
-Node saves successfully.
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
+Investigate recursion limit in paragraph rendering.
 
-## Actual Behavior
-WSOD with error: "Maximum function nesting level of 256 reached"
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Confirm reproduction
+- [ ] Investigate root cause
+- [ ] Implement fix
+- [ ] Add test
 
-## Environment
-- Drupal: 10.2.5
-- Paragraphs: 1.17
-- PHP: 8.2.15
+<h3 id="summary-ui-changes">User interface changes</h3>
+None
+
+<h3 id="summary-api-changes">API changes</h3>
+None
+
+<h3 id="summary-data-model-changes">Data model changes</h3>
+None
 ```
 
 ### Example 2: Feature Request
@@ -273,25 +295,33 @@ WSOD with error: "Maximum function nesting level of 256 reached"
 User: "I want to suggest adding a feature to export paragraphs"
 
 Title: Add ability to export paragraph configurations as YAML
+```
 
-## Problem/Motivation
+```html
+<h3 id="summary-problem-motivation">Problem/Motivation</h3>
 Developers need to share paragraph type configurations between sites. Currently, this requires manually recreating configurations or using Features module.
 
-## Proposed Resolution
+<h3 id="summary-proposed-resolution">Proposed resolution</h3>
 Add a "Export" tab to paragraph types that generates YAML configuration that can be imported via drush or admin UI.
 
-## User Interface Changes
+<h3 id="summary-remaining-tasks">Remaining tasks</h3>
+- [ ] Design export format
+- [ ] Implement export functionality
+- [ ] Add import functionality
+- [ ] Add drush commands
+- [ ] Document workflow
+
+<h3 id="summary-ui-changes">User interface changes</h3>
 - New "Export" tab on paragraph type edit page
 - YAML textarea with copy button
 - Import form at /admin/structure/paragraphs/import
 
-## API Changes
-- New service: `paragraphs.config_exporter`
-- New drush command: `paragraphs:export`
+<h3 id="summary-api-changes">API changes</h3>
+- New service: paragraphs.config_exporter
+- New drush command: paragraphs:export
 
-## Alternatives Considered
-- Features module: Adds complexity for simple use case
-- Manual config sync: Error-prone and tedious
+<h3 id="summary-data-model-changes">Data model changes</h3>
+None
 ```
 
 ### Example 3: Quick Status Update
@@ -317,6 +347,7 @@ Best practice: Include a summary of changes in your comment when changing to "Ne
 4. **Wrong project** - Make sure you're creating the issue on the correct project
 5. **Mixing issues** - One issue per bug/feature
 6. **No follow-up** - Respond to maintainer questions
+7. **Using Markdown instead of HTML** - drupal.org expects HTML format
 
 ## Resources
 

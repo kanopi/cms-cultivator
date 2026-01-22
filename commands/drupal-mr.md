@@ -1,7 +1,7 @@
 ---
 description: Create or list merge requests for drupal.org projects via git.drupalcode.org
 argument-hint: "[project] [issue-number] | list [project]"
-allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(glab:*), Bash(drupalorg:*), Bash(mkdir:*), Bash(ls:*), Bash(cd:*), chrome-devtools MCP, Task
+allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(glab:*), Bash(drupalorg:*), Bash(mkdir:*), Bash(ls:*), Bash(cd:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Task
 ---
 
 ## How It Works
@@ -10,12 +10,12 @@ Spawn the **drupalorg-mr-specialist** agent to handle merge request operations:
 
 ```
 Task(cms-cultivator:drupalorg-mr-specialist:drupalorg-mr-specialist,
-     prompt="Execute the drupal-mr command with arguments: [arguments]. Check prerequisites (glab CLI, authentication), clone project to ~/.cache/drupal-contrib/ if needed, create issue fork via browser automation, set up branch, and create MR. Return MR URL and next steps.")
+     prompt="Execute the drupal-mr command with arguments: [arguments]. Check prerequisites (glab CLI, authentication), clone project to ~/.cache/drupal-contrib/ if needed, guide user through manual issue fork creation, set up branch, and create MR via glab CLI. Return MR URL and next steps.")
 ```
 
-### Workflow Steps (Automated)
+### Workflow Steps
 
-The drupalorg-mr-specialist automatically executes these steps:
+The drupalorg-mr-specialist handles git operations automatically but requires **one manual step** for issue fork creation:
 
 #### 1. Prerequisites Check
 - Verify glab CLI is installed
@@ -26,10 +26,12 @@ The drupalorg-mr-specialist automatically executes these steps:
 - Clone to `~/.cache/drupal-contrib/{project}/`
 - Or update existing clone with `git fetch --all`
 
-#### 3. Create Issue Fork (Browser Automation)
-- Navigate to drupal.org issue page
-- Click "Create issue fork" button
-- Wait for fork creation confirmation
+#### 3. Create Issue Fork (Manual Step)
+- Opens the issue page in your browser
+- You click "Create issue fork" button in the right sidebar
+- Reply "done" when the fork is created
+
+**Note**: Issue fork creation requires the drupal.org web UI and cannot be automated due to CAPTCHA protection.
 
 #### 4. Set Up Branch and Remote
 - Add issue fork remote: `git remote add issue-fork git@git.drupal.org:issue/{project}-{issue}.git`
@@ -37,7 +39,7 @@ The drupalorg-mr-specialist automatically executes these steps:
 
 #### 5. Push and Create MR
 - Push to issue fork: `git push issue-fork {branch}`
-- Create MR via glab CLI or browser fallback
+- Create MR via glab CLI
 
 ---
 
@@ -71,11 +73,13 @@ The drupalorg-mr-specialist automatically executes these steps:
 
 The agent will:
 1. Clone the project to `~/.cache/drupal-contrib/{project}/`
-2. Create issue fork on drupal.org (via browser)
-3. Create branch: `{issue_number}-{description}`
-4. Push to issue fork
-5. Create MR via glab CLI
-6. Return MR URL
+2. Open the issue page for you to create the issue fork
+3. Wait for your confirmation ("done")
+4. Add the issue fork remote
+5. Create branch: `{issue_number}-{description}`
+6. Push to issue fork
+7. Create MR via glab CLI
+8. Return MR URL
 
 ### List Merge Requests
 
@@ -141,10 +145,6 @@ Useful commands:
 - `drupalorg issue:branch {issue}` - Create branch for issue
 - `drupalorg issue:apply {issue}` - Apply patch from issue
 - `drupalorg project:releases {project}` - Show releases
-
-### Chrome DevTools MCP
-
-Required for creating issue forks (drupal.org requires web UI for this step).
 
 ## Clone Location
 
@@ -241,7 +241,7 @@ The agent guides you through:
 
 ### Issue Fork Not Created
 
-The agent uses browser automation to create the fork, or provides manual instructions if browser automation is unavailable.
+The agent opens the issue page and provides instructions to create the fork manually.
 
 ## Related Commands
 

@@ -119,13 +119,15 @@ git clone git@git.drupal.org:project/{project}.git ~/.cache/drupal-contrib/{proj
 cd ~/.cache/drupal-contrib/{project}
 ```
 
-### 2. Create Issue Fork (Web UI Required)
+### 2. Create Issue Fork (Manual Step Required)
+
+Issue forks must be created via the drupal.org web UI. This cannot be automated due to CAPTCHA protection.
 
 1. Go to: `https://www.drupal.org/project/{project}/issues/{issue_number}`
 2. Click **"Create issue fork"** in the right sidebar
-3. Wait for confirmation message
+3. Wait for confirmation message (~10 seconds)
 
-**Note**: This step cannot be done via command line - drupal.org requires web UI.
+**Note**: This step cannot be done via command line or API.
 
 ### 3. Add Issue Fork Remote
 
@@ -287,7 +289,7 @@ User: "How do I create a merge request for drupal.org?"
 
 Skill response:
 1. Clone the project
-2. Create issue fork on drupal.org (web UI required)
+2. Create issue fork on drupal.org (click button in web UI - required manual step)
 3. Add remote: `git remote add issue-fork git@git.drupal.org:issue/{project}-{issue}.git`
 4. Create branch: `git checkout -b {issue_number}-{description}`
 5. Commit with: `Issue #{issue_number}: description`

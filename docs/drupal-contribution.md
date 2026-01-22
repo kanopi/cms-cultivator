@@ -13,7 +13,7 @@ Contributing to drupal.org involves a specific workflow:
 5. **Make changes** and commit
 6. **Push to the issue fork** and create a merge request
 
-CMS Cultivator automates this workflow through specialized agents and commands.
+CMS Cultivator automates most of this workflow, with **two manual steps** required due to drupal.org's CAPTCHA protection.
 
 ## Commands
 
@@ -35,11 +35,12 @@ Start a complete contribution workflow:
 ```
 
 This will:
-1. Create a new issue on drupal.org
-2. Clone the project to `~/.cache/drupal-contrib/paragraphs/`
-3. Create the issue fork
-4. Set up your branch
-5. Guide you through making changes and creating the MR
+1. Generate issue content and copy title to clipboard
+2. Open browser for you to create the issue
+3. Clone the project to `~/.cache/drupal-contrib/paragraphs/`
+4. Guide you through creating the issue fork
+5. Set up your branch
+6. Create MR via glab CLI
 
 ### Existing Issue
 
@@ -56,6 +57,20 @@ Create only an issue (no MR setup):
 ```bash
 /drupal-issue create paragraphs
 ```
+
+## User Interaction Points
+
+The workflow requires **two manual interactions** due to drupal.org's CAPTCHA protection:
+
+### 1. Issue Creation
+- **When**: After agent generates issue content
+- **What**: Paste title (from clipboard) and description into drupal.org form
+- **Then**: Reply with the issue number (e.g., `3456789`)
+
+### 2. Issue Fork Creation
+- **When**: After agent opens the issue page
+- **What**: Click "Create issue fork" button in right sidebar
+- **Then**: Reply "done" when the fork is created
 
 ## Prerequisites
 
@@ -123,70 +138,39 @@ Add your SSH key to git.drupalcode.org:
 
 #### 5. drupal.org Account
 
-Log into drupal.org in Chrome:
-1. Open: https://www.drupal.org/user/login
-2. Log in with your credentials
-3. Your session persists for the agents to use
+You need a drupal.org account. Log in via your browser when prompted during the workflow.
 
-#### 6. Chrome DevTools MCP
+## How It Works
 
-Ensure Chrome DevTools MCP is configured in Claude Code for browser automation.
+### Guided Manual Workflow
 
-## Authentication Details
+Unlike browser automation approaches, CMS Cultivator uses a **"guided manual" workflow** for drupal.org interactions:
 
-### How Authentication Works
+1. **Agent generates content** - Issue templates, MR descriptions, etc.
+2. **Copies to clipboard** - Title or content automatically copied
+3. **Opens browser** - Navigates to the correct drupal.org page
+4. **Guides user** - Clear instructions for what to do
+5. **Waits for confirmation** - User confirms completion
 
-| Service | Read Operations | Write Operations |
-|---------|-----------------|------------------|
-| **drupal.org** | No auth (public REST API) | Browser session cookies |
-| **git.drupalcode.org** | No auth (public repos) | glab token or SSH key |
+**Why this approach?**
+- drupal.org has **no write API** - all issue creation/updates require the web UI
+- drupal.org uses **PerimeterX CAPTCHA** protection that blocks automated browser access
+- The guided manual workflow is **more reliable** than fighting bot detection
+- Uses your **existing authenticated browser session**
+- **Minimal manual effort** - just paste and click
 
-**Key point**: drupal.org has **no write API**. Issue creation/updates require browser automation using your Chrome session.
+### What's Automated
 
-### Credential Storage
-
-| Credential | Storage Location | Managed By |
-|------------|------------------|------------|
-| drupal.org credentials | `~/.config/drupalorg/credentials.yml` | You (one-time setup) |
-| git.drupalcode.org token | `~/.config/glab-cli/config.yml` | glab CLI |
-| SSH keys | `~/.ssh/` | You |
-
-### Save drupal.org Credentials (Recommended)
-
-Save your drupal.org credentials for automatic login:
-
-```bash
-# Create config directory
-mkdir -p ~/.config/drupalorg
-
-# Create credentials file
-cat > ~/.config/drupalorg/credentials.yml << 'EOF'
-# drupal.org credentials for CMS Cultivator
-username: your-drupal-username
-password: your-drupal-password
-EOF
-
-# IMPORTANT: Set secure file permissions
-chmod 600 ~/.config/drupalorg/credentials.yml
-```
-
-**Security notes**:
-- File is in your home directory, not the project
-- `chmod 600` ensures only you can read it
-- Never commit credentials to version control
-- The agent reads this to auto-fill the login form
-
-### Session Persistence
-
-Chrome MCP does not persist cookies between sessions, but with saved credentials the agent can auto-login:
-
-| Scenario | With Saved Credentials | Without Saved Credentials |
-|----------|------------------------|---------------------------|
-| Same session | Stays logged in | Stays logged in |
-| New session | **Auto-login** (~5 sec) | Manual login required |
-| Chrome MCP restart | **Auto-login** (~5 sec) | Manual login required |
-
-**Recommendation**: Save credentials once for seamless experience across sessions.
+| Operation | Automated? | Notes |
+|-----------|------------|-------|
+| Git clone/fetch | ✅ Yes | Clones to ~/.cache/drupal-contrib/ |
+| Branch creation | ✅ Yes | Follows naming convention |
+| Commit/push | ✅ Yes | Standard git operations |
+| MR creation (glab) | ✅ Yes | Via glab CLI |
+| Issue content generation | ✅ Yes | Using drupal.org HTML templates |
+| Issue submission | ❌ Manual | Paste and submit |
+| Issue fork creation | ❌ Manual | Click button in sidebar |
+| Issue status updates | ❌ Manual | Change dropdown in UI |
 
 ## Repository Management
 
@@ -218,41 +202,6 @@ Remove all cloned repos:
 ```bash
 /drupal-cleanup --all
 ```
-
-## Workflow Details
-
-### Issue Creation
-
-The `drupalorg-issue-specialist` agent handles issue creation:
-
-1. Navigates to drupal.org
-2. Checks login status
-3. Fills the issue form with your details
-4. Presents for approval before submission
-5. Returns the issue URL
-
-**Note**: drupal.org has no write API, so browser automation is required.
-
-### Issue Fork Creation
-
-Issue forks must be created via the drupal.org web UI. The agent:
-
-1. Navigates to the issue page
-2. Clicks "Create issue fork"
-3. Waits for confirmation
-
-This step cannot be done via git or glab CLI.
-
-### Merge Request Creation
-
-The `drupalorg-mr-specialist` agent handles MR creation:
-
-1. Clones the project (or updates existing clone)
-2. Creates the issue fork via browser
-3. Adds the issue fork remote
-4. Creates a properly named branch
-5. Pushes changes
-6. Creates MR via glab CLI
 
 ## Branch Naming Convention
 
@@ -288,9 +237,9 @@ After creating an MR, update the issue status to "Needs review".
 
 ### drupalorg-issue-specialist
 
-**Purpose**: Create and manage drupal.org issues
+**Purpose**: Create and manage drupal.org issues using guided manual workflow
 
-**Tools**: Read, Glob, Grep, Bash, chrome-devtools MCP
+**Tools**: Read, Glob, Grep, Bash
 
 **Skill**: drupalorg-issue-helper
 
@@ -298,7 +247,7 @@ After creating an MR, update the issue status to "Needs review".
 
 **Purpose**: Create and manage merge requests
 
-**Tools**: Read, Glob, Grep, Bash, chrome-devtools MCP
+**Tools**: Read, Glob, Grep, Bash
 
 **Skill**: drupalorg-contribution-helper
 
@@ -346,11 +295,13 @@ Create the issue fork manually:
 2. Verify issue fork exists
 3. Check remote is correct: `git remote -v`
 
-### Browser automation not working
+### Browser doesn't open
 
-1. Ensure Chrome is running
-2. Verify Chrome DevTools MCP is configured
-3. Fall back to manual instructions provided by the agent
+The agent will display the URL for you to copy/paste manually.
+
+### Clipboard doesn't work
+
+The agent will display the content for you to copy manually.
 
 ## Resources
 

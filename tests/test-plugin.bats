@@ -966,10 +966,13 @@ setup() {
   [ -f "skills/drupalorg-contribution-helper/SKILL.md" ]
 }
 
-@test "drupalorg agents have chrome-devtools MCP in tools" {
+@test "drupalorg agents do NOT have chrome-devtools MCP in tools (guided manual workflow)" {
+  # After v0.7.0, drupalorg agents use guided manual workflow (clipboard + browser launch)
+  # instead of browser automation due to drupal.org CAPTCHA protection
   for agent in agents/drupalorg-*/AGENT.md; do
-    if ! grep -q "chrome-devtools MCP" "$agent"; then
-      echo "Missing chrome-devtools MCP in $agent"
+    tools=$(sed -n 's/^tools: *//p' "$agent")
+    if echo "$tools" | grep -q "chrome-devtools MCP"; then
+      echo "drupalorg agent $agent should NOT have chrome-devtools MCP (use guided manual workflow)"
       return 1
     fi
   done
