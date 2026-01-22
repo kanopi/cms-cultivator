@@ -31,6 +31,7 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 4. **Test the plugin locally**:
    ```bash
    # Link to Claude Code plugins directory
+   mkdir -p ~/.config/claude/plugins/cms-cultivator
    ln -s $(pwd) ~/.config/claude/plugins/cms-cultivator
    claude plugins enable cms-cultivator
    ```
