@@ -1,11 +1,11 @@
 ---
 name: drupalorg-issue-helper
-description: Quick help with drupal.org issue templates, formatting, and best practices. Invoke when user asks "how do I write a bug report?", "drupal.org issue template", "issue formatting", or needs help structuring issue descriptions for drupal.org projects.
+description: Quick help with drupal.org issue templates, formatting, contributing patches, and best practices. Invoke when user asks "how do I write a bug report?", "drupal.org issue template", "issue formatting", "I have a patch", "contribute back", "submit my fix", "I fixed a bug in a module", or needs help structuring issue descriptions or contributing code to drupal.org projects.
 ---
 
 # Drupal.org Issue Helper
 
-Quick assistance with drupal.org issue templates, formatting, and best practices for effective bug reports and feature requests.
+Quick assistance with drupal.org issue templates, formatting, contributing patches/fixes, and best practices for effective bug reports and feature requests.
 
 ## When to Use This Skill
 
@@ -15,6 +15,11 @@ Activate this skill when the user:
 - Needs help formatting an issue description
 - Asks about issue categories or priorities
 - Wants to understand drupal.org issue best practices
+- Says "I have a patch" or "I created a fix"
+- Wants to "contribute back" or "contribute upstream"
+- Asks "how do I submit my fix to drupal.org?"
+- Mentions "I fixed a bug in a contrib module"
+- Wants to contribute code changes to a drupal.org project
 
 ## Quick Note on Creating Issues
 
@@ -27,6 +32,75 @@ Use `/drupal-issue create {project}` for a guided workflow that:
 4. Guides you through submission
 
 Or manually create issues at: `https://www.drupal.org/node/add/project-issue/{project}`
+
+## Contributing a Patch or Fix Back to Drupal.org
+
+If you've already created a fix locally and want to contribute it back, here's the workflow:
+
+### Step 1: Create an Issue First
+
+Before submitting code, you need an issue on drupal.org:
+1. Search existing issues to avoid duplicates
+2. Use `/drupal-issue create {project}` to create a new issue
+3. Note the issue number (e.g., `3569261`)
+
+### Step 2: Create a Merge Request
+
+Use `/drupal-mr {project} {issue_number}` which will:
+1. Clone the project to `~/.cache/drupal-contrib/{project}/`
+2. Guide you to create an issue fork on drupal.org
+3. Set up the branch `{issue_number}-{description}`
+4. Push your changes and provide the MR URL
+
+### Step 3: Apply Your Local Changes
+
+If your fix is in a different location (e.g., your project's `vendor/` or `web/modules/contrib/`):
+
+```bash
+# Option A: Copy changed files
+cp /path/to/your/fix/SomeClass.php ~/.cache/drupal-contrib/{project}/src/
+
+# Option B: Create a patch from your changes and apply it
+cd /path/to/your/project
+git diff web/modules/contrib/{module} > ~/fix.patch
+cd ~/.cache/drupal-contrib/{project}
+git apply ~/fix.patch
+
+# Option C: Cherry-pick if you committed locally
+git format-patch -1 HEAD --stdout > ~/fix.patch
+cd ~/.cache/drupal-contrib/{project}
+git am ~/fix.patch
+```
+
+### Step 4: Commit and Push
+
+```bash
+cd ~/.cache/drupal-contrib/{project}
+git add .
+git commit -m "Issue #{issue_number}: Description of fix"
+git push {project}-{issue_number} {branch_name}
+```
+
+### Quick Contribution Workflow
+
+For a complete guided workflow that handles issue + MR together:
+```bash
+/drupal-contribute {project}
+```
+
+### Example: Contributing a Bug Fix
+
+```
+User: "I fixed a bug in the paragraphs module where nested items weren't saving correctly. How do I contribute this back?"
+
+Workflow:
+1. /drupal-issue create paragraphs
+   → Creates issue, returns #3569999
+2. /drupal-mr paragraphs 3569999
+   → Sets up branch, you copy your fix, push
+3. Complete MR in browser
+4. Update issue status to "Needs review"
+```
 
 ## Official drupal.org HTML Issue Template
 
@@ -339,6 +413,74 @@ Status changes:
 Best practice: Include a summary of changes in your comment when changing to "Needs review".
 ```
 
+### Example 4: Contributing a Local Fix
+
+```
+User: "I fixed a PHP 8.2 deprecation warning in the webform module. How do I contribute this back?"
+
+Response:
+Great! Here's how to contribute your fix:
+
+1. **Create an issue** (if one doesn't exist):
+   /drupal-issue create webform
+
+   Use this title format: "PHP 8.2 deprecation warning in [ClassName]"
+   Category: Bug report
+   Priority: Normal (or Major if it causes errors)
+
+2. **Create a merge request**:
+   /drupal-mr webform {issue_number}
+
+   This clones the project and sets up your branch.
+
+3. **Apply your fix**:
+   cd ~/.cache/drupal-contrib/webform
+   # Copy your fixed file or apply your patch
+   git add .
+   git commit -m "Issue #{issue_number}: Fix PHP 8.2 deprecation warning in ClassName"
+   git push webform-{issue_number} {branch_name}
+
+4. **Complete the MR** in your browser when the URL opens.
+
+5. **Update issue status** to "Needs review" on drupal.org.
+
+Tip: In your issue description, include the exact deprecation warning message
+and the PHP/Drupal versions where you tested the fix.
+```
+
+### Example 5: Already Have a Patch File
+
+```
+User: "I have a .patch file that fixes an issue. How do I submit it?"
+
+Response:
+Modern drupal.org workflow uses merge requests instead of patch files, but you can
+still apply your patch:
+
+1. **Create or find the issue** on drupal.org for your fix
+
+2. **Set up the MR environment**:
+   /drupal-mr {project} {issue_number}
+
+3. **Apply your patch**:
+   cd ~/.cache/drupal-contrib/{project}
+   git apply /path/to/your/fix.patch
+
+   If that fails, try:
+   git apply --3way /path/to/your/fix.patch
+
+4. **Commit and push**:
+   git add .
+   git commit -m "Issue #{issue_number}: Description of fix"
+   git push {project}-{issue_number} {branch_name}
+
+5. **Complete the MR** in browser.
+
+Note: If you just want to share the patch without creating an MR, you can attach
+the .patch file directly to the issue as a comment. However, merge requests are
+preferred as they enable automated testing.
+```
+
 ## Common Mistakes to Avoid
 
 1. **No version info** - Always include Drupal and module versions
@@ -348,6 +490,8 @@ Best practice: Include a summary of changes in your comment when changing to "Ne
 5. **Mixing issues** - One issue per bug/feature
 6. **No follow-up** - Respond to maintainer questions
 7. **Using Markdown instead of HTML** - drupal.org expects HTML format
+8. **Submitting patches without an issue** - Always create an issue first, then attach code
+9. **Using patches instead of MRs** - Merge requests are preferred; they enable automated testing
 
 ## Resources
 
