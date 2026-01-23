@@ -978,10 +978,10 @@ setup() {
   done
 }
 
-@test "drupal-mr command has git and glab in allowed-tools" {
+@test "drupal-mr command has git and ssh in allowed-tools" {
   tools=$(sed -n 's/^allowed-tools: *//p' commands/drupal-mr.md)
   echo "$tools" | grep -q "git:" || return 1
-  echo "$tools" | grep -q "glab:" || return 1
+  echo "$tools" | grep -q "ssh:" || return 1
 }
 
 @test "drupal-cleanup command has valid structure" {
