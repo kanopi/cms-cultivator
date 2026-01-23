@@ -138,6 +138,7 @@ jobs:
           quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
           docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
           design_count=$(find commands -maxdepth 1 -name "design-*.md" | wc -l)
+          drupal_count=$(find commands -maxdepth 1 -name "drupal-*.md" | wc -l)
 
           echo "Command counts:"
           echo "  Total: $total"
@@ -150,12 +151,13 @@ jobs:
           echo "  Quality: $quality_count"
           echo "  Documentation: $docs_count"
           echo "  Design: $design_count"
+          echo "  Drupal.org: $drupal_count"
 
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 17 ]; then
-            echo "❌ Expected 17 total commands, found $total"
+          if [ "$total" -ne 21 ]; then
+            echo "❌ Expected 21 total commands, found $total"
             errors=$((errors + 1))
           fi
 
@@ -201,6 +203,11 @@ jobs:
 
           if [ "$design_count" -ne 3 ]; then
             echo "❌ Expected 3 design commands, found $design_count"
+            errors=$((errors + 1))
+          fi
+
+          if [ "$drupal_count" -ne 4 ]; then
+            echo "❌ Expected 4 Drupal.org commands, found $drupal_count"
             errors=$((errors + 1))
           fi
 
