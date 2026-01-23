@@ -14,20 +14,15 @@ setup() {
 # PREREQUISITE TESTS
 # ==============================================================================
 
-@test "glab CLI is installed" {
-  command -v glab || skip "glab not installed"
-}
-
 @test "git is installed" {
   command -v git
 }
 
-@test "glab can reach git.drupalcode.org" {
-  if ! command -v glab &> /dev/null; then
-    skip "glab not installed"
-  fi
-  run glab api --hostname git.drupalcode.org /api/v4/version
-  [ "$status" -eq 0 ] || skip "Not authenticated to git.drupalcode.org"
+@test "SSH can reach git.drupal.org" {
+  run ssh -o BatchMode=yes -o ConnectTimeout=5 git@git.drupal.org 2>&1
+  # SSH to git.drupal.org returns exit code 1 with welcome message, that's expected
+  # We just need to verify we can connect (not exit code 255 which means connection failed)
+  [ "$status" -ne 255 ] || skip "Cannot connect to git.drupal.org via SSH"
 }
 
 # ==============================================================================
@@ -58,19 +53,6 @@ setup() {
 @test "cloned repo is not in current project directory" {
   # Verify isolation from plugin project
   [ ! -d "$PROJECT_ROOT/easy_lqp" ]
-}
-
-# ==============================================================================
-# GLAB FUNCTIONALITY TESTS
-# ==============================================================================
-
-@test "glab can list MRs for drupal project" {
-  if ! command -v glab &> /dev/null; then
-    skip "glab not installed"
-  fi
-  run glab mr list --hostname git.drupalcode.org --repo project/easy_lqp 2>&1
-  # May fail if not authenticated, that's ok for CI
-  [ "$status" -eq 0 ] || skip "Cannot access git.drupalcode.org MRs"
 }
 
 # ==============================================================================
@@ -176,4 +158,13 @@ setup() {
   expected_remote="git@git.drupal.org:issue/${project}-${issue}.git"
 
   [ "$expected_remote" = "git@git.drupal.org:issue/paragraphs-3456789.git" ]
+}
+
+@test "remote naming convention follows project-issue pattern" {
+  # Test the new naming convention: {project}-{issue}
+  project="paragraphs"
+  issue="3456789"
+  remote_name="${project}-${issue}"
+
+  [ "$remote_name" = "paragraphs-3456789" ]
 }

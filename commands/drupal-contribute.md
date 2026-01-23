@@ -1,7 +1,7 @@
 ---
 description: Full drupal.org contribution workflow - create issue and merge request together
 argument-hint: "{project} [issue-number]"
-allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(glab:*), Bash(mkdir:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Task
+allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(ssh:*), Bash(mkdir:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Bash(curl:*), Task
 ---
 
 ## How It Works
@@ -13,7 +13,7 @@ This command orchestrates the complete drupal.org contribution workflow by spawn
        prompt="Create a new issue for {project}. Generate issue content using drupal.org HTML templates, copy title to clipboard, open browser, guide user through submission, and return the issue number.")
 
 2. Task(cms-cultivator:drupalorg-mr-specialist:drupalorg-mr-specialist,
-       prompt="Create a merge request for {project} issue #{issue_number}. Clone repo, guide user through manual fork creation, set up branch, and create MR.")
+       prompt="Create a merge request for {project} issue #{issue_number}. Clone repo, guide user through manual fork creation, set up branch, push changes, and provide MR creation URL.")
 ```
 
 ### Workflow Steps
@@ -27,15 +27,16 @@ This command orchestrates the complete drupal.org contribution workflow by spawn
 6. **User provides**: Issue number (e.g., `3456789`)
 
 #### Phase 2: Merge Request Creation (drupalorg-mr-specialist)
-1. Check glab CLI and authentication
+1. Check SSH connectivity
 2. Clone project to `~/.cache/drupal-contrib/{project}/`
 3. Open issue page for fork creation
 4. **User interaction**: Click "Create issue fork"
 5. **User confirms**: "done"
-6. Add issue fork remote
-7. Create branch: `{issue_number}-{description}`
-8. Set up for code changes
-9. Push and create MR via glab CLI
+6. Add issue fork remote (named `{project}-{issue}`)
+7. Fetch from fork
+8. Create branch: `{issue_number}-{description}`
+9. Set up for code changes
+10. Push and provide MR creation URL from git output
 
 ---
 
@@ -136,11 +137,11 @@ cd ~/.cache/drupal-contrib/paragraphs
 ```bash
 git add .
 git commit -m "Issue #3456789: Fix validation error"
-git push issue-fork 3456789-fix-validation-error
+git push paragraphs-3456789 3456789-fix-validation-error
 ```
 
 ### Step 7: Create MR
-The agent creates the MR via glab, or you can do it via the drupal.org UI.
+Git outputs the MR creation URL when you push. Open it in your browser to complete the MR.
 
 ## Prerequisites
 
@@ -148,18 +149,17 @@ The agent creates the MR via glab, or you can do it via the drupal.org UI.
 - **drupal.org account** - Log in via browser when prompted
 
 ### For MR Creation
-- **glab CLI** - GitLab CLI tool
-- **git.drupalcode.org authentication** - Via `glab auth login` (persists in config)
 - **SSH key** - Added to git.drupalcode.org
+- Or **HTTPS with token** - For networks blocking SSH port 22
 
 ### One-Time Setup
 
 ```bash
-# Install glab
-brew install glab  # macOS
+# Verify SSH connectivity
+ssh -T git@git.drupal.org
 
-# Authenticate with git.drupalcode.org
-glab auth login --hostname git.drupalcode.org
+# If SSH fails, add your key at:
+# https://git.drupalcode.org/-/user_settings/ssh_keys
 ```
 
 See individual commands for more details:
@@ -179,7 +179,7 @@ See individual commands for more details:
 
 **Repository**: ~/.cache/drupal-contrib/paragraphs/
 **Branch**: 3456789-fix-validation-error
-**Issue Fork**: git@git.drupal.org:issue/paragraphs-3456789.git
+**Issue Fork Remote**: paragraphs-3456789
 
 **Next Steps**:
 
@@ -197,14 +197,11 @@ See individual commands for more details:
 
 3. **Push**:
    ```bash
-   git push issue-fork 3456789-fix-validation-error
+   git push paragraphs-3456789 3456789-fix-validation-error
    ```
 
-4. **Create MR** (if not auto-created):
-   ```bash
-   glab mr create --hostname git.drupalcode.org \
-     --title "Issue #3456789: Fix validation error"
-   ```
+4. **Create MR**:
+   Open the URL from git push output in your browser to complete MR creation.
 
 5. **Update issue status** to "Needs review" on drupal.org
 ```

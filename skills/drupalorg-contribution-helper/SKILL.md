@@ -15,7 +15,6 @@ Activate this skill when the user:
 - Needs help with git.drupalcode.org commands
 - Asks about drupal.org branch naming conventions
 - Wants to understand the drupal.org contribution workflow
-- Asks about glab CLI for drupal.org
 
 ## Quick Reference
 
@@ -44,8 +43,6 @@ drupalorg project:issues paragraphs
 # Open issue in browser
 drupalorg issue:link 3456789
 ```
-
-**Note**: drupalorg-cli excels at the legacy patch workflow. For GitLab MR workflow, also use glab CLI.
 
 ### Git Clone Commands
 
@@ -78,12 +75,18 @@ Examples:
 
 ### Issue Fork Remote
 
+Remote naming follows `{project}-{issue}` convention to allow multiple issue forks per project:
+
 ```bash
 # Add issue fork remote
-git remote add issue-fork git@git.drupal.org:issue/{project}-{issue_number}.git
+git remote add {project}-{issue_number} git@git.drupal.org:issue/{project}-{issue_number}.git
 
-# Example
-git remote add issue-fork git@git.drupal.org:issue/paragraphs-3456789.git
+# Examples
+git remote add paragraphs-3456789 git@git.drupal.org:issue/paragraphs-3456789.git
+git remote add easy_lqp-3456790 git@git.drupal.org:issue/easy_lqp-3456790.git
+
+# Fetch from issue fork
+git fetch {project}-{issue_number}
 
 # Verify remotes
 git remote -v
@@ -102,10 +105,10 @@ Issue #3456789: Fix validation error in configuration form
 
 ```bash
 # Push branch to issue fork
-git push issue-fork {branch_name}
+git push {project}-{issue_number} {branch_name}
 
 # Example
-git push issue-fork 3456789-fix-validation-error
+git push paragraphs-3456789 3456789-fix-validation-error
 ```
 
 ## Complete Workflow
@@ -132,12 +135,17 @@ Issue forks must be created via the drupal.org web UI. This cannot be automated 
 ### 3. Add Issue Fork Remote
 
 ```bash
-git remote add issue-fork git@git.drupal.org:issue/{project}-{issue_number}.git
+git remote add {project}-{issue_number} git@git.drupal.org:issue/{project}-{issue_number}.git
+git fetch {project}-{issue_number}
 ```
 
 ### 4. Create Branch
 
 ```bash
+# If branch already exists on fork, checkout tracking it:
+git checkout -b '{issue_number}-{description}' --track {project}-{issue_number}/'{issue_number}-{description}'
+
+# If creating new branch:
 git checkout -b {issue_number}-{description}
 ```
 
@@ -155,75 +163,64 @@ git commit -m "Issue #{issue_number}: {description}"
 ### 6. Push to Issue Fork
 
 ```bash
-git push issue-fork {branch_name}
+git push {project}-{issue_number} {branch_name}
 ```
 
 ### 7. Create Merge Request
 
-**Option A: Using glab CLI**
-```bash
-glab mr create --hostname git.drupalcode.org \
-  --source-branch {branch_name} \
-  --target-branch main \
-  --title "Issue #{issue_number}: {description}"
+When you push, git outputs the MR creation URL:
+```
+remote: To create a merge request for {branch}, visit:
+remote:   https://git.drupalcode.org/issue/{project}-{issue}/-/merge_requests/new?...
 ```
 
-**Option B: Via Web UI**
+Open that URL in your browser to complete MR creation.
+
+**Alternative: Via Web UI**
 1. Go to issue page on drupal.org
 2. Click "Compare" button
 3. Follow MR creation flow
 
-## glab CLI Setup
+## SSH Key Setup
 
-### Installation
+### Check for Existing Key
 
 ```bash
-# macOS
-brew install glab
-
-# Linux
-curl -sL https://j.mp/glab | sudo bash
-
-# Windows
-winget install glab
+ls -la ~/.ssh/id_*.pub
 ```
 
-### Authentication
+### Generate Key if Needed
 
 ```bash
-# Authenticate with git.drupalcode.org
-glab auth login --hostname git.drupalcode.org
-
-# Choose "Token" authentication
-# Get token from: https://git.drupalcode.org/-/user_settings/personal_access_tokens
-# Required scopes: api, read_user, read_repository, write_repository
+ssh-keygen -t ed25519 -C "your-email@example.com"
 ```
 
-### Verify Setup
+### Add Key to git.drupalcode.org
+
+1. Go to: https://git.drupalcode.org/-/user_settings/ssh_keys
+2. Copy your public key: `cat ~/.ssh/id_ed25519.pub`
+3. Paste and save
+
+### Test Connection
 
 ```bash
-# Check authentication status
-glab auth status --hostname git.drupalcode.org
+ssh -T git@git.drupal.org
 ```
 
-## Common Commands
+## HTTPS Fallback (If SSH Port Blocked)
 
-### List Your MRs
-
-```bash
-glab mr list --hostname git.drupalcode.org --repo project/{project} --author=@me
-```
-
-### View MR Details
+If your network blocks SSH port 22, use HTTPS with a personal access token:
 
 ```bash
-glab mr view {mr_number} --hostname git.drupalcode.org --repo project/{project}
-```
+# Create token at: https://git.drupalcode.org/-/user_settings/personal_access_tokens
+# Required scopes: read_repository, write_repository
 
-### Check MR Status
+# For clone:
+git clone https://{username}:{token}@git.drupalcode.org/project/{project}.git
 
-```bash
-glab mr status --hostname git.drupalcode.org --repo project/{project}
+# For issue fork remote:
+git remote add {project}-{issue} \
+  "https://{username}:{token}@git.drupalcode.org/issue/{project}-{issue}.git"
 ```
 
 ## Troubleshooting
@@ -240,7 +237,7 @@ glab mr status --hostname git.drupalcode.org --repo project/{project}
 3. Verify remote is correct:
    ```bash
    git remote -v
-   # Should show: issue-fork git@git.drupal.org:issue/{project}-{issue}.git
+   # Should show: {project}-{issue} git@git.drupal.org:issue/{project}-{issue}.git
    ```
 
 ### "Issue fork not found"
@@ -257,8 +254,8 @@ You must create the issue fork via drupal.org web UI first:
 git checkout {existing_branch}
 
 # If remote branch exists
-git fetch issue-fork
-git checkout -b {branch} issue-fork/{branch}
+git fetch {project}-{issue_number}
+git checkout -b {branch} --track {project}-{issue_number}/{branch}
 ```
 
 ### Update Existing MR
@@ -269,7 +266,7 @@ git add .
 git commit -m "Issue #{issue_number}: Additional fixes"
 
 # Push updates (existing MR updates automatically)
-git push issue-fork {branch_name}
+git push {project}-{issue_number} {branch_name}
 ```
 
 ## Best Practices
@@ -290,11 +287,12 @@ User: "How do I create a merge request for drupal.org?"
 Skill response:
 1. Clone the project
 2. Create issue fork on drupal.org (click button in web UI - required manual step)
-3. Add remote: `git remote add issue-fork git@git.drupal.org:issue/{project}-{issue}.git`
-4. Create branch: `git checkout -b {issue_number}-{description}`
-5. Commit with: `Issue #{issue_number}: description`
-6. Push: `git push issue-fork {branch}`
-7. Create MR via glab or drupal.org UI
+3. Add remote: `git remote add {project}-{issue} git@git.drupal.org:issue/{project}-{issue}.git`
+4. Fetch: `git fetch {project}-{issue}`
+5. Create branch: `git checkout -b {issue_number}-{description}`
+6. Commit with: `Issue #{issue_number}: description`
+7. Push: `git push {project}-{issue} {branch}`
+8. Open MR creation URL from git output in browser
 ```
 
 **Example 2: Branch Naming Help**
@@ -323,14 +321,15 @@ Skill response:
 Add the issue fork as a remote:
 
 ```bash
-git remote add issue-fork git@git.drupal.org:issue/{project}-{issue_number}.git
+git remote add {project}-{issue_number} git@git.drupal.org:issue/{project}-{issue_number}.git
+git fetch {project}-{issue_number}
 ```
 
 Replace `{project}` with your project name and `{issue_number}` with your issue number.
 
 Then push your branch:
 ```bash
-git push issue-fork {your-branch-name}
+git push {project}-{issue_number} {your-branch-name}
 ```
 ```
 
@@ -338,5 +337,4 @@ git push issue-fork {your-branch-name}
 
 - [Drupal.org GitLab Guide](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal)
 - [Creating Issue Forks](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/creating-issue-forks)
-- [glab CLI Documentation](https://docs.gitlab.com/cli/)
 - [git.drupalcode.org](https://git.drupalcode.org)

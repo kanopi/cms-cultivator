@@ -1,7 +1,7 @@
 ---
 description: Create or list merge requests for drupal.org projects via git.drupalcode.org
 argument-hint: "[project] [issue-number] | list [project]"
-allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(glab:*), Bash(drupalorg:*), Bash(mkdir:*), Bash(ls:*), Bash(cd:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Task
+allowed-tools: Read, Glob, Grep, Bash(git:*), Bash(ssh:*), Bash(drupalorg:*), Bash(mkdir:*), Bash(ls:*), Bash(cd:*), Bash(open:*), Bash(xdg-open:*), Bash(pbcopy:*), Bash(xclip:*), Bash(curl:*), Task
 ---
 
 ## How It Works
@@ -10,7 +10,7 @@ Spawn the **drupalorg-mr-specialist** agent to handle merge request operations:
 
 ```
 Task(cms-cultivator:drupalorg-mr-specialist:drupalorg-mr-specialist,
-     prompt="Execute the drupal-mr command with arguments: [arguments]. Check prerequisites (glab CLI, authentication), clone project to ~/.cache/drupal-contrib/ if needed, guide user through manual issue fork creation, set up branch, and create MR via glab CLI. Return MR URL and next steps.")
+     prompt="Execute the drupal-mr command with arguments: [arguments]. Check prerequisites (SSH key), clone project to ~/.cache/drupal-contrib/ if needed, guide user through manual issue fork creation, set up branch, push changes, and provide MR creation URL. Return MR URL and next steps.")
 ```
 
 ### Workflow Steps
@@ -18,9 +18,8 @@ Task(cms-cultivator:drupalorg-mr-specialist:drupalorg-mr-specialist,
 The drupalorg-mr-specialist handles git operations automatically but requires **one manual step** for issue fork creation:
 
 #### 1. Prerequisites Check
-- Verify glab CLI is installed
-- Check authentication: `glab auth status --hostname git.drupalcode.org`
-- Guide through one-time setup if needed
+- Verify SSH key connectivity: `ssh -T git@git.drupal.org`
+- Guide through SSH key setup if needed
 
 #### 2. Clone/Update Repository
 - Clone to `~/.cache/drupal-contrib/{project}/`
@@ -34,12 +33,14 @@ The drupalorg-mr-specialist handles git operations automatically but requires **
 **Note**: Issue fork creation requires the drupal.org web UI and cannot be automated due to CAPTCHA protection.
 
 #### 4. Set Up Branch and Remote
-- Add issue fork remote: `git remote add issue-fork git@git.drupal.org:issue/{project}-{issue}.git`
+- Add issue fork remote: `git remote add {project}-{issue} git@git.drupal.org:issue/{project}-{issue}.git`
+- Fetch from fork: `git fetch {project}-{issue}`
 - Create branch: `git checkout -b {issue_number}-{description}`
 
 #### 5. Push and Create MR
-- Push to issue fork: `git push issue-fork {branch}`
-- Create MR via glab CLI
+- Push to issue fork: `git push {project}-{issue} {branch}`
+- Git outputs the MR creation URL automatically
+- Open that URL in browser to complete MR creation
 
 ---
 
@@ -75,11 +76,12 @@ The agent will:
 1. Clone the project to `~/.cache/drupal-contrib/{project}/`
 2. Open the issue page for you to create the issue fork
 3. Wait for your confirmation ("done")
-4. Add the issue fork remote
-5. Create branch: `{issue_number}-{description}`
-6. Push to issue fork
-7. Create MR via glab CLI
-8. Return MR URL
+4. Add the issue fork remote (named `{project}-{issue}`)
+5. Fetch from the fork
+6. Create branch: `{issue_number}-{description}`
+7. Push to issue fork
+8. Provide MR creation URL from git push output
+9. Open URL in browser for you to complete MR creation
 
 ### List Merge Requests
 
@@ -93,42 +95,28 @@ The agent will:
 
 ## Prerequisites
 
-### glab CLI
-
-Install the GitLab CLI:
-
-```bash
-# macOS
-brew install glab
-
-# Linux
-curl -sL https://j.mp/glab | sudo bash
-
-# Windows
-winget install glab
-```
-
-### Authentication (One-Time Setup)
-
-```bash
-# Authenticate with git.drupalcode.org
-glab auth login --hostname git.drupalcode.org
-```
-
-1. Choose "Token" authentication
-2. Get token from: https://git.drupalcode.org/-/user_settings/personal_access_tokens
-3. Required scopes: `api`, `read_user`, `read_repository`, `write_repository`
-
-Verify setup:
-```bash
-glab auth status --hostname git.drupalcode.org
-```
-
 ### SSH Key
 
 Ensure your SSH key is added to git.drupalcode.org:
 1. Go to: https://git.drupalcode.org/-/user_settings/ssh_keys
 2. Add your public key (`~/.ssh/id_rsa.pub` or `~/.ssh/id_ed25519.pub`)
+
+Verify connectivity:
+```bash
+ssh -T git@git.drupal.org
+```
+
+### HTTPS Fallback (Optional)
+
+If your network blocks SSH port 22, use HTTPS with a personal access token:
+
+1. Create token at: https://git.drupalcode.org/-/user_settings/personal_access_tokens
+2. Required scopes: `read_repository`, `write_repository`
+3. Use HTTPS remote URLs instead:
+   ```bash
+   git remote set-url {project}-{issue} \
+     "https://{username}:{token}@git.drupalcode.org/issue/{project}-{issue}.git"
+   ```
 
 ### drupalorg-cli (Optional)
 
@@ -176,12 +164,15 @@ Examples:
 ### Successful MR Creation
 
 ```markdown
-**Merge Request Created**
+**Merge Request Ready**
 
 **Project**: paragraphs
 **Issue**: #3456789
-**MR URL**: https://git.drupalcode.org/issue/paragraphs-3456789/-/merge_requests/1
 **Branch**: 3456789-fix-validation-error
+
+**MR Creation URL**: https://git.drupalcode.org/issue/paragraphs-3456789/-/merge_requests/new?merge_request%5Bsource_branch%5D=3456789-fix-validation-error
+
+Opening URL in browser... Complete the MR creation in the web UI.
 
 **Local repo**: ~/.cache/drupal-contrib/paragraphs/
 
@@ -191,11 +182,11 @@ cd ~/.cache/drupal-contrib/paragraphs
 git checkout 3456789-fix-validation-error
 # Make changes
 git add . && git commit -m "Issue #3456789: updates"
-git push issue-fork 3456789-fix-validation-error
+git push paragraphs-3456789 3456789-fix-validation-error
 ```
 
 **Next Steps**:
-1. Review MR at the URL above
+1. Complete MR creation in browser
 2. Update drupal.org issue status to "Needs review"
 3. Respond to review feedback
 ```
@@ -221,27 +212,31 @@ git fetch --all
 git checkout {branch_name}
 # Make changes
 git add . && git commit -m "Issue #{issue}: additional fixes"
-git push issue-fork {branch_name}
+git push {project}-{issue} {branch_name}
 ```
 
 The MR updates automatically when you push to the branch.
 
 ## Error Handling
 
-### glab Not Installed
-
-The agent provides installation instructions for your platform.
-
-### Not Authenticated
+### SSH Connection Failed
 
 The agent guides you through:
-1. Creating a personal access token
-2. Running `glab auth login`
-3. Verifying with `glab auth status`
+1. Generating an SSH key if needed
+2. Adding key to git.drupalcode.org
+3. Testing connectivity with `ssh -T git@git.drupal.org`
+4. Optionally using HTTPS fallback with token
 
 ### Issue Fork Not Created
 
 The agent opens the issue page and provides instructions to create the fork manually.
+
+### Push Failed
+
+Common causes and solutions:
+1. **Remote not added**: `git remote add {project}-{issue} git@git.drupal.org:issue/{project}-{issue}.git`
+2. **SSH key not configured**: Add key to git.drupalcode.org
+3. **Network blocks SSH**: Use HTTPS with token fallback
 
 ## Related Commands
 
@@ -254,6 +249,6 @@ The agent opens the issue page and provides instructions to create the fork manu
 This command uses the **drupalorg-contribution-helper** skill for:
 - Git workflow guidance
 - Branch naming conventions
-- glab CLI commands
+- Native git commands for drupal.org
 
 For quick help with drupal.org git workflows, the skill activates when you ask about "drupal.org contribution" or "issue fork".
