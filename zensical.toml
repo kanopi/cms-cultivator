@@ -35,7 +35,8 @@ nav = [
   {"Guides" = [
     "guides/pr-workflow.md",
     "guides/design-workflow.md",
-    "guides/using-argument-modes.md"
+    "guides/using-argument-modes.md",
+    "drupal-contribution.md"
   ]},
   {"Kanopi Tools" = [
     "kanopi-tools/overview.md",
