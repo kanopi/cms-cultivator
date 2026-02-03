@@ -115,6 +115,7 @@ Comprehensive audits of live websites using Chrome DevTools.
 | Command | Description |
 |---------|-------------|
 | `/audit-live-site [url]` | Full site audit for performance, accessibility, SEO, and security |
+| `/export-audit-csv [report-file]` | Export audit report to CSV for project management tools (Teamwork, Jira, Monday, etc.) |
 
 **Requirements**: Chrome DevTools MCP Server
 

@@ -229,3 +229,15 @@ The security-specialist agent performs all audit operations.
 ## Agent Used
 
 **security-specialist** - OWASP Top 10 specialist with CMS-specific security knowledge for Drupal and WordPress.
+
+---
+
+## Exporting to Project Management Tools
+
+After audit completes, export findings as CSV:
+
+```bash
+/export-audit-csv [report-filename]
+```
+
+Generates Teamwork-compatible CSV for importing tasks into project management tools (also works with Jira, Monday, Linear).

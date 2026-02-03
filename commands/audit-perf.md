@@ -623,3 +623,15 @@ The performance specialist recommends budgets based on industry standards:
 - ✅ Prioritized fixes by impact
 - ✅ Code examples (before/after)
 - ✅ Stakeholder reports with ROI
+
+---
+
+## Exporting to Project Management Tools
+
+After audit completes, export findings as CSV:
+
+```bash
+/export-audit-csv [report-filename]
+```
+
+Generates Teamwork-compatible CSV for importing tasks into project management tools (also works with Jira, Monday, Linear).
