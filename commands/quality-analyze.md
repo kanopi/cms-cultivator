@@ -212,3 +212,15 @@ The code-quality-specialist agent performs all quality analysis operations.
 ## Agent Used
 
 **code-quality-specialist** - Code quality and technical debt analyst with CMS-specific standards knowledge.
+
+---
+
+## Exporting to Project Management Tools
+
+After audit completes, export findings as CSV:
+
+```bash
+/export-audit-csv [report-filename]
+```
+
+Generates Teamwork-compatible CSV for importing tasks into project management tools (also works with Jira, Monday, Linear).

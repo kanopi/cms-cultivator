@@ -61,6 +61,7 @@ Comprehensive performance, accessibility, and security audits with flexible argu
 - `/audit-perf [options]` - Core Web Vitals and optimization
 - `/quality-analyze [options]` - Code quality and technical debt
 - `/audit-live-site [url]` - Comprehensive parallel audit (all specialists)
+- `/export-audit-csv [report-file]` - Export audit findings to CSV for project management tools
 
 ### Design-to-Code
 Figma → WordPress blocks, Drupal paragraphs with browser validation.

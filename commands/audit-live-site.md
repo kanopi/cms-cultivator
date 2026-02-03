@@ -8,7 +8,14 @@ Spawn the **live-audit-specialist** agent using:
 
 ```
 Task(cms-cultivator:live-audit-specialist:live-audit-specialist,
-     prompt="Perform a comprehensive site audit by orchestrating performance-specialist, accessibility-specialist, security-specialist, and code-quality-specialist in parallel. Site URL: [use argument if provided]. Synthesize findings into unified report with health score, prioritized issues, and remediation roadmap. Save the comprehensive audit report to a file (audit-live-site-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
+     prompt="Perform comprehensive site audit by orchestrating 4 specialists in parallel.
+
+Site context:
+- Site URL: [use argument if provided, or 'local development']
+- CMS: [Drupal/WordPress - detect from codebase if local]
+- Environment: [production/staging/local]
+
+CRITICAL: Spawn all 4 specialists IMMEDIATELY in a single message with 4 Task calls. Do NOT gather context yourself - it is provided above. Synthesize findings into unified report. Save to audit-live-site-YYYY-MM-DD-HHMM.md and suggest: '/export-audit-csv [report-file]'")
 ```
 
 The live-audit specialist will:
@@ -73,3 +80,15 @@ The live-audit-specialist coordinates all operations by orchestrating the 4 spec
 - ✅ Actionable remediation roadmap
 - ✅ Executive + technical reports
 - ✅ **Audit report saved to file** for reference and stakeholder sharing
+
+---
+
+## Exporting to Project Management Tools
+
+After audit completes, export findings as CSV:
+
+```bash
+/export-audit-csv [report-filename]
+```
+
+Generates Teamwork-compatible CSV for importing tasks into project management tools (also works with Jira, Monday, Linear).

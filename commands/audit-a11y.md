@@ -470,3 +470,15 @@ ddev exec npx lighthouse [url] --only-categories=accessibility
 - ✅ Stakeholder-friendly reports
 - ✅ Legal/compliance guidance
 - ✅ Remediation roadmap with effort estimates
+
+---
+
+## Exporting to Project Management Tools
+
+After audit completes, export findings as CSV:
+
+```bash
+/export-audit-csv [report-filename]
+```
+
+Generates Teamwork-compatible CSV for importing tasks into project management tools (also works with Jira, Monday, Linear).

@@ -71,9 +71,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (21)" {
+@test "command count matches expected (22)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 21 ]
+  [ "$count" -eq 22 ]
 }
 
 # ==============================================================================
