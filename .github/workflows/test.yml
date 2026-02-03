@@ -133,7 +133,7 @@ jobs:
           a11y_count=$(find commands -maxdepth 1 -name "audit-a11y.md" | wc -l)
           perf_count=$(find commands -maxdepth 1 -name "audit-perf.md" | wc -l)
           security_count=$(find commands -maxdepth 1 -name "audit-security.md" | wc -l)
-          live_audit_count=$(find commands -maxdepth 1 -name "audit-live-site.md" | wc -l)
+          live_audit_count=$(find commands -maxdepth 1 \( -name "audit-live-site.md" -o -name "export-audit-csv.md" \) | wc -l)
           test_count=$(find commands -maxdepth 1 -name "test-*.md" | wc -l)
           quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
           docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
@@ -156,8 +156,8 @@ jobs:
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 21 ]; then
-            echo "❌ Expected 21 total commands, found $total"
+          if [ "$total" -ne 22 ]; then
+            echo "❌ Expected 22 total commands, found $total"
             errors=$((errors + 1))
           fi
 
@@ -181,8 +181,8 @@ jobs:
             errors=$((errors + 1))
           fi
 
-          if [ "$live_audit_count" -ne 1 ]; then
-            echo "❌ Expected 1 live site audit command (audit-live-site.md), found $live_audit_count"
+          if [ "$live_audit_count" -ne 2 ]; then
+            echo "❌ Expected 2 live site audit commands (audit-live-site.md, export-audit-csv.md), found $live_audit_count"
             errors=$((errors + 1))
           fi
 
