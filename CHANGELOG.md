@@ -7,20 +7,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-02-03
+
 ### Added
-- **Drupal.org Integration** - New commands and agents for contributing to drupal.org projects
-  - `/drupal-issue` - Create, update, or list issues on drupal.org using browser automation
-  - `/drupal-mr` - Create or list merge requests on git.drupalcode.org via glab CLI
-  - `/drupal-contribute` - Full workflow orchestrator combining issue creation and MR setup
+
+- **CSV Export Integration** - Export audit findings to project management tools
+  - `/export-audit-csv [report-file]` - Convert markdown audit reports to CSV format
+  - Teamwork-compatible format with phases, priorities, due dates, and time estimates
+  - Supports all audit report types (accessibility, security, performance, quality, live-site)
+  - Automatically organizes tasks into 4 phases based on severity (Critical/High/Medium/Low)
+  - Calculates due dates: Critical (3 days), High (10 days), Medium (20 days), Low (no deadline)
+  - Extracts effort estimates from reports (15m, 30m, 1h, 2h, etc.)
+  - Tags tasks by category (Security, Performance, Accessibility, Code Quality)
+  - Compatible with Teamwork, Jira, Monday.com, Asana, and other PM tools supporting CSV import
+
+- **Drupal.org Contribution Integration** - Complete workflow for contributing to drupal.org projects
+  - `/drupal-contribute` - Full orchestration workflow combining issue creation and MR setup
+  - `/drupal-issue` - Create, update, or list issues on drupal.org with guided manual workflow
+  - `/drupal-mr` - Create or list merge requests on git.drupalcode.org using native git commands with SSH
   - `/drupal-cleanup` - List and cleanup cloned repositories in `~/.cache/drupal-contrib/`
-  - `drupalorg-issue-specialist` agent - Browser automation for issue management
-  - `drupalorg-mr-specialist` agent - Git operations and glab CLI for merge requests
-  - `drupalorg-issue-helper` skill - Quick help with issue templates and formatting
-  - `drupalorg-contribution-helper` skill - Quick help with git workflow and branch naming
-  - Credential storage support at `~/.config/drupalorg/credentials.yml` for auto-login
-  - Integration with `drupalorg-cli` tool (https://github.com/mglaman/drupalorg-cli) when available
+  - `drupalorg-issue-specialist` agent - Guided clipboard-based workflow for issue management
+  - `drupalorg-mr-specialist` agent - Git operations with SSH for merge request creation
+  - `drupalorg-issue-helper` skill - Quick help with issue templates, formatting, and contribution process
+  - `drupalorg-contribution-helper` skill - Quick help with git workflow, branch naming, and patch creation
+  - Credential storage support at `~/.config/drupalorg/credentials.yml` for auto-login assistance
+  - Official HTML issue templates with all standard drupal.org sections
+  - Integration guidance for `drupalorg-cli` tool (https://github.com/mglaman/drupalorg-cli)
   - Comprehensive documentation at `docs/drupal-contribution.md`
   - New BATS test file `tests/test-drupalorg-integration.bats` for integration testing
+
+### Changed
+
+- **Live Audit Workflow** - Enhanced with CSV export recommendation
+  - `live-audit-specialist` now suggests running `/export-audit-csv` after generating reports
+  - All audit command documentation updated with CSV export examples
+  - Better PM tool integration guidance across all audit types
+
+- **Drupal.org MR Process** - Simplified from glab CLI to native git
+  - Removed `glab` CLI dependency (was GitLab-specific)
+  - Use native `git` commands with SSH for drupal.org compatibility
+  - Simplified authentication (SSH keys only, no API tokens needed)
+  - Updated tests to validate SSH configuration instead of glab presence
+
+- **Drupal.org Issue Process** - Changed from browser automation to guided manual
+  - Removed Chrome DevTools MCP dependency (drupal.org has CAPTCHA protection)
+  - Implemented clipboard-based workflow with browser launch
+  - Provides pre-filled HTML templates for all issue sections
+  - User copies template, agent opens browser, user pastes and submits
+  - More reliable than automation, works with PerimeterX CAPTCHA
+
+### Fixed
+
+- **Issue Helper Skill** - Added patch contribution triggers
+  - New activation patterns for users wanting to contribute local fixes
+  - Section: "Contributing a Patch or Fix Back to Drupal.org"
+  - Guides users through the contribution process when they have working fixes
+
+### Documentation
+
+- **Drupal Contribution Guide** - New comprehensive documentation
+  - Complete guide at `docs/drupal-contribution.md`
+  - Covers all 4 drupal.org contribution commands
+  - SSH setup instructions
+  - Issue template guidance
+  - Merge request workflow
+  - Branch naming conventions
+  - Patch file creation
+  - Testing and review process
+
+- **CSV Export Documentation** - Export integration guidance
+  - Added to all audit command files (a11y, security, perf, quality, live-site)
+  - PM tool import instructions (Teamwork, Jira, Monday, Asana)
+  - Phase structure explanation
+  - Due date calculation logic
+  - Time estimation format
+  - Updated `docs/commands/overview.md` with export-audit-csv entry
 
 ## [0.6.1] - 2026-01-20
 
