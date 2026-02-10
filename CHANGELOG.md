@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **WordPress Skills Installation** - Install official WordPress agent-skills
+  - `/wp-add-skills` command - Install 13 WordPress-specific skills to ~/.claude/skills/
+  - Supports `--list` flag to show installed skills
+  - Supports `--update` flag to update to latest version
+  - Prerequisite checking for git, Node.js, disk space
+  - Installation time: ~70 seconds
+  - Skills include: block development, REST API, WP-CLI, performance, theme.json, and more
+  - New documentation page: `docs/wordpress-skills.md`
+  - Integration with official WordPress/agent-skills repository
+
 ## [0.7.0] - 2026-02-03
 
 ### Added

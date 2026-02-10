@@ -71,9 +71,9 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (22)" {
+@test "command count matches expected (23)" {
   count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 22 ]
+  [ "$count" -eq 23 ]
 }
 
 # ==============================================================================
@@ -179,6 +179,22 @@ setup() {
 @test "design commands start with design-" {
   design_count=$(find commands -maxdepth 1 -name "design-*.md" | wc -l)
   [ "$design_count" -eq 3 ]
+}
+
+@test "wordpress skills command exists" {
+  [ -f "commands/wp-add-skills.md" ]
+}
+
+@test "wp-add-skills has required frontmatter" {
+  cmd="commands/wp-add-skills.md"
+  grep -q "^description:" "$cmd"
+  grep -q "^allowed-tools:" "$cmd"
+}
+
+@test "wp-add-skills allows git and node" {
+  tools=$(sed -n 's/^allowed-tools: *//p' commands/wp-add-skills.md)
+  echo "$tools" | grep -q "git:"
+  echo "$tools" | grep -q "node:"
 }
 
 # ==============================================================================
