@@ -156,8 +156,8 @@ jobs:
           # Verify expected counts
           errors=0
 
-          if [ "$total" -ne 22 ]; then
-            echo "❌ Expected 22 total commands, found $total"
+          if [ "$total" -ne 23 ]; then
+            echo "❌ Expected 23 total commands, found $total"
             errors=$((errors + 1))
           fi
 

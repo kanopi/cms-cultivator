@@ -165,6 +165,24 @@ Commands automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/ov
 
 ---
 
+## ⚙️ Setup & Configuration
+
+Extend CMS Cultivator with additional skills.
+
+| Command | Description |
+|---------|-------------|
+| `/wp-add-skills [options]` | Install official WordPress agent-skills globally |
+
+**Options:**
+- `--list` - Show installed WordPress skills
+- `--update` - Update skills to latest version
+
+**What it installs:** 13 WordPress-specific skills for block development, REST API, WP-CLI, performance, and more.
+
+**Learn more:** [WordPress Skills Guide](../wordpress-skills.md)
+
+---
+
 ## Next Steps
 
 - **[PR Workflow Commands](pr-workflow.md)** - Detailed PR workflow guide

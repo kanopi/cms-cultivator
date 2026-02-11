@@ -393,6 +393,37 @@ Many commands also accept legacy focus parameters to analyze specific areas:
 
 ---
 
+## Optional: WordPress Skills
+
+Install official WordPress agent-skills for specialized WordPress development:
+
+```bash
+/wp-add-skills
+```
+
+**What you get:**
+- 13 WordPress-specific skills
+- Gutenberg block development
+- REST API expertise
+- WP-CLI automation
+- Performance optimization
+- Theme.json and block themes
+- Plugin architecture guidance
+
+**Installation time:** ~70 seconds
+
+**Learn more:** [WordPress Skills Guide](wordpress-skills.md)
+
+**Example questions after installation:**
+```
+"How do I create a custom Gutenberg block?"
+"Show me how to configure theme.json"
+"Create a custom REST endpoint"
+"How do I optimize WordPress database queries?"
+```
+
+---
+
 ## Tips & Best Practices
 
 ### 1. Run Checks Early and Often
