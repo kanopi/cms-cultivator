@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-02-11
+
 ### Added
 
 - **WordPress Skills Installation** - Install official WordPress agent-skills
@@ -18,6 +20,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Skills include: block development, REST API, WP-CLI, performance, theme.json, and more
   - New documentation page: `docs/wordpress-skills.md`
   - Integration with official WordPress/agent-skills repository
+
+### Changed
+
+- **Test Suite** - Updated command count validation
+  - Command count increased from 22 to 23 commands
+  - Added 3 new tests for wp-add-skills command
+  - All 106 tests passing
+
+### Documentation
+
+- **WordPress Skills Guide** - New comprehensive documentation
+  - Complete guide at `docs/wordpress-skills.md`
+  - Installation instructions and troubleshooting
+  - Skill descriptions and usage patterns
+  - Integration with WordPress projects
+  - Updated `docs/commands/overview.md` with Setup & Configuration section
+  - Updated `docs/quick-start.md` with WordPress skills section
+  - Added navigation entry in `zensical.toml`
+
+### Development
+
+- **Project Metadata** - Added new project tracking
+  - Added `.beads/` directory for AI-assisted development tracking
+  - Planning documentation in `.claude/plans/`
+  - Removed outdated refactor documentation from `.claude/v.6-refactor/`
+  - Added `.gitattributes` for repository configuration
+  - New `AGENTS.md` file documenting agent architecture
 
 ## [0.7.0] - 2026-02-03
 
@@ -646,7 +675,9 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.6.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1
+[0.7.0]: https://github.com/kanopi/cms-cultivator/compare/0.6.1...0.6.0
 [0.6.1]: https://github.com/kanopi/cms-cultivator/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/kanopi/cms-cultivator/compare/0.4.2...0.6.0
 [0.4.2]: https://github.com/kanopi/cms-cultivator/compare/0.4.1...0.4.2
