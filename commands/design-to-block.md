@@ -195,7 +195,7 @@ This command spawns the **design-specialist** agent with WordPress focus. The ag
 <!-- /wp:group -->
 ```
 
-### 2. Responsive Stylesheet
+### 2. Front-End Stylesheet
 **Path**: `wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss`
 
 **Contains**:
@@ -207,12 +207,21 @@ This command spawns the **design-specialist** agent with WordPress focus. The ag
 - Proper focus indicators
 - Reduced motion support
 
-### 3. Test Page
+### 3. Editor Stylesheet
+**Path**: `wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}-editor.scss`
+
+**Contains**:
+- All front-end styles wrapped in `.editor-styles-wrapper` context
+- Ensures pattern appears styled in WordPress block editor (admin)
+- Mirrors front-end styles for accurate preview
+- Editor-specific overrides if needed
+
+### 4. Test Page
 **URL**: `http://{site-domain}/test-{pattern-slug}/`
 
 **Created automatically** if WP-CLI available, or manual instructions provided.
 
-### 4. Validation Report
+### 5. Validation Report
 Comprehensive technical report including:
 - ✅ Responsive behavior at all breakpoints (with screenshots)
 - ✅ Accessibility findings (contrast ratios, keyboard nav, ARIA)
@@ -235,13 +244,19 @@ Comprehensive technical report including:
    - Blocks: Group, Heading, Paragraph, Buttons
    - Registration: Auto-discovered (WordPress 6.0+)
 
-2. **Responsive Stylesheet**
+2. **Front-End Stylesheet**
    - Path: wp-content/themes/my-theme/assets/styles/scss/patterns/_hero-cta.scss
    - Lines: 234
    - Approach: Mobile-first
    - Breakpoints: 768px (tablet), 1024px (desktop)
    - WCAG AA: ✅ All text meets 4.5:1 minimum
    - Touch targets: ✅ 44px minimum on mobile
+
+3. **Editor Stylesheet**
+   - Path: wp-content/themes/my-theme/assets/styles/scss/patterns/_hero-cta-editor.scss
+   - Lines: 248
+   - Context: WordPress block editor (.editor-styles-wrapper)
+   - Ensures pattern appears styled in admin
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## Test Page
@@ -280,31 +295,66 @@ See full report: screenshots/hero-cta/validation-report.md
 
 1. Review test page in browser: http://my-site.test/test-hero-cta/
 2. Apply recommended fixes (2 minor issues)
-3. Import SCSS into theme stylesheet
-4. Pattern is ready to use in Block Editor!
+3. **Compile SCSS** to CSS (`npm run build:styles` or `ddev theme-build`)
+4. **Set up auto-enqueue (one-time)** - Add glob code to functions.php (see "Enqueue Editor Stylesheet" → Option 1)
+5. **Import SCSS** into theme stylesheet (for front-end)
+6. **Clear cache** (`wp cache flush`)
+7. **Test in block editor** - Insert pattern and verify styling appears
+8. Pattern is ready to use in Block Editor!
    - Appears in: Patterns → Features
    - Slug: my-theme/hero-cta
+
+**Pro tip**: With auto-enqueue set up, future patterns automatically get editor styles without updating functions.php!
 ```
 
 ## Integration with Existing Workflows
 
 ### Kanopi Projects
 If using Kanopi DDEV add-ons:
+
+**One-time setup** (auto-enqueue all pattern editor styles):
+```php
+// functions.php
+function my_theme_setup() {
+    add_theme_support( 'editor-styles' );
+
+    // Auto-load all pattern editor stylesheets
+    $pattern_editor_styles = glob( get_template_directory() . '/assets/styles/css/patterns/*-editor.css' );
+    foreach ( $pattern_editor_styles as $style_path ) {
+        $relative_path = str_replace( get_template_directory() . '/', '', $style_path );
+        add_editor_style( $relative_path );
+    }
+}
+add_action( 'after_setup_theme', 'my_theme_setup' );
+```
+
+**After each pattern creation**:
 ```bash
-# After pattern creation, compile styles
+# Compile styles (front-end + editor)
 ddev theme-build
 
 # Run accessibility audit
 ddev pa11y http://my-site.ddev.site/test-hero-cta/
+
+# Clear WordPress cache
+ddev wp cache flush
 ```
 
 ### Non-Kanopi Projects
+
+**One-time setup** (same auto-enqueue code as above)
+
+**After each pattern creation**:
 ```bash
 # Compile SCSS (if using node-sass or similar)
 npm run build:styles
 
-# Or import in your main SCSS file
-@import 'patterns/hero-cta';
+# Clear WordPress cache
+wp cache flush
+
+# Import in your main SCSS files
+# Front-end: @import 'patterns/hero-cta';
+# Editor: @import 'patterns/hero-cta-editor';
 ```
 
 ## Pattern Registration
@@ -327,6 +377,134 @@ function my_theme_register_block_patterns() {
 }
 add_action( 'init', 'my_theme_register_block_patterns' );
 ```
+
+## Enqueue Editor Stylesheet
+
+**IMPORTANT**: The editor stylesheet must be enqueued to style patterns in the WordPress block editor.
+
+### Option 1: Auto-Enqueue All Pattern Editor Styles (Recommended)
+
+Automatically enqueue all `*-editor.css` files from the patterns directory:
+
+```php
+function my_theme_setup() {
+    // Add editor stylesheet support
+    add_theme_support( 'editor-styles' );
+
+    // Auto-enqueue all pattern editor stylesheets
+    $pattern_editor_styles = glob( get_template_directory() . '/assets/styles/css/patterns/*-editor.css' );
+
+    foreach ( $pattern_editor_styles as $style_path ) {
+        // Convert absolute path to relative path
+        $relative_path = str_replace( get_template_directory() . '/', '', $style_path );
+        add_editor_style( $relative_path );
+    }
+}
+add_action( 'after_setup_theme', 'my_theme_setup' );
+```
+
+**Benefits**:
+- ✅ No need to manually add each pattern
+- ✅ New patterns automatically get editor styles
+- ✅ No maintenance required
+- ✅ Works for any number of patterns
+
+### Option 2: Import in Main Editor Stylesheet (SCSS)
+
+Import all pattern editor styles in a single SCSS file:
+
+```scss
+// assets/styles/scss/editor.scss
+
+// Automatically import all pattern editor styles
+// Note: You need to manually add each @import, or use a build tool
+@import 'patterns/hero-cta-editor';
+@import 'patterns/team-grid-editor';
+@import 'patterns/feature-banner-editor';
+// Add more as you create patterns
+```
+
+Then enqueue the compiled main editor stylesheet:
+
+```php
+function my_theme_setup() {
+    add_theme_support( 'editor-styles' );
+    add_editor_style( 'assets/styles/css/editor.css' );
+}
+add_action( 'after_setup_theme', 'my_theme_setup' );
+```
+
+### Option 3: Manual Single File Enqueue
+
+Manually enqueue specific pattern editor stylesheets:
+
+```php
+function my_theme_setup() {
+    // Add editor stylesheet support
+    add_theme_support( 'editor-styles' );
+
+    // Enqueue specific pattern editor styles
+    add_editor_style( 'assets/styles/css/patterns/hero-cta-editor.css' );
+    add_editor_style( 'assets/styles/css/patterns/team-grid-editor.css' );
+    // Add more as you create patterns
+}
+add_action( 'after_setup_theme', 'my_theme_setup' );
+```
+
+**Downside**: Must update `functions.php` every time you add a new pattern.
+
+### Option 4: theme.json with Auto-Enqueue
+
+Combine theme.json with automatic enqueuing:
+
+**theme.json**:
+```json
+{
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "useRootPaddingAwareAlignments": true
+  }
+}
+```
+
+**functions.php** (same as Option 1):
+```php
+function my_theme_setup() {
+    add_theme_support( 'editor-styles' );
+
+    // Auto-enqueue all pattern editor stylesheets
+    $pattern_editor_styles = glob( get_template_directory() . '/assets/styles/css/patterns/*-editor.css' );
+
+    foreach ( $pattern_editor_styles as $style_path ) {
+        $relative_path = str_replace( get_template_directory() . '/', '', $style_path );
+        add_editor_style( $relative_path );
+    }
+}
+add_action( 'after_setup_theme', 'my_theme_setup' );
+```
+
+### Testing Editor Styles
+
+1. **Compile SCSS to CSS** (if using build process):
+   ```bash
+   npm run build:styles
+   # or
+   ddev theme-build
+   ```
+
+2. **Clear WordPress cache**:
+   ```bash
+   wp cache flush
+   ```
+
+3. **Hard refresh browser** (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows)
+
+4. **Create or edit a page** in WordPress admin
+
+5. **Insert the pattern** from the Block Inserter
+
+6. **Verify styling** - Pattern should now appear styled in the editor
 
 ## Troubleshooting
 
@@ -368,6 +546,61 @@ cd /path/to/wordpress
 3. Pattern has proper PHP header comments
 4. Theme is active
 5. Clear browser cache and refresh editor
+
+### Pattern appears unstyled in Block Editor
+**This is the most common issue!** The pattern shows on the front-end but not in the admin editor.
+
+**Solution**:
+
+1. **Verify editor stylesheet exists**:
+   ```bash
+   ls wp-content/themes/{theme}/assets/styles/css/patterns/{pattern-slug}-editor.css
+   ```
+
+2. **Compile SCSS to CSS**:
+   ```bash
+   npm run build:styles
+   # or
+   ddev theme-build
+   ```
+
+3. **Set up auto-enqueue in `functions.php`** (recommended):
+   ```php
+   function my_theme_setup() {
+       add_theme_support( 'editor-styles' );
+
+       // Auto-enqueue ALL pattern editor styles
+       $pattern_editor_styles = glob( get_template_directory() . '/assets/styles/css/patterns/*-editor.css' );
+       foreach ( $pattern_editor_styles as $style_path ) {
+           $relative_path = str_replace( get_template_directory() . '/', '', $style_path );
+           add_editor_style( $relative_path );
+       }
+   }
+   add_action( 'after_setup_theme', 'my_theme_setup' );
+   ```
+
+   **OR manually enqueue single file**:
+   ```php
+   function my_theme_setup() {
+       add_theme_support( 'editor-styles' );
+       add_editor_style( 'assets/styles/css/patterns/{pattern-slug}-editor.css' );
+   }
+   add_action( 'after_setup_theme', 'my_theme_setup' );
+   ```
+
+4. **Clear WordPress cache**:
+   ```bash
+   wp cache flush
+   ```
+
+5. **Hard refresh browser** in editor (Cmd+Shift+R / Ctrl+Shift+R)
+
+6. **Check if styles are loaded** in browser DevTools:
+   - Open WordPress block editor
+   - Inspect element → Network tab → Filter by CSS
+   - Look for `{pattern-slug}-editor.css`
+   - If missing, editor stylesheet not enqueued correctly
+   - Verify glob is finding files: `var_dump(glob(get_template_directory() . '/assets/styles/css/patterns/*-editor.css'));`
 
 ## Related Commands
 

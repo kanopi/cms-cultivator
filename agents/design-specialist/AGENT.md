@@ -247,7 +247,9 @@ Task(cms-cultivator:responsive-styling-specialist:responsive-styling-specialist,
      prompt="Generate mobile-first responsive SCSS for the {pattern-name} WordPress block pattern.
 
 Component: {pattern-slug}-pattern
-File path: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss
+File paths:
+- Front-end: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss
+- Editor: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}-editor.scss
 
 Design specifications:
 {Design analysis from Step 3}
@@ -259,10 +261,13 @@ Requirements:
 - Proper focus indicators (2px outline)
 - Reduced motion support
 - Typography scaling across breakpoints
+- Generate TWO files:
+  1. Front-end SCSS (standard component styles)
+  2. Editor SCSS (prefixed with .editor-styles-wrapper for WordPress block editor)
 - Report exact technical specifications")
 ```
 
-Wait for responsive-styling-specialist to complete and return SCSS file path.
+Wait for responsive-styling-specialist to complete and return BOTH SCSS file paths.
 
 #### Step 6: Create Test Page
 Create a test page to validate the implementation:
@@ -328,11 +333,17 @@ Generate comprehensive report:
    - Slug: {theme-prefix}/{pattern-slug}
    - Uses {N} native WordPress blocks
 
-2. **Responsive Stylesheet**
+2. **Front-End Stylesheet**
    - Path: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss
    - Lines: {line count}
    - Breakpoints: Mobile (base), Tablet (768px), Desktop (1024px)
    - WCAG AA compliant: ✅
+
+3. **Editor Stylesheet**
+   - Path: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}-editor.scss
+   - Lines: {line count}
+   - Context: WordPress block editor (.editor-styles-wrapper)
+   - Ensures pattern appears styled in admin
 
 ## Test Page
 - URL: http://{site-domain}/test-{pattern-slug}/
@@ -726,11 +737,17 @@ The design-specialist generates comprehensive reports after orchestrating the co
    - Slug: {theme-prefix}/{pattern-slug}
    - Uses {N} native WordPress blocks
 
-2. **Responsive Stylesheet**
+2. **Front-End Stylesheet**
    - Path: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss
    - Lines: {line count}
    - Breakpoints: Mobile (base), Tablet (768px), Desktop (1024px)
    - WCAG AA compliant: ✅
+
+3. **Editor Stylesheet**
+   - Path: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}-editor.scss
+   - Lines: {line count}
+   - Context: WordPress block editor (.editor-styles-wrapper)
+   - Ensures pattern appears styled in admin
 
 ## Test Page
 - URL: http://{site-domain}/test-{pattern-slug}/
@@ -740,10 +757,63 @@ The design-specialist generates comprehensive reports after orchestrating the co
 {Browser-validator-specialist detailed report with responsive testing and accessibility compliance}
 
 ## Next Steps
+
 1. Review test page in browser at URL above
 2. Apply any recommended fixes from validation report
-3. Pattern is auto-discovered in WordPress 6.0+
-4. Use pattern in pages via Block Editor
+3. **Compile SCSS to CSS** (`npm run build:styles` or `ddev theme-build`)
+4. **Set up auto-enqueue (one-time)** - See "Enqueue Editor Stylesheet" below
+5. **Clear cache** (`wp cache flush`)
+6. Pattern is auto-discovered in WordPress 6.0+
+7. Use pattern in pages via Block Editor
+
+**After initial setup, future patterns work automatically!**
+
+### Enqueue Editor Stylesheet
+
+**Option 1: Auto-Enqueue All Pattern Editor Styles (Recommended)**
+
+Set this up once and all pattern editor styles load automatically:
+
+```php
+function {theme}_setup() {
+    add_theme_support( 'editor-styles' );
+
+    // Auto-enqueue all *-editor.css files from patterns directory
+    $pattern_editor_styles = glob( get_template_directory() . '/assets/styles/css/patterns/*-editor.css' );
+
+    foreach ( $pattern_editor_styles as $style_path ) {
+        $relative_path = str_replace( get_template_directory() . '/', '', $style_path );
+        add_editor_style( $relative_path );
+    }
+}
+add_action( 'after_setup_theme', '{theme}_setup' );
+```
+
+**Benefits**: New patterns automatically get editor styles without updating code.
+
+**Option 2: Import in main editor stylesheet**
+```scss
+// assets/styles/scss/editor.scss
+@import 'patterns/{pattern-slug}-editor';
+```
+
+Then enqueue the compiled editor.css:
+```php
+function {theme}_setup() {
+    add_theme_support( 'editor-styles' );
+    add_editor_style( 'assets/styles/css/editor.css' );
+}
+add_action( 'after_setup_theme', '{theme}_setup' );
+```
+
+**Option 3: Manual single file enqueue**
+```php
+function {theme}_setup() {
+    add_theme_support( 'editor-styles' );
+    add_editor_style( 'assets/styles/css/patterns/{pattern-slug}-editor.css' );
+}
+add_action( 'after_setup_theme', '{theme}_setup' );
+```
 ```
 
 ### Drupal Paragraph Type Output

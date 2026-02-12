@@ -58,7 +58,8 @@ Invoke this agent when:
 5. **Scale typography responsively** (fluid or stepped scaling)
 6. **Add proper focus indicators** (2px minimum, high contrast)
 7. **Support reduced motion** (@prefers-reduced-motion)
-8. **Report detailed technical specifications** (exact values, calculations)
+8. **Generate editor-specific styles** (for WordPress block editor when requested)
+9. **Report detailed technical specifications** (exact values, calculations)
 
 ## Tools Available
 
@@ -750,6 +751,122 @@ $spacing-3xl: 4rem;    // 64px
 }
 ```
 
+### WordPress Block Editor Styles
+
+**CRITICAL**: When generating styles for WordPress block patterns, you MUST generate TWO separate files:
+
+#### 1. Front-End Stylesheet (Standard)
+File: `wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss`
+
+This is the standard stylesheet that applies to published pages (front-end).
+
+#### 2. Editor Stylesheet (NEW)
+File: `wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}-editor.scss`
+
+This stylesheet applies styles in the WordPress block editor (admin). It MUST:
+- Wrap all selectors with `.editor-styles-wrapper` prefix
+- Mirror the front-end styles but adapted for editor context
+- Account for editor-specific overrides
+
+**Example Editor Stylesheet**:
+
+```scss
+// File: wp-content/themes/my-theme/assets/styles/scss/patterns/_hero-cta-editor.scss
+
+// WordPress block editor context wrapper
+.editor-styles-wrapper {
+
+  // Mirror the front-end pattern styles
+  .hero-cta-pattern {
+    // Mobile-first base styles
+    padding: 2rem 0;
+    background: #0073aa; // Same as front-end
+    color: #ffffff;
+
+    // Tablet enhancements
+    @media (min-width: 768px) {
+      padding: 3rem 0;
+    }
+
+    // Desktop enhancements
+    @media (min-width: 1024px) {
+      padding: 4rem 0;
+    }
+
+    // Child elements (same as front-end)
+    .hero-heading {
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-content {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 12px 24px;
+      min-height: 44px;
+      background: #ffffff;
+      color: #0073aa;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      &:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 2px;
+      }
+
+      // Reduced motion
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+
+        &:hover {
+          transform: none;
+        }
+      }
+    }
+  }
+
+  // Editor-specific overrides (if needed)
+  // Example: Adjust for editor UI chrome
+  .hero-cta-pattern {
+    // Editor may have different default fonts, ensure consistency
+    font-family: inherit;
+
+    // Prevent editor toolbar overlap issues
+    position: relative;
+    z-index: 1;
+  }
+}
+```
+
+**Key Differences Between Front-End and Editor Stylesheets**:
+
+| Aspect | Front-End | Editor |
+|--------|-----------|--------|
+| File name | `_pattern-slug.scss` | `_pattern-slug-editor.scss` |
+| Root selector | `.pattern-slug-pattern` | `.editor-styles-wrapper .pattern-slug-pattern` |
+| Context | Published pages | Block editor admin |
+| Purpose | User-facing styles | Editor preview styles |
+| Enqueue | Theme's main stylesheet | `add_editor_style()` or theme.json |
+
+**When to Generate Editor Styles**:
+- ✅ Always generate when creating WordPress block patterns
+- ✅ When design-specialist explicitly requests editor styles
+- ✅ When user mentions "editor" or "admin" styling
+- ❌ Skip for Drupal (Drupal doesn't have block editor)
+- ❌ Skip for generic component styles (not block patterns)
+
 ## Output Format
 
 After generating styles, provide this detailed technical report:
@@ -759,10 +876,25 @@ After generating styles, provide this detailed technical report:
 
 **Status:** ✅ Complete | ⚠️ Needs Review | ❌ Issues Found
 
-## Generated File
-**Path**: {file-path}
-**Lines**: {line-count}
-**Format**: SCSS
+## Generated Files
+
+**For WordPress Block Patterns**:
+1. **Front-End Stylesheet**
+   - Path: {file-path}
+   - Lines: {line-count}
+   - Format: SCSS
+   - Context: Published pages
+
+2. **Editor Stylesheet**
+   - Path: {file-path-editor}
+   - Lines: {line-count-editor}
+   - Format: SCSS
+   - Context: WordPress block editor (.editor-styles-wrapper)
+
+**For Other Components**:
+- Path: {file-path}
+- Lines: {line-count}
+- Format: SCSS
 
 ## Color Specifications
 

@@ -34,6 +34,7 @@ This skill automatically activates when:
 - Creating styles for a component
 - User asks about media queries
 - Responsive design is needed for implementation
+- WordPress block patterns need editor styling
 
 ## Decision Framework
 
@@ -398,6 +399,52 @@ Use fluid spacing that scales:
   }
 }
 ```
+
+## WordPress Block Editor Styles
+
+**IMPORTANT**: WordPress block patterns require TWO separate stylesheets:
+
+### 1. Front-End Stylesheet
+Standard styles that apply to published pages. No special wrapper needed.
+
+### 2. Editor Stylesheet
+Styles for the WordPress block editor (admin). Must wrap all selectors with `.editor-styles-wrapper`.
+
+**Example**:
+
+**Front-end** (`_hero-cta.scss`):
+```scss
+.hero-cta-pattern {
+  padding: 2rem 1rem;
+  background: #0073aa;
+  color: #ffffff;
+
+  @media (min-width: 768px) {
+    padding: 3rem 2rem;
+  }
+}
+```
+
+**Editor** (`_hero-cta-editor.scss`):
+```scss
+// Wrap everything with .editor-styles-wrapper
+.editor-styles-wrapper {
+  .hero-cta-pattern {
+    padding: 2rem 1rem;
+    background: #0073aa;
+    color: #ffffff;
+
+    @media (min-width: 768px) {
+      padding: 3rem 2rem;
+    }
+  }
+}
+```
+
+**Why this is necessary**:
+- WordPress block editor uses `.editor-styles-wrapper` as a scoping mechanism
+- Without this wrapper, styles won't apply in the admin editor
+- Pattern appears unstyled when inserted, confusing users
 
 ## Responsive Images
 
