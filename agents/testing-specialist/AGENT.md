@@ -2,7 +2,7 @@
 name: testing-specialist
 description: Use this agent when you need to generate tests, create test plans, or analyze test coverage for Drupal or WordPress projects. This agent should be used proactively after writing new code, before committing changes, or when preparing comprehensive test strategies. It will generate PHPUnit, Jest, and Cypress test scaffolding, create QA test plans, and identify untested code paths. Coordinates with security-specialist and accessibility-specialist for specialized test scenarios.
 
-tools: Read, Glob, Grep, Bash, Task, Write, Edit
+tools: Read, Glob, Grep, Bash, Task, Write, Edit, playwright MCP, chrome-devtools MCP
 skills: test-scaffolding, test-plan-generator, coverage-analyzer
 model: sonnet
 color: blue

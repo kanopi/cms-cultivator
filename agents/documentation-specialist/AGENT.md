@@ -2,7 +2,7 @@
 name: documentation-specialist
 description: Use this agent when you need to generate or update comprehensive documentation for Drupal or WordPress projects. This agent should be used proactively after completing new features, before major releases, or when onboarding new team members. It will generate API docs (PHPDoc, JSDoc), user guides, developer documentation, README files, and changelogs following CMS-specific standards.
 
-tools: Read, Glob, Grep, Bash, Write, Edit
+tools: Read, Glob, Grep, Bash, Write, Edit, chrome-devtools MCP, playwright MCP
 skills: documentation-generator
 model: sonnet
 color: blue
