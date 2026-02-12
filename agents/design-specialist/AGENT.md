@@ -50,12 +50,14 @@ Invoke this agent when:
 
 ## Core Responsibilities
 
-1. **Analyze design inputs** using design-analyzer skill
-2. **Generate CMS-specific code** (WordPress patterns or Drupal paragraphs)
+1. **Receive pre-fetched design specifications** from main conversation (Figma MCP or screenshot analysis)
+2. **Generate CMS-specific code** (WordPress patterns or Drupal paragraphs) based on provided specs
 3. **Spawn responsive-styling-specialist** for CSS generation (WAIT for completion)
 4. **Create test pages/nodes** for validation
 5. **Spawn browser-validator-specialist** for comprehensive testing (WAIT for completion)
 6. **Report detailed results** with file paths and technical specifications
+
+**IMPORTANT**: Design data (Figma context, screenshots) must be fetched by the main conversation BEFORE spawning this agent, as MCP tools are not available in subagent context. The agent receives structured design specifications, not raw design sources.
 
 ## Tools Available
 
@@ -110,44 +112,58 @@ Examples:
 - "awesome" → prefix: "awesome" → slug: "awesome/hero-cta"
 ```
 
-#### Step 3: Analyze Design with design-analyzer Skill
+#### Step 3: Use Pre-Fetched Design Specifications
 
-**CRITICAL**: You MUST invoke the design-analyzer skill to fetch and analyze the design.
+**CRITICAL**: Design specifications should be provided in the prompt from the main conversation.
 
-The design-analyzer skill will:
-- ✅ Load and use Figma MCP tools (if Figma URL provided)
-- ✅ Fetch design context and screenshots from Figma
-- ✅ Extract exact design specifications (colors, typography, spacing, layout)
-- ✅ Download all image assets locally to theme directory
-- ✅ Read screenshot files (if image file provided)
-- ✅ Identify WordPress blocks needed OR Drupal fields needed
-- ✅ Document responsive behavior requirements
-- ✅ Note accessibility considerations
+The prompt should include:
+- **Design Reference**: Original Figma URL or screenshot path
+- **Design Specifications**: Pre-fetched data including:
+  - Colors (exact hex codes)
+  - Typography (fonts, sizes, weights, line-heights)
+  - Spacing (margins, padding, gaps in px/rem)
+  - Layout structure (flexbox, grid, positioning)
+  - Image asset URLs or local paths
+  - Component hierarchy
+  - Responsive behavior notes
+  - Accessibility considerations
 
-**Invoke the skill:**
+**If specifications are NOT provided in the prompt:**
+
+1. **Check prompt carefully** for a "Design Specifications" section
+2. **If missing**, STOP and report:
 ```
-Use the design-analyzer skill to fetch and extract technical specifications from:
-{design_source}
+❌ ERROR: Design specifications not provided
 
-Target CMS: {wordpress | drupal}
-Component type: {block-pattern | paragraph-type}
+This agent requires pre-fetched design specifications.
+The main conversation must fetch Figma data or analyze screenshots BEFORE spawning this agent.
+
+Reason: MCP tools (Figma) are not available in subagent context.
+
+Please:
+1. Fetch design data in main conversation using Figma MCP tools
+2. Extract all design specifications (colors, typography, spacing, layout)
+3. Include specifications in the agent prompt
+4. Then spawn this agent
+
+I cannot proceed without design specifications.
 ```
 
-The skill will return structured output with:
-- Exact colors (hex codes from Figma)
-- Exact typography (font families, sizes, weights, line-heights)
-- Exact spacing (margins, padding, gaps in px/rem)
-- Layout structure (flexbox, grid, positioning)
-- Image asset paths (downloaded locally)
-- Component mapping (WordPress blocks OR Drupal fields)
-- Responsive breakpoint specifications
-- Accessibility requirements and concerns
+**If specifications ARE provided:**
 
-**DO NOT PROCEED** to Step 4 until the design-analyzer skill has:
-- ✅ Completed fetching design data (Figma MCP OR Read tool)
-- ✅ Returned structured design specifications
-- ✅ Downloaded all image assets to local paths
-- ✅ Provided accurate values (not estimates)
+Document and organize the specifications for use in subsequent steps:
+- Colors → For SCSS variables and inline styles
+- Typography → For heading levels and text blocks
+- Spacing → For padding, margins, gaps
+- Layout → For WordPress block structure or Drupal field planning
+- Images → For downloading/referencing assets
+- Responsive → For breakpoint planning
+
+**DO NOT**:
+- ❌ Try to fetch Figma data yourself (MCP not available)
+- ❌ Guess or make up specifications
+- ❌ Create generic placeholder patterns
+- ✅ ALWAYS use the provided specifications exactly as given
 
 #### Step 4: Generate Block Pattern PHP
 Create file at: `wp-content/themes/{theme}/patterns/{pattern-slug}.php`
@@ -332,45 +348,44 @@ Optional:
 - module_name: Custom module name (default: "custom_paragraphs")
 ```
 
-#### Step 2: Analyze Design with design-analyzer Skill
+#### Step 2: Use Pre-Fetched Design Specifications
 
-**CRITICAL**: You MUST invoke the design-analyzer skill to fetch and analyze the design.
+**CRITICAL**: Design specifications should be provided in the prompt from the main conversation.
 
-The design-analyzer skill will:
-- ✅ Load and use Figma MCP tools (if Figma URL provided)
-- ✅ Fetch design context and screenshots from Figma
-- ✅ Extract exact design specifications (colors, typography, spacing, layout)
-- ✅ Download all image assets locally to module directory
-- ✅ Read screenshot files (if image file provided)
-- ✅ Identify Drupal field requirements:
-  - Field types (text, text_long, link, entity_reference for Media, boolean, list)
-  - Field cardinality (single or unlimited)
-  - Field labels and descriptions
-  - Required vs optional fields
-- ✅ Document responsive behavior requirements
-- ✅ Note accessibility considerations
+The prompt should include:
+- **Design Reference**: Original Figma URL or screenshot path
+- **Design Specifications**: Pre-fetched data with Drupal-specific analysis
+- **Field Mapping**: Design elements mapped to Drupal field types
 
-**Invoke the skill:**
+**Expected specification format:**
 ```
-Use the design-analyzer skill to fetch and extract technical specifications from:
-{design_source}
+Design Specifications:
+- Colors: [hex codes]
+- Typography: [fonts, sizes, weights, line-heights]
+- Spacing: [margins, padding, gaps]
+- Layout: [structure, grid, positioning]
+- Images: [asset URLs or paths]
 
-Target CMS: drupal
-Component type: paragraph-type
+Drupal Field Mapping:
+- field_heading: text (plain, single, required) - for main heading
+- field_body: text_long (formatted, single, optional) - for description
+- field_cta: link (single, optional) - for call-to-action
+- field_image: entity_reference→Media (single, optional) - for hero image
 ```
 
-The skill will return structured output with:
-- Exact colors, typography, spacing, layout
-- Image asset paths (downloaded locally)
-- Drupal field definitions
-- Twig template structure guidance
-- Responsive specifications
-- Accessibility requirements
+**If specifications are NOT provided:**
 
-**DO NOT PROCEED** to Step 3 until the design-analyzer skill has:
-- ✅ Completed fetching design data (Figma MCP OR Read tool)
-- ✅ Returned structured design specifications with Drupal fields
-- ✅ Downloaded all image assets to local paths
+STOP and report error (MCP tools not available in agent context).
+
+**If specifications ARE provided:**
+
+Use the field mapping to generate:
+1. Paragraph type YAML configuration
+2. Field storage and instance YAML files
+3. Twig template structure
+4. SCSS styles based on design specifications
+
+Download image assets to: `modules/custom/{module}/assets/images/{paragraph-name}/`
 
 #### Step 3: Detect Drupal MCP Availability
 ```bash
@@ -789,23 +804,57 @@ add_action( 'after_setup_theme', '{theme}_setup' );
 ## Error Handling
 
 ### Design Reference Not Found
+
+**CRITICAL**: If you cannot access the design reference, you MUST stop immediately.
+
 ```
-❌ Error: Cannot access design reference
+❌ FATAL ERROR: Cannot access design reference
 
 Design source: {design_source}
+Error: {specific error message}
+
+I attempted to:
+{list what you tried - e.g., "Load Figma MCP tools", "Call get_design_context", etc.}
 
 Possible issues:
-- Figma URL requires authentication
-- Screenshot file not found
-- Invalid path
+- Figma URL requires authentication (403 error)
+- Figma MCP tools not available in agent context
+- Screenshot file not found at specified path
+- Invalid file path or URL format
 
-Solutions:
-1. For Figma: Ensure URL is publicly accessible or use screenshot instead
-2. For screenshots: Verify file path is correct
-3. Try using absolute path: /full/path/to/screenshot.png
+NEXT STEPS REQUIRED:
 
-Would you like to try a different design reference?
+1. **For Figma URLs**:
+   a. Verify Figma MCP is available: Check if mcp__plugin_figma tools loaded
+   b. Make Figma file public: Share → "Anyone with the link" → "can view"
+   c. OR export design as screenshot and provide image file instead
+   d. Provide node-specific URL with correct format
+
+2. **For Screenshot Files**:
+   a. Verify file exists: Run `ls -la {screenshot-path}`
+   b. Use absolute path: /full/path/to/screenshot.png
+   c. Check file permissions are readable
+
+3. **Alternative**:
+   Provide manual design specifications:
+   - Colors (hex codes)
+   - Typography (fonts, sizes, weights)
+   - Spacing values
+   - Layout dimensions
+   - Image files
+
+⚠️  I CANNOT proceed without access to the actual design.
+Creating a generic placeholder would not match your design requirements.
+
+Please provide one of the above solutions to continue.
 ```
+
+**Agent Requirements**:
+- ❌ NEVER create generic/placeholder patterns when design access fails
+- ❌ NEVER guess or estimate design specifications
+- ❌ NEVER proceed to code generation without fetched design data
+- ✅ ALWAYS stop and report detailed error with troubleshooting steps
+- ✅ ALWAYS ask for alternative design source or manual specifications
 
 ### WordPress Theme Not Found
 ```

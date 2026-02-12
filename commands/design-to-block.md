@@ -1,19 +1,91 @@
 ---
 description: "Create WordPress block pattern from Figma design or screenshot using design specialist"
 argument-hint: "[design-source] [pattern-name] [theme-namespace]"
-allowed-tools: Task
+allowed-tools: ToolSearch, mcp__plugin_figma_figma__get_design_context, mcp__plugin_figma_figma__get_screenshot, Task, Read
 ---
 
-Spawn the **design-specialist** agent for WordPress block pattern creation:
+**CRITICAL FIRST STEP**: Fetch design data in main conversation BEFORE spawning agent.
+
+## Step 1: Fetch Design Data
+
+### If design source is a Figma URL:
+
+1. **Load Figma MCP tools**:
+```
+ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
+ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
+```
+
+2. **Parse Figma URL**:
+```
+URL format: https://figma.com/design/{fileKey}?node-id={nodeId}
+Extract: fileKey and nodeId (replace hyphen with colon in nodeId)
+```
+
+3. **Fetch design context**:
+```
+mcp__plugin_figma_figma__get_design_context(
+  fileKey: {extracted},
+  nodeId: {extracted with colon},
+  clientLanguages: "html,css,php",
+  clientFrameworks: "wordpress"
+)
+```
+
+4. **Get screenshot**:
+```
+mcp__plugin_figma_figma__get_screenshot(
+  fileKey: {same},
+  nodeId: {same},
+  clientLanguages: "html,css,php",
+  clientFrameworks: "wordpress"
+)
+```
+
+5. **Extract specifications from Figma data**:
+- Colors (hex codes from CSS/Tailwind)
+- Typography (fonts, sizes, weights, line-heights)
+- Spacing (margins, padding, gaps)
+- Layout structure
+- Image asset URLs
+- Component hierarchy
+
+### If design source is a screenshot:
+
+1. **Read the image file**:
+```
+Read(file_path: {screenshot-path})
+```
+
+2. **Visually analyze** and note:
+- Layout structure
+- Estimated colors
+- Typography styles
+- Spacing patterns
+- Component relationships
+
+## Step 2: Spawn Agent with Design Specifications
+
+Now spawn the **design-specialist** agent with the fetched/extracted specifications:
 
 ```
 Task(cms-cultivator:design-specialist:design-specialist,
-     prompt="Create a WordPress block pattern from the provided design.
+     prompt="Create a WordPress block pattern from the provided design specifications.
 
 # WordPress Block Pattern from Design
 
 ## Design Reference
-{User's design source - Figma URL or screenshot path}
+{Original design source - Figma URL or screenshot path}
+
+## Design Specifications (Pre-Fetched)
+{Paste the extracted design specifications here, including:
+- Colors with hex codes
+- Typography details
+- Spacing values
+- Layout structure
+- Component hierarchy
+- Image asset URLs (if from Figma)
+}
 
 ## Pattern Details
 - Pattern Name: {User's pattern-name}
@@ -110,14 +182,26 @@ The design-specialist orchestrates all operations sequentially (analysis → cod
 
 ## How It Works
 
-This command spawns the **design-specialist** agent with WordPress focus. The agent orchestrates the complete workflow:
+This command has a **two-phase workflow**:
 
-1. **Analyzes design** using the design-analyzer skill to extract technical requirements
-2. **Generates block pattern PHP** using native WordPress blocks
+### Phase 1: Main Conversation Fetches Design (YOU)
+1. **Detect design source type** (Figma URL vs screenshot)
+2. **For Figma**: Load MCP tools, fetch design context and screenshot, extract specifications
+3. **For screenshots**: Read image file, perform visual analysis
+4. **Extract/document** all design specifications (colors, typography, spacing, layout)
+
+### Phase 2: Agent Creates Pattern (design-specialist)
+1. **Receives** pre-fetched design specifications from Phase 1
+2. **Generates block pattern PHP** using native WordPress blocks based on specs
 3. **Spawns responsive-styling-specialist** for mobile-first CSS/SCSS (waits for completion)
 4. **Creates test page** for validation
 5. **Spawns browser-validator-specialist** for comprehensive testing (waits for completion)
 6. **Reports detailed results** with file paths and technical specs
+
+**Why this workflow?**
+- MCP tools are only available in main conversation, not in subagents
+- Fetching design data first ensures accurate specifications
+- Agent can focus on implementation with exact values
 
 **Sequential execution ensures** each step completes successfully before proceeding.
 
