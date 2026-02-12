@@ -111,14 +111,84 @@ Examples:
 ```
 
 #### Step 3: Analyze Design
-Use the **design-analyzer** skill to extract:
-- Colors (hex codes)
-- Typography (families, sizes, weights)
-- Spacing (margins, padding, gaps)
-- Layout structure
-- WordPress blocks needed
-- Responsive behavior requirements
-- Accessibility requirements
+
+**CRITICAL**: You MUST fetch the actual Figma design before generating any code.
+
+**For Figma URLs:**
+1. **REQUIRED**: Use ToolSearch to load Figma tools:
+   ```
+   ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
+   ```
+
+2. **REQUIRED**: Fetch design context with Figma MCP:
+   ```
+   mcp__plugin_figma_figma__get_design_context(
+     fileKey: {extracted from URL},
+     nodeId: {extracted from URL, format: "123:456"},
+     clientLanguages: "html,css,scss",
+     clientFrameworks: "wordpress"
+   )
+   ```
+   This returns:
+   - Generated code (React/Tailwind - will need conversion)
+   - Image asset URLs
+   - Exact CSS values from design
+
+3. **REQUIRED**: Get screenshot for visual reference:
+   ```
+   ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
+
+   mcp__plugin_figma_figma__get_screenshot(
+     fileKey: {extracted from URL},
+     nodeId: {extracted from URL},
+     clientLanguages: "html,css,scss",
+     clientFrameworks: "wordpress"
+   )
+   ```
+
+4. **REQUIRED**: Use design-analyzer skill to extract from Figma data:
+   - Colors (exact hex codes from Figma)
+   - Typography (exact families, sizes, weights, line-heights from Figma)
+   - Spacing (exact margins, padding, gaps from Figma)
+   - Layout structure (flexbox, grid, positioning from Figma)
+   - Images and assets (download URLs from Figma)
+   - WordPress blocks needed
+   - Responsive behavior requirements
+   - Accessibility requirements
+
+5. **REQUIRED**: Download all image assets locally:
+   ```bash
+   mkdir -p {theme-path}/assets/images/patterns
+   cd {theme-path}/assets/images/patterns
+   curl -o {filename}.png "{figma-asset-url}"
+   ```
+
+**For Screenshot/Image Files:**
+1. **REQUIRED**: Read the image file using Read tool:
+   ```
+   Read(file_path: {screenshot-path})
+   ```
+
+2. **REQUIRED**: Use design-analyzer skill to analyze the visual design:
+   - Extract colors from image
+   - Identify typography styles
+   - Measure spacing and layout
+   - Identify required components
+   - Note accessibility considerations
+
+**DO NOT PROCEED** to Step 4 until you have:
+- ✅ Fetched actual Figma design (if Figma URL) OR read screenshot
+- ✅ Extracted all design specifications
+- ✅ Downloaded all image assets locally
+- ✅ Verified you have accurate colors, typography, spacing values
+
+**Example Figma URL parsing:**
+```
+URL: https://figma.com/design/ABC123XYZ?node-id=16981-81661
+Extract:
+- fileKey: "ABC123XYZ"
+- nodeId: "16981:81661" (replace hyphen with colon!)
+```
 
 #### Step 4: Generate Block Pattern PHP
 Create file at: `wp-content/themes/{theme}/patterns/{pattern-slug}.php`
@@ -293,13 +363,62 @@ Optional:
 ```
 
 #### Step 2: Analyze Design
-Use the **design-analyzer** skill to extract:
-- Colors, typography, spacing, layout (same as WordPress)
-- **Field requirements** (specific to Drupal):
-  - Field types: text, text_long, link, entity_reference (Media), boolean, list
-  - Field cardinality: single or unlimited
-  - Field labels and descriptions
-  - Required vs optional fields
+
+**CRITICAL**: You MUST fetch the actual Figma design before generating any code.
+
+**For Figma URLs:**
+1. **REQUIRED**: Use ToolSearch to load Figma tools:
+   ```
+   ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
+   ```
+
+2. **REQUIRED**: Fetch design context with Figma MCP:
+   ```
+   mcp__plugin_figma_figma__get_design_context(
+     fileKey: {extracted from URL},
+     nodeId: {extracted from URL, format: "123:456"},
+     clientLanguages: "html,css,scss",
+     clientFrameworks: "drupal"
+   )
+   ```
+
+3. **REQUIRED**: Get screenshot for visual reference:
+   ```
+   ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
+
+   mcp__plugin_figma_figma__get_screenshot(
+     fileKey: {extracted from URL},
+     nodeId: {extracted from URL},
+     clientLanguages: "html,css,scss",
+     clientFrameworks: "drupal"
+   )
+   ```
+
+4. **REQUIRED**: Use design-analyzer skill to extract:
+   - Colors, typography, spacing, layout (exact values from Figma)
+   - Images and assets (download URLs from Figma)
+   - **Field requirements** (specific to Drupal):
+     - Field types: text, text_long, link, entity_reference (Media), boolean, list
+     - Field cardinality: single or unlimited
+     - Field labels and descriptions
+     - Required vs optional fields
+
+5. **REQUIRED**: Download all image assets locally:
+   ```bash
+   mkdir -p {module-path}/assets/images
+   cd {module-path}/assets/images
+   curl -o {filename}.png "{figma-asset-url}"
+   ```
+
+**For Screenshot/Image Files:**
+1. **REQUIRED**: Read the image file using Read tool
+2. **REQUIRED**: Use design-analyzer skill to analyze and extract field requirements
+
+**DO NOT PROCEED** to Step 3 until you have:
+- ✅ Fetched actual Figma design (if Figma URL) OR read screenshot
+- ✅ Extracted all design specifications
+- ✅ Downloaded all image assets locally
+- ✅ Identified all required Drupal fields
 
 #### Step 3: Detect Drupal MCP Availability
 ```bash
