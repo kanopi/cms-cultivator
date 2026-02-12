@@ -6,7 +6,9 @@ description: Automatically extract technical requirements from design references
 # Design Analyzer Skill
 
 ## Purpose
-Extract technical requirements from design references (Figma URLs, screenshots, mockups) for CMS component implementation.
+**Fetch and extract** technical requirements from design references (Figma URLs, screenshots, mockups) for CMS component implementation.
+
+**CRITICAL FIRST STEP**: This skill MUST actively fetch design data using available tools (Figma MCP, Read tool) before performing any analysis. Never guess or infer design specifications - always fetch the actual design first.
 
 ## Philosophy
 
@@ -122,9 +124,21 @@ Output structured technical spec
 
 ## Capabilities
 
-### Design Input Processing
-- **Figma URLs**: Extract node IDs, artboard names, frame structure
-- **Screenshots**: Analyze visual hierarchy, layout patterns, UI components
+### Design Input Fetching & Processing
+
+**CRITICAL**: This skill actively FETCHES design data before analysis:
+
+- **Figma URLs**:
+  - ✅ Use Figma MCP to fetch design context and code
+  - ✅ Use Figma MCP to capture screenshots
+  - ✅ Extract exact values from Figma design tokens
+  - ✅ Download image assets locally
+  - Extract node IDs, artboard names, frame structure
+
+- **Screenshots**:
+  - ✅ Read image files using Read tool
+  - Analyze visual hierarchy, layout patterns, UI components
+
 - **Mockups**: Identify design system elements, spacing, typography
 - **Wireframes**: Extract structure and content relationships
 
@@ -143,6 +157,110 @@ Output structured technical spec
 - **Interactions**: Hover states, animations, transitions
 
 ## Analysis Process
+
+### 0. Fetch Design Data (CRITICAL FIRST STEP)
+
+**Before any analysis**, you MUST fetch the actual design data:
+
+#### For Figma URLs:
+
+**STEP 1: Load Figma MCP Tools**
+```
+Use ToolSearch to load Figma tools FIRST:
+ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
+ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
+```
+
+**STEP 2: Parse Figma URL**
+```
+URL format: https://figma.com/design/{fileKey}?node-id={nodeId}
+Example: https://figma.com/design/ABC123XYZ?node-id=16981-81661
+
+Extract:
+- fileKey: "ABC123XYZ"
+- nodeId: "16981:81661" (IMPORTANT: Replace hyphen with colon!)
+```
+
+**STEP 3: Fetch Design Context**
+```
+Call Figma MCP to get design structure and code:
+mcp__plugin_figma_figma__get_design_context(
+  fileKey: {extracted fileKey},
+  nodeId: {extracted nodeId with colon},
+  clientLanguages: "html,css,scss",
+  clientFrameworks: "wordpress" | "drupal"
+)
+
+Returns:
+- React/Tailwind code (will need conversion to native WordPress/Drupal)
+- Exact CSS values (colors, spacing, typography from Figma)
+- Image asset URLs (valid for 7 days)
+- Design token information
+```
+
+**STEP 4: Get Visual Screenshot**
+```
+Call Figma MCP to get visual reference:
+mcp__plugin_figma_figma__get_screenshot(
+  fileKey: {same fileKey},
+  nodeId: {same nodeId with colon},
+  clientLanguages: "html,css,scss",
+  clientFrameworks: "wordpress" | "drupal"
+)
+
+Returns: Visual image for analysis
+```
+
+**STEP 5: Extract Design Specifications**
+
+From the Figma data, extract:
+- **Colors**: Exact hex codes from CSS values in code output
+- **Typography**: Font families, sizes (px), weights, line-heights from code
+- **Spacing**: Margins, padding, gaps from Tailwind classes or CSS
+- **Layout**: Flexbox, grid, positioning from class names
+- **Images**: Download URLs for all assets (imgVariable = "https://...")
+- **Dimensions**: Width, height, border-radius values
+- **Effects**: Shadows, gradients, opacity
+
+**STEP 6: Download Image Assets Locally**
+```bash
+# Create directory for pattern/paragraph assets
+mkdir -p {theme-path}/assets/images/patterns
+
+# Download each image asset
+cd {theme-path}/assets/images/patterns
+curl -o {descriptive-filename}.png "{figma-asset-url}"
+curl -o {descriptive-filename-2}.jpg "{figma-asset-url-2}"
+```
+
+Update code references to use local paths:
+```
+OLD: src="https://www.figma.com/api/mcp/asset/..."
+NEW: src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/patterns/{filename}.png' ); ?>"
+```
+
+#### For Screenshot/Image Files:
+
+**STEP 1: Read Image File**
+```
+Use Read tool to load the image:
+Read(file_path: {screenshot-path})
+```
+
+**STEP 2: Visual Analysis**
+
+Analyze the image visually:
+- Identify layout structure
+- Estimate colors (use hex color picker if available)
+- Measure relative spacing and proportions
+- Identify typography styles
+- Note component hierarchy
+
+**DO NOT PROCEED** until you have:
+- ✅ Fetched Figma design (if Figma URL) OR loaded screenshot
+- ✅ Extracted exact design values (colors, typography, spacing)
+- ✅ Downloaded all image assets to local paths
+- ✅ Have visual reference for comparison
 
 ### 1. Initial Assessment
 
@@ -419,6 +537,50 @@ Provides:
 
 ## Example Activation
 
+### Example 1: Figma URL
+
+**User provides Figma URL:**
+> "Create a WordPress block pattern from this Figma design: https://figma.com/design/ABC123?node-id=100-200"
+
+**Skill Response:**
+```
+I'll fetch and analyze this Figma design for WordPress implementation.
+
+[Step 1: Load Figma tools with ToolSearch]
+[Step 2: Parse URL - fileKey: ABC123, nodeId: 100:200]
+[Step 3: Call mcp__plugin_figma_figma__get_design_context]
+[Step 4: Call mcp__plugin_figma_figma__get_screenshot]
+[Step 5: Extract design specifications from Figma data]
+[Step 6: Download image assets locally]
+
+Design Analysis Complete:
+- Type: Hero section with overlaid text
+- Fetched from Figma: node-id=100:200
+- WordPress Blocks Needed: Cover, Heading, Paragraph, Buttons
+- Layout: Full-width (1200px max-width), centered content
+- Colors (from Figma):
+  - Background overlay: #000000 (40% opacity)
+  - Text: #FFFFFF
+  - Button: #0073AA
+  - Button hover: #005A87
+- Typography (from Figma):
+  - Heading: Montserrat Bold, 48px/1.2, desktop → 32px mobile
+  - Body: Inter Regular, 18px/1.6
+- Spacing (from Figma):
+  - Section padding: 120px vertical, 40px horizontal
+  - Element gap: 24px
+- Images (downloaded):
+  - Hero background: /assets/images/patterns/hero-bg.jpg
+- Responsive: Text scales down, padding reduces on mobile
+- Accessibility:
+  - Text contrast 7:1 (exceeds WCAG AA)
+  - Need alt text for background image
+
+Ready to generate the block pattern with exact Figma specifications.
+```
+
+### Example 2: Screenshot
+
 **User uploads image and says:**
 > "Create a WordPress block pattern from this hero design"
 
@@ -426,28 +588,38 @@ Provides:
 ```
 I'll analyze this design for WordPress implementation.
 
-[Performs visual analysis]
+[Step 1: Read image file]
+[Step 2: Perform visual analysis]
 
 Design Analysis Complete:
 - Type: Hero section with overlaid text
 - WordPress Blocks Needed: Cover, Heading, Paragraph, Buttons
 - Layout: Full-width background image with centered content
-- Colors: Dark overlay (#000000 40% opacity), white text
-- Typography: 3rem heading on desktop, 2rem mobile
+- Colors (estimated from screenshot):
+  - Dark overlay: ~#000000 (40% opacity)
+  - Text: white
+- Typography (estimated):
+  - Heading: ~3rem on desktop, ~2rem mobile
+  - Body: ~1.125rem
 - Responsive: Text size reduces, padding adjusts
 - Accessibility: Need alt text for background image, ensure text contrast
+
+Note: Values estimated from screenshot. For exact specifications, provide Figma URL.
 
 Ready to generate the block pattern. Shall I proceed?
 ```
 
 ## Best Practices
 
-1. **Ask Before Assuming**: If design intent is unclear, ask the user
-2. **Be Specific**: Provide exact values (px, rem, hex codes)
-3. **Think Mobile-First**: Always consider mobile layout first
-4. **Check Accessibility**: Flag potential issues early
-5. **Document Interactions**: Don't overlook hover states and animations
-6. **Map to Native Components**: Prefer platform-native solutions
+1. **ALWAYS Fetch Design Data First**: Never analyze without fetching actual design using Figma MCP or Read tool
+2. **Use Exact Values from Figma**: When Figma URL provided, use exact px/rem values from Figma data, not estimates
+3. **Download Assets Locally**: Never reference Figma CDN URLs in production code - download to theme/module
+4. **Ask Before Assuming**: If design intent is unclear, ask the user
+5. **Be Specific**: Provide exact values (px, rem, hex codes)
+6. **Think Mobile-First**: Always consider mobile layout first
+7. **Check Accessibility**: Flag potential issues early
+8. **Document Interactions**: Don't overlook hover states and animations
+9. **Map to Native Components**: Prefer platform-native solutions
 
 ## Common Patterns Recognition
 

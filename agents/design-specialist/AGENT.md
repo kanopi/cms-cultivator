@@ -110,85 +110,44 @@ Examples:
 - "awesome" → prefix: "awesome" → slug: "awesome/hero-cta"
 ```
 
-#### Step 3: Analyze Design
+#### Step 3: Analyze Design with design-analyzer Skill
 
-**CRITICAL**: You MUST fetch the actual Figma design before generating any code.
+**CRITICAL**: You MUST invoke the design-analyzer skill to fetch and analyze the design.
 
-**For Figma URLs:**
-1. **REQUIRED**: Use ToolSearch to load Figma tools:
-   ```
-   ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
-   ```
+The design-analyzer skill will:
+- ✅ Load and use Figma MCP tools (if Figma URL provided)
+- ✅ Fetch design context and screenshots from Figma
+- ✅ Extract exact design specifications (colors, typography, spacing, layout)
+- ✅ Download all image assets locally to theme directory
+- ✅ Read screenshot files (if image file provided)
+- ✅ Identify WordPress blocks needed OR Drupal fields needed
+- ✅ Document responsive behavior requirements
+- ✅ Note accessibility considerations
 
-2. **REQUIRED**: Fetch design context with Figma MCP:
-   ```
-   mcp__plugin_figma_figma__get_design_context(
-     fileKey: {extracted from URL},
-     nodeId: {extracted from URL, format: "123:456"},
-     clientLanguages: "html,css,scss",
-     clientFrameworks: "wordpress"
-   )
-   ```
-   This returns:
-   - Generated code (React/Tailwind - will need conversion)
-   - Image asset URLs
-   - Exact CSS values from design
-
-3. **REQUIRED**: Get screenshot for visual reference:
-   ```
-   ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
-
-   mcp__plugin_figma_figma__get_screenshot(
-     fileKey: {extracted from URL},
-     nodeId: {extracted from URL},
-     clientLanguages: "html,css,scss",
-     clientFrameworks: "wordpress"
-   )
-   ```
-
-4. **REQUIRED**: Use design-analyzer skill to extract from Figma data:
-   - Colors (exact hex codes from Figma)
-   - Typography (exact families, sizes, weights, line-heights from Figma)
-   - Spacing (exact margins, padding, gaps from Figma)
-   - Layout structure (flexbox, grid, positioning from Figma)
-   - Images and assets (download URLs from Figma)
-   - WordPress blocks needed
-   - Responsive behavior requirements
-   - Accessibility requirements
-
-5. **REQUIRED**: Download all image assets locally:
-   ```bash
-   mkdir -p {theme-path}/assets/images/patterns
-   cd {theme-path}/assets/images/patterns
-   curl -o {filename}.png "{figma-asset-url}"
-   ```
-
-**For Screenshot/Image Files:**
-1. **REQUIRED**: Read the image file using Read tool:
-   ```
-   Read(file_path: {screenshot-path})
-   ```
-
-2. **REQUIRED**: Use design-analyzer skill to analyze the visual design:
-   - Extract colors from image
-   - Identify typography styles
-   - Measure spacing and layout
-   - Identify required components
-   - Note accessibility considerations
-
-**DO NOT PROCEED** to Step 4 until you have:
-- ✅ Fetched actual Figma design (if Figma URL) OR read screenshot
-- ✅ Extracted all design specifications
-- ✅ Downloaded all image assets locally
-- ✅ Verified you have accurate colors, typography, spacing values
-
-**Example Figma URL parsing:**
+**Invoke the skill:**
 ```
-URL: https://figma.com/design/ABC123XYZ?node-id=16981-81661
-Extract:
-- fileKey: "ABC123XYZ"
-- nodeId: "16981:81661" (replace hyphen with colon!)
+Use the design-analyzer skill to fetch and extract technical specifications from:
+{design_source}
+
+Target CMS: {wordpress | drupal}
+Component type: {block-pattern | paragraph-type}
 ```
+
+The skill will return structured output with:
+- Exact colors (hex codes from Figma)
+- Exact typography (font families, sizes, weights, line-heights)
+- Exact spacing (margins, padding, gaps in px/rem)
+- Layout structure (flexbox, grid, positioning)
+- Image asset paths (downloaded locally)
+- Component mapping (WordPress blocks OR Drupal fields)
+- Responsive breakpoint specifications
+- Accessibility requirements and concerns
+
+**DO NOT PROCEED** to Step 4 until the design-analyzer skill has:
+- ✅ Completed fetching design data (Figma MCP OR Read tool)
+- ✅ Returned structured design specifications
+- ✅ Downloaded all image assets to local paths
+- ✅ Provided accurate values (not estimates)
 
 #### Step 4: Generate Block Pattern PHP
 Create file at: `wp-content/themes/{theme}/patterns/{pattern-slug}.php`
@@ -373,63 +332,45 @@ Optional:
 - module_name: Custom module name (default: "custom_paragraphs")
 ```
 
-#### Step 2: Analyze Design
+#### Step 2: Analyze Design with design-analyzer Skill
 
-**CRITICAL**: You MUST fetch the actual Figma design before generating any code.
+**CRITICAL**: You MUST invoke the design-analyzer skill to fetch and analyze the design.
 
-**For Figma URLs:**
-1. **REQUIRED**: Use ToolSearch to load Figma tools:
-   ```
-   ToolSearch(query: "select:mcp__plugin_figma_figma__get_design_context")
-   ```
+The design-analyzer skill will:
+- ✅ Load and use Figma MCP tools (if Figma URL provided)
+- ✅ Fetch design context and screenshots from Figma
+- ✅ Extract exact design specifications (colors, typography, spacing, layout)
+- ✅ Download all image assets locally to module directory
+- ✅ Read screenshot files (if image file provided)
+- ✅ Identify Drupal field requirements:
+  - Field types (text, text_long, link, entity_reference for Media, boolean, list)
+  - Field cardinality (single or unlimited)
+  - Field labels and descriptions
+  - Required vs optional fields
+- ✅ Document responsive behavior requirements
+- ✅ Note accessibility considerations
 
-2. **REQUIRED**: Fetch design context with Figma MCP:
-   ```
-   mcp__plugin_figma_figma__get_design_context(
-     fileKey: {extracted from URL},
-     nodeId: {extracted from URL, format: "123:456"},
-     clientLanguages: "html,css,scss",
-     clientFrameworks: "drupal"
-   )
-   ```
+**Invoke the skill:**
+```
+Use the design-analyzer skill to fetch and extract technical specifications from:
+{design_source}
 
-3. **REQUIRED**: Get screenshot for visual reference:
-   ```
-   ToolSearch(query: "select:mcp__plugin_figma_figma__get_screenshot")
+Target CMS: drupal
+Component type: paragraph-type
+```
 
-   mcp__plugin_figma_figma__get_screenshot(
-     fileKey: {extracted from URL},
-     nodeId: {extracted from URL},
-     clientLanguages: "html,css,scss",
-     clientFrameworks: "drupal"
-   )
-   ```
+The skill will return structured output with:
+- Exact colors, typography, spacing, layout
+- Image asset paths (downloaded locally)
+- Drupal field definitions
+- Twig template structure guidance
+- Responsive specifications
+- Accessibility requirements
 
-4. **REQUIRED**: Use design-analyzer skill to extract:
-   - Colors, typography, spacing, layout (exact values from Figma)
-   - Images and assets (download URLs from Figma)
-   - **Field requirements** (specific to Drupal):
-     - Field types: text, text_long, link, entity_reference (Media), boolean, list
-     - Field cardinality: single or unlimited
-     - Field labels and descriptions
-     - Required vs optional fields
-
-5. **REQUIRED**: Download all image assets locally:
-   ```bash
-   mkdir -p {module-path}/assets/images
-   cd {module-path}/assets/images
-   curl -o {filename}.png "{figma-asset-url}"
-   ```
-
-**For Screenshot/Image Files:**
-1. **REQUIRED**: Read the image file using Read tool
-2. **REQUIRED**: Use design-analyzer skill to analyze and extract field requirements
-
-**DO NOT PROCEED** to Step 3 until you have:
-- ✅ Fetched actual Figma design (if Figma URL) OR read screenshot
-- ✅ Extracted all design specifications
-- ✅ Downloaded all image assets locally
-- ✅ Identified all required Drupal fields
+**DO NOT PROCEED** to Step 3 until the design-analyzer skill has:
+- ✅ Completed fetching design data (Figma MCP OR Read tool)
+- ✅ Returned structured design specifications with Drupal fields
+- ✅ Downloaded all image assets to local paths
 
 #### Step 3: Detect Drupal MCP Availability
 ```bash
