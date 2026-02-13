@@ -555,6 +555,7 @@ Read the existing `composer.json` and add missing dev dependencies:
 - `phpstan/phpstan-deprecation-rules` (dev)
 - `palantirnet/drupal-rector` (dev)
 - `vincentlanglet/twig-cs-fixer` (dev)
+- `ergebnis/composer-normalize` (dev)
 
 **Check what's already present before adding:**
 
@@ -579,6 +580,16 @@ composer show --format=json 2>/dev/null | jq -r '.installed[].name' | grep -E 'c
 ```
 
 **Use `Edit` tool to merge into existing `composer.json`.** Do NOT overwrite the entire file.
+
+**Normalize composer.json** after all dependency and script changes:
+
+```bash
+# Install composer-normalize if not already added above
+ddev composer require --dev ergebnis/composer-normalize
+
+# Normalize composer.json (sorts packages, formats consistently)
+ddev composer normalize
+```
 
 ### 4.3 Code Quality Configs
 
