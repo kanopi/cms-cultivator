@@ -235,6 +235,37 @@ gh auth status
 git ls-remote {git-url} HEAD
 ```
 
+**CircleCI CLI** (needed for Phase 5):
+
+```bash
+# Check CircleCI CLI
+which circleci
+```
+
+If not found, install via Homebrew:
+```bash
+brew install circleci
+```
+
+Then authenticate (separate Bash call):
+```bash
+circleci setup --no-prompt --host https://circleci.com --token $CIRCLECI_TOKEN
+```
+
+Then verify (separate Bash call):
+```bash
+circleci diagnostic
+```
+
+**If `$CIRCLECI_TOKEN` is not set or diagnostic fails**, prompt user:
+```
+CircleCI CLI is not authenticated.
+Please provide your CircleCI Personal API Token (CCIPAT format):
+→ Create one at: https://app.circleci.com/settings/user/tokens
+
+Then set it: export CIRCLECI_TOKEN=CCIPAT_...
+```
+
 **If any check fails**, report the issue and stop. Do not proceed with partial setup.
 
 ### 1.2 Clone Repository
@@ -1376,86 +1407,82 @@ git commit -m "feat: add Kanopi DevOps tooling and CI/CD configuration
 git push -u origin feature/kanopi-devops
 ```
 
+**CRITICAL — CircleCI API slug format:**
+Always use `github/kanopi/{repo-name}` in all CircleCI API URLs.
+NEVER use `gh/kanopi/{repo-name}` — it returns "Project not found" on all endpoints,
+even though CircleCI's own responses show `"slug": "gh/kanopi/..."`.
+
 ### 5.2 Set Up CircleCI Project
 
-Use the CircleCI CLI to hook the new repo into CircleCI:
+The CircleCI project must be created via the web UI — neither the CLI (`circleci project create`, `circleci follow`) nor the API (`/follow` endpoint) work reliably with current CCIPAT tokens.
 
-```bash
-# Check if circleci CLI is installed
-which circleci
+1. **Prompt user** to open CircleCI and create the project:
+   ```
+   Please create the CircleCI project:
+   → Open: https://app.circleci.com/projects/project-setup/github/kanopi/{repo-name}
+   → Follow the setup wizard to connect the repo
+   → Let me know when it's done.
+   ```
 
-# If not found, install via Homebrew
-brew install circleci
+2. **Poll to verify** the project exists (use `github/` slug, NOT `gh/`):
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}" \
+     "https://circleci.com/api/v2/project/github/kanopi/{repo-name}" \
+     -H "Circle-Token: $CIRCLECI_TOKEN"
+   ```
+   If returns 200, project is ready. If not, wait and retry.
 
-# Follow the project on CircleCI
-circleci follow --host https://circleci.com --org-slug gh/kanopi --project-slug gh/kanopi/{repo-name}
-```
-
-**If `circleci follow` is not available**, use the CircleCI API:
-```bash
-curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/follow" \
-  -H "Circle-Token: $CIRCLECI_TOKEN" \
-  -H "Content-Type: application/json"
-```
+3. **Verify pipelines are accessible:**
+   ```bash
+   curl -s "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/pipeline" \
+     -H "Circle-Token: $CIRCLECI_TOKEN"
+   ```
 
 ### 5.3 Configure CircleCI Project Settings
 
-Configure the project to auto-cancel redundant builds and only build pull requests:
+Configure the project to auto-cancel redundant builds and only build pull requests via the REST API:
 
 ```bash
-# Enable auto-cancel redundant workflows
-circleci api --host https://circleci.com \
-  "project/gh/kanopi/{repo-name}/settings" \
-  --method PATCH \
-  --data '{"advanced": {"autocancel_builds": true}}'
-
-# Only build pull requests (skip branch pushes without PRs)
-circleci api --host https://circleci.com \
-  "project/gh/kanopi/{repo-name}/settings" \
-  --method PATCH \
-  --data '{"advanced": {"pr_only_build": true}}'
-```
-
-**If the CLI method fails**, use the CircleCI API directly:
-```bash
-# Auto-cancel redundant builds
-curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+curl -X PATCH "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/settings" \
   -H "Circle-Token: $CIRCLECI_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"advanced": {"autocancel_builds": true}}'
+```
 
-# Only build pull requests
-curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+```bash
+curl -X PATCH "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/settings" \
   -H "Circle-Token: $CIRCLECI_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"advanced": {"pr_only_build": true}}'
 ```
 
+**If settings API fails**, add to the manual follow-up checklist — these can be configured via the CircleCI web UI under Project Settings → Advanced.
+
 ### 5.4 Add Weekly Automated Update Trigger
 
-Add a scheduled trigger to run the `automated-update` workflow once a week on Wednesdays:
+Add a scheduled trigger to run the automated updates workflow once a week on Tuesdays:
 
 ```bash
-# Create scheduled pipeline trigger for weekly automated updates
-curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule" \
+curl -X POST "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/schedule" \
   -H "Circle-Token: $CIRCLECI_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "weekly-automated-update",
-    "description": "Run automated dependency updates every Wednesday",
-    "attribution-actor": "system",
+    "name": "Automated Updates",
+    "description": "Weekly automated Drupal/Composer updates via cms-updates orb",
+    "attribution-actor": "current",
     "parameters": {
-      "run-automated-update": true
+      "branch": "main",
+      "workflow": "automatic updates"
     },
     "timetable": {
       "per-hour": 1,
-      "hours-of-day": [10],
-      "days-of-week": ["WED"]
+      "hours-of-day": [14],
+      "days-of-week": ["TUE"]
     }
   }'
 ```
 
-**Note:** The `run-automated-update` parameter must be defined in the `.circleci/config.yml` pipeline parameters and used to trigger the `automated-update` workflow. Verify the drupal-starter config supports this parameter.
+Verify the schedule was created by checking the POST response (don't rely on GET schedule working immediately). A successful response will include the schedule `id` and `name`.
 
 ### 5.5 Create Pull Request
 
@@ -1542,29 +1569,38 @@ List any non-blocking warnings collected from gates during the run. For example:
 - [ ] Redis enabled on multidev
 
 ### Manual Follow-Up Tasks
-1. **CircleCI Secrets** - Configure context with:
+1. **CircleCI Project** (if not already created in step 5.2):
+   - Open: https://app.circleci.com/projects/project-setup/github/kanopi/{repo-name}
+   - Follow the setup wizard to connect the repo
+
+2. **CircleCI Secrets** - Configure context with:
    - `TERMINUS_TOKEN` - Pantheon machine token
    - `GITHUB_TOKEN` - GitHub personal access token
    - `TERMINUS_SITE` - {site-name}
    - `TEST_SITE_NAME` - multidev URL for Cypress
 
-2. **CircleCI SSH Key** - Add to Pantheon:
+3. **CircleCI SSH Key** - Add to Pantheon:
    - Go to CircleCI project settings → SSH Keys
    - Add private key with hostname `drush.in`
 
-3. **Enable Drupal Modules** (after first successful deploy):
+4. **CircleCI Project Settings** (if API calls failed in step 5.3):
+   - Go to CircleCI Project Settings → Advanced
+   - Enable "Auto-cancel redundant workflows"
+   - Enable "Only build pull requests"
+
+5. **Enable Drupal Modules** (after first successful deploy):
    ```bash
    terminus drush {site-name}.dev -- en redis pantheon_advanced_page_cache -y
    ```
 
-4. **Theme Compilation** - Verify on multidev:
+6. **Theme Compilation** - Verify on multidev:
    - Check that CSS/JS are loading correctly
    - If theme uses Gulp, verify build process
 ```
 
 If Gulp 3 was detected in Phase 4.8:
 ```
-5. **⚠️ Gulp 3→4 Upgrade Required**
+7. **⚠️ Gulp 3→4 Upgrade Required**
    - Theme uses Gulp 3.x which is deprecated
    - Migration guide: https://gulpjs.com/docs/en/getting-started/creating-tasks
    - This is a breaking change requiring manual migration
