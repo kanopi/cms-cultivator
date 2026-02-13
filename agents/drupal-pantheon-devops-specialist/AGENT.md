@@ -1130,6 +1130,10 @@ gh pr create \
 - [ ] Verify theme builds correctly on multidev
 - [ ] Update CircleCI environment variables if needed
 
+## Troubleshooting
+
+**If multidevs are not building:** Delete any existing multidev environments on the Pantheon site. Pantheon has a limit on the number of multidevs, and stale ones can prevent new ones from being created. Use `terminus multidev:list {site-name}` to check and `terminus multidev:delete {site-name}.{env-name}` to remove old ones.
+
 🤖 Generated with [Claude Code](https://claude.com/claude-code) via cms-cultivator"
 ```
 
