@@ -295,9 +295,16 @@ brew install pantheon-systems/external/terminus
 terminus auth:whoami
 ```
 
-**If not authenticated**, prompt user:
+**If not authenticated**, try the cached session first:
+```bash
+# Attempt login using cached/saved machine token
+terminus auth:login
 ```
-Terminus is not authenticated. Please provide your Pantheon machine token:
+
+**If `auth:login` also fails** (no cached token), prompt user:
+```
+Terminus is not authenticated and no cached token was found.
+Please provide your Pantheon machine token:
 → You can create one at: https://dashboard.pantheon.io/account#/tokens/create/terminus
 
 Run: terminus auth:login --machine-token=YOUR_TOKEN
