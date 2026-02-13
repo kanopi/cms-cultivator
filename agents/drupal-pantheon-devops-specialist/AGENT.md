@@ -1054,88 +1054,7 @@ Glob(path="/tmp/drupal-starter/.circleci", pattern="*")
 
 For each file found (besides `config.yml` which was already handled), read and write to the project.
 
-#### 4.10b Set Up CircleCI Project
-
-Use the CircleCI CLI to hook the new repo into CircleCI:
-
-```bash
-# Check if circleci CLI is installed
-which circleci
-
-# If not found, install via Homebrew
-brew install circleci
-
-# Follow the project on CircleCI
-circleci follow --host https://circleci.com --org-slug gh/kanopi --project-slug gh/kanopi/{repo-name}
-```
-
-**If `circleci follow` is not available**, use the CircleCI API:
-```bash
-curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/follow" \
-  -H "Circle-Token: $CIRCLECI_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-#### 4.10c Configure CircleCI Project Settings
-
-Configure the project to auto-cancel redundant builds and only build pull requests:
-
-```bash
-# Enable auto-cancel redundant workflows
-circleci api --host https://circleci.com \
-  "project/gh/kanopi/{repo-name}/settings" \
-  --method PATCH \
-  --data '{"advanced": {"autocancel_builds": true}}'
-
-# Only build pull requests (skip branch pushes without PRs)
-circleci api --host https://circleci.com \
-  "project/gh/kanopi/{repo-name}/settings" \
-  --method PATCH \
-  --data '{"advanced": {"pr_only_build": true}}'
-```
-
-**If the CLI method fails**, use the CircleCI API directly:
-```bash
-# Auto-cancel redundant builds
-curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
-  -H "Circle-Token: $CIRCLECI_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"advanced": {"autocancel_builds": true}}'
-
-# Only build pull requests
-curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
-  -H "Circle-Token: $CIRCLECI_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"advanced": {"pr_only_build": true}}'
-```
-
-#### 4.10d Add Weekly Automated Update Trigger
-
-Add a scheduled trigger to run the `automated-update` workflow once a week on Wednesdays:
-
-```bash
-# Create scheduled pipeline trigger for weekly automated updates
-curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule" \
-  -H "Circle-Token: $CIRCLECI_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "weekly-automated-update",
-    "description": "Run automated dependency updates every Wednesday",
-    "attribution-actor": "system",
-    "parameters": {
-      "run-automated-update": true
-    },
-    "timetable": {
-      "per-hour": 1,
-      "hours-of-day": [10],
-      "days-of-week": ["WED"]
-    }
-  }'
-```
-
-**Note:** The `run-automated-update` parameter must be defined in the `.circleci/config.yml` pipeline parameters and used to trigger the `automated-update` workflow. Verify the drupal-starter config supports this parameter.
-
-#### 4.10e Remove Legacy CI/Build Files
+#### 4.10b Remove Legacy CI/Build Files
 
 **Remove legacy CI/build files** if present in the project root. Kanopi's CircleCI configuration does not use them:
 
@@ -1457,7 +1376,88 @@ git commit -m "feat: add Kanopi DevOps tooling and CI/CD configuration
 git push -u origin feature/kanopi-devops
 ```
 
-### 5.2 Create Pull Request
+### 5.2 Set Up CircleCI Project
+
+Use the CircleCI CLI to hook the new repo into CircleCI:
+
+```bash
+# Check if circleci CLI is installed
+which circleci
+
+# If not found, install via Homebrew
+brew install circleci
+
+# Follow the project on CircleCI
+circleci follow --host https://circleci.com --org-slug gh/kanopi --project-slug gh/kanopi/{repo-name}
+```
+
+**If `circleci follow` is not available**, use the CircleCI API:
+```bash
+curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/follow" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+### 5.3 Configure CircleCI Project Settings
+
+Configure the project to auto-cancel redundant builds and only build pull requests:
+
+```bash
+# Enable auto-cancel redundant workflows
+circleci api --host https://circleci.com \
+  "project/gh/kanopi/{repo-name}/settings" \
+  --method PATCH \
+  --data '{"advanced": {"autocancel_builds": true}}'
+
+# Only build pull requests (skip branch pushes without PRs)
+circleci api --host https://circleci.com \
+  "project/gh/kanopi/{repo-name}/settings" \
+  --method PATCH \
+  --data '{"advanced": {"pr_only_build": true}}'
+```
+
+**If the CLI method fails**, use the CircleCI API directly:
+```bash
+# Auto-cancel redundant builds
+curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"advanced": {"autocancel_builds": true}}'
+
+# Only build pull requests
+curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"advanced": {"pr_only_build": true}}'
+```
+
+### 5.4 Add Weekly Automated Update Trigger
+
+Add a scheduled trigger to run the `automated-update` workflow once a week on Wednesdays:
+
+```bash
+# Create scheduled pipeline trigger for weekly automated updates
+curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "weekly-automated-update",
+    "description": "Run automated dependency updates every Wednesday",
+    "attribution-actor": "system",
+    "parameters": {
+      "run-automated-update": true
+    },
+    "timetable": {
+      "per-hour": 1,
+      "hours-of-day": [10],
+      "days-of-week": ["WED"]
+    }
+  }'
+```
+
+**Note:** The `run-automated-update` parameter must be defined in the `.circleci/config.yml` pipeline parameters and used to trigger the `automated-update` workflow. Verify the drupal-starter config supports this parameter.
+
+### 5.5 Create Pull Request
 
 ```bash
 gh pr create \
@@ -1503,7 +1503,7 @@ gh pr create \
 
 **⮕ Run Gate 5 validation** (see Phase Gate Validation section) before outputting checklist.
 
-### 5.3 Output Verification Checklist
+### 5.6 Output Verification Checklist
 
 After PR creation, output this for the user. **Include any non-blocking gate warnings collected during the run.**
 
@@ -1782,7 +1782,7 @@ Validates that the non-interactive DDEV configuration wrote correct values. If t
 **On FAIL (blocking):** Corrupted `composer.json` or placeholder variables in CircleCI config are serious issues. Fix before committing. Note: CircleCI config uses the **Pantheon site name** (`{pantheon-site}`), not the GitHub repo name.
 **On warning:** Record missing files/configs (including Solr settings override) for final checklist.
 
-### Gate 5: Delivery (after step 5.2 PR creation, before 5.3 checklist)
+### Gate 5: Delivery (after step 5.5 PR creation, before 5.6 checklist)
 
 | # | Check | Command | Blocking? |
 |---|-------|---------|-----------|
