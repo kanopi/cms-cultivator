@@ -390,12 +390,22 @@ Run `ddev project-configure` which will interactively prompt for project setting
 ddev project-configure
 ```
 
+**Before answering prompts**, determine the Pantheon environment to use:
+
+```bash
+# Check if live environment is initialized
+terminus env:info {site-name}.live 2>/dev/null && echo "USE_LIVE=true" || echo "USE_LIVE=false"
+```
+
+If live is enabled, use `live` as the Pantheon environment. Otherwise default to `dev`.
+
 **Expected prompts and how to answer:**
 - **PHP version** → Use detected PHP version (e.g., `8.2`)
 - **Database type/version** → Use detected DB version (e.g., MariaDB 10.6)
 - **Node version** → Use detected Node version (e.g., `22`)
 - **Theme path** → Use detected theme path (e.g., `web/themes/custom/mytheme`)
 - **Pantheon site name** → Use detected site name
+- **Pantheon environment** → Use `live` if enabled (checked above), otherwise `dev`
 - **Any other prompts** → Use auto-detected values where available, or sensible defaults
 
 **IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
