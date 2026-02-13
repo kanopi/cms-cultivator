@@ -586,6 +586,48 @@ For each custom theme directory:
 
 ### 4.9 Cypress Tests
 
+#### 4.9a Composer Prerequisites for kanopi/shrubs
+
+Before installing the Cypress files, the project's `composer.json` must be configured to support the `kanopi/shrubs` package (custom `cypress-support` installer type). **Make these changes using `Edit` before running `composer require`:**
+
+1. **Add `oomphinc/composer-installers-extender`** to `require` (if not present):
+   ```json
+   "oomphinc/composer-installers-extender": "^2.0"
+   ```
+
+2. **Allow the plugin** in `config.allow-plugins` (if not present):
+   ```json
+   "oomphinc/composer-installers-extender": true
+   ```
+
+3. **Add `installer-types`** to `extra` (merge with existing, don't overwrite):
+   ```json
+   "installer-types": [
+     "cypress-support",
+     "cypress-e2e"
+   ]
+   ```
+
+4. **Add `installer-paths`** to `extra.installer-paths` (merge with existing):
+   ```json
+   "tests/cypress/cypress/support/{$name}": [
+     "type:cypress-support"
+   ],
+   "tests/cypress/cypress/e2e/{$name}": [
+     "type:cypress-e2e"
+   ]
+   ```
+
+**After editing `composer.json`**, install the package:
+
+```bash
+composer require kanopi/shrubs:^0.2 oomphinc/composer-installers-extender:^2.0
+```
+
+This installs shrubs' Cypress support commands into `tests/cypress/cypress/support/shrubs/`.
+
+#### 4.9b Cypress Test Files
+
 Fetch the Cypress test directory structure from drupal-starter:
 
 ```bash
@@ -607,7 +649,8 @@ tests/cypress/
     ├── fixtures/
     └── support/
         ├── commands.js
-        └── e2e.js
+        ├── e2e.js
+        └── shrubs/        ← installed by kanopi/shrubs via Composer
 ```
 
 Fetch each file from drupal-starter and write to the project. Update `cypress.config.js` with the project's URL pattern if detectable.
@@ -835,7 +878,7 @@ git commit -m "feat: add Kanopi DevOps tooling and CI/CD configuration
 
 - Add DDEV configuration for local development
 - Add CircleCI pipeline with code quality checks and deployment
-- Add Cypress system checks test suite
+- Add Cypress system checks test suite with kanopi/shrubs support commands
 - Add PHP CodeSniffer, PHPStan, and Rector configurations
 - Add Composer scripts for code quality (code-check, phpstan, rector-check)
 - Add quicksilver scripts for config import and New Relic logging
