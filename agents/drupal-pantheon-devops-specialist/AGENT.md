@@ -621,7 +621,7 @@ Before installing the Cypress files, the project's `composer.json` must be confi
 **After editing `composer.json`**, install the package:
 
 ```bash
-composer require kanopi/shrubs:^0.2 oomphinc/composer-installers-extender:^2.0
+composer require --dev kanopi/shrubs:^0.2 oomphinc/composer-installers-extender:^2.0
 ```
 
 This installs shrubs' Cypress support commands into `tests/cypress/cypress/support/shrubs/`.
