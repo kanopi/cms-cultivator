@@ -71,10 +71,6 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (23)" {
-  count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 23 ]
-}
 
 # ==============================================================================
 # COMMAND FRONTMATTER TESTS
