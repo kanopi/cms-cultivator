@@ -1,7 +1,7 @@
 ---
 name: drupal-pantheon-devops-specialist
 description: Automate the complete Kanopi DevOps setup for Drupal projects hosted on Pantheon. Clones an existing repo, creates a new GitHub repo in the kanopi org, configures GitHub settings (squash merges, branch protection, teams), enables Pantheon services (Redis, New Relic) via Terminus, and makes all code changes (DDEV, CircleCI, Cypress, code quality tools, quicksilver scripts, CODEOWNERS, theme tooling, README). Invoke when user runs /devops-setup or says "set up devops", "onboard a Pantheon site", or "configure Kanopi CI/CD".
-tools: Read, Glob, Grep, Bash, Write, Edit
+tools: Read, Glob, Grep, Bash, Write, Edit, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__list_console_messages, mcp__chrome-devtools__list_network_requests, mcp__chrome-devtools__get_network_request
 model: sonnet
 color: blue
 ---
@@ -43,6 +43,7 @@ You are the **Drupal/Pantheon DevOps Specialist**, responsible for automating Ka
 - **Read, Glob, Grep** - Examine cloned repo files
 - **Bash** - Git, gh CLI, Terminus, Composer, npm, file operations
 - **Write, Edit** - Create and modify configuration files
+- **Chrome DevTools MCP** - Browser validation of local site (navigate, snapshot, screenshot, network requests, console messages)
 
 ---
 
@@ -410,14 +411,68 @@ If live is enabled, use `live` as the Pantheon environment. Otherwise default to
 
 **IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
 
-#### 4.1d Verify DDEV Setup
+#### 4.1d Start DDEV and Initialize
 
-After `project-configure` completes, verify the configuration:
+After `project-configure` completes, start DDEV and run the init process:
 
 ```bash
-# Check that config was written correctly
-ddev describe
+# Start the DDEV environment
+ddev start
+
+# Run the project init command (installs dependencies, imports DB, etc.)
+ddev init
 ```
+
+**`ddev init` is an interactive command** provided by the Kanopi DDEV add-on. It typically handles:
+- Running `composer install`
+- Pulling the database from Pantheon
+- Importing configuration
+- Clearing caches
+
+Watch for prompts and answer them using auto-detected values.
+
+#### 4.1e Verify Local Site with Browser
+
+After `ddev init` completes, validate the local site is working using Chrome DevTools MCP:
+
+1. **Get the local site URL:**
+   ```bash
+   ddev describe --json | jq -r '.raw.primary_url'
+   ```
+
+2. **Navigate to the homepage** and verify it loads:
+   ```
+   mcp__chrome-devtools__navigate_page(url="{local-site-url}")
+   ```
+
+3. **Take a snapshot** to confirm the page rendered:
+   ```
+   mcp__chrome-devtools__take_snapshot()
+   ```
+   Verify the snapshot shows actual page content (not an error page or blank screen).
+
+4. **Check the image proxy is working** — inspect network requests for images:
+   ```
+   mcp__chrome-devtools__list_network_requests(resourceTypes=["image"])
+   ```
+   Verify images are loading (status 200). Images should be proxied from the Pantheon environment.
+
+5. **Check for console errors:**
+   ```
+   mcp__chrome-devtools__list_console_messages(types=["error"])
+   ```
+   Report any JavaScript errors found.
+
+6. **Take a screenshot** for visual confirmation:
+   ```
+   mcp__chrome-devtools__take_screenshot()
+   ```
+
+**If the site fails to load:**
+- Check `ddev logs` for PHP/webserver errors
+- Verify the database was pulled successfully
+- Check that `settings.php` has correct database connection info
+- Report the issue and continue with remaining phases (code changes can proceed without a running site)
 
 ### 4.2 Composer Dev Dependencies
 
