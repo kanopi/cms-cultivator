@@ -531,7 +531,7 @@ ddev init
 **`ddev init` is an interactive command** provided by the Kanopi DDEV add-on. It handles starting DDEV and the full project initialization:
 - Starting the DDEV environment
 - Running `composer install`
-- Pulling the database from Pantheon
+- Syncing the database via `ddev pull` (handled automatically, no terminus backup needed)
 - Importing configuration
 - Clearing caches
 
@@ -576,7 +576,7 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 
 **If the site fails to load:**
 - Check `ddev logs` for PHP/webserver errors
-- Verify the database was pulled successfully
+- Verify `ddev init` completed without errors
 - Check that `settings.php` has correct database connection info
 - Report the issue and continue with remaining phases (code changes can proceed without a running site)
 - **Skip steps 4.1f and 4.1g** if the site is not loading
