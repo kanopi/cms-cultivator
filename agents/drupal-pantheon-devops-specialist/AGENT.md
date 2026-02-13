@@ -473,6 +473,32 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 - Verify the database was pulled successfully
 - Check that `settings.php` has correct database connection info
 - Report the issue and continue with remaining phases (code changes can proceed without a running site)
+- **Skip step 4.1f** if the site is not loading
+
+#### 4.1f Run Cypress Validation
+
+**Only proceed with this step after Chrome DevTools validation passes.**
+
+1. **Install Cypress** via DDEV:
+   ```bash
+   ddev cypress install
+   ```
+
+2. **Create testing users** needed by the Cypress tests:
+   ```bash
+   ddev cypress-users
+   ```
+
+3. **Run the system checks Cypress test:**
+   ```bash
+   ddev cypress run --spec tests/cypress/cypress/e2e/system-checks.cy.js
+   ```
+
+**If Cypress tests fail:**
+- Check that testing users were created successfully
+- Verify the local site URL matches `cypress.config.js`
+- Check `ddev logs` for any backend errors
+- Report failures but continue with remaining phases
 
 ### 4.2 Composer Dev Dependencies
 
