@@ -55,8 +55,8 @@ Never combine commands. Never use `&&`, `||`, or `;`. Each Bash tool call must c
 ### Rule 2: NEVER start a command with `cd`
 Do NOT prepend `cd /path &&` to commands. The Bash tool runs in the project directory already. If you need a different directory, pass the path as an argument to the command itself (e.g., `git -C /path status`).
 
-### Rule 6: Use Glob/Read/Grep tools instead of ls/cat/grep commands
-Do NOT use `ls` to find files — use the `Glob` tool instead (e.g., `Glob(pattern="web/themes/custom/*")`). Do NOT use `cat` to read files — use the `Read` tool. Do NOT use `grep` in Bash — use the `Grep` tool. These dedicated tools never trigger permission prompts.
+### Rule 6: Use Glob/Read/Grep tools instead of ls/cat/grep/git-search commands
+Do NOT use `ls` to find files — use the `Glob` tool instead (e.g., `Glob(pattern="web/themes/custom/*")`). Do NOT use `cat` to read files — use the `Read` tool. Do NOT use `grep` in Bash — use the `Grep` tool. Do NOT use `git log`, `git grep`, or `git show` to search for content — use `Read` and `Grep` tools on actual files. Only use `git` for actual git operations (clone, add, commit, push, remote, checkout, branch, rm). These dedicated tools never trigger permission prompts.
 
 ### Rule 3: NEVER append `2>/dev/null`, `2>&1`, or `|| echo "..."`
 Do NOT suppress errors or add fallback echo commands. Just run the command. If it fails, you will see the error in the output and can decide what to do next.
@@ -74,6 +74,8 @@ Make decisions in your reasoning based on command output, not in shell.
 cd /path && gh repo view kanopi/name 2>/dev/null || echo "NOT_FOUND"
 cd /path && git checkout -b main 2>/dev/null || git checkout main
 cd /path && ls -la web/themes/custom/ 2>/dev/null || echo "NO_CUSTOM_THEMES"
+git -C /path log --all --remotes --grep="pantheon" --oneline -n 5
+git log --grep="config" --oneline
 cat /tmp/drupal-starter/file.txt > project/file.txt
 if [ -d ".ci" ]; then git rm -r .ci/; fi
 for f in a b c; do git rm "$f"; done
@@ -94,6 +96,13 @@ git checkout -b main
 If that errors (branch exists), make a separate call:
 ```
 git checkout main
+```
+
+To detect project info, use `Read` and `Grep` tools on files (not git commands):
+```
+Read(file_path="{project-root}/pantheon.yml")
+Grep(pattern="search_api_solr", path="{project-root}/composer.json")
+Glob(pattern="web/themes/custom/*/*.info.yml")
 ```
 
 To read reference files, use the `Read` tool:
@@ -136,15 +145,15 @@ I need two pieces of information to get started:
 
 ### Step 2: Clone and Auto-Detect
 
-After cloning, scan the repo to detect:
+After cloning, scan the repo to detect. **Use `Read`, `Grep`, and `Glob` tools for all detection — do NOT use `git log`, `git grep`, or other git search commands:**
 
-- **PHP version**: From `pantheon.yml` (`api_version`, `php_version`) or `composer.json` (`require.php`)
-- **DB version**: From `pantheon.yml` (`database.version`) or default to MariaDB 10.6
-- **Pantheon site name/UUID**: From git remote URL or `pantheon.yml`
-- **Theme name and path**: Scan `web/themes/custom/` for directories containing a `.info.yml` file
-- **Solr usage**: Check `pantheon.yml` for `search` config or `composer.json` for `drupal/search_api_solr`
-- **Node version**: From existing `.nvmrc` or default to 22
-- **Existing composer dependencies**: Parse `composer.json` for already-present packages
+- **PHP version**: `Read` `pantheon.yml` (look for `php_version`) or `Read` `composer.json` (look for `require.php`)
+- **DB version**: `Read` `pantheon.yml` (look for `database.version`) or default to MariaDB 10.6
+- **Pantheon site name/UUID**: Parse from the git remote URL (already provided as input) or `Read` `pantheon.yml`
+- **Theme name and path**: `Glob(pattern="web/themes/custom/*/*.info.yml")` to find custom themes
+- **Solr usage**: `Grep` `pantheon.yml` for `search` or `Grep` `composer.json` for `search_api_solr`
+- **Node version**: `Read` `.nvmrc` if it exists, or default to 22
+- **Existing composer dependencies**: `Read` `composer.json` to check `require` and `require-dev` sections
 
 Report findings:
 
