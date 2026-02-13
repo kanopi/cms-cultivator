@@ -348,12 +348,19 @@ All changes happen on this branch. **Reference files are fetched from `kanopi/dr
 
 ### Fetching Reference Files
 
-Use this pattern to fetch files from drupal-starter:
+**IMPORTANT: Use a two-step process to avoid permission prompts from piped bash commands.**
 
-```bash
-# Fetch a file's content (base64 decoded)
-gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --decode
-```
+1. **Fetch** the file content with `gh api` (captures output):
+   ```bash
+   gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --decode
+   ```
+
+2. **Write** the content to the project using the `Write` tool (not bash redirection):
+   ```
+   Write(file_path="{target-path}", content="{fetched-content}")
+   ```
+
+**Do NOT pipe gh api output directly to files with `>`** — this creates compound shell commands that trigger user permission prompts. Always use the `Write` tool to create files from fetched content.
 
 **IMPORTANT:** Always check if a file already exists in the project before overwriting. Merge configurations rather than replacing when the project has customizations.
 
@@ -593,18 +600,16 @@ ddev composer normalize
 
 ### 4.3 Code Quality Configs
 
-Fetch from drupal-starter if not already present in the project:
+Fetch from drupal-starter if not already present in the project. **Use `gh api` to fetch, then `Write` tool to save** (do not pipe to files):
+
+For each file (`phpstan.neon`, `rector.php`, `.twig-cs-fixer.php`):
 
 ```bash
-# phpstan.neon
-gh api repos/kanopi/drupal-starter/contents/phpstan.neon --jq '.content' | base64 --decode > phpstan.neon
-
-# rector.php
-gh api repos/kanopi/drupal-starter/contents/rector.php --jq '.content' | base64 --decode > rector.php
-
-# .twig-cs-fixer.php
-gh api repos/kanopi/drupal-starter/contents/.twig-cs-fixer.php --jq '.content' | base64 --decode > .twig-cs-fixer.php
+# Fetch content (read the output, then use Write tool to save)
+gh api repos/kanopi/drupal-starter/contents/phpstan.neon --jq '.content' | base64 --decode
 ```
+
+Then use `Write` tool to save to the project root. Repeat for `rector.php` and `.twig-cs-fixer.php`.
 
 **Check first:** If these files already exist, preserve project customizations. Only create them if missing.
 
@@ -821,19 +826,19 @@ tests/cypress/
         └── shrubs/        ← installed by kanopi/shrubs via Composer
 ```
 
-Fetch each file from drupal-starter and write to the project. Update `cypress.config.js` with the project's URL pattern if detectable.
+For each file, fetch with `gh api` and save with `Write` tool (do not pipe to files). Update `cypress.config.js` with the project's URL pattern if detectable.
 
 ### 4.10 CircleCI Configuration
 
 #### 4.10a CircleCI Config File
 
-Fetch `.circleci/config.yml` from drupal-starter:
+Fetch `.circleci/config.yml` from drupal-starter (fetch with `gh api`, then save with `Write` tool after replacing variables):
 
 ```bash
 gh api repos/kanopi/drupal-starter/contents/.circleci/config.yml --jq '.content' | base64 --decode
 ```
 
-**Replace variables in the template:**
+Read the output, then **replace variables before writing** with the `Write` tool:
 - `TERMINUS_SITE` → detected Pantheon site name
 - `PANTHEON_UUID` → UUID from Phase 3
 - `THEME_NAME` → detected theme name
@@ -970,7 +975,7 @@ gh api repos/kanopi/drupal-starter/contents/web/private/scripts --jq '.[].path'
 - `web/private/scripts/drush_config_import.php` - Auto-import config on deploy
 - `web/private/scripts/new_relic_deploy.php` - Log deployments to New Relic
 
-Create `web/private/scripts/` directory and fetch each script.
+Create `web/private/scripts/` directory. For each script, fetch with `gh api` and save with `Write` tool (do not pipe to files).
 
 ### 4.13 Drupal Modules
 
@@ -1026,10 +1031,9 @@ ddev composer install
 
 ### Theme Development
 ```bash
-cd {theme-path}
-nvm use
-npm install
-npm run build
+ddev theme-install   # Install theme dependencies
+ddev theme-build     # Build theme assets
+ddev theme-watch     # Watch for changes
 ```
 
 ## Code Quality
@@ -1065,10 +1069,9 @@ Deployments are managed via CircleCI:
 ## Cypress Tests
 
 ```bash
-cd tests/cypress
-nvm use
-npm install
-npm run cy:run
+ddev cypress install   # Install Cypress dependencies
+ddev cypress-users     # Create test users
+ddev cypress run       # Run all Cypress tests
 ```
 ```
 
@@ -1115,11 +1118,9 @@ ddev composer code-sniff    # Run all checks
 
 ### Theme
 ```bash
-cd {theme-path}
-nvm use
-npm install
-npm run build    # Build theme assets
-npm run watch    # Watch for changes
+ddev theme-install   # Install theme dependencies
+ddev theme-build     # Build theme assets
+ddev theme-watch     # Watch for changes
 ```
 
 ## Key Directories
@@ -1343,16 +1344,25 @@ All configuration files are fetched from `kanopi/drupal-starter` at runtime. Thi
 
 ### Fetch Pattern
 
+**Always use a two-step process: fetch with `gh api`, then save with `Write` tool.**
+
 ```bash
-# Single file
+# Step 1: Fetch file content (read the output)
 gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --decode
 
-# Directory listing
+# Step 2: Use Write tool to save to project (NOT bash redirection)
+# Write(file_path="{target-path}", content="{output-from-step-1}")
+```
+
+```bash
+# Directory listing (to discover files to fetch)
 gh api repos/kanopi/drupal-starter/contents/{dir-path} --jq '.[].path'
 
 # Check if file exists
 gh api repos/kanopi/drupal-starter/contents/{path} 2>/dev/null
 ```
+
+**NEVER use `> filename` redirection with `gh api` commands.** Piped/redirected bash commands trigger user permission prompts. Always use the `Write` tool to create files.
 
 ### Merge vs. Replace Strategy
 
