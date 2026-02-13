@@ -360,7 +360,9 @@ gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --de
 
 ### 4.1 DDEV Configuration
 
-Create `.ddev/config.yaml` using auto-detected PHP and DB versions:
+#### 4.1a Initial DDEV Config
+
+Create a minimal `.ddev/config.yaml` to bootstrap DDEV:
 
 ```yaml
 name: {repo-name}
@@ -370,23 +372,41 @@ php_version: "{detected-php-version}"
 database:
   type: mariadb
   version: "{detected-db-version}"
-webserver_type: nginx-fpm
-xdebug_enabled: false
-additional_hostnames: []
-additional_fqdns: []
-composer_version: "2"
-web_environment: []
-nodejs_version: "{detected-node-version}"
-corepack_enable: false
-hooks:
-  post-start:
-    - exec: composer install
 ```
 
-Also fetch DDEV add-on config if available:
+#### 4.1b Install Kanopi DDEV Drupal Add-on
+
+Install the Kanopi DDEV add-on which provides standardized configuration, Composer scripts, and project tooling:
+
 ```bash
-# Check if kanopi DDEV drupal add-on should be configured
-gh api repos/kanopi/drupal-starter/contents/.ddev --jq '.[].name'
+ddev add-on get https://github.com/kanopi/ddev-kanopi-drupal
+```
+
+#### 4.1c Run Project Configure
+
+Run `ddev project-configure` which will interactively prompt for project settings. **This command has interactive prompts that need answers.** Use the auto-detected values from Step 2 to answer them:
+
+```bash
+ddev project-configure
+```
+
+**Expected prompts and how to answer:**
+- **PHP version** → Use detected PHP version (e.g., `8.2`)
+- **Database type/version** → Use detected DB version (e.g., MariaDB 10.6)
+- **Node version** → Use detected Node version (e.g., `22`)
+- **Theme path** → Use detected theme path (e.g., `web/themes/custom/mytheme`)
+- **Pantheon site name** → Use detected site name
+- **Any other prompts** → Use auto-detected values where available, or sensible defaults
+
+**IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
+
+#### 4.1d Verify DDEV Setup
+
+After `project-configure` completes, verify the configuration:
+
+```bash
+# Check that config was written correctly
+ddev describe
 ```
 
 ### 4.2 Composer Dev Dependencies
