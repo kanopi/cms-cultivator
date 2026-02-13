@@ -55,6 +55,9 @@ Never combine commands. Never use `&&`, `||`, or `;`. Each Bash tool call must c
 ### Rule 2: NEVER start a command with `cd`
 Do NOT prepend `cd /path &&` to commands. The Bash tool runs in the project directory already. If you need a different directory, pass the path as an argument to the command itself (e.g., `git -C /path status`).
 
+### Rule 6: Use Glob/Read/Grep tools instead of ls/cat/grep commands
+Do NOT use `ls` to find files — use the `Glob` tool instead (e.g., `Glob(pattern="web/themes/custom/*")`). Do NOT use `cat` to read files — use the `Read` tool. Do NOT use `grep` in Bash — use the `Grep` tool. These dedicated tools never trigger permission prompts.
+
 ### Rule 3: NEVER append `2>/dev/null`, `2>&1`, or `|| echo "..."`
 Do NOT suppress errors or add fallback echo commands. Just run the command. If it fails, you will see the error in the output and can decide what to do next.
 
@@ -70,6 +73,7 @@ Make decisions in your reasoning based on command output, not in shell.
 ```
 cd /path && gh repo view kanopi/name 2>/dev/null || echo "NOT_FOUND"
 cd /path && git checkout -b main 2>/dev/null || git checkout main
+cd /path && ls -la web/themes/custom/ 2>/dev/null || echo "NO_CUSTOM_THEMES"
 gh api .../file --jq '.content' | base64 --decode > file.txt
 if [ -d ".ci" ]; then git rm -r .ci/; fi
 for f in a b c; do git rm "$f"; done
@@ -97,10 +101,16 @@ gh api .../file --jq '.content' | base64 --decode
 ```
 Read the output, then use `Write` tool to save it to a file.
 
+To find files/directories, use `Glob` tool instead of `ls`:
 ```
-ls .ci/
+Glob(pattern="web/themes/custom/*")
 ```
-If the output shows it exists, make a separate call:
+
+To check if something exists before removing, use `Glob` tool:
+```
+Glob(pattern=".ci/*")
+```
+If results come back, make a separate Bash call:
 ```
 git rm -r .ci/
 ```
@@ -786,9 +796,9 @@ indent_size = 2
 
 Detect the theme directory from step 2 auto-detection.
 
-```bash
-# Find custom themes
-ls web/themes/custom/
+Use the `Glob` tool to find custom themes:
+```
+Glob(pattern="web/themes/custom/*/*.info.yml")
 ```
 
 For each custom theme directory:
@@ -798,14 +808,13 @@ For each custom theme directory:
    22
    ```
 
-2. **Check for compiled assets** and ensure they're gitignored:
-   ```bash
-   # Common compiled asset directories
-   ls {theme-path}/dist/
-   ls {theme-path}/assets/
-   ls {theme-path}/build/
+2. **Check for compiled assets** and ensure they're gitignored. Use `Glob` tool:
    ```
-   Add to `.gitignore` if not already present.
+   Glob(pattern="{theme-path}/dist/*")
+   Glob(pattern="{theme-path}/assets/*")
+   Glob(pattern="{theme-path}/build/*")
+   ```
+   Add any found directories to `.gitignore` if not already present.
 
 3. **Check for Gulp version** (flag if Gulp 3 detected):
    Use the `Grep` tool to search for `"gulp"` in `{theme-path}/package.json`. Or use `Read` tool to read `package.json` and check the gulp version.
@@ -996,17 +1005,21 @@ curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule
 
 **Remove legacy CI/build files** if present in the project root. Kanopi's CircleCI configuration does not use them:
 
-Check for each file/directory with a separate Bash call using `ls`. If it exists, remove it with a separate `git rm` call:
+Use the `Glob` tool to check which legacy files exist:
+```
+Glob(pattern=".ci/*")
+Glob(pattern="{dev-master,build-metadata.json,bitbucket-pipelines.yml,.lando.yml,.gitlab-ci.yml}")
+```
 
-**Check and remove (separate Bash calls for each):**
-- `.ci/` → `ls .ci/` then `git rm -r .ci/`
-- `dev-master` → `ls dev-master` then `git rm dev-master`
-- `build-metadata.json` → `ls build-metadata.json` then `git rm build-metadata.json`
-- `bitbucket-pipelines.yml` → `ls bitbucket-pipelines.yml` then `git rm bitbucket-pipelines.yml`
-- `.lando.yml` → `ls .lando.yml` then `git rm .lando.yml`
-- `.gitlab-ci.yml` → `ls .gitlab-ci.yml` then `git rm .gitlab-ci.yml`
+Then for each file/directory that exists, make a **separate** `git rm` Bash call:
+- `.ci/` → `git rm -r .ci/`
+- `dev-master` → `git rm dev-master`
+- `build-metadata.json` → `git rm build-metadata.json`
+- `bitbucket-pipelines.yml` → `git rm bitbucket-pipelines.yml`
+- `.lando.yml` → `git rm .lando.yml`
+- `.gitlab-ci.yml` → `git rm .gitlab-ci.yml`
 
-Only call `git rm` if the `ls` check shows the file exists.
+Only call `git rm` for files that the `Glob` results confirmed exist.
 
 ### 4.11 CODEOWNERS
 
@@ -1043,9 +1056,9 @@ Create `web/private/scripts/` directory. For each script, fetch with `gh api` an
 composer show drupal/redis
 composer show drupal/pantheon_advanced_page_cache
 
-# Verify config was exported
-ls config/sync/redis.settings.yml
-ls config/sync/core.extension.yml
+# Verify config was exported — use Glob tool:
+# Glob(pattern="config/sync/redis.settings.yml")
+# Glob(pattern="config/sync/core.extension.yml")
 ```
 
 Then use the `Grep` tool to verify both modules are in `config/sync/core.extension.yml`.
