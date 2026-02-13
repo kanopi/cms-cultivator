@@ -473,11 +473,56 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 - Verify the database was pulled successfully
 - Check that `settings.php` has correct database connection info
 - Report the issue and continue with remaining phases (code changes can proceed without a running site)
-- **Skip step 4.1f** if the site is not loading
+- **Skip steps 4.1f and 4.1g** if the site is not loading
 
-#### 4.1f Run Cypress Validation
+#### 4.1f Enable Redis and Pantheon Advanced Page Cache
 
 **Only proceed with this step after Chrome DevTools validation passes.**
+
+1. **Install and enable Redis module:**
+   ```bash
+   # Check if drupal/redis is already in composer.json
+   ddev composer show drupal/redis 2>/dev/null
+
+   # If not present, require it
+   ddev composer require drupal/redis
+
+   # Enable the module
+   ddev drush en redis -y
+   ```
+
+2. **Install and enable Pantheon Advanced Page Cache:**
+   ```bash
+   # Check if already present
+   ddev composer show drupal/pantheon_advanced_page_cache 2>/dev/null
+
+   # If not present, require it
+   ddev composer require drupal/pantheon_advanced_page_cache
+
+   # Enable the module
+   ddev drush en pantheon_advanced_page_cache -y
+   ```
+
+3. **Export configuration** to persist the enabled modules:
+   ```bash
+   ddev drush cex -y
+   ```
+
+4. **Clear caches** and verify both modules are active:
+   ```bash
+   ddev drush cr
+   ddev drush pm:list --status=enabled --filter=redis
+   ddev drush pm:list --status=enabled --filter=pantheon_advanced_page_cache
+   ```
+
+**If module enable fails:**
+- Check for missing dependencies with `ddev drush en redis -y 2>&1`
+- Verify `settings.php` has Redis configuration for local (DDEV handles this automatically)
+- Report the issue but continue with remaining steps
+
+#### 4.1g Run Cypress Validation
+
+**Only proceed with this step after steps 4.1e and 4.1f pass.**
 
 1. **Install Cypress** via DDEV:
    ```bash
@@ -815,22 +860,22 @@ Create `web/private/scripts/` directory and fetch each script.
 
 ### 4.13 Drupal Modules
 
-Check and add required modules to `composer.json`:
+**Note:** `drupal/redis` and `drupal/pantheon_advanced_page_cache` were already installed and enabled in step 4.1f during DDEV verification, and their configuration was exported. This step only needs to confirm they are present in `composer.json` and `config/sync/`:
 
 ```bash
-# Check if redis module is present
-composer show drupal/redis 2>/dev/null
+# Verify modules are in composer.json
+composer show drupal/redis
+composer show drupal/pantheon_advanced_page_cache
 
-# Check if PAPC is present
-composer show drupal/pantheon_advanced_page_cache 2>/dev/null
+# Verify config was exported
+ls config/sync/redis.settings.yml 2>/dev/null
+ls config/sync/core.extension.yml && grep -E 'redis|pantheon_advanced_page_cache' config/sync/core.extension.yml
 ```
 
-Add missing modules:
+If for any reason they were not installed in step 4.1f (e.g., site failed to load), install them now:
 ```bash
 composer require drupal/redis drupal/pantheon_advanced_page_cache --no-install
 ```
-
-**Note:** Use `--no-install` to avoid running composer install (CI will handle it). If the project has a `composer.lock`, run `composer update drupal/redis drupal/pantheon_advanced_page_cache --with-dependencies` instead.
 
 ### 4.14 README
 
