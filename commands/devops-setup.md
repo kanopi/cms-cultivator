@@ -1,7 +1,7 @@
 ---
 description: Automate Kanopi's Drupal/Pantheon DevOps setup for a new project
 argument-hint: "[git-url]"
-allowed-tools: Task, Bash(git:*), Bash(gh:*), Bash(terminus:*), Bash(ddev:*), Bash(composer:*), Bash(ddev composer:*), Bash(npm:*), Bash(ddev exec:*), Bash(curl:*), Bash(brew:*), Bash(which:*), Bash(php:*), Bash(node:*), Bash(mkdir:*), Bash(cp:*), Bash(chmod:*), Bash(ls:*), Bash(cat:*), Bash(ssh:*), Read, Glob, Grep, Write, Edit
+allowed-tools: Task, Bash(git:*), Bash(gh:*), Bash(terminus:*), Bash(ddev:*), Bash(composer:*), Bash(ddev composer:*), Bash(npm:*), Bash(ddev exec:*), Bash(curl:*), Bash(brew:*), Bash(which:*), Bash(php:*), Bash(node:*), Bash(mkdir:*), Bash(cp:*), Bash(chmod:*), Bash(ls:*), Bash(cat:*), Bash(ssh:*), Bash(circleci:*), Read, Glob, Grep, Write, Edit
 ---
 
 ## How It Works
@@ -104,9 +104,8 @@ After the automated setup completes, these tasks require manual action:
 
 1. **CircleCI Secrets**: Configure context secrets (`TERMINUS_TOKEN`, `GITHUB_TOKEN`, etc.)
 2. **CircleCI SSH Key**: Add SSH key to Pantheon for deployments
-3. **Enable Drupal Modules**: Enable `redis` and `pantheon_advanced_page_cache` after first deploy
-4. **Gulp Upgrade**: Upgrade Gulp 3 to 4 if flagged during setup
-5. **Theme Compilation**: Verify theme builds correctly on multidev
+3. **Gulp Upgrade**: Upgrade Gulp 3 to 4 if flagged during setup
+4. **Theme Compilation**: Verify theme builds correctly on multidev
 
 ## Related Commands
 

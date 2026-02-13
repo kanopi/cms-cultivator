@@ -813,6 +813,8 @@ Fetch each file from drupal-starter and write to the project. Update `cypress.co
 
 ### 4.10 CircleCI Configuration
 
+#### 4.10a CircleCI Config File
+
 Fetch `.circleci/config.yml` from drupal-starter:
 
 ```bash
@@ -826,11 +828,95 @@ gh api repos/kanopi/drupal-starter/contents/.circleci/config.yml --jq '.content'
 - `THEME_PATH` → detected theme path (e.g., `web/themes/custom/mytheme`)
 - PHP version → detected PHP version
 - Node version → detected node version
+- **Environment to pull from** → Set to `live` (e.g., `terminus env:clone-content {site}.live` or any environment variable referencing the source environment should use `live`)
 
 Also fetch CircleCI helper scripts if present in drupal-starter:
 ```bash
 gh api repos/kanopi/drupal-starter/contents/.circleci --jq '.[].path'
 ```
+
+#### 4.10b Set Up CircleCI Project
+
+Use the CircleCI CLI to hook the new repo into CircleCI:
+
+```bash
+# Check if circleci CLI is installed
+which circleci
+
+# If not found, install via Homebrew
+brew install circleci
+
+# Follow the project on CircleCI
+circleci follow --host https://circleci.com --org-slug gh/kanopi --project-slug gh/kanopi/{repo-name}
+```
+
+**If `circleci follow` is not available**, use the CircleCI API:
+```bash
+curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/follow" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+#### 4.10c Configure CircleCI Project Settings
+
+Configure the project to auto-cancel redundant builds and only build pull requests:
+
+```bash
+# Enable auto-cancel redundant workflows
+circleci api --host https://circleci.com \
+  "project/gh/kanopi/{repo-name}/settings" \
+  --method PATCH \
+  --data '{"advanced": {"autocancel_builds": true}}'
+
+# Only build pull requests (skip branch pushes without PRs)
+circleci api --host https://circleci.com \
+  "project/gh/kanopi/{repo-name}/settings" \
+  --method PATCH \
+  --data '{"advanced": {"pr_only_build": true}}'
+```
+
+**If the CLI method fails**, use the CircleCI API directly:
+```bash
+# Auto-cancel redundant builds
+curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"advanced": {"autocancel_builds": true}}'
+
+# Only build pull requests
+curl -X PATCH "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/settings" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"advanced": {"pr_only_build": true}}'
+```
+
+#### 4.10d Add Weekly Automated Update Trigger
+
+Add a scheduled trigger to run the `automated-update` workflow once a week on Wednesdays:
+
+```bash
+# Create scheduled pipeline trigger for weekly automated updates
+curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule" \
+  -H "Circle-Token: $CIRCLECI_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "weekly-automated-update",
+    "description": "Run automated dependency updates every Wednesday",
+    "attribution-actor": "system",
+    "parameters": {
+      "run-automated-update": true
+    },
+    "timetable": {
+      "per-hour": 1,
+      "hours-of-day": [10],
+      "days-of-week": ["WED"]
+    }
+  }'
+```
+
+**Note:** The `run-automated-update` parameter must be defined in the `.circleci/config.yml` pipeline parameters and used to trigger the `automated-update` workflow. Verify the drupal-starter config supports this parameter.
+
+#### 4.10e Remove Legacy CI/Build Files
 
 **Remove legacy CI/build files** if present in the project root. Kanopi's CircleCI configuration does not use them:
 
