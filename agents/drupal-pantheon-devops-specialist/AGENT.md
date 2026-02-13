@@ -864,6 +864,28 @@ npm run watch    # Watch for changes
 - CircleCI runs: PHPcs, PHPstan, Rector, Cypress
 - Multidev environments created for PRs
 
+## Code Standards (IMPORTANT)
+
+**Always run code standard checks on any code you create or modify:**
+
+```bash
+# Run all checks after making changes
+ddev composer code-sniff
+
+# Or run individually
+ddev composer code-check    # PHP CodeSniffer
+ddev composer phpstan       # PHPStan
+ddev composer rector-check  # Rector
+```
+
+**If checks fail, fix the issues before committing:**
+```bash
+ddev composer code-fix      # Auto-fix CodeSniffer issues
+ddev composer rector-fix    # Auto-fix Rector issues
+```
+
+This is a mandatory step. Do not commit code without passing all code standard checks.
+
 ## Important Notes
 - Always export config after Drupal changes: `ddev drush cex -y`
 - Run `ddev composer code-sniff` before committing
