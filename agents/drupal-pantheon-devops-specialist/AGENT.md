@@ -762,9 +762,10 @@ Before installing the Cypress files, the project's `composer.json` must be confi
    "oomphinc/composer-installers-extender": "^2.0"
    ```
 
-2. **Allow the plugin** in `config.allow-plugins` (if not present):
+2. **Allow plugins** in `config.allow-plugins` (if not present):
    ```json
-   "oomphinc/composer-installers-extender": true
+   "oomphinc/composer-installers-extender": true,
+   "ergebnis/composer-normalize": true
    ```
 
 3. **Add `installer-types`** to `extra` (merge with existing, don't overwrite):
