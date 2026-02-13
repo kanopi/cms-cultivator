@@ -520,19 +520,16 @@ If the command succeeds, use `live` as the Pantheon environment. If it errors, d
 
 **IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
 
-#### 4.1d Start DDEV and Initialize
+#### 4.1d Run DDEV Init
 
-After `project-configure` completes, start DDEV and run the init process:
+After `project-configure` completes, run `ddev init` to spin up and validate the local environment:
 
 ```bash
-# Start the DDEV environment
-ddev start
-
-# Run the project init command (installs dependencies, imports DB, etc.)
 ddev init
 ```
 
-**`ddev init` is an interactive command** provided by the Kanopi DDEV add-on. It typically handles:
+**`ddev init` is an interactive command** provided by the Kanopi DDEV add-on. It handles starting DDEV and the full project initialization:
+- Starting the DDEV environment
 - Running `composer install`
 - Pulling the database from Pantheon
 - Importing configuration
