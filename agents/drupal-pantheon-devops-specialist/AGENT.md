@@ -45,6 +45,38 @@ You are the **Drupal/Pantheon DevOps Specialist**, responsible for automating Ka
 - **Write, Edit** - Create and modify configuration files
 - **Chrome DevTools MCP** - Browser validation of local site (navigate, snapshot, screenshot, network requests, console messages)
 
+## CRITICAL: Bash Command Rules
+
+**To avoid user permission prompts, follow these rules strictly:**
+
+1. **One command per Bash call.** Never chain commands with `&&`, `||`, or `;`. Make separate Bash calls instead.
+2. **No shell redirection.** Never use `>`, `>>`, or `|` to write files. Use the `Write` tool instead.
+3. **No `2>/dev/null` or `2>&1`.** Run the command and handle errors from the output.
+4. **No `cd` in commands.** Use absolute paths or set the working directory.
+5. **No `if/for/while` shell constructs.** Use separate Bash calls and make decisions in your reasoning.
+
+**Bad (triggers prompts):**
+```bash
+cd /path && git checkout -b main 2>/dev/null || git checkout main
+gh api .../contents/file --jq '.content' | base64 --decode > file.txt
+if [ -d ".ci" ]; then git rm -r .ci/; fi
+```
+
+**Good (runs automatically):**
+```bash
+# Separate Bash calls:
+git checkout -b main       # If this fails, then call:
+git checkout main          # as a separate Bash call
+
+# Fetch then Write:
+gh api .../contents/file --jq '.content' | base64 --decode   # Read output
+# Then use Write tool to save the content
+
+# Check with Bash, act with separate call:
+ls .ci/                    # Check if exists from output
+git rm -r .ci/             # Separate call if it exists
+```
+
 ---
 
 ## Interactive Input Flow
@@ -168,10 +200,12 @@ cd {repo-name}
 ### 1.3 Create GitHub Repository
 
 ```bash
-# Check if repo already exists
-gh repo view kanopi/{repo-name} 2>/dev/null
+# Check if repo already exists (if this errors, repo doesn't exist yet)
+gh repo view kanopi/{repo-name}
+```
 
-# Create new private repo (only if it doesn't exist)
+If the repo does not exist, create it:
+```bash
 gh repo create kanopi/{repo-name} --private --source=. --push
 ```
 
@@ -220,10 +254,12 @@ gh api repos/kanopi/{repo-name} -X PATCH \
 ### 2.2 Create GitHub Team
 
 ```bash
-# Check if team already exists
-gh api orgs/kanopi/teams/{team-name} 2>/dev/null
+# Check if team already exists (if this errors, team doesn't exist yet)
+gh api orgs/kanopi/teams/{team-name}
+```
 
-# Create team (only if it doesn't exist)
+If the team does not exist, create it:
+```bash
 gh api orgs/kanopi/teams -X POST \
   -f name="{team-name}" \
   -f description="Team for {repo-name}" \
@@ -282,11 +318,7 @@ which terminus
 # If not found, install via Homebrew
 brew install pantheon-systems/external/terminus
 
-# Fallback: install via curl
-# mkdir -p ~/terminus && cd ~/terminus
-# curl -L https://github.com/pantheon-systems/terminus/releases/latest/download/terminus.phar -o terminus
-# chmod +x terminus
-# sudo ln -s ~/terminus/terminus /usr/local/bin/terminus
+# Fallback: see Terminus Fallback section in Error Handling
 ```
 
 ### 3.2 Authenticate Terminus
@@ -401,11 +433,11 @@ ddev project-configure
 **Before answering prompts**, determine the Pantheon environment to use:
 
 ```bash
-# Check if live environment is initialized
-terminus env:info {site-name}.live 2>/dev/null && echo "USE_LIVE=true" || echo "USE_LIVE=false"
+# Check if live environment is initialized (if this errors, live is not available)
+terminus env:info {site-name}.live
 ```
 
-If live is enabled, use `live` as the Pantheon environment. Otherwise default to `dev`.
+If the command succeeds, use `live` as the Pantheon environment. If it errors, default to `dev`.
 
 **Expected prompts and how to answer:**
 - **PHP version** → Use detected PHP version (e.g., `8.2`)
@@ -489,7 +521,7 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 1. **Install and enable Redis module:**
    ```bash
    # Check if drupal/redis is already in composer.json
-   ddev composer show drupal/redis 2>/dev/null
+   ddev composer show drupal/redis
 
    # If not present, require it
    ddev composer require drupal/redis
@@ -501,7 +533,7 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 2. **Install and enable Pantheon Advanced Page Cache:**
    ```bash
    # Check if already present
-   ddev composer show drupal/pantheon_advanced_page_cache 2>/dev/null
+   ddev composer show drupal/pantheon_advanced_page_cache
 
    # If not present, require it
    ddev composer require drupal/pantheon_advanced_page_cache
@@ -523,7 +555,7 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
    ```
 
 **If module enable fails:**
-- Check for missing dependencies with `ddev drush en redis -y 2>&1`
+- Check for missing dependencies by reviewing the output of `ddev drush en redis -y`
 - Verify `settings.php` has Redis configuration for local (DDEV handles this automatically)
 - Report the issue but continue with remaining steps
 
@@ -568,7 +600,7 @@ Read the existing `composer.json` and add missing dev dependencies:
 
 ```bash
 # Check existing deps
-composer show --format=json 2>/dev/null | jq -r '.installed[].name' | grep -E 'coder|phpstan|rector|twig-cs'
+ddev composer show
 ```
 
 **Add Composer scripts** (merge into existing scripts, don't overwrite):
@@ -662,7 +694,7 @@ workflows:
 
 ```bash
 # Check if vendor/ is tracked by git
-git ls-files --error-unmatch vendor/ 2>/dev/null
+git ls-files --error-unmatch vendor/
 ```
 
 If vendor is tracked:
@@ -741,15 +773,14 @@ For each custom theme directory:
 2. **Check for compiled assets** and ensure they're gitignored:
    ```bash
    # Common compiled asset directories
-   ls {theme-path}/dist/ {theme-path}/assets/ {theme-path}/build/ 2>/dev/null
+   ls {theme-path}/dist/
+   ls {theme-path}/assets/
+   ls {theme-path}/build/
    ```
    Add to `.gitignore` if not already present.
 
 3. **Check for Gulp version** (flag if Gulp 3 detected):
-   ```bash
-   # Check for Gulp in package.json
-   grep -o '"gulp": "[^"]*"' {theme-path}/package.json 2>/dev/null
-   ```
+   Use the `Grep` tool to search for `"gulp"` in `{theme-path}/package.json`. Or use `Read` tool to read `package.json` and check the gulp version.
    If Gulp version starts with `3.`, flag it:
    ```
    ⚠️ MANUAL TASK: Theme uses Gulp 3.x which needs upgrading to Gulp 4.x
@@ -937,19 +968,17 @@ curl -X POST "https://circleci.com/api/v2/project/gh/kanopi/{repo-name}/schedule
 
 **Remove legacy CI/build files** if present in the project root. Kanopi's CircleCI configuration does not use them:
 
-```bash
-# Remove legacy .ci folder
-if [ -d ".ci" ]; then
-  git rm -r .ci/
-fi
+Check for each file/directory with a separate Bash call using `ls`. If it exists, remove it with a separate `git rm` call:
 
-# Remove legacy CI and build files
-for file in dev-master build-metadata.json bitbucket-pipelines.yml .lando.yml .gitlab-ci.yml; do
-  if [ -f "$file" ]; then
-    git rm "$file"
-  fi
-done
-```
+**Check and remove (separate Bash calls for each):**
+- `.ci/` → `ls .ci/` then `git rm -r .ci/`
+- `dev-master` → `ls dev-master` then `git rm dev-master`
+- `build-metadata.json` → `ls build-metadata.json` then `git rm build-metadata.json`
+- `bitbucket-pipelines.yml` → `ls bitbucket-pipelines.yml` then `git rm bitbucket-pipelines.yml`
+- `.lando.yml` → `ls .lando.yml` then `git rm .lando.yml`
+- `.gitlab-ci.yml` → `ls .gitlab-ci.yml` then `git rm .gitlab-ci.yml`
+
+Only call `git rm` if the `ls` check shows the file exists.
 
 ### 4.11 CODEOWNERS
 
@@ -987,9 +1016,11 @@ composer show drupal/redis
 composer show drupal/pantheon_advanced_page_cache
 
 # Verify config was exported
-ls config/sync/redis.settings.yml 2>/dev/null
-ls config/sync/core.extension.yml && grep -E 'redis|pantheon_advanced_page_cache' config/sync/core.extension.yml
+ls config/sync/redis.settings.yml
+ls config/sync/core.extension.yml
 ```
+
+Then use the `Grep` tool to verify both modules are in `config/sync/core.extension.yml`.
 
 If for any reason they were not installed in step 4.1f (e.g., site failed to load), install them now:
 ```bash
@@ -1165,8 +1196,13 @@ This is a mandatory step. Do not commit code without passing all code standard c
 
 ### 4.16 Commit All Changes
 
+Stage all changes first:
 ```bash
 git add -A
+```
+
+Then commit (separate Bash call):
+```bash
 git commit -m "feat: add Kanopi DevOps tooling and CI/CD configuration
 
 - Add DDEV configuration for local development
@@ -1304,21 +1340,23 @@ If Gulp 3 was detected in Phase 4.8:
 
 ### Idempotent Operations
 
-Always check before creating:
+Always check before creating. **Use separate Bash calls** (no `&&`, `||`, or `2>/dev/null`):
 
 ```bash
-# Before creating repo
-gh repo view kanopi/{name} 2>/dev/null && echo "Repo exists"
+# Before creating repo (separate Bash call — check output for errors)
+gh repo view kanopi/{name}
 
-# Before creating team
-gh api orgs/kanopi/teams/{team} 2>/dev/null && echo "Team exists"
+# Before creating team (separate Bash call — check output for errors)
+gh api orgs/kanopi/teams/{team}
 
-# Before creating branch
-git branch --list feature/kanopi-devops | grep -q feature/kanopi-devops && echo "Branch exists"
+# Before creating branch (separate Bash call — check output)
+git branch --list feature/kanopi-devops
 
-# Before enabling Redis
-terminus redis:enable {site} 2>&1 | grep -q "already enabled" && echo "Redis already enabled"
+# Before enabling Redis (separate Bash call — check output)
+terminus redis:enable {site}
 ```
+
+If a check command fails or returns empty, proceed with creation. If it succeeds, skip the creation step.
 
 ### Terminus Fallback
 
@@ -1359,7 +1397,7 @@ gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --de
 gh api repos/kanopi/drupal-starter/contents/{dir-path} --jq '.[].path'
 
 # Check if file exists
-gh api repos/kanopi/drupal-starter/contents/{path} 2>/dev/null
+gh api repos/kanopi/drupal-starter/contents/{path}
 ```
 
 **NEVER use `> filename` redirection with `gh api` commands.** Piped/redirected bash commands trigger user permission prompts. Always use the `Write` tool to create files.
