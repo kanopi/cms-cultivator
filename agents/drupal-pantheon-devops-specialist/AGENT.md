@@ -1235,7 +1235,73 @@ This is a mandatory step. Do not commit code without passing all code standard c
 - Theme assets must be compiled before commit
 ```
 
-### 4.16 Commit All Changes
+### 4.16 Local Validation (BEFORE committing)
+
+**Run all local checks before committing. Do not skip this step.** This catches issues before they hit CI.
+
+#### 4.16a Run Code Quality Checks
+
+```bash
+ddev composer code-sniff
+```
+
+This runs PHPcs, PHPStan, and Rector. If any check fails, fix the issues before continuing.
+
+```bash
+# If code-sniff fails, try auto-fixing:
+ddev composer code-fix
+```
+
+Then re-run `ddev composer code-sniff` to verify fixes.
+
+#### 4.16b Build Theme
+
+```bash
+ddev theme-build
+```
+
+Verify theme compiles without errors.
+
+#### 4.16c Verify Site Still Works
+
+After all code changes, verify the local site still loads. Use Chrome DevTools MCP:
+
+1. Navigate to the local site URL:
+   ```
+   mcp__chrome-devtools__navigate_page(type="reload")
+   ```
+
+2. Take a snapshot to confirm it rendered:
+   ```
+   mcp__chrome-devtools__take_snapshot()
+   ```
+
+3. Check for console errors:
+   ```
+   mcp__chrome-devtools__list_console_messages(types=["error"])
+   ```
+
+#### 4.16d Run Cypress Tests Again
+
+Run the full Cypress suite to ensure nothing broke:
+
+```bash
+ddev cypress run
+```
+
+#### 4.16e Verify Configuration Export
+
+Make sure all Drupal config is exported:
+
+```bash
+ddev drush cex -y
+```
+
+Check if there are any unexported changes by running export again — if it says "No changes to export", the config is clean.
+
+**Only proceed to commit after ALL local checks pass.**
+
+### 4.17 Commit All Changes
 
 Stage all changes first:
 ```bash
