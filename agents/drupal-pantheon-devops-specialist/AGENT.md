@@ -1237,41 +1237,18 @@ This is a mandatory step. Do not commit code without passing all code standard c
 
 ### 4.16 Local Validation (BEFORE committing)
 
-**Run all local checks before committing. Do not skip this step.** This catches issues before they hit CI.
+**Verify the site works locally before committing. Do not skip this step.**
 
-#### 4.16a Run Code Quality Checks
+#### 4.16a Verify Homepage Loads
 
-```bash
-ddev composer code-sniff
-```
-
-This runs PHPcs, PHPStan, and Rector. If any check fails, fix the issues before continuing.
-
-```bash
-# If code-sniff fails, try auto-fixing:
-ddev composer code-fix
-```
-
-Then re-run `ddev composer code-sniff` to verify fixes.
-
-#### 4.16b Build Theme
-
-```bash
-ddev theme-build
-```
-
-Verify theme compiles without errors.
-
-#### 4.16c Verify Site Still Works
-
-After all code changes, verify the local site still loads. Use Chrome DevTools MCP:
+Use Chrome DevTools MCP to confirm the site loads without errors:
 
 1. Navigate to the local site URL:
    ```
    mcp__chrome-devtools__navigate_page(type="reload")
    ```
 
-2. Take a snapshot to confirm it rendered:
+2. Take a snapshot to confirm it rendered correctly:
    ```
    mcp__chrome-devtools__take_snapshot()
    ```
@@ -1281,25 +1258,30 @@ After all code changes, verify the local site still loads. Use Chrome DevTools M
    mcp__chrome-devtools__list_console_messages(types=["error"])
    ```
 
-#### 4.16d Run Cypress Tests Again
+4. Take a screenshot for visual confirmation:
+   ```
+   mcp__chrome-devtools__take_screenshot()
+   ```
 
-Run the full Cypress suite to ensure nothing broke:
+#### 4.16b Verify Login Works
 
-```bash
-ddev cypress run
-```
-
-#### 4.16e Verify Configuration Export
-
-Make sure all Drupal config is exported:
+Generate a one-time login link and verify it works:
 
 ```bash
-ddev drush cex -y
+ddev drush uli
 ```
 
-Check if there are any unexported changes by running export again — if it says "No changes to export", the config is clean.
+Navigate to the generated URL with Chrome DevTools MCP:
+```
+mcp__chrome-devtools__navigate_page(url="{uli-url}")
+```
 
-**Only proceed to commit after ALL local checks pass.**
+Take a snapshot to confirm the admin dashboard loaded:
+```
+mcp__chrome-devtools__take_snapshot()
+```
+
+**Only proceed to commit after the homepage loads without errors and login works.**
 
 ### 4.17 Commit All Changes
 
