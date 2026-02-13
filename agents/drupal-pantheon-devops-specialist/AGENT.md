@@ -62,7 +62,7 @@ Do NOT use `ls` to find files — use the `Glob` tool instead (e.g., `Glob(patte
 Do NOT suppress errors or add fallback echo commands. Just run the command. If it fails, you will see the error in the output and can decide what to do next.
 
 ### Rule 4: NEVER use `>` or `>>` to write files
-Use the `Write` tool to create files. The only acceptable pipe is `|` between two read-only commands (e.g., `gh api ... --jq '.content' | base64 --decode`).
+Use the `Write` tool to create files. Use the `Read` tool to read files. Do not pipe command output to files.
 
 ### Rule 5: NEVER use `if`, `for`, `while`, or `[` in commands
 Make decisions in your reasoning based on command output, not in shell.
@@ -74,7 +74,7 @@ Make decisions in your reasoning based on command output, not in shell.
 cd /path && gh repo view kanopi/name 2>/dev/null || echo "NOT_FOUND"
 cd /path && git checkout -b main 2>/dev/null || git checkout main
 cd /path && ls -la web/themes/custom/ 2>/dev/null || echo "NO_CUSTOM_THEMES"
-gh api .../file --jq '.content' | base64 --decode > file.txt
+cat /tmp/drupal-starter/file.txt > project/file.txt
 if [ -d ".ci" ]; then git rm -r .ci/; fi
 for f in a b c; do git rm "$f"; done
 ```
@@ -96,10 +96,11 @@ If that errors (branch exists), make a separate call:
 git checkout main
 ```
 
+To read reference files, use the `Read` tool:
 ```
-gh api .../file --jq '.content' | base64 --decode
+Read(file_path="/tmp/drupal-starter/path/to/file")
 ```
-Read the output, then use `Write` tool to save it to a file.
+Then use `Write` tool to save it to the project.
 
 To find files/directories, use `Glob` tool instead of `ls`:
 ```
@@ -414,23 +415,45 @@ Store this value for use in Phase 4 (CircleCI configuration).
 git checkout -b feature/kanopi-devops
 ```
 
-All changes happen on this branch. **Reference files are fetched from `kanopi/drupal-starter` at runtime** via `gh api repos/kanopi/drupal-starter/contents/{path}` to always get the latest versions.
+All changes happen on this branch. **Reference files come from a local clone of `kanopi/drupal-starter`** to always get the latest versions.
 
-### Fetching Reference Files
+### Prepare drupal-starter Reference Repository
 
-**IMPORTANT: Use a two-step process to avoid permission prompts from piped bash commands.**
+Before making code changes, ensure the `kanopi/drupal-starter` repo is available locally at `/tmp/drupal-starter`:
 
-1. **Fetch** the file content with `gh api` (captures output):
+1. **Check if already cloned:**
+   ```
+   Glob(path="/tmp/drupal-starter", pattern="composer.json")
+   ```
+
+2. **If the directory exists**, pull the latest changes:
    ```bash
-   gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --decode
+   git -C /tmp/drupal-starter pull
    ```
 
-2. **Write** the content to the project using the `Write` tool (not bash redirection):
-   ```
-   Write(file_path="{target-path}", content="{fetched-content}")
+3. **If the directory does NOT exist**, clone it:
+   ```bash
+   git clone https://github.com/kanopi/drupal-starter.git /tmp/drupal-starter
    ```
 
-**Do NOT pipe gh api output directly to files with `>`** — this creates compound shell commands that trigger user permission prompts. Always use the `Write` tool to create files from fetched content.
+### Copying Reference Files
+
+To copy files from drupal-starter into the project:
+
+1. **Read** the file from the local clone using the `Read` tool:
+   ```
+   Read(file_path="/tmp/drupal-starter/{path}")
+   ```
+
+2. **Write** the content to the project using the `Write` tool:
+   ```
+   Write(file_path="{project-root}/{target-path}", content="{read-content}")
+   ```
+
+For directories, use `Glob` to discover files, then `Read` and `Write` each one:
+```
+Glob(path="/tmp/drupal-starter/{dir-path}", pattern="*")
+```
 
 **IMPORTANT:** Always check if a file already exists in the project before overwriting. Merge configurations rather than replacing when the project has customizations.
 
@@ -624,24 +647,21 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 
 ### 4.2 Composer Dev Dependencies
 
-Read the existing `composer.json` and add missing dev dependencies:
-
-**Required packages:**
-- `drupal/coder` (dev)
-- `mglaman/phpstan-drupal` (dev)
-- `phpstan/phpstan-deprecation-rules` (dev)
-- `palantirnet/drupal-rector` (dev)
-- `vincentlanglet/twig-cs-fixer` (dev)
-- `ergebnis/composer-normalize` (dev)
+Install dev dependencies using `ddev composer require --dev`. **Always use `composer require` to add packages — do NOT edit `composer.json` directly for dependencies.**
 
 **Check what's already present before adding:**
 
 ```bash
-# Check existing deps
 ddev composer show
 ```
 
-**Add Composer scripts** (merge into existing scripts, don't overwrite):
+**Install missing packages** (check output of `ddev composer show` first, skip any already present):
+
+```bash
+ddev composer require --dev drupal/coder mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules palantirnet/drupal-rector vincentlanglet/twig-cs-fixer ergebnis/composer-normalize
+```
+
+**Add Composer scripts** (merge into existing scripts section using `Edit` tool, don't overwrite):
 
 ```json
 {
@@ -656,30 +676,31 @@ ddev composer show
 }
 ```
 
-**Use `Edit` tool to merge into existing `composer.json`.** Do NOT overwrite the entire file.
+**Use `Edit` tool to merge scripts into existing `composer.json`.** Only edit the `scripts` section — do NOT add or modify dependencies via Edit.
 
 **Normalize composer.json** after all dependency and script changes:
 
 ```bash
-# Install composer-normalize if not already added above
-ddev composer require --dev ergebnis/composer-normalize
-
-# Normalize composer.json (sorts packages, formats consistently)
 ddev composer normalize
 ```
 
 ### 4.3 Code Quality Configs
 
-Fetch from drupal-starter if not already present in the project. **Use `gh api` to fetch, then `Write` tool to save** (do not pipe to files):
+Copy from the local drupal-starter clone if not already present in the project.
 
 For each file (`phpstan.neon`, `rector.php`, `.twig-cs-fixer.php`):
 
-```bash
-# Fetch content (read the output, then use Write tool to save)
-gh api repos/kanopi/drupal-starter/contents/phpstan.neon --jq '.content' | base64 --decode
-```
+1. **Read** from the local clone:
+   ```
+   Read(file_path="/tmp/drupal-starter/phpstan.neon")
+   ```
 
-Then use `Write` tool to save to the project root. Repeat for `rector.php` and `.twig-cs-fixer.php`.
+2. **Write** to the project root:
+   ```
+   Write(file_path="{project-root}/phpstan.neon", content="{read-content}")
+   ```
+
+Repeat for `rector.php` and `.twig-cs-fixer.php`.
 
 **Check first:** If these files already exist, preserve project customizations. Only create them if missing.
 
@@ -745,10 +766,10 @@ Ensure `vendor/` is in `.gitignore` (handled in step 4.6).
 
 ### 4.6 .gitignore
 
-Fetch the reference `.gitignore` from drupal-starter:
+Read the reference `.gitignore` from the local drupal-starter clone:
 
-```bash
-gh api repos/kanopi/drupal-starter/contents/.gitignore --jq '.content' | base64 --decode
+```
+Read(file_path="/tmp/drupal-starter/.gitignore")
 ```
 
 **Merge strategy:**
@@ -828,20 +849,9 @@ For each custom theme directory:
 
 #### 4.9a Composer Prerequisites for kanopi/shrubs
 
-Before installing the Cypress files, the project's `composer.json` must be configured to support the `kanopi/shrubs` package (custom `cypress-support` installer type). **Make these changes using `Edit` before running `composer require`:**
+Before installing shrubs, the project's `composer.json` needs configuration for the custom `cypress-support` installer type. **Use `Edit` tool only for non-dependency config, then `composer require` for packages.**
 
-1. **Add `oomphinc/composer-installers-extender`** to `require` (if not present):
-   ```json
-   "oomphinc/composer-installers-extender": "^2.0"
-   ```
-
-2. **Allow plugins** in `config.allow-plugins` (if not present):
-   ```json
-   "oomphinc/composer-installers-extender": true,
-   "ergebnis/composer-normalize": true
-   ```
-
-3. **Add `installer-types`** to `extra` (merge with existing, don't overwrite):
+1. **Add `installer-types`** to `extra` using `Edit` tool (merge with existing, don't overwrite):
    ```json
    "installer-types": [
      "cypress-support",
@@ -849,7 +859,7 @@ Before installing the Cypress files, the project's `composer.json` must be confi
    ]
    ```
 
-4. **Add `installer-paths`** to `extra.installer-paths` (merge with existing):
+2. **Add `installer-paths`** to `extra.installer-paths` using `Edit` tool (merge with existing):
    ```json
    "tests/cypress/cypress/support/{$name}": [
      "type:cypress-support"
@@ -859,24 +869,32 @@ Before installing the Cypress files, the project's `composer.json` must be confi
    ]
    ```
 
-**After editing `composer.json`**, install the package:
+3. **Install packages using `composer require`** (this also handles `allow-plugins` prompts):
 
-```bash
-composer require --dev kanopi/shrubs:^0.2 oomphinc/composer-installers-extender:^2.0
-```
+   ```bash
+   ddev composer require oomphinc/composer-installers-extender:^2.0
+   ```
+
+   ```bash
+   ddev composer require --dev kanopi/shrubs:^0.2
+   ```
 
 This installs shrubs' Cypress support commands into `tests/cypress/cypress/support/shrubs/`.
 
 #### 4.9b Cypress Test Files
 
-Fetch the Cypress test directory structure from drupal-starter:
+Copy the Cypress test directory structure from the local drupal-starter clone.
 
-```bash
-# List cypress files in drupal-starter
-gh api repos/kanopi/drupal-starter/contents/tests/cypress --jq '.[].path'
-```
+1. **Discover files** in the reference repo:
+   ```
+   Glob(path="/tmp/drupal-starter/tests/cypress", pattern="**/*")
+   ```
 
-Create `tests/cypress/` directory and fetch each file:
+2. **For each file**, read from the clone and write to the project:
+   ```
+   Read(file_path="/tmp/drupal-starter/tests/cypress/{file}")
+   Write(file_path="{project-root}/tests/cypress/{file}", content="{read-content}")
+   ```
 
 **Expected structure:**
 ```
@@ -894,19 +912,19 @@ tests/cypress/
         └── shrubs/        ← installed by kanopi/shrubs via Composer
 ```
 
-For each file, fetch with `gh api` and save with `Write` tool (do not pipe to files). Update `cypress.config.js` with the project's URL pattern if detectable.
+Update `cypress.config.js` with the project's URL pattern if detectable.
 
 ### 4.10 CircleCI Configuration
 
 #### 4.10a CircleCI Config File
 
-Fetch `.circleci/config.yml` from drupal-starter (fetch with `gh api`, then save with `Write` tool after replacing variables):
+Read `.circleci/config.yml` from the local drupal-starter clone:
 
-```bash
-gh api repos/kanopi/drupal-starter/contents/.circleci/config.yml --jq '.content' | base64 --decode
+```
+Read(file_path="/tmp/drupal-starter/.circleci/config.yml")
 ```
 
-Read the output, then **replace variables before writing** with the `Write` tool:
+**Replace variables before writing** with the `Write` tool:
 - `TERMINUS_SITE` → detected Pantheon site name
 - `PANTHEON_UUID` → UUID from Phase 3
 - `THEME_NAME` → detected theme name
@@ -915,10 +933,12 @@ Read the output, then **replace variables before writing** with the `Write` tool
 - Node version → detected node version
 - **Environment to pull from** → Set to `live` (e.g., `terminus env:clone-content {site}.live` or any environment variable referencing the source environment should use `live`)
 
-Also fetch CircleCI helper scripts if present in drupal-starter:
-```bash
-gh api repos/kanopi/drupal-starter/contents/.circleci --jq '.[].path'
+Also copy CircleCI helper scripts if present in the drupal-starter clone:
 ```
+Glob(path="/tmp/drupal-starter/.circleci", pattern="*")
+```
+
+For each file found (besides `config.yml` which was already handled), read and write to the project.
 
 #### 4.10b Set Up CircleCI Project
 
@@ -1034,18 +1054,22 @@ Create the `.github/` directory if it doesn't exist.
 
 ### 4.12 Quicksilver Scripts
 
-Fetch quicksilver scripts from drupal-starter:
+Copy quicksilver scripts from the local drupal-starter clone:
 
-```bash
-# List quicksilver scripts
-gh api repos/kanopi/drupal-starter/contents/web/private/scripts --jq '.[].path'
-```
+1. **Discover scripts:**
+   ```
+   Glob(path="/tmp/drupal-starter/web/private/scripts", pattern="*.php")
+   ```
 
 **Expected scripts:**
 - `web/private/scripts/drush_config_import.php` - Auto-import config on deploy
 - `web/private/scripts/new_relic_deploy.php` - Log deployments to New Relic
 
-Create `web/private/scripts/` directory. For each script, fetch with `gh api` and save with `Write` tool (do not pipe to files).
+2. **For each script**, read from the clone and write to the project:
+   ```
+   Read(file_path="/tmp/drupal-starter/web/private/scripts/{script}")
+   Write(file_path="{project-root}/web/private/scripts/{script}", content="{read-content}")
+   ```
 
 ### 4.13 Drupal Modules
 
@@ -1065,7 +1089,7 @@ Then use the `Grep` tool to verify both modules are in `config/sync/core.extensi
 
 If for any reason they were not installed in step 4.1f (e.g., site failed to load), install them now:
 ```bash
-composer require drupal/redis drupal/pantheon_advanced_page_cache --no-install
+ddev composer require drupal/redis drupal/pantheon_advanced_page_cache
 ```
 
 ### 4.14 README
@@ -1463,33 +1487,46 @@ sudo ln -s ~/terminus/terminus /usr/local/bin/terminus
 
 ## Reference File Strategy
 
-All configuration files are fetched from `kanopi/drupal-starter` at runtime. This ensures:
+All configuration files come from a local clone of `kanopi/drupal-starter` at `/tmp/drupal-starter`. This ensures:
 
-1. **Always latest versions** - No stale bundled files
+1. **Always latest versions** - Pull latest before starting each setup
 2. **Single source of truth** - drupal-starter is the canonical reference
 3. **Automatic updates** - Plugin doesn't need updating when configs change
+4. **Fast local access** - No API rate limits or network latency per file
 
-### Fetch Pattern
+### Clone/Update Pattern
 
-**Always use a two-step process: fetch with `gh api`, then save with `Write` tool.**
+**At the start of Phase 4** (before any code changes), ensure the reference repo is available:
 
-```bash
-# Step 1: Fetch file content (read the output)
-gh api repos/kanopi/drupal-starter/contents/{path} --jq '.content' | base64 --decode
+```
+# Check if already cloned
+Glob(path="/tmp/drupal-starter", pattern="composer.json")
 
-# Step 2: Use Write tool to save to project (NOT bash redirection)
-# Write(file_path="{target-path}", content="{output-from-step-1}")
+# If exists: pull latest
+git -C /tmp/drupal-starter pull
+
+# If not exists: clone
+git clone https://github.com/kanopi/drupal-starter.git /tmp/drupal-starter
 ```
 
-```bash
-# Directory listing (to discover files to fetch)
-gh api repos/kanopi/drupal-starter/contents/{dir-path} --jq '.[].path'
+### Copy Pattern
 
-# Check if file exists
-gh api repos/kanopi/drupal-starter/contents/{path}
+**Use `Read` tool to read from the clone, `Write` tool to save to the project:**
+
+```
+# Read a single file
+Read(file_path="/tmp/drupal-starter/{path}")
+
+# Write to project
+Write(file_path="{project-root}/{target-path}", content="{read-content}")
 ```
 
-**NEVER use `> filename` redirection with `gh api` commands.** Piped/redirected bash commands trigger user permission prompts. Always use the `Write` tool to create files.
+```
+# Discover files in a directory
+Glob(path="/tmp/drupal-starter/{dir-path}", pattern="*")
+
+# Then Read and Write each file
+```
 
 ### Merge vs. Replace Strategy
 
