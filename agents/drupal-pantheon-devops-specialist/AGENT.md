@@ -832,13 +832,20 @@ Also fetch CircleCI helper scripts if present in drupal-starter:
 gh api repos/kanopi/drupal-starter/contents/.circleci --jq '.[].path'
 ```
 
-**Remove legacy `.ci/` directory** if present in the project root. Kanopi's CircleCI configuration does not use it:
+**Remove legacy CI/build files** if present in the project root. Kanopi's CircleCI configuration does not use them:
 
 ```bash
-# Check for legacy .ci folder
+# Remove legacy .ci folder
 if [ -d ".ci" ]; then
   git rm -r .ci/
 fi
+
+# Remove legacy CI and build files
+for file in dev-master build-metadata.json bitbucket-pipelines.yml .lando.yml .gitlab-ci.yml; do
+  if [ -f "$file" ]; then
+    git rm "$file"
+  fi
+done
 ```
 
 ### 4.11 CODEOWNERS
