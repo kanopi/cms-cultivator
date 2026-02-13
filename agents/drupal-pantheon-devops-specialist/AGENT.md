@@ -470,72 +470,91 @@ Glob(path="/tmp/drupal-starter/{dir-path}", pattern="*")
 
 ### 4.1 DDEV Configuration
 
-#### 4.1a Initial DDEV Config
+The Kanopi DDEV Drupal add-on (https://github.com/kanopi/ddev-kanopi-drupal) provides all project commands. The setup flow is: create config → install add-on → project-configure → init.
 
-Create a minimal `.ddev/config.yaml` to bootstrap DDEV:
+#### 4.1a Create Initial DDEV Config
 
-```yaml
-name: {repo-name}
-type: drupal
-docroot: web
-php_version: "{detected-php-version}"
-database:
-  type: mariadb
-  version: "{detected-db-version}"
+Create a minimal `.ddev/config.yaml` to bootstrap DDEV (required before the add-on can be installed):
+
+```bash
+ddev config --project-type=drupal --docroot=web --php-version={detected-php-version} --database=mariadb:{detected-db-version}
+```
+
+Then start DDEV (required before `ddev add-on get`):
+
+```bash
+ddev start
 ```
 
 #### 4.1b Install Kanopi DDEV Drupal Add-on
 
-Install the Kanopi DDEV add-on which provides standardized configuration, Composer scripts, and project tooling:
+Install the Kanopi DDEV add-on which provides all project commands, Redis/Solr add-ons, nginx image proxy config, and theme/Cypress/deployment tooling:
 
 ```bash
-ddev add-on get https://github.com/kanopi/ddev-kanopi-drupal
+ddev add-on get kanopi/ddev-kanopi-drupal
 ```
+
+**What this installs automatically:**
+- Redis add-on (`ddev/ddev-redis`)
+- Solr add-on (`ddev/ddev-drupal-solr`)
+- All host/web commands (project-configure, init, theme-*, cypress-*, db-refresh, etc.)
+- Nginx config for image proxy (configured by project-configure)
+- PHP config (256M memory, 64M upload)
+- Xdebug profiling setup
 
 #### 4.1c Run Project Configure
 
-Run `ddev project-configure` which will interactively prompt for project settings. **This command has interactive prompts that need answers.** Use the auto-detected values from Step 2 to answer them:
+**Before running**, determine the Pantheon environment to use:
 
 ```bash
-ddev project-configure
-```
-
-**Before answering prompts**, determine the Pantheon environment to use:
-
-```bash
-# Check if live environment is initialized (if this errors, live is not available)
 terminus env:info {site-name}.live
 ```
 
 If the command succeeds, use `live` as the Pantheon environment. If it errors, default to `dev`.
 
+Run `ddev project-configure` which is an interactive wizard that configures the project:
+
+```bash
+ddev project-configure
+```
+
+**This command will:**
+- Stop DDEV to safely update configuration
+- Write environment variables to `.ddev/config.yaml` and `.ddev/scripts/load-config.sh`
+- Install the Redis DDEV add-on for Pantheon projects
+- Configure nginx to proxy missing files to the Pantheon environment
+- Restart DDEV with new configuration
+
 **Expected prompts and how to answer:**
-- **PHP version** → Use detected PHP version (e.g., `8.2`)
-- **Database type/version** → Use detected DB version (e.g., MariaDB 10.6)
-- **Node version** → Use detected Node version (e.g., `22`)
-- **Theme path** → Use detected theme path (e.g., `web/themes/custom/mytheme`)
-- **Pantheon site name** → Use detected site name
+- **Hosting provider** → Select `Pantheon`
+- **Pantheon site machine name** → Use detected site name
 - **Pantheon environment** → Use `live` if enabled (checked above), otherwise `dev`
-- **Any other prompts** → Use auto-detected values where available, or sensible defaults
+- **Theme path** → Use detected theme path relative to docroot (e.g., `themes/custom/mytheme`)
+- **Theme name/slug** → Use detected theme name
+- **Migration settings** → Skip unless the project has migrations
 
 **IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
 
 #### 4.1d Run DDEV Init
 
-After `project-configure` completes, run `ddev init` to spin up and validate the local environment:
+After `project-configure` completes, run `ddev init` (alias for `ddev project-init`) to fully initialize the local environment:
 
 ```bash
 ddev init
 ```
 
-**`ddev init` is an interactive command** provided by the Kanopi DDEV add-on. It handles starting DDEV and the full project initialization:
-- Starting the DDEV environment
-- Running `composer install`
-- Syncing the database via `ddev pull` (handled automatically, no terminus backup needed)
-- Importing configuration
-- Clearing caches
+**`ddev init` runs this exact sequence:**
+1. `ddev start` — Start the DDEV environment
+2. `ddev project-lefthook` — Install Lefthook git hooks (if `.lefthook.yml` exists)
+3. `ddev auth ssh` — Add SSH keys to container for Pantheon access
+4. `composer install` — Install PHP dependencies
+5. `ddev db-refresh` — Download database from Pantheon (smart 12-hour backup caching)
+6. `ddev project-nvm` — Install NVM on host if needed
+7. `ddev cypress-install` — Install Cypress E2E testing dependencies
+8. `ddev theme-install` — Install theme Node.js dependencies and build theme
+9. `ddev drupal-uli` — Generate a one-time login link
 
-Watch for prompts and answer them using auto-detected values.
+Watch for prompts and answer them using auto-detected values. **No separate terminus backup or ddev pull commands are needed** — `ddev db-refresh` handles everything automatically.
 
 #### 4.1e Verify Local Site with Browser
 
@@ -543,8 +562,9 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 
 1. **Get the local site URL:**
    ```bash
-   ddev describe --json | jq -r '.raw.primary_url'
+   ddev describe
    ```
+   Read the primary URL from the output.
 
 2. **Navigate to the homepage** and verify it loads:
    ```
@@ -561,7 +581,7 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
    ```
    mcp__chrome-devtools__list_network_requests(resourceTypes=["image"])
    ```
-   Verify images are loading (status 200). Images should be proxied from the Pantheon environment.
+   Verify images are loading (status 200). The nginx proxy was configured by `project-configure` to fetch missing files from the Pantheon environment.
 
 5. **Check for console errors:**
    ```
@@ -585,27 +605,31 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 
 **Only proceed with this step after Chrome DevTools validation passes.**
 
+The Redis DDEV add-on was already installed by `project-configure`, but the Drupal modules still need to be installed and enabled:
+
 1. **Install and enable Redis module:**
    ```bash
-   # Check if drupal/redis is already in composer.json
    ddev composer show drupal/redis
-
-   # If not present, require it
+   ```
+   If not present:
+   ```bash
    ddev composer require drupal/redis
-
-   # Enable the module
+   ```
+   Enable it:
+   ```bash
    ddev drush en redis -y
    ```
 
 2. **Install and enable Pantheon Advanced Page Cache:**
    ```bash
-   # Check if already present
    ddev composer show drupal/pantheon_advanced_page_cache
-
-   # If not present, require it
+   ```
+   If not present:
+   ```bash
    ddev composer require drupal/pantheon_advanced_page_cache
-
-   # Enable the module
+   ```
+   Enable it:
+   ```bash
    ddev drush en pantheon_advanced_page_cache -y
    ```
 
@@ -617,36 +641,37 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 4. **Clear caches** and verify both modules are active:
    ```bash
    ddev drush cr
+   ```
+   ```bash
    ddev drush pm:list --status=enabled --filter=redis
+   ```
+   ```bash
    ddev drush pm:list --status=enabled --filter=pantheon_advanced_page_cache
    ```
 
 **If module enable fails:**
-- Check for missing dependencies by reviewing the output of `ddev drush en redis -y`
-- Verify `settings.php` has Redis configuration for local (DDEV handles this automatically)
+- Check for missing dependencies by reviewing the error output
+- Redis DDEV service is already running (installed by the add-on), so `settings.php` should auto-detect it
 - Report the issue but continue with remaining steps
 
 #### 4.1g Run Cypress Validation
 
 **Only proceed with this step after steps 4.1e and 4.1f pass.**
 
-1. **Install Cypress** via DDEV:
-   ```bash
-   ddev cypress install
-   ```
+Cypress was already installed by `ddev init` (via `ddev cypress-install`). Now create test users and run the tests:
 
-2. **Create testing users** needed by the Cypress tests:
+1. **Create testing users** needed by the Cypress tests:
    ```bash
    ddev cypress-users
    ```
 
-3. **Run the system checks Cypress test:**
+2. **Run the system checks Cypress test:**
    ```bash
    ddev cypress run --spec tests/cypress/cypress/e2e/system-checks.cy.js
    ```
 
 **If Cypress tests fail:**
-- Check that testing users were created successfully
+- Check that testing users were created successfully (`cypress` user with `administrator` role)
 - Verify the local site URL matches `cypress.config.js`
 - Check `ddev logs` for any backend errors
 - Report failures but continue with remaining phases
