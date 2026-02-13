@@ -280,6 +280,8 @@ git checkout -b main
 git push -u origin main
 ```
 
+**⮕ Run Gate 1 validation** (see Phase Gate Validation section) before proceeding.
+
 ---
 
 ## Phase 2: GitHub Repo Configuration
@@ -353,6 +355,8 @@ gh api repos/kanopi/{repo-name}/branches/main/protection -X PUT \
 EOF
 ```
 
+**⮕ Run Gate 2 validation** (see Phase Gate Validation section) before proceeding.
+
 ---
 
 ## Phase 3: Pantheon Configuration
@@ -413,6 +417,8 @@ terminus site:info {site-name} --field=id
 ```
 
 Store this value for use in Phase 4 (CircleCI configuration).
+
+**⮕ Run Gate 3 validation** (see Phase Gate Validation section) before proceeding.
 
 ---
 
@@ -496,44 +502,87 @@ ddev add-on get kanopi/ddev-kanopi-drupal
 
 **What this installs automatically:**
 - Redis add-on (`ddev/ddev-redis`)
-- Solr add-on (`ddev/ddev-drupal-solr`)
+- Solr add-on (`ddev/ddev-drupal-solr`) — installed conditionally in step 4.1c if Solr is detected
 - All host/web commands (project-configure, init, theme-*, cypress-*, db-refresh, etc.)
 - Nginx config for image proxy (configured by project-configure)
 - PHP config (256M memory, 64M upload)
 - Xdebug profiling setup
 
-#### 4.1c Run Project Configure
+#### 4.1c Configure DDEV for Pantheon (Non-Interactive)
 
-**Before running**, determine the Pantheon environment to use:
-
-```bash
-terminus env:info {site-name}.live
-```
-
-If the command succeeds, use `live` as the Pantheon environment. If it errors, default to `dev`.
-
-Run `ddev project-configure` which is an interactive wizard that configures the project:
+**Before configuring**, determine the Pantheon environment to use:
 
 ```bash
-ddev project-configure
+terminus env:info {pantheon-site}.live
 ```
 
-**This command will:**
-- Stop DDEV to safely update configuration
-- Write environment variables to `.ddev/config.yaml` and `.ddev/scripts/load-config.sh`
-- Install the Redis DDEV add-on for Pantheon projects
-- Configure nginx to proxy missing files to the Pantheon environment
-- Restart DDEV with new configuration
+If the command succeeds, use `live` as the hosting environment. If it errors, default to `dev`.
 
-**Expected prompts and how to answer:**
-- **Hosting provider** → Select `Pantheon`
-- **Pantheon site machine name** → Use detected site name
-- **Pantheon environment** → Use `live` if enabled (checked above), otherwise `dev`
-- **Theme path** → Use detected theme path relative to docroot (e.g., `themes/custom/mytheme`)
-- **Theme name/slug** → Use detected theme name
-- **Migration settings** → Skip unless the project has migrations
+**This step replicates what `ddev project-configure` does, but without interactive prompts.** Each `ddev config` call is a separate Bash invocation:
 
-**IMPORTANT:** This is an interactive command. Watch for each prompt and provide the appropriate response. Do not skip or auto-accept without reading the prompts.
+1. **Stop DDEV** to safely update configuration:
+   ```bash
+   ddev stop
+   ```
+
+2. **Set environment variables** (one `ddev config` call per variable):
+   ```bash
+   ddev config --web-environment-add=HOSTING_PROVIDER=pantheon
+   ```
+   ```bash
+   ddev config --web-environment-add=HOSTING_SITE={pantheon-site}
+   ```
+   ```bash
+   ddev config --web-environment-add=HOSTING_ENV={live-or-dev}
+   ```
+   ```bash
+   ddev config --web-environment-add=THEME={theme-path}
+   ```
+   Where `{theme-path}` is relative to docroot (e.g., `themes/custom/mytheme`).
+   ```bash
+   ddev config --web-environment-add=THEMENAME={theme-name}
+   ```
+   Where `{theme-name}` is just the theme directory name (e.g., `mytheme`).
+
+3. **Write `.ddev/scripts/load-config.sh`** using the `Write` tool. This file exports the same variables for scripts that source it:
+   ```bash
+   #!/bin/bash
+
+   export HOSTING_PROVIDER="pantheon"
+   export HOSTING_SITE="{pantheon-site}"
+   export HOSTING_ENV="{live-or-dev}"
+   export THEME="{theme-path}"
+   export THEMENAME="{theme-name}"
+
+   load_kanopi_config() {
+     export HOSTING_PROVIDER HOSTING_SITE HOSTING_ENV THEME THEMENAME
+   }
+   ```
+
+4. **Update nginx image proxy** — use `Edit` tool on `.ddev/nginx_full/nginx-site.conf`:
+   - Replace `HOSTING_ENV-HOSTING_SITE` with `{env}-{pantheon-site}` (e.g., `live-mysite`)
+   - Replace `HOSTING_DOMAIN` with `pantheonsite.io`
+
+   This configures nginx to proxy missing images from the Pantheon environment.
+
+5. **Install Redis add-on**:
+   ```bash
+   ddev add-on get ddev/ddev-redis
+   ```
+
+6. **If Solr was detected** (from auto-detection in Step 2), install the Solr add-on:
+   ```bash
+   ddev add-on get ddev/ddev-drupal-solr
+   ```
+
+7. **Append `settings.ddev.redis.php` to `.gitignore`** if not already present — use `Grep` tool to check, then `Edit` tool to append.
+
+8. **Start DDEV** with new configuration:
+   ```bash
+   ddev start
+   ```
+
+**⮕ Run Gate 3B validation** (see Phase Gate Validation section) before proceeding to 4.1d.
 
 #### 4.1d Run DDEV Init
 
@@ -555,6 +604,8 @@ ddev init
 9. `ddev drupal-uli` — Generate a one-time login link
 
 Watch for prompts and answer them using auto-detected values. **No separate terminus backup or ddev pull commands are needed** — `ddev db-refresh` handles everything automatically.
+
+**⮕ Run Gate 4A validation** (see Phase Gate Validation section) before proceeding to browser check.
 
 #### 4.1e Verify Local Site with Browser
 
@@ -675,6 +726,38 @@ Cypress was already installed by `ddev init` (via `ddev cypress-install`). Now c
 - Verify the local site URL matches `cypress.config.js`
 - Check `ddev logs` for any backend errors
 - Report failures but continue with remaining phases
+
+#### 4.1h Configure Solr (Conditional)
+
+**Only proceed if Solr was detected during auto-detection (Step 2).**
+
+1. **Detect the Search API server machine name** from the project's exported config:
+   ```
+   Glob(path="config/sync", pattern="search_api.server.*.yml")
+   ```
+   Extract the machine name from the filename (e.g., `search_api.server.pantheon_solr8.yml` → `pantheon_solr8`). If no config file is found, default to `pantheon_solr8`.
+
+2. **Add Solr config override to `settings.php`** using the `Edit` tool. Insert before the closing `?>` or at the end of the file, following the [Kanopi DDEV addon Solr documentation](https://kanopi.github.io/ddev-kanopi-drupal/custom-configuration/#solr-configuration):
+   ```php
+   /**
+    * DDEV Solr Configuration.
+    * Override Pantheon search configuration for local development.
+    */
+   if (getenv('IS_DDEV_PROJECT') == 'true') {
+     $config['search_api.server.{server-name}']['backend_config']['connector'] = 'standard';
+     $config['search_api.server.{server-name}']['backend_config']['connector_config']['host'] = 'solr';
+     $config['search_api.server.{server-name}']['backend_config']['connector_config']['port'] = '8983';
+     $config['search_api.server.{server-name}']['backend_config']['connector_config']['path'] = '/';
+     $config['search_api.server.{server-name}']['backend_config']['connector_config']['core'] = 'dev';
+   }
+   ```
+   Where `{server-name}` is the auto-detected machine name.
+
+3. **Verify the Solr service is running:**
+   ```bash
+   ddev describe
+   ```
+   Confirm the output includes a Solr service entry.
 
 ### 4.2 Composer Dev Dependencies
 
@@ -1290,6 +1373,8 @@ This is a mandatory step. Do not commit code without passing all code standard c
 - Theme assets must be compiled before commit
 ```
 
+**⮕ Run Gate 4B validation** (see Phase Gate Validation section) before proceeding to local validation.
+
 ### 4.16 Local Validation (BEFORE committing)
 
 **Verify the site works locally before committing. Do not skip this step.**
@@ -1416,15 +1501,39 @@ gh pr create \
 🤖 Generated with [Claude Code](https://claude.com/claude-code) via cms-cultivator"
 ```
 
+**⮕ Run Gate 5 validation** (see Phase Gate Validation section) before outputting checklist.
+
 ### 5.3 Output Verification Checklist
 
-After PR creation, output this for the user:
+After PR creation, output this for the user. **Include any non-blocking gate warnings collected during the run.**
 
 ```
 ## ✅ DevOps Setup Complete!
 
 **PR:** {pr-url}
 **Repo:** https://github.com/kanopi/{repo-name}
+
+### Gate Validation Summary
+
+| Gate | Result |
+|------|--------|
+| Gate 1: Git Infrastructure | ✅ PASSED |
+| Gate 2: GitHub Configuration | ⚠️ PASSED with warnings |
+| Gate 3: Pantheon Services | ✅ PASSED |
+| Gate 3B: DDEV Config | ✅ PASSED |
+| Gate 4A: Local Environment | ✅ PASSED |
+| Gate 4B: Code Changes | ✅ PASSED |
+| Gate 5: Delivery | ✅ PASSED |
+
+(Replace with actual results from each gate run during the setup.)
+
+### ⚠️ Gate Warnings (Non-Blocking Issues)
+
+List any non-blocking warnings collected from gates during the run. For example:
+- **Gate 2, Check 4:** Branch protection API call failed — main branch may not be protected
+- **Gate 4B, Check 5:** `.twig-cs-fixer.php` not found — twig linting will not run
+
+(Omit this section entirely if no warnings were recorded.)
 
 ### Automated Verification (check after CircleCI runs)
 - [ ] Multidev created on Pantheon (images work, theme compiled)
@@ -1576,6 +1685,144 @@ Glob(path="/tmp/drupal-starter/{dir-path}", pattern="*")
 | `CLAUDE.md` | **Create** new |
 | `.ddev/config.yaml` | **Create** new with detected settings |
 | `.editorconfig` | **Create** if missing |
+
+---
+
+## Phase Gate Validation
+
+After each phase, run the corresponding gate checks. Gates validate **outcomes** (query resulting state), not actions (re-run the same command).
+
+**Gate result types:**
+- **PASSED** — All checks pass. Proceed to next phase.
+- **PASSED with warnings** — Non-blocking checks failed. Record warnings for the final checklist. Proceed.
+- **FAILED** — Blocking check failed. Halt execution and report the failure.
+
+**Important variable distinction:**
+- `{repo-name}` — The new GitHub repo name under `kanopi/` org (chosen by user)
+- `{pantheon-site}` — The Pantheon site machine name (auto-detected from git URL or `pantheon.yml`)
+- These are NOT the same and must not be swapped.
+
+### Gate 1: Git Infrastructure (after Phase 1)
+
+| # | Check | Command | Blocking? |
+|---|-------|---------|-----------|
+| 1 | GitHub repo exists | `gh repo view kanopi/{repo-name} --json name,visibility,defaultBranch` | **Yes** |
+| 2 | main branch on remote | `git ls-remote origin main` | **Yes** |
+| 3 | pantheon remote URL correct | `git remote get-url pantheon` | No |
+| 4 | origin remote URL correct | `git remote get-url origin` | **Yes** |
+
+**On FAIL (blocking):** The repo or branch was not created correctly. Check `gh` auth, org permissions, and re-run Phase 1.
+**On warning (non-blocking):** Record the pantheon remote URL issue and add it to the final checklist.
+
+### Gate 2: GitHub Configuration (after Phase 2)
+
+| # | Check | Command | Blocking? |
+|---|-------|---------|-----------|
+| 1 | Repo settings applied | `gh api repos/kanopi/{repo-name} --jq '{allow_squash_merge,allow_merge_commit,allow_rebase_merge,delete_branch_on_merge,allow_auto_merge}'` | No |
+| 2 | Team has correct members | `gh api orgs/kanopi/teams/{team}/members --jq '.[].login'` | No |
+| 3 | Team has repo access | `gh api orgs/kanopi/teams/{team}/repos --jq '.[].full_name'` | No |
+| 4 | Branch protection active | `gh api repos/kanopi/{repo-name}/branches/main/protection --jq '{required_status_checks: .required_status_checks.contexts, reviews: .required_pull_request_reviews.required_approving_review_count}'` | No |
+
+All non-blocking — these can be fixed post-setup. Branch protection is the most fragile API call; catching failures here prevents unprotected main for months.
+
+**On warning:** Record which settings failed and add to the final checklist as manual follow-up items.
+
+### Gate 3: Pantheon Services (after Phase 3)
+
+| # | Check | Command | Blocking? |
+|---|-------|---------|-----------|
+| 1 | Terminus authenticated | `terminus auth:whoami` | **Yes** |
+| 2 | Site UUID captured | `terminus site:info {pantheon-site} --field=id` | **Yes** |
+| 3 | Redis enabled | `terminus redis:enable {pantheon-site}` (idempotent) | No |
+
+**On FAIL (blocking):** UUID is critical — it feeds into CircleCI config. Empty UUID = broken CI. Halt and resolve Terminus auth or site access before proceeding.
+**On warning:** Record Redis status for final checklist.
+
+### Gate 3B: DDEV Project Configure (after step 4.1c, before 4.1d)
+
+Validates that the non-interactive DDEV configuration wrote correct values. If these are wrong, `ddev init` will use wrong settings.
+
+| # | Check | Tool/Command | Blocking? |
+|---|-------|--------------|-----------|
+| 1 | HOSTING_SITE is set correctly | `Grep(pattern="{pantheon-site}", path=".ddev/config.yaml")` | **Yes** |
+| 2 | HOSTING_ENV is set | `Grep(pattern="HOSTING_ENV", path=".ddev/config.yaml")` | **Yes** |
+| 3 | THEME path is set | `Grep(pattern="THEME=", path=".ddev/scripts/load-config.sh")` | No |
+| 4 | load-config.sh exists | `Glob(path=".ddev/scripts", pattern="load-config.sh")` | **Yes** |
+| 5 | Solr addon installed (if detected) | `Glob(path=".ddev", pattern="docker-compose.solr.yaml")` | No |
+
+**On FAIL (blocking):** The DDEV config is incomplete. Re-run step 4.1c. Do NOT proceed to `ddev init` with incorrect config.
+**On warning:** Record missing THEME config or Solr addon for final checklist.
+
+### Gate 4A: Local Environment (after step 4.1d `ddev init`, before 4.1e browser check)
+
+| # | Check | Tool/Command | Blocking? |
+|---|-------|--------------|-----------|
+| 1 | DDEV running with correct config | `ddev describe` | **Yes** |
+| 2 | Drupal bootstrap works | `ddev drush status --field=bootstrap` | No |
+| 3 | Database has content | `ddev drush sql:query "SELECT COUNT(*) FROM node"` | No |
+| 4 | Kanopi add-on installed | `Glob(path=".ddev", pattern="commands/host/project-configure")` | No |
+
+**On FAIL (blocking):** DDEV is not running. Check `ddev logs` and restart.
+**On warning:** Record Drupal bootstrap or database issues. The browser check in 4.1e will provide more detail.
+
+### Gate 4B: Code Changes (after step 4.15, before 4.16 browser check)
+
+| # | Check | Tool/Command | Blocking? |
+|---|-------|--------------|-----------|
+| 1 | composer.json valid | `ddev composer validate --no-check-all --no-check-publish` | **Yes** |
+| 2 | Composer scripts present | `Grep(pattern="code-check", path="composer.json")` | No |
+| 3 | Dev deps installed | `ddev composer show drupal/coder` | No |
+| 4 | CircleCI config has Pantheon site | `Grep(pattern="{pantheon-site}", path=".circleci/config.yml")` | **Yes** |
+| 5 | Critical config files exist | `Glob(pattern="{phpstan.neon,rector.php,.twig-cs-fixer.php,.editorconfig,.github/CODEOWNERS}")` | No |
+| 6 | Quicksilver scripts exist | `Glob(path="web/private/scripts", pattern="*.php")` | No |
+| 7 | pantheon.yml has workflow hooks | `Grep(pattern="drush_config_import", path="pantheon.yml")` | No |
+| 8 | Cypress test files exist | `Glob(path="tests/cypress", pattern="**/*.cy.js")` | No |
+| 9 | Solr settings override in settings.php (if detected) | `Grep(pattern="search_api.server.*connector_config.*solr", path="web/sites/default/settings.php")` | No |
+
+**On FAIL (blocking):** Corrupted `composer.json` or placeholder variables in CircleCI config are serious issues. Fix before committing. Note: CircleCI config uses the **Pantheon site name** (`{pantheon-site}`), not the GitHub repo name.
+**On warning:** Record missing files/configs (including Solr settings override) for final checklist.
+
+### Gate 5: Delivery (after step 5.2 PR creation, before 5.3 checklist)
+
+| # | Check | Command | Blocking? |
+|---|-------|---------|-----------|
+| 1 | Branch on remote | `git ls-remote origin feature/kanopi-devops` | **Yes** |
+| 2 | PR created | `gh pr view feature/kanopi-devops --json number,url,state` | No |
+| 3 | Commit on branch | `git log --oneline -1 feature/kanopi-devops` | No |
+
+**On FAIL (blocking):** The branch was not pushed. Re-run `git push -u origin feature/kanopi-devops`.
+**On warning:** Record PR creation failure. The PR can be created manually.
+
+### Gate Summary Output
+
+After running each gate, output a summary table:
+
+```
+### Gate {N} Results: {gate-name}
+
+| Check | Result |
+|-------|--------|
+| {check-1} | ✅ PASSED |
+| {check-2} | ✅ PASSED |
+| {check-3} | ⚠️ WARNING: {brief reason} |
+
+**Result: PASSED with warnings** — Proceeding to next phase.
+**Warnings recorded for final checklist.**
+```
+
+If a blocking check fails:
+
+```
+### Gate {N} Results: {gate-name}
+
+| Check | Result |
+|-------|--------|
+| {check-1} | ✅ PASSED |
+| {check-2} | ❌ FAILED: {brief reason} |
+
+**Result: FAILED** — Halting execution.
+**Action required:** {specific fix instructions}
+```
 
 ---
 
