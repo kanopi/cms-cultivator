@@ -636,6 +636,39 @@ ddev init
 
 Watch for prompts and answer them using auto-detected values. **No separate terminus backup or ddev pull commands are needed** — `ddev db-refresh` handles everything automatically.
 
+**If `ddev theme-install` or `ddev cypress-install` fail** (common when `package-lock.json` is missing — `npm ci` requires a lock file):
+
+1. **Check for missing lock file in the theme directory:**
+   ```
+   Glob(pattern="{theme-path}/package-lock.json")
+   ```
+
+2. **If missing, run `npm install` directly on the host** to generate the lock file:
+   ```bash
+   npm --prefix {theme-path} install
+   ```
+   Where `{theme-path}` is relative to the project root (e.g., `web/themes/custom/mytheme`).
+
+3. **Re-run theme build:**
+   ```bash
+   ddev theme-build
+   ```
+
+4. **Check for missing lock file in Cypress directory:**
+   ```
+   Glob(pattern="tests/cypress/package-lock.json")
+   ```
+
+5. **If missing, run `npm install` directly on the host** for Cypress:
+   ```bash
+   npm --prefix tests/cypress install
+   ```
+
+6. **Re-run Cypress install via DDEV:**
+   ```bash
+   ddev cypress-install
+   ```
+
 **⮕ Run Gate 4A validation** (see Phase Gate Validation section) before proceeding to browser check.
 
 #### 4.1e Verify Local Site with Browser
@@ -680,12 +713,11 @@ After `ddev init` completes, validate the local site is working using Chrome Dev
 - Check `ddev logs` for PHP/webserver errors
 - Verify `ddev init` completed without errors
 - Check that `settings.php` has correct database connection info
-- Report the issue and continue with remaining phases (code changes can proceed without a running site)
-- **Skip steps 4.1f and 4.1g** if the site is not loading
+- Report the issue but **continue with steps 4.1f and 4.1g** — Redis/PAPC install and Cypress test user creation do not require a working frontend
 
 #### 4.1f Enable Redis and Pantheon Advanced Page Cache
 
-**Only proceed with this step after Chrome DevTools validation passes.**
+**Proceed with this step regardless of whether Chrome DevTools validation (4.1e) passed.** Redis and PAPC modules should be installed even if the site isn't loading in the browser — `ddev drush` commands work as long as DDEV is running and Drupal can bootstrap.
 
 The Redis DDEV add-on was already installed by `project-configure`, but the Drupal modules still need to be installed and enabled:
 
@@ -738,7 +770,7 @@ The Redis DDEV add-on was already installed by `project-configure`, but the Drup
 
 #### 4.1g Run Cypress Validation
 
-**Only proceed with this step after steps 4.1e and 4.1f pass.**
+**Proceed with this step as long as DDEV is running and Drupal bootstraps** (Gate 4A checks 1-2 passed). Test user creation works independently of browser validation. Only skip the actual Cypress test run if the site is not loading.
 
 Cypress was already installed by `ddev init` (via `ddev cypress-install`). Now create test users and run the tests:
 
@@ -747,7 +779,12 @@ Cypress was already installed by `ddev init` (via `ddev cypress-install`). Now c
    ddev cypress-users
    ```
 
-2. **Run the system checks Cypress test:**
+2. **Clear flood table** to prevent login lockouts from any prior failed attempts:
+   ```bash
+   ddev drush sql:query "TRUNCATE TABLE flood"
+   ```
+
+3. **Run the system checks Cypress test:**
    ```bash
    ddev cypress run --spec tests/cypress/cypress/e2e/system-checks.cy.js
    ```
@@ -1059,6 +1096,55 @@ tests/cypress/
 
 Update `cypress.config.js` with the project's URL pattern if detectable.
 
+#### 4.9c Customize Cypress Support Files
+
+After copying Cypress files, check for modules that require Cypress configuration:
+
+1. **Check for modules with uncaught JS exceptions:**
+   ```
+   Grep(pattern="editoria11y", path="composer.json")
+   ```
+   If found, use the `Edit` tool to add an exception handler to `tests/cypress/cypress/support/e2e.js`:
+   ```javascript
+   // Ignore uncaught exceptions from third-party modules (e.g., editoria11y)
+   Cypress.on('uncaught:exception', (err, runnable) => {
+     return false;
+   });
+   ```
+
+2. **Check for popup/modal modules:**
+   ```
+   Grep(pattern="mailchimp\\|popup\\|newsletter\\|webform_popup", path="composer.json")
+   ```
+   If found, use the `Edit` tool to add modal dismissal to `tests/cypress/cypress/support/commands.js`:
+   ```javascript
+   // Dismiss common popups/modals before interacting with the page
+   Cypress.Commands.add('dismissPopups', () => {
+     cy.get('body').then(($body) => {
+       // Close Mailchimp/newsletter popups if present
+       const closeSelectors = [
+         '.mc-closeModal',
+         '.popup-close',
+         '[data-dismiss="modal"]',
+         '.newsletter-close'
+       ];
+       closeSelectors.forEach((selector) => {
+         if ($body.find(selector).length > 0) {
+           cy.get(selector).first().click({ force: true });
+         }
+       });
+     });
+   });
+   ```
+   Then add a `beforeEach` hook in `tests/cypress/cypress/support/e2e.js`:
+   ```javascript
+   beforeEach(() => {
+     cy.dismissPopups();
+   });
+   ```
+
+3. **Report** any customizations made so the user is aware of site-specific Cypress changes.
+
 ### 4.10 CircleCI Configuration
 
 #### 4.10a CircleCI Config File
@@ -1137,24 +1223,52 @@ Copy quicksilver scripts from the local drupal-starter clone:
 
 ### 4.13 Drupal Modules
 
-**Note:** `drupal/redis` and `drupal/pantheon_advanced_page_cache` were already installed and enabled in step 4.1f during DDEV verification, and their configuration was exported. This step only needs to confirm they are present in `composer.json` and `config/sync/`:
+Ensure `drupal/redis` and `drupal/pantheon_advanced_page_cache` are installed, enabled, and config is exported. Step 4.1f should have handled this, but verify and fix if needed:
 
-```bash
-# Verify modules are in composer.json
-composer show drupal/redis
-composer show drupal/pantheon_advanced_page_cache
+1. **Check if modules are installed in composer:**
+   ```bash
+   ddev composer show drupal/redis
+   ```
+   If not present:
+   ```bash
+   ddev composer require drupal/redis
+   ```
 
-# Verify config was exported — use Glob tool:
-# Glob(pattern="config/sync/redis.settings.yml")
-# Glob(pattern="config/sync/core.extension.yml")
-```
+   ```bash
+   ddev composer show drupal/pantheon_advanced_page_cache
+   ```
+   If not present:
+   ```bash
+   ddev composer require drupal/pantheon_advanced_page_cache
+   ```
 
-Then use the `Grep` tool to verify both modules are in `config/sync/core.extension.yml`.
+2. **Check if modules are enabled:**
+   ```bash
+   ddev drush pm:list --status=enabled --filter=redis
+   ```
+   If not enabled:
+   ```bash
+   ddev drush en redis -y
+   ```
 
-If for any reason they were not installed in step 4.1f (e.g., site failed to load), install them now:
-```bash
-ddev composer require drupal/redis drupal/pantheon_advanced_page_cache
-```
+   ```bash
+   ddev drush pm:list --status=enabled --filter=pantheon_advanced_page_cache
+   ```
+   If not enabled:
+   ```bash
+   ddev drush en pantheon_advanced_page_cache -y
+   ```
+
+3. **Export configuration** if any modules were newly installed or enabled:
+   ```bash
+   ddev drush cex -y
+   ```
+
+4. **Verify config was exported** — use Grep tool:
+   ```
+   Grep(pattern="redis", path="config/sync/core.extension.yml")
+   Grep(pattern="pantheon_advanced_page_cache", path="config/sync/core.extension.yml")
+   ```
 
 ### 4.14 README
 
@@ -1598,9 +1712,14 @@ List any non-blocking warnings collected from gates during the run. For example:
    - If theme uses Gulp, verify build process
 ```
 
+7. **Performance Settings** (if not already configured):
+   - Enable CSS/JS aggregation: `ddev drush config:set system.performance js.preprocess 1 -y` and `css.preprocess 1`
+   - Enable page caching: `ddev drush config:set system.performance cache.page.max_age 3600 -y`
+   - Export config: `ddev drush cex -y`
+
 If Gulp 3 was detected in Phase 4.8:
 ```
-7. **⚠️ Gulp 3→4 Upgrade Required**
+8. **⚠️ Gulp 3→4 Upgrade Required**
    - Theme uses Gulp 3.x which is deprecated
    - Migration guide: https://gulpjs.com/docs/en/getting-started/creating-tasks
    - This is a breaking change requiring manual migration
@@ -1797,9 +1916,11 @@ Validates that the non-interactive DDEV configuration wrote correct values. If t
 | 2 | Drupal bootstrap works | `ddev drush status --field=bootstrap` | No |
 | 3 | Database has content | `ddev drush sql:query "SELECT COUNT(*) FROM node"` | No |
 | 4 | Kanopi add-on installed | `Glob(path=".ddev", pattern="commands/host/project-configure")` | No |
+| 5 | Theme node_modules installed | `Glob(pattern="{theme-path}/node_modules/.package-lock.json")` | No |
+| 6 | Cypress node_modules installed | `Glob(pattern="tests/cypress/node_modules/.package-lock.json")` | No |
 
 **On FAIL (blocking):** DDEV is not running. Check `ddev logs` and restart.
-**On warning:** Record Drupal bootstrap or database issues. The browser check in 4.1e will provide more detail.
+**On warning:** Record Drupal bootstrap, database, or npm install issues. If theme or Cypress node_modules are missing, run the npm recovery steps from 4.1d before proceeding to 4.1e.
 
 ### Gate 4B: Code Changes (after step 4.15, before 4.16 browser check)
 
