@@ -1281,12 +1281,10 @@ Generate a project-specific `README.md`. If one exists, update it. If not, creat
 
 ## Important Links
 
-| Resource | URL |
-|----------|-----|
-| Pantheon Dashboard | https://dashboard.pantheon.io/sites/{site-uuid} |
-| GitHub Repo | https://github.com/kanopi/{repo-name} |
-| CircleCI | https://app.circleci.com/pipelines/github/kanopi/{repo-name} |
-| Production | https://live-{site-name}.pantheonsite.io |
+- [Pantheon Dashboard](https://dashboard.pantheon.io/sites/{site-uuid})
+- [GitHub Repo](https://github.com/kanopi/{repo-name})
+- [CircleCI](https://app.circleci.com/pipelines/github/kanopi/{repo-name})
+- [Production](https://live-{site-name}.pantheonsite.io)
 
 ## Local Development
 
