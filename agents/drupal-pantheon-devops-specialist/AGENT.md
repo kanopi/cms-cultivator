@@ -2,6 +2,7 @@
 name: drupal-pantheon-devops-specialist
 description: Automate the complete Kanopi DevOps setup for Drupal projects hosted on Pantheon. Clones an existing repo, creates a new GitHub repo in the kanopi org, configures GitHub settings (squash merges, branch protection, teams), enables Pantheon services (Redis, New Relic) via Terminus, and makes all code changes (DDEV, CircleCI, Cypress, code quality tools, quicksilver scripts, CODEOWNERS, theme tooling, README). Invoke when user runs /devops-setup or says "set up devops", "onboard a Pantheon site", or "configure Kanopi CI/CD".
 tools: Read, Glob, Grep, Bash, Write, Edit, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__list_console_messages, mcp__chrome-devtools__list_network_requests, mcp__chrome-devtools__get_network_request
+skills: []
 model: sonnet
 color: blue
 ---
@@ -268,6 +269,44 @@ Then set it: export CIRCLECI_TOKEN=CCIPAT_...
 
 **If any check fails**, report the issue and stop. Do not proceed with partial setup.
 
+### 1.1b Progress Tracking with Beads (Recommended)
+
+**This is a multi-step process that benefits from structured progress tracking.** If the project uses [Beads](https://beads.dev) (check for `.beads/` directory or `bd` CLI availability), create tracking issues for each phase:
+
+```bash
+bd --version
+```
+
+If beads is available, create one issue per phase to track progress:
+
+```bash
+bd create "Phase 1: Git setup and GitHub repo creation for {repo-name}"
+```
+```bash
+bd create "Phase 2: GitHub repo configuration (settings, team, branch protection)"
+```
+```bash
+bd create "Phase 3: Pantheon configuration (Redis, New Relic, UUID)"
+```
+```bash
+bd create "Phase 4: Code changes (DDEV, deps, configs, Cypress, CircleCI)"
+```
+```bash
+bd create "Phase 5: Branch push, CircleCI setup, and PR creation"
+```
+
+As you complete each phase, update the corresponding issue:
+```bash
+bd close {issue-id}
+```
+
+If a phase encounters issues that require AGENT.md changes or manual follow-up, create a separate issue:
+```bash
+bd create "FIX: {description of issue found during Phase N}"
+```
+
+**If beads is not available**, this is non-blocking — proceed without progress tracking. The Phase Gate Validation system (see end of document) still provides structured checkpoints.
+
 ### 1.2 Clone Repository
 
 ```bash
@@ -304,11 +343,17 @@ git remote -v
 ### 1.5 Create Main Branch and Push
 
 ```bash
-# Create main branch from current HEAD
 git checkout -b main
+```
 
-# Push main to new origin
+```bash
 git push -u origin main
+```
+
+Then set `main` as the default branch on GitHub (otherwise `master` remains default since it was pushed first by `gh repo create`):
+
+```bash
+gh api repos/kanopi/{repo-name} -X PATCH -f default_branch=main
 ```
 
 **⮕ Run Gate 1 validation** (see Phase Gate Validation section) before proceeding.
@@ -349,13 +394,17 @@ gh api orgs/kanopi/teams -X POST \
 
 ### 2.3 Add Team Members
 
+Add each team member with a **separate Bash call per member** (no `for` loops — see Rule 5):
+
 ```bash
-# Add each member + kanopicode
-for member in {members} kanopicode; do
-  gh api orgs/kanopi/teams/{team-slug}/memberships/$member -X PUT \
-    -f role="member"
-done
+gh api orgs/kanopi/teams/{team-slug}/memberships/kanopicode -X PUT -f role="member"
 ```
+
+```bash
+gh api orgs/kanopi/teams/{team-slug}/memberships/{member1} -X PUT -f role="member"
+```
+
+Repeat for each additional member. Always include `kanopicode`.
 
 ### 2.4 Add Team to Repository
 
@@ -435,10 +484,19 @@ terminus redis:enable {site-name}
 
 ### 3.4 Enable New Relic
 
+First check if New Relic is already active:
+
 ```bash
-# Enable New Relic
+terminus new-relic:info {site-name}
+```
+
+If status is **not** "active", enable it:
+
+```bash
 terminus new-relic:enable {site-name}
 ```
+
+**Note:** `terminus new-relic:enable` returns "Bad Request" if New Relic is already active. Unlike `redis:enable` (which is idempotent), always check status first.
 
 ### 3.5 Get Site UUID
 
@@ -514,8 +572,13 @@ The Kanopi DDEV Drupal add-on (https://github.com/kanopi/ddev-kanopi-drupal) pro
 Create a minimal `.ddev/config.yaml` to bootstrap DDEV (required before the add-on can be installed):
 
 ```bash
-ddev config --project-type=drupal --docroot=web --php-version={detected-php-version} --database=mariadb:{detected-db-version}
+ddev config --project-type={drupal-type} --docroot=web --php-version={detected-php-version} --database=mariadb:{detected-db-version}
 ```
+
+Where `{drupal-type}` is determined by the Drupal core version in `composer.json`:
+- `drupal/core` `^10` → `--project-type=drupal10`
+- `drupal/core` `^11` → `--project-type=drupal` (latest)
+- If unclear, use `--project-type=drupal` and ignore the warning about type mismatch.
 
 Then start DDEV (required before `ddev add-on get`):
 
@@ -591,22 +654,24 @@ If the command succeeds, use `live` as the hosting environment. If it errors, de
    ```
 
 4. **Update nginx image proxy** — use `Edit` tool on `.ddev/nginx_full/nginx-site.conf`:
-   - Replace `HOSTING_ENV-HOSTING_SITE` with `{env}-{pantheon-site}` (e.g., `live-mysite`)
-   - Replace `HOSTING_DOMAIN` with `pantheonsite.io`
+   Find the line: `rewrite ^/(.*)$ https://HOSTING_ENV-HOSTING_SITE.HOSTING_DOMAIN/$1;`
+   Replace the entire URL with the actual values: `https://{env}-{pantheon-site}.pantheonsite.io/$1`
+   For example: `rewrite ^/(.*)$ https://live-siren-network.pantheonsite.io/$1;`
+
+   The three placeholders in the nginx config template are:
+   - `HOSTING_ENV` → the Pantheon environment (e.g., `live` or `dev`)
+   - `HOSTING_SITE` → the Pantheon site machine name (e.g., `siren-network`)
+   - `HOSTING_DOMAIN` → always `pantheonsite.io` for Pantheon
 
    This configures nginx to proxy missing images from the Pantheon environment.
 
-5. **Install Redis add-on**:
-   ```bash
-   ddev add-on get ddev/ddev-redis
+5. **Verify Redis and Solr add-ons** — the Kanopi DDEV add-on (step 4.1b) automatically installs both `ddev/ddev-redis` and `ddev/ddev-drupal-solr`. Do NOT install them again. Verify they are present:
+   ```
+   Glob(path=".ddev", pattern="docker-compose.redis.yaml")
+   Glob(path=".ddev", pattern="docker-compose.solr.yaml")
    ```
 
-6. **If Solr was detected** (from auto-detection in Step 2), install the Solr add-on:
-   ```bash
-   ddev add-on get ddev/ddev-drupal-solr
-   ```
-
-7. **Append `settings.ddev.redis.php` to `.gitignore`** if not already present — use `Grep` tool to check, then `Edit` tool to append.
+6. **Append `settings.ddev.redis.php` to `.gitignore`** if not already present — use `Grep` tool to check, then `Edit` tool to append. (The Redis add-on may have already added this.)
 
 8. **Start DDEV** with new configuration:
    ```bash
@@ -763,6 +828,80 @@ The Redis DDEV add-on was already installed by `project-configure`, but the Drup
    ddev drush pm:list --status=enabled --filter=pantheon_advanced_page_cache
    ```
 
+5. **Add Pantheon Redis configuration to `settings.php`:**
+   Read `web/sites/default/settings.php` and check if it already contains a `PANTHEON_ENVIRONMENT` Redis configuration block. If not, add the following block **after** the `config_sync_directory` setting and **before** the local settings include:
+
+   ```php
+   // Configure Redis
+   if (defined(
+     'PANTHEON_ENVIRONMENT'
+   ) && !\Drupal\Core\Installer\InstallerKernel::installationAttempted(
+   ) && extension_loaded('redis')) {
+     // Set Redis as the default backend for any cache bin not otherwise specified.
+     $settings['cache']['default'] = 'cache.backend.redis';
+
+     //phpredis is built into the Pantheon application container.
+     $settings['redis.connection']['interface'] = 'PhpRedis';
+
+     // These are dynamic variables handled by Pantheon.
+     $settings['redis.connection']['host'] = $_ENV['CACHE_HOST'];
+     $settings['redis.connection']['port'] = $_ENV['CACHE_PORT'];
+     $settings['redis.connection']['password'] = $_ENV['CACHE_PASSWORD'];
+
+     $settings['redis_compress_length'] = 100;
+     $settings['redis_compress_level'] = 1;
+
+     $settings['cache_prefix']['default'] = 'pantheon-redis';
+
+     $settings['cache']['bins']['form'] = 'cache.backend.database'; // Use the database for forms
+
+     $settings['container_yamls'][] = 'modules/contrib/redis/example.services.yml';
+     $settings['container_yamls'][] = 'modules/contrib/redis/redis.services.yml';
+
+     $class_loader->addPsr4('Drupal\\redis\\', 'modules/contrib/redis/src');
+
+     $settings['redis.settings']['perm_ttl'] = 2630000; // 30 days
+     $settings['redis.settings']['perm_ttl_config'] = 43200;
+     $settings['redis.settings']['perm_ttl_data'] = 43200;
+     $settings['redis.settings']['perm_ttl_default'] = 43200;
+     $settings['redis.settings']['perm_ttl_entity'] = 172800;
+
+     $settings['bootstrap_container_definition'] = [
+       'parameters' => [],
+       'services' => [
+         'redis.factory' => [
+           'class' => 'Drupal\redis\ClientFactory',
+         ],
+         'cache.backend.redis' => [
+           'class' => 'Drupal\redis\Cache\CacheBackendFactory',
+           'arguments' => [
+             '@redis.factory',
+             '@cache_tags_provider.container',
+             '@serialization.phpserialize',
+           ],
+         ],
+         'cache.container' => [
+           'class' => '\Drupal\redis\Cache\PhpRedis',
+           'factory' => ['@cache.backend.redis', 'get'],
+           'arguments' => ['container'],
+         ],
+         'cache_tags_provider.container' => [
+           'class' => 'Drupal\redis\Cache\RedisCacheTagsChecksum',
+           'arguments' => ['@redis.factory'],
+         ],
+         'serialization.phpserialize' => [
+           'class' => 'Drupal\Component\Serialization\PhpSerialize',
+         ],
+       ],
+     ];
+   }
+   ```
+
+   After adding, verify Drupal still bootstraps:
+   ```bash
+   ddev drush status --field=bootstrap
+   ```
+
 **If module enable fails:**
 - Check for missing dependencies by reviewing the error output
 - Redis DDEV service is already running (installed by the add-on), so `settings.php` should auto-detect it
@@ -798,6 +937,25 @@ Cypress was already installed by `ddev init` (via `ddev cypress-install`). Now c
 #### 4.1h Configure Solr (Conditional)
 
 **Only proceed if Solr was detected during auto-detection (Step 2).**
+
+**First, verify Solr is actually used by the project.** The Kanopi DDEV add-on auto-installs the Solr container by default, but many projects don't use Solr. Check `composer.json` for `drupal/search_api_solr`:
+
+```bash
+ddev composer show drupal/search_api_solr
+```
+
+If not present (command returns an error), **remove the Solr DDEV add-on** since it's not needed:
+
+```bash
+ddev add-on remove solr
+```
+```bash
+ddev restart
+```
+
+Then **skip the rest of this step** and proceed to 4.2.
+
+If `drupal/search_api_solr` IS present, continue with the configuration below:
 
 1. **Detect the Search API server machine name** from the project's exported config:
    ```
@@ -1524,6 +1682,25 @@ Always use `github/kanopi/{repo-name}` in all CircleCI API URLs.
 NEVER use `gh/kanopi/{repo-name}` — it returns "Project not found" on all endpoints,
 even though CircleCI's own responses show `"slug": "gh/kanopi/..."`.
 
+### 5.1b Resolve CircleCI Token
+
+Steps 5.2–5.4 use `$CIRCLECI_TOKEN` for API calls. If the env var is not set, try to extract it from the CircleCI CLI config:
+
+```bash
+# Check if CIRCLECI_TOKEN is set
+if [ -z "$CIRCLECI_TOKEN" ]; then
+  # Try to read from CircleCI CLI config
+  CIRCLECI_TOKEN=$(grep '^token:' ~/.circleci/cli.yml 2>/dev/null | awk '{print $2}')
+fi
+```
+
+Also verify the token works:
+```bash
+curl -s "https://circleci.com/api/v2/me" -H "Circle-Token: $CIRCLECI_TOKEN"
+```
+
+If the response contains a `"login"` field, the token is valid. If the response says "You must log in first", the token is invalid — prompt the user to run `circleci setup` or set `CIRCLECI_TOKEN`.
+
 ### 5.2 Set Up CircleCI Project
 
 The CircleCI project must be created via the web UI — neither the CLI (`circleci project create`, `circleci follow`) nor the API (`/follow` endpoint) work reliably with current CCIPAT tokens.
@@ -1536,13 +1713,15 @@ The CircleCI project must be created via the web UI — neither the CLI (`circle
    → Let me know when it's done.
    ```
 
-2. **Poll to verify** the project exists (use `github/` slug, NOT `gh/`):
+2. **Poll to verify** the project exists (use `github/` slug, NOT `gh/`). Retry up to 6 times with 10-second waits:
    ```bash
    curl -s -o /dev/null -w "%{http_code}" \
      "https://circleci.com/api/v2/project/github/kanopi/{repo-name}" \
      -H "Circle-Token: $CIRCLECI_TOKEN"
    ```
-   If returns 200, project is ready. If not, wait and retry.
+   - If returns **200**, project is ready. Proceed.
+   - If returns **404**, wait 10 seconds and retry (up to 6 attempts = 60 seconds total).
+   - If still 404 after 6 attempts, prompt the user: "CircleCI project not found via API yet. Please verify the project was created and try again."
 
 3. **Verify pipelines are accessible:**
    ```bash
@@ -1565,10 +1744,14 @@ curl -X PATCH "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/set
 curl -X PATCH "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/settings" \
   -H "Circle-Token: $CIRCLECI_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"advanced": {"pr_only_build": true}}'
+  -d '{"advanced": {"build_prs_only": true}}'
 ```
 
-**If settings API fails**, add to the manual follow-up checklist — these can be configured via the CircleCI web UI under Project Settings → Advanced.
+**After each PATCH call**, check the HTTP response code:
+- If **200**, setting was applied successfully.
+- If **not 200**, record the failure in gate warnings and add to manual follow-up checklist: "Configure auto-cancel / PR-only builds via CircleCI web UI → Project Settings → Advanced."
+
+**If settings API fails entirely**, add to the manual follow-up checklist — these can be configured via the CircleCI web UI under Project Settings → Advanced.
 
 ### 5.4 Add Weekly Automated Update Trigger
 
@@ -1594,7 +1777,12 @@ curl -X POST "https://circleci.com/api/v2/project/github/kanopi/{repo-name}/sche
   }'
 ```
 
-Verify the schedule was created by checking the POST response (don't rely on GET schedule working immediately). A successful response will include the schedule `id` and `name`.
+Verify the schedule was created by parsing the POST response JSON:
+- Response must contain an `"id"` field (schedule was created successfully).
+- `"name"` must match `"Automated Updates"`.
+- If the response does not contain an `"id"`, report: "Schedule creation failed. Add as manual follow-up: Create weekly schedule via CircleCI web UI → Project Settings → Triggers."
+
+Do not rely on GET schedule working immediately — validate using the POST response only.
 
 ### 5.5 Create Pull Request
 
@@ -1627,11 +1815,11 @@ gh pr create \
 
 ## Manual Follow-Up Required
 
-- [ ] Configure CircleCI context secrets (TERMINUS_TOKEN, GITHUB_TOKEN, etc.)
 - [ ] Add CircleCI SSH key to Pantheon
 - [ ] Enable redis and pantheon_advanced_page_cache modules after first deploy
 - [ ] Verify theme builds correctly on multidev
-- [ ] Update CircleCI environment variables if needed
+
+> **Note:** Environment variables (TERMINUS_TOKEN, GITHUB_TOKEN, etc.) are provided by the \`kanopi-code\` CircleCI context — no per-project secret configuration is needed.
 
 ## Troubleshooting
 
@@ -1681,43 +1869,40 @@ List any non-blocking warnings collected from gates during the run. For example:
 - [ ] Redis enabled on multidev
 
 ### Manual Follow-Up Tasks
+
+> **Note:** Environment variables (TERMINUS_TOKEN, GITHUB_TOKEN, etc.) are provided by the `kanopi-code` CircleCI context — no per-project secret configuration is needed.
+
 1. **CircleCI Project** (if not already created in step 5.2):
    - Open: https://app.circleci.com/projects/project-setup/github/kanopi/{repo-name}
    - Follow the setup wizard to connect the repo
 
-2. **CircleCI Secrets** - Configure context with:
-   - `TERMINUS_TOKEN` - Pantheon machine token
-   - `GITHUB_TOKEN` - GitHub personal access token
-   - `TERMINUS_SITE` - {site-name}
-   - `TEST_SITE_NAME` - multidev URL for Cypress
-
-3. **CircleCI SSH Key** - Add to Pantheon:
+2. **CircleCI SSH Key** - Add to Pantheon:
    - Go to CircleCI project settings → SSH Keys
    - Add private key with hostname `drush.in`
 
-4. **CircleCI Project Settings** (if API calls failed in step 5.3):
+3. **CircleCI Project Settings** (if API calls failed in step 5.3):
    - Go to CircleCI Project Settings → Advanced
    - Enable "Auto-cancel redundant workflows"
    - Enable "Only build pull requests"
 
-5. **Enable Drupal Modules** (after first successful deploy):
+4. **Enable Drupal Modules** (after first successful deploy):
    ```bash
    terminus drush {site-name}.dev -- en redis pantheon_advanced_page_cache -y
    ```
 
-6. **Theme Compilation** - Verify on multidev:
+5. **Theme Compilation** - Verify on multidev:
    - Check that CSS/JS are loading correctly
    - If theme uses Gulp, verify build process
 ```
 
-7. **Performance Settings** (if not already configured):
+6. **Performance Settings** (if not already configured):
    - Enable CSS/JS aggregation: `ddev drush config:set system.performance js.preprocess 1 -y` and `css.preprocess 1`
    - Enable page caching: `ddev drush config:set system.performance cache.page.max_age 3600 -y`
    - Export config: `ddev drush cex -y`
 
 If Gulp 3 was detected in Phase 4.8:
 ```
-8. **⚠️ Gulp 3→4 Upgrade Required**
+7. **⚠️ Gulp 3→4 Upgrade Required**
    - Theme uses Gulp 3.x which is deprecated
    - Migration guide: https://gulpjs.com/docs/en/getting-started/creating-tasks
    - This is a breaking change requiring manual migration
@@ -1859,7 +2044,7 @@ After each phase, run the corresponding gate checks. Gates validate **outcomes**
 
 | # | Check | Command | Blocking? |
 |---|-------|---------|-----------|
-| 1 | GitHub repo exists | `gh repo view kanopi/{repo-name} --json name,visibility,defaultBranch` | **Yes** |
+| 1 | GitHub repo exists | `gh repo view kanopi/{repo-name} --json name,visibility,defaultBranchRef` | **Yes** |
 | 2 | main branch on remote | `git ls-remote origin main` | **Yes** |
 | 3 | pantheon remote URL correct | `git remote get-url pantheon` | No |
 | 4 | origin remote URL correct | `git remote get-url origin` | **Yes** |
@@ -1899,26 +2084,27 @@ Validates that the non-interactive DDEV configuration wrote correct values. If t
 |---|-------|--------------|-----------|
 | 1 | HOSTING_SITE is set correctly | `Grep(pattern="{pantheon-site}", path=".ddev/config.yaml")` | **Yes** |
 | 2 | HOSTING_ENV is set | `Grep(pattern="HOSTING_ENV", path=".ddev/config.yaml")` | **Yes** |
-| 3 | THEME path is set | `Grep(pattern="THEME=", path=".ddev/scripts/load-config.sh")` | No |
+| 3 | THEME path is set and valid | `Grep(pattern="THEME=", path=".ddev/scripts/load-config.sh")` then `Glob(pattern="{detected-theme-path}/*.info.yml")` to confirm theme exists | **Yes** |
 | 4 | load-config.sh exists | `Glob(path=".ddev/scripts", pattern="load-config.sh")` | **Yes** |
 | 5 | Solr addon installed (if detected) | `Glob(path=".ddev", pattern="docker-compose.solr.yaml")` | No |
+| 6 | HOSTING_ENV accessible on Pantheon | `terminus env:info {pantheon-site}.{hosting-env}` | No |
 
-**On FAIL (blocking):** The DDEV config is incomplete. Re-run step 4.1c. Do NOT proceed to `ddev init` with incorrect config.
-**On warning:** Record missing THEME config or Solr addon for final checklist.
+**On FAIL (blocking):** The DDEV config is incomplete. THEME path must be valid — if wrong, `ddev theme-install`, `ddev theme-build`, and CircleCI theme compilation all fail silently downstream. Re-run step 4.1c. Do NOT proceed to `ddev init` with incorrect config.
+**On warning:** Record Solr addon or HOSTING_ENV accessibility issues for final checklist.
 
 ### Gate 4A: Local Environment (after step 4.1d `ddev init`, before 4.1e browser check)
 
 | # | Check | Tool/Command | Blocking? |
 |---|-------|--------------|-----------|
 | 1 | DDEV running with correct config | `ddev describe` | **Yes** |
-| 2 | Drupal bootstrap works | `ddev drush status --field=bootstrap` | No |
+| 2 | Drupal bootstrap works | `ddev drush status --field=bootstrap` — must return "Successful" | **Yes** |
 | 3 | Database has content | `ddev drush sql:query "SELECT COUNT(*) FROM node"` | No |
 | 4 | Kanopi add-on installed | `Glob(path=".ddev", pattern="commands/host/project-configure")` | No |
-| 5 | Theme node_modules installed | `Glob(pattern="{theme-path}/node_modules/.package-lock.json")` | No |
-| 6 | Cypress node_modules installed | `Glob(pattern="tests/cypress/node_modules/.package-lock.json")` | No |
+| 5 | Theme node_modules installed | `Glob(pattern="{theme-path}/node_modules/.package-lock.json")` or `Glob(pattern="{theme-path}/node_modules")` for npm v6 (Node 14) projects | No |
+| 6 | Cypress node_modules installed | `Glob(pattern="tests/cypress/node_modules/.package-lock.json")` — may not exist if `tests/cypress/` hasn't been created yet | No |
 
-**On FAIL (blocking):** DDEV is not running. Check `ddev logs` and restart.
-**On warning:** Record Drupal bootstrap, database, or npm install issues. If theme or Cypress node_modules are missing, run the npm recovery steps from 4.1d before proceeding to 4.1e.
+**On FAIL (blocking):** DDEV is not running or Drupal cannot bootstrap. Check `ddev logs` for PHP errors. Verify database was imported by `ddev db-refresh`. If bootstrap fails, steps 4.1f and 4.1g (drush commands) will also fail — do not proceed until bootstrap is working.
+**On warning:** Record database content or npm install issues. If theme or Cypress node_modules are missing, run the npm recovery steps from 4.1d before proceeding to 4.1e.
 
 ### Gate 4B: Code Changes (after step 4.15, before 4.16 browser check)
 
@@ -1933,8 +2119,9 @@ Validates that the non-interactive DDEV configuration wrote correct values. If t
 | 7 | pantheon.yml has workflow hooks | `Grep(pattern="drush_config_import", path="pantheon.yml")` | No |
 | 8 | Cypress test files exist | `Glob(path="tests/cypress", pattern="**/*.cy.js")` | No |
 | 9 | Solr settings override in settings.php (if detected) | `Grep(pattern="search_api.server.*connector_config.*solr", path="web/sites/default/settings.php")` | No |
+| 10 | No unreplaced placeholders in CircleCI config | `Grep(pattern="\\{.*\\}", path=".circleci/config.yml")` — should return no matches (all `{variable}` placeholders must be substituted) | **Yes** |
 
-**On FAIL (blocking):** Corrupted `composer.json` or placeholder variables in CircleCI config are serious issues. Fix before committing. Note: CircleCI config uses the **Pantheon site name** (`{pantheon-site}`), not the GitHub repo name.
+**On FAIL (blocking):** Corrupted `composer.json`, placeholder variables in CircleCI config, or unreplaced `{variable}` placeholders are serious issues. Fix before committing. Note: CircleCI config uses the **Pantheon site name** (`{pantheon-site}`), not the GitHub repo name.
 **On warning:** Record missing files/configs (including Solr settings override) for final checklist.
 
 ### Gate 5: Delivery (after step 5.5 PR creation, before 5.6 checklist)
