@@ -421,7 +421,7 @@ gh api repos/kanopi/{repo-name}/branches/main/protection -X PUT \
 {
   "required_status_checks": {
     "strict": true,
-    "contexts": ["Cypress", "Deployment", "PHPcs", "PHPstan", "Rector"]
+    "contexts": ["Deployment"]
   },
   "enforce_admins": false,
   "required_pull_request_reviews": {
@@ -1802,16 +1802,13 @@ gh pr create \
 
 ## Test Plan
 
-- [ ] CircleCI pipeline runs successfully
-- [ ] Multidev environment is created on Pantheon
-- [ ] Site loads correctly on multidev (images, CSS, JS)
-- [ ] Theme compiles correctly
-- [ ] PHPcs check passes
-- [ ] PHPStan check passes
-- [ ] Rector check passes (dry run)
-- [ ] Cypress system checks pass
-- [ ] Redis is enabled on multidev
-- [ ] New Relic is reporting
+- [ ] Verify DDEV starts correctly with \`ddev init\`
+- [ ] Verify \`ddev composer code-check\` runs successfully
+- [ ] Verify CircleCI pipeline triggers on push
+- [ ] Verify PHPStan, PHPCS, Rector, and Twig CS Fixer jobs run in circleci
+- [ ] Verify Pantheon deployment workflow completes
+- [ ] Verify Redis connects on Pantheon dev environment
+- [ ] Verify Cypress tests run against multidev
 
 ## Manual Follow-Up Required
 
