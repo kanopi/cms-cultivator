@@ -21,3 +21,4 @@ composer.lock
 
 # mkdocs
 /site*
+.beads
