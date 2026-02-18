@@ -314,7 +314,7 @@ cms-cultivator/
 ├── .github/workflows/
 │   ├── docs.yml             # Zensical deployment
 │   └── test.yml             # BATS test automation
-├── commands/                # 14 slash command files (*.md)
+├── commands/                # 24 slash command files (*.md)
 │   ├── pr-*.md              # PR workflow commands
 │   ├── audit-*.md           # Audit commands (comprehensive)
 │   ├── test-*.md            # Testing commands
@@ -330,6 +330,7 @@ cms-cultivator/
 │   ├── performance-analyzer/
 │   ├── security-scanner/
 │   ├── coverage-analyzer/
+│   ├── structured-data-analyzer/
 │   └── README.md            # Skills overview
 ├── docs/                    # Zensical documentation site
 │   ├── commands/            # Command category pages
@@ -618,4 +619,4 @@ Ideas for future development:
 
 ---
 
-Last updated: 2026-01-19
+Last updated: 2026-02-17
