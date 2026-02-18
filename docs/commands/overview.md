@@ -115,6 +115,7 @@ Comprehensive audits of live websites using Chrome DevTools.
 | Command | Description |
 |---------|-------------|
 | `/audit-live-site [url]` | Full site audit for performance, accessibility, SEO, and security |
+| `/audit-structured-data <url> [options]` | Audit JSON-LD/Schema.org for SEO and AI discoverability |
 | `/export-audit-csv [report-file]` | Export audit report to CSV for project management tools (Teamwork, Jira, Monday, etc.) |
 
 **Requirements**: Chrome DevTools MCP Server
@@ -124,6 +125,7 @@ Comprehensive audits of live websites using Chrome DevTools.
 - Accessibility (WCAG 2.2 AA compliance)
 - SEO (meta tags, structured data, sitemaps)
 - Security (HTTPS, headers, mixed content)
+- Structured data (JSON-LD, Schema.org, Rich Results eligibility)
 - Best practices (console errors, optimization)
 
 **Output**: Markdown report + CSV task list

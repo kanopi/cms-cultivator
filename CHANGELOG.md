@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-02-17
+
+### Added
+
+- **Structured Data Specialist Agent** - Audit JSON-LD/Schema.org on any website
+  - `agents/structured-data-specialist/AGENT.md` - Leaf specialist for structured data auditing
+  - Scans live pages via Chrome DevTools MCP (no code access required)
+  - Extracts and validates `<script type="application/ld+json">` blocks
+  - Validates against Google Rich Results requirements (required vs recommended properties)
+  - Quality scoring and grading system (A-F, Coverage/Completeness/Validity/Graph Design)
+  - Priority/severity ratings with business value justification
+  - Cross-page entity graph design with stable @id conventions
+  - CMS detection from page output (Drupal Schema.org Metatag, WordPress Yoast/RankMath)
+  - Optional codebase analysis when local code is available
+  - Supports 18+ Schema.org types including educational types
+
+- **Structured Data Analyzer Skill** - Conversational JSON-LD/Schema.org assistance
+  - `skills/structured-data-analyzer/SKILL.md` - Auto-invoked when discussing structured data
+  - Triggers on "JSON-LD", "Schema.org", "structured data", "rich results"
+  - Quick checks on specific pages, templates, or code snippets
+  - Decision framework for choosing Schema.org types
+  - Platform-specific guidance for Drupal and WordPress
+
+- **Structured Data Audit Command** - `/audit-structured-data <url> [options]`
+  - `commands/audit-structured-data.md` - User-facing command
+  - URL-first pattern: works against any website without code access
+  - Flexible argument modes: `--quick`, `--standard`, `--comprehensive`
+  - Scope control: `--scope=url`, `--scope=sitemap`, `--scope=content-type`
+  - Output formats: `--format=report`, `--format=json`, `--format=summary`, `--format=checklist`
+  - Legacy focus areas: `jsonld`, `richresults`, `ecommerce`, `articles`, `events`, etc.
+  - Report generation: `audit-structured-data-YYYY-MM-DD-HHMM.md`
+  - Compatible with `/export-audit-csv` for PM tool export
+
+### Changed
+
+- **Test Suite** - Updated counts and added new tests
+  - Agent count increased from 13 to 14 agents
+  - Command count increased from 23 to 24 commands
+  - Added 5 new tests for structured data specialist
+  - Added structured-data-specialist to leaf specialists array
+
+### Documentation
+
+- Updated `docs/commands/overview.md` with structured data audit command
+- Updated `docs/agents-and-skills.md` with structured-data-specialist and structured-data-analyzer
+- Added cross-reference to `/audit-structured-data` in `commands/audit-live-site.md`
+- Updated README.md with structured data audit command
+
 ## [0.7.1] - 2026-02-11
 
 ### Added

@@ -21,6 +21,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **security-specialist** - OWASP Top 10 vulnerability scanning
 - **documentation-specialist** - API docs, guides, and changelogs
 - **code-quality-specialist** - Code standards and technical debt assessment
+- **structured-data-specialist** - JSON-LD/Schema.org auditing for SEO and AI discoverability
 
 **Orchestrators** (delegate to other agents):
 
@@ -101,6 +102,7 @@ PR with new features:
 | documentation-specialist | `/docs-generate` | (none - leaf) |
 | live-audit-specialist | `/audit-live-site` | performance, accessibility, security, code-quality |
 | code-quality-specialist | `/quality-analyze`, `/quality-standards` | (none - leaf) |
+| structured-data-specialist | `/audit-structured-data` | (none - leaf) |
 
 ### Agent-to-Skill Mapping
 
@@ -115,6 +117,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | testing-specialist | test-scaffolding, test-plan-generator, coverage-analyzer |
 | documentation-specialist | documentation-generator |
 | code-quality-specialist | code-standards-checker |
+| structured-data-specialist | structured-data-analyzer |
 | live-audit-specialist | (none - pure orchestrator) |
 
 ### Why Agents?
@@ -441,6 +444,46 @@ Recommendation: Add tests for payment/auth first."
 
 ---
 
+### 10. structured-data-analyzer
+
+**Automatically triggers when you:**
+- Ask "does this page have structured data?"
+- Mention "JSON-LD", "Schema.org", or "rich results"
+- Show HTML/template code for articles, events, products, or FAQs
+- Ask "what Schema.org type should I use?"
+- Say "add structured data" or "SEO schema"
+
+**What it does:**
+- Checks pages or templates for existing JSON-LD blocks
+- Identifies applicable Schema.org types for content
+- Validates against Google Rich Results requirements
+- Provides ready-to-use JSON-LD examples
+- Recommends CMS modules/plugins (Drupal Schema.org Metatag, WordPress Yoast)
+
+**Example:**
+```
+You: "Does this blog template need structured data?"
+Claude: "Yes! Blog posts should have Article/BlogPosting markup.
+
+Required properties:
+- headline, author, datePublished, image
+
+Here's JSON-LD for your template:
+{
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  'headline': '...',
+  'author': { '@type': 'Person', 'name': '...' },
+  'datePublished': '...'
+}
+
+Use @id: '/blog/slug/#article' for entity linking."
+```
+
+**Related Command:** `/audit-structured-data` - For comprehensive site-wide structured data audits with scoring
+
+---
+
 ## How to Use Agent Skills
 
 ### Natural Conversation
@@ -526,6 +569,7 @@ Don't try to "game" the system—just describe what you need:
 | performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
 | security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
 | coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
+| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `/audit-structured-data` |
 
 ## Integration with Workflow
 
