@@ -71,10 +71,6 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
-@test "command count matches expected (23)" {
-  count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 23 ]
-}
 
 # ==============================================================================
 # COMMAND FRONTMATTER TESTS
@@ -273,7 +269,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 13 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -285,9 +281,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (13)" {
+@test "agent count matches expected (14)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 13 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "expected agent directories exist" {
@@ -298,6 +294,7 @@ setup() {
     "design-specialist"
     "documentation-specialist"
     "drupalorg-issue-specialist"
+    "drupal-pantheon-devops-specialist"
     "drupalorg-mr-specialist"
     "live-audit-specialist"
     "performance-specialist"

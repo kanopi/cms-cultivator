@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
-  "version": "0.7.8",
-  "description": "13 specialist agents + 23 commands + 14 skills for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution. Design-to-code workflows with browser validation. CSV export for PM tools. Drupal.org contribution integration.",
+  "version": "0.8.0",
+  "description": "14 specialist agents + 24 commands + 14 skills for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution. Design-to-code workflows with browser validation. CSV export for PM tools. Drupal.org contribution integration. Drupal/Pantheon DevOps automation.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",
@@ -33,7 +33,10 @@
     "figma",
     "responsive-design",
     "browser-validation",
-    "chrome-devtools-mcp"
+    "chrome-devtools-mcp",
+    "devops",
+    "pantheon",
+    "circleci"
   ],
   "repository": "https://github.com/kanopi/cms-cultivator",
   "homepage": "https://kanopi.github.io/cms-cultivator/"
