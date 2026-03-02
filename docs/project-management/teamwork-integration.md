@@ -31,44 +31,39 @@ The Teamwork integration provides:
 
 The Teamwork MCP server enables direct API integration from Claude Code.
 
-**Step 1: Install MCP Server**
+**Step 1: Get Bearer Token**
 
 ```bash
-# Install via npm (if using Node.js MCP server)
-npm install -g @modelcontextprotocol/server-teamwork
+npm i @teamwork/get-bearer-token@latest -g
+teamwork-get-bearer-token
 ```
 
-**Step 2: Configure Claude Code**
+Follow the interactive prompts to generate your bearer token.
 
-Add to `~/.config/claude/mcp.json`:
+**Step 2: Enable MCP in Teamwork**
 
-```json
-{
-  "mcpServers": {
-    "teamwork": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-teamwork"],
-      "env": {
-        "TEAMWORK_DOMAIN": "yourcompany.teamwork.com",
-        "TEAMWORK_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
-```
+Ask your Teamwork admin to enable MCP under **Settings → AI** in your Teamwork instance.
 
-**Step 3: Get Teamwork API Key**
-
-1. Go to Teamwork → Profile → API & Mobile
-2. Generate new API key
-3. Copy key to configuration above
-
-**Step 4: Test Connection**
+**Step 3: Add Server to Claude Code**
 
 ```bash
-/teamwork status
-# Should show: "Connected to Teamwork: yourcompany.teamwork.com"
+# HTTP mode (recommended) - hosted remote server
+claude mcp add --transport http teamwork https://mcp.ai.teamwork.com \
+  --header "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Alternative: STDIO mode - download binary from releases, rename to tw-mcp
+claude mcp add --transport stdio --env TW_MCP_BEARER_TOKEN=YOUR_TOKEN teamwork -- tw-mcp
 ```
+
+**Step 4: Authenticate**
+
+```bash
+# In Claude Code, authenticate
+/mcp
+```
+
+**Full documentation:** [Teamwork MCP Usage Guide](https://github.com/Teamwork/mcp/blob/main/usage.md)
+**Claude Code MCP docs:** [code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp)
 
 ### Without MCP Server
 
