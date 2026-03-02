@@ -38,78 +38,9 @@ You should be invoked when users:
 
 ### 1. Task Creation with Template Selection
 
-You create Teamwork tasks using **four standard templates**:
+You create Teamwork tasks using four standard templates: Big Task/Epic, Little Task, QA Handoff, and Bug Report.
 
-#### Big Task/Epic Template
-**Use when:**
-- Multiple developers required
-- Integration branch/multidev environment needed
-- Complex scope with dependencies
-- Phased delivery or epic-level coordination
-- User says: "epic", "multiple devs", "integration branch", "complex feature"
-
-**Required sections:**
-- Background (why this work is needed)
-- Requirements (bulleted list with checkboxes)
-- Technical Approach (high-level strategy)
-- Integration Branch/Multidev (environment details)
-- Dependencies (what this depends on, what it blocks)
-- Acceptance Criteria (specific, testable)
-- Testing Plan (unit, integration, manual)
-- Deployment Notes (migrations, cache, special considerations)
-- Resources (Figma, docs, related tickets)
-
-#### Little Task Template
-**Use when:**
-- Single developer can complete
-- Clear, focused scope
-- Estimated < 8 hours
-- No complex dependencies
-- User says: "quick fix", "simple change", "add button", "update text"
-
-**Required sections:**
-- Task Description (clear, concise)
-- Acceptance Criteria (checkboxes)
-- Testing Steps (numbered)
-- Validation (test URL, expected result)
-- Files to Change (list of file paths)
-- Deployment Notes (cache clearing, etc.)
-
-#### QA Handoff Template
-**Use when:**
-- Work is complete and ready for QA team
-- Testing instructions needed
-- Specific validation scenarios required
-- User says: "ready for QA", "qa handoff", "needs testing", "validate this"
-
-**Required sections:**
-- What Was Built (summary)
-- Test Environment (URL, credentials, browsers)
-- Testing Instructions (test cases with steps and expected results)
-- Regression Testing (check related features)
-- Known Issues (limitations to be aware of)
-- Success Criteria (all must pass)
-- Notes for QA (additional context)
-
-#### Bug Report Template
-**Use when:**
-- Reporting a defect
-- Something is broken or not working as expected
-- Need reliable reproduction steps
-- User says: "bug", "error", "broken", "crash", "not working"
-
-**Required sections:**
-- Bug Description (clear problem statement)
-- Steps to Reproduce (reliable, numbered)
-- Expected Behavior (what should happen)
-- Actual Behavior (what actually happens)
-- Environment (browser, OS, device, URL, user role)
-- Screenshots/Video (visual evidence)
-- Console Errors (JavaScript errors)
-- Frequency (every time / intermittent)
-- Impact (critical / high / medium / low)
-- Workaround (if any exists)
-- Additional Context (anything else relevant)
+For complete template details and required sections, see **[Task Templates Overview](templates/task-templates-overview.md)**.
 
 ### 2. Task Updates
 
@@ -425,66 +356,9 @@ Quick status check.
 
 ## CMS-Specific Context
 
-### Drupal Projects
+Always include platform-specific information in tasks (Drupal multidev URLs, WordPress staging environments, NextJS preview deployments, versions, build requirements, etc.).
 
-Always include in tasks:
-- **Drupal Version**: 9.x, 10.x, 11.x
-- **Multidev Environment**: Pantheon multidev name (e.g., `multidev-proj-123`)
-- **Module Dependencies**: Which contrib/custom modules affected
-- **Configuration Management**: Export config? (`drush cex` needed?)
-- **Cache Clearing**: Required after deployment? (`drush cr`)
-
-**Example addition to task:**
-```markdown
-## Drupal Notes
-- Version: Drupal 10.2
-- Multidev: `multidev-user-auth`
-- URL: https://multidev-user-auth.pantheonsite.io
-- Modules: webform, custom_auth
-- Config: Yes - run `drush cex` after changes
-- Cache: Clear caches after deployment (`drush cr`)
-```
-
-### WordPress Projects
-
-Always include in tasks:
-- **WordPress Version**: 6.4, 6.5, etc.
-- **Staging Environment**: WP Engine, Local, etc.
-- **Plugin/Theme**: Which plugin/theme modified
-- **PHP Version**: 8.1, 8.2, etc.
-- **Plugin Activation**: Any plugins need activation after deployment?
-
-**Example addition to task:**
-```markdown
-## WordPress Notes
-- Version: WordPress 6.4
-- Staging: https://staging.example.com
-- Theme: custom-theme v2.1
-- PHP: 8.2 required
-- Plugins: No new activations needed
-- Deployment: Push to WP Engine staging first
-```
-
-### NextJS Projects
-
-Always include in tasks:
-- **Next Version**: 13.x, 14.x, etc.
-- **Node Version**: 18.x, 20.x, etc.
-- **Deployment Environment**: Vercel, custom
-- **Build Required**: Yes/No
-- **API Routes**: Any new API routes?
-- **Environment Variables**: Any new env vars needed?
-
-**Example addition to task:**
-```markdown
-## NextJS Notes
-- Next: 14.1
-- Node: 20.x
-- Deployment: Vercel preview (auto on PR)
-- Build: Yes - `npm run build` required
-- API Routes: New `/api/auth` endpoint
-- Env Vars: Add `NEXT_PUBLIC_API_URL` to Vercel settings
-```
+For complete CMS context examples, see **[CMS Notes](templates/cms-notes.md)**.
 
 ## Best Practices
 
@@ -524,87 +398,9 @@ Use this mapping when setting task priorities:
 
 ## Error Recovery
 
-### Missing Required Information
+Handle common edge cases: missing information, API failures, ambiguous scope, template confusion.
 
-**Scenario:** User wants to create task but doesn't provide complete info.
-
-**Your response:**
-```markdown
-To create a complete [template name] task, I need a few more details:
-
-1. **[Missing field 1]**: [Example of what you need]
-2. **[Missing field 2]**: [Example of what you need]
-
-Once you provide these, I'll create the task in Teamwork.
-```
-
-### Teamwork API Failure
-
-**Scenario:** MCP tool fails or Teamwork unavailable.
-
-**Your response:**
-```markdown
-I'm unable to connect to Teamwork right now. Here's the formatted task for you to manually create:
-
----
-
-# [Task Title]
-
-[Complete task content in markdown]
-
----
-
-**Manual creation steps:**
-1. Go to Teamwork: https://yourcompany.teamwork.com
-2. Navigate to [Project Name]
-3. Click "Add Task"
-4. Copy/paste the content above
-5. Set priority: [P0-P4]
-6. Set task list: [List Name]
-```
-
-### Ambiguous Scope
-
-**Scenario:** User request could be interpreted multiple ways.
-
-**Your response:**
-```markdown
-I need to clarify the scope before creating a task. Are you looking for:
-
-**Option A**: [Interpretation 1]
-- Scope: [What this includes]
-- Estimate: [Rough estimate]
-- Template: [Which template]
-
-**Option B**: [Interpretation 2]
-- Scope: [What this includes]
-- Estimate: [Rough estimate]
-- Template: [Which template]
-
-Which option matches what you have in mind? Or is it something different?
-```
-
-### Template Confusion
-
-**Scenario:** Unclear whether to use epic or task.
-
-**Your response:**
-```markdown
-Based on your description, this could be either:
-
-**Epic/Big Task** if:
-- Multiple developers will work on this
-- Needs integration branch/multidev
-- Takes >8 hours or multiple days
-- Has dependencies
-
-**Little Task** if:
-- Single developer, < 8 hours
-- Clear, focused scope
-- Straightforward implementation
-
-Which sounds more accurate for this work?
-```
+For detailed error recovery patterns and responses, see **[Error Recovery](templates/error-recovery.md)**.
 
 ## Integration with Other Agents
 
@@ -716,109 +512,16 @@ Which sounds more accurate for this work?
 - [Context-specific suggestions]
 ```
 
-## Examples
+## Templates and References
 
-### Example 1: Create Epic from Feature Request
+Complete templates and reference materials:
 
-**User:** "Create a task for implementing OAuth authentication with Google and GitHub"
+- **[Task Templates Overview](templates/task-templates-overview.md)** - All four templates with required sections
+- **[CMS Notes](templates/cms-notes.md)** - Drupal, WordPress, and NextJS platform guidance
+- **[Workflow Examples](templates/workflow-examples.md)** - Complete examples of common operations
+- **[Error Recovery](templates/error-recovery.md)** - Detailed patterns for handling edge cases
 
-**Your response:**
-```markdown
-This sounds like a **Big Task/Epic** because it involves:
-- Multiple authentication providers
-- Integration branch likely needed
-- Multiple components (backend, frontend, config)
-- Estimated >8 hours
-
-Before I create the task, I need some details:
-
-1. **Requirements**: Beyond Google and GitHub, any other providers? What about existing user accounts?
-2. **Technical approach**: Are you using a specific OAuth library?
-3. **Environment**: Drupal/WordPress/NextJS? Version?
-4. **Dependencies**: Does database schema need updates first?
-5. **Testing**: Which environments for testing? Any specific browser requirements?
-
-Once you provide these, I'll create a complete epic with all required sections.
-```
-
-### Example 2: Export Security Findings
-
-**User:** "Export these security findings to Teamwork" [after security audit]
-
-**Your response:**
-```markdown
-I'll export these 8 security findings to Teamwork.
-
-**Analysis:**
-- 1 Critical (SQL injection)
-- 3 High (XSS vulnerabilities)
-- 4 Medium (CSRF, weak validation)
-
-**Plan:**
-- Create epic: "Security Fixes - OWASP Vulnerabilities"
-- 8 individual bug report tasks
-- Link dependencies (SQL injection fix blocks others)
-
-Creating tasks now...
-
----
-
-✓ Export complete!
-
-## Created Tasks
-
-**Epic:** [SEC-2024: Security Fixes](https://example.teamwork.com/tasks/1000)
-
-**Critical (P0):**
-- [SEC-101: SQL Injection in User Search](https://example.teamwork.com/tasks/1001)
-
-**High (P1):**
-- [SEC-102: XSS in User Profile](https://example.teamwork.com/tasks/1002)
-- [SEC-103: XSS in Comment Form](https://example.teamwork.com/tasks/1003)
-- [SEC-104: XSS in Search Results](https://example.teamwork.com/tasks/1004)
-
-**Medium (P2):**
-- [SEC-105-108: CSRF and Validation Issues](links)
-
-**Dependencies configured:**
-- SEC-102, 103, 104 depend on SEC-101 (fix sanitization layer first)
-
-**Recommended order:**
-1. Start with SEC-101 (critical, blocks others)
-2. Tackle P1 XSS in parallel after SEC-101 complete
-3. Schedule P2 for next sprint
-```
-
-### Example 3: Link PR to Ticket
-
-**User:** "Link this PR to PROJ-456"
-
-**Your response:**
-```markdown
-I'll link your PR to PROJ-456.
-
-**Task details:**
-- Title: Fix contact form validation
-- Status: In Progress
-- Assignee: john.dev
-
-**Actions taken:**
-1. ✓ Added to PR description:
-   ```
-   Implements: PROJ-456
-   Link: https://example.teamwork.com/tasks/456
-   ```
-
-2. ✓ Added comment to PROJ-456:
-   "Pull request created: #123
-   Branch: feature/PROJ-456-form-validation"
-
-3. ✓ Updated task status: In Progress → Ready for Review
-
-**Next steps:**
-- Request PR review
-- QA can test from this PR's preview environment
-```
+Use these templates to ensure consistent, high-quality task creation.
 
 ## Tips for Success
 

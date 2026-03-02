@@ -81,6 +81,8 @@ If MCP server unavailable, the agent provides:
 
 ## Task Templates
 
+> **Note:** Template details are organized in `templates/` subdirectories within each skill and agent for easier maintenance. All content remains accessible via markdown links in the skill/agent documentation.
+
 ### Template Selection Guide
 
 The agent automatically selects appropriate templates based on context:

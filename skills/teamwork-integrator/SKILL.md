@@ -27,188 +27,22 @@ This skill activates when users:
 
 ## Ticket Number Pattern Recognition
 
-### Supported Formats
+The skill recognizes standard ticket formats (PROJ-123, SITE-456, etc.) and can clarify ambiguous references.
 
-The skill recognizes these ticket number patterns:
-
-- `PROJ-123` - Standard format (PROJECT-NUMBER)
-- `SITE-456` - Any uppercase prefix + dash + number
-- `ABC-789` - 2-4 letter prefix supported
-- `#123` - Hash + number (less specific, ask for clarification)
-
-### Pattern Matching Examples
-
-**Automatically detected:**
-```
-"Check the status of SITE-456"
-"I'm working on PROJ-123"
-"What's in WEB-789?"
-"Is BLOG-012 ready for QA?"
-```
-
-**Needs clarification:**
-```
-"Check ticket 123" → Ask: "Which project? (e.g., PROJ-123)"
-"Status of #456" → Ask: "Which project prefix? (e.g., SITE-456)"
-```
+For complete pattern details, see **[Ticket Patterns](templates/ticket-patterns.md)**.
 
 ## Core Operations
 
-### 1. Quick Status Check
+The skill provides four read-only operations:
 
-**Trigger phrases:**
-- "status of PROJ-123"
-- "what's the status?"
-- "is SITE-456 done?"
+1. **Quick Status Check** - Status, assignee, priority, due date
+2. **Task Details** - Full description, criteria, comments, dependencies
+3. **Project Context** - List active projects and recent tasks
+4. **Link Tasks in PRs** - Auto-detect ticket numbers in branches/commits
 
-**Information to retrieve:**
-- Task title
-- Current status (Not Started, In Progress, Completed)
-- Assignee (who's working on it)
-- Priority (P0-P4)
-- Due date (if set)
-- Direct link to Teamwork task
+For complete operation details and examples, see **[Operations Reference](templates/operations-reference.md)**.
 
-**Example output:**
-```markdown
-## PROJ-123 Status
-
-**Title:** Implement user authentication
-
-**Status:** In Progress ⏳
-
-**Assignee:** jane.developer@example.com
-
-**Priority:** P1 (High)
-
-**Due Date:** 2024-01-20
-
-**Link:** https://example.teamwork.com/tasks/123456
-```
-
-### 2. Task Details
-
-**Trigger phrases:**
-- "show me PROJ-123"
-- "what's in that ticket?"
-- "details on SITE-456"
-
-**Information to retrieve:**
-- All fields from status check above
-- Task description (first 500 chars)
-- Acceptance criteria
-- Comments (last 3)
-- Attachments/links
-- Related tasks (dependencies)
-
-**Example output:**
-```markdown
-## PROJ-123: Implement user authentication
-
-**Status:** In Progress ⏳ | **Assignee:** jane.developer | **Priority:** P1
-
-### Description
-Implement OAuth2 authentication with Google and GitHub providers. Users should be able to sign in using either provider...
-
-### Acceptance Criteria
-- [ ] Google OAuth integration
-- [ ] GitHub OAuth integration
-- [ ] User profile creation
-- [x] Database schema updated
-
-### Recent Comments
-**john.qa (2 hours ago):** "Database migrations look good"
-**jane.developer (4 hours ago):** "Google OAuth working on staging"
-
-### Dependencies
-- Depends on: PROJ-100 (Database schema updates) ✓ Complete
-- Blocks: PROJ-125 (User profile page)
-
-**Link:** https://example.teamwork.com/tasks/123456
-```
-
-### 3. Project Context
-
-**Trigger phrases:**
-- "which project is this?"
-- "show me projects"
-- "list Teamwork projects"
-
-**Information to retrieve:**
-- Active projects
-- Project names and IDs
-- Recent tasks per project
-
-**Example output:**
-```markdown
-## Active Teamwork Projects
-
-1. **Website Redesign (SITE)**
-   - ID: 12345
-   - Active tasks: 23
-   - Recent: SITE-456, SITE-455, SITE-450
-
-2. **Blog Platform (BLOG)**
-   - ID: 12346
-   - Active tasks: 8
-   - Recent: BLOG-123, BLOG-120, BLOG-119
-
-3. **Mobile App (APP)**
-   - ID: 12347
-   - Active tasks: 15
-   - Recent: APP-789, APP-788, APP-780
-```
-
-### 4. Link Tasks in PR Descriptions
-
-**Trigger phrases:**
-- "add this to PR description"
-- "link PROJ-123 in the PR"
-- "reference this ticket in PR"
-
-**When creating/updating PR:**
-- Detect ticket numbers in branch name
-- Detect ticket numbers in commit messages
-- Format ticket references for PR body
-
-**Format for PR body:**
-```markdown
-## Related Tickets
-
-- Implements: PROJ-123
-- Fixes: SITE-456
-- Related: BLOG-789
-
-## Teamwork Links
-
-- [PROJ-123: Implement user authentication](https://example.teamwork.com/tasks/123456)
-```
-
-## Teamwork MCP Tools
-
-This skill uses these Teamwork MCP tools (loaded via ToolSearch):
-
-### For Status Checks
-```
-mcp__teamwork__twprojects-get_task
-```
-
-**Usage:**
-```javascript
-ToolSearch("select:mcp__teamwork__twprojects-get_task")
-// Then call: mcp__teamwork__twprojects-get_task(task_id: "123456")
-```
-
-### For Project Listing
-```
-mcp__teamwork__twprojects-list_projects
-```
-
-### For Task Listing
-```
-mcp__teamwork__twprojects-list_tasks
-mcp__teamwork__twprojects-list_tasks_by_project
-```
+For MCP tool usage, see **[MCP Tools Reference](templates/mcp-tools-reference.md)**.
 
 ## Workflow
 
@@ -326,59 +160,9 @@ Testing steps from Teamwork tasks:
 
 ## CMS-Specific Context
 
-### Drupal Projects
+When displaying task details, highlight platform-specific information (Drupal multidev URLs, WordPress staging, NextJS preview environments).
 
-When showing task details, highlight Drupal-specific info:
-- Multidev environment URLs
-- Configuration export requirements
-- Module dependencies
-
-**Example:**
-```markdown
-## PROJ-123 Details
-
-### Drupal Notes
-- Multidev: `multidev-proj-123`
-- URL: https://multidev-proj-123.pantheonsite.io
-- Config: Yes - `drush cex` required
-- Modules: webform, custom_auth
-```
-
-### WordPress Projects
-
-Highlight WordPress-specific info:
-- Staging environment
-- Plugin/theme changes
-- PHP version requirements
-
-**Example:**
-```markdown
-## SITE-456 Details
-
-### WordPress Notes
-- Staging: https://staging.example.com
-- Theme: custom-theme v2.1
-- PHP: 8.2 required
-- Plugins: No new activations needed
-```
-
-### NextJS Projects
-
-Highlight NextJS-specific info:
-- Deployment environment
-- Build requirements
-- Environment variables
-
-**Example:**
-```markdown
-## APP-789 Details
-
-### NextJS Notes
-- Preview: https://preview-proj-789.vercel.app
-- Build: `npm run build` required
-- Env vars: `NEXT_PUBLIC_API_URL` updated
-- API routes: New `/api/auth` endpoint
-```
+For complete CMS context examples, see **[CMS Context](templates/cms-context.md)**.
 
 ## When to Escalate to Teamwork Specialist
 
@@ -424,125 +208,6 @@ read/write capabilities.
 - ❌ Make assumptions about ticket number format
 - ❌ Ignore error cases (always handle gracefully)
 
-## Examples
-
-### Example 1: Quick Status
-
-**User:** "What's the status of PROJ-123?"
-
-**Skill Response:**
-```markdown
-## PROJ-123 Status
-
-**Title:** Implement user authentication
-
-**Status:** In Progress ⏳
-
-**Assignee:** jane.developer
-
-**Priority:** P1 (High)
-
-**Due:** Jan 20, 2024
-
-**Link:** https://example.teamwork.com/tasks/123456
-
-Jane is actively working on this. Last update was 2 hours ago: "Google OAuth working on staging"
-
-Would you like to see full task details or update the status?
-```
-
-### Example 2: Task Details
-
-**User:** "Show me SITE-456"
-
-**Skill Response:**
-```markdown
-## SITE-456: Fix contact form validation
-
-**Status:** Ready for QA 🎯 | **Assignee:** john.dev | **Priority:** P1
-
-### Description
-Contact form validation not working on mobile devices. Users can submit empty forms. Fixed validation logic and added client-side checks.
-
-### Acceptance Criteria
-- [x] Form validates on desktop
-- [x] Form validates on mobile
-- [x] Error messages display correctly
-- [x] Empty submissions blocked
-- [ ] QA testing complete
-
-### Recent Comments
-**john.dev (1 hour ago):** "Ready for QA - tested on Chrome/Safari mobile"
-**jane.qa (3 hours ago):** "I'll test this tomorrow"
-
-### WordPress Notes
-- Staging: https://staging.example.com/contact
-- Theme: custom-theme
-- Files changed: `contact-form.js`, `form-validation.php`
-
-**Link:** https://example.teamwork.com/tasks/654321
-
-This looks ready for QA review. Would you like me to create a QA handoff task or update this one?
-```
-
-### Example 3: Project Listing
-
-**User:** "Show me active projects"
-
-**Skill Response:**
-```markdown
-## Active Teamwork Projects
-
-1. **Website Redesign (SITE)** - 23 open tasks
-   - Recent: SITE-456, SITE-455, SITE-450
-   - Link: https://example.teamwork.com/projects/12345
-
-2. **Blog Platform (BLOG)** - 8 open tasks
-   - Recent: BLOG-123, BLOG-120, BLOG-119
-   - Link: https://example.teamwork.com/projects/12346
-
-3. **Mobile App (APP)** - 15 open tasks
-   - Recent: APP-789, APP-788, APP-780
-   - Link: https://example.teamwork.com/projects/12347
-
-Which project would you like to focus on?
-```
-
-### Example 4: PR Integration
-
-**User:** "I'm creating a PR for my user-auth branch"
-
-**Skill Response:**
-```markdown
-I detected ticket PROJ-123 in your branch name `feature/PROJ-123-user-auth`.
-
-Here's what I'll add to your PR description:
-
----
-
-## Related Tickets
-
-Implements: [PROJ-123: Implement user authentication](https://example.teamwork.com/tasks/123456)
-
-## Summary from Teamwork
-
-OAuth2 authentication with Google and GitHub providers. Users can sign in using either provider.
-
-**Status:** In Progress → Completed (when merged)
-
-## Testing
-
-From PROJ-123 acceptance criteria:
-- [ ] Google OAuth integration works
-- [ ] GitHub OAuth integration works
-- [ ] User profile created on first login
-- [ ] Existing users can link accounts
-
----
-
-Would you like me to create the PR now with this description?
-```
-
 ## Output Format
 
 Always structure responses with:
@@ -560,9 +225,15 @@ Use emojis sparingly for status:
 - 🚫 Blocked
 - 📋 Not Started
 
-## Performance Tips
+## References
 
-- Cache project list (update every 24 hours)
-- Cache task details (update every 5 minutes)
-- Use task IDs not names for API calls
-- Batch requests when possible (list multiple tasks at once)
+Complete reference materials available in the templates directory:
+
+- **[Ticket Patterns](templates/ticket-patterns.md)** - Supported ticket number formats and pattern matching
+- **[Operations Reference](templates/operations-reference.md)** - Detailed documentation for all four core operations
+- **[Integration Examples](templates/integration-examples.md)** - Real-world usage examples for each operation
+- **[CMS Context](templates/cms-context.md)** - Drupal, WordPress, and NextJS specific information
+- **[MCP Tools Reference](templates/mcp-tools-reference.md)** - Teamwork MCP tools and usage patterns
+- **[Performance Tips](templates/performance-tips.md)** - Caching and optimization strategies
+
+Use these references to understand operation details and implementation patterns.
