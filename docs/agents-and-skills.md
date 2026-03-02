@@ -115,6 +115,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | testing-specialist | test-scaffolding, test-plan-generator, coverage-analyzer |
 | documentation-specialist | documentation-generator |
 | code-quality-specialist | code-standards-checker |
+| teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
 | live-audit-specialist | (none - pure orchestrator) |
 
 ### Why Agents?
@@ -441,6 +442,116 @@ Recommendation: Add tests for payment/auth first."
 
 ---
 
+### 10. teamwork-task-creator
+
+**Automatically triggers when you:**
+- Say "create a task" or "make a ticket"
+- Mention "track this work" or "create Teamwork task"
+- Provide requirements that need documentation
+- Ask "how do I create a task?"
+
+**What it does:**
+- Performs context-aware template selection
+- Uses appropriate task template (bug/feature/qa/epic)
+- Ensures all required sections included
+- Provides properly formatted Teamwork task
+
+**Example:**
+```
+You: "Create a task for fixing the broken newsletter signup"
+Claude: "I'll create a Bug Report task since you mentioned 'broken'.
+
+I need a few more details:
+1. What's the exact error?
+2. Where does this happen? (URL)
+3. What browser did you observe this on?
+4. What were the steps that led to the issue?
+
+Once you provide these, I'll create a complete bug report."
+```
+
+**Related Command:** `/teamwork create` - For explicit Teamwork task creation
+
+---
+
+### 11. teamwork-integrator
+
+**Automatically triggers when you:**
+- Mention ticket numbers (PROJ-123, SITE-456)
+- Ask "what's the status of [ticket]?"
+- Say "show me task [number]"
+- Reference Teamwork tasks conversationally
+
+**What it does:**
+- Quick status checks (read-only)
+- Retrieves task details
+- Links tickets in PR descriptions
+- Provides project context
+
+**Example:**
+```
+You: "What's the status of PROJ-123?"
+Claude: "Let me check that for you...
+
+## PROJ-123 Status
+
+**Title:** Implement user authentication
+**Status:** In Progress ⏳
+**Assignee:** jane.developer
+**Priority:** P1 (High)
+**Due:** Jan 20, 2024
+
+**Link:** https://example.teamwork.com/tasks/123
+
+Jane updated this 2 hours ago: 'Google OAuth working on staging'"
+```
+
+**Related Command:** `/teamwork status` - For explicit status checks
+
+---
+
+### 12. teamwork-exporter
+
+**Automatically triggers when you:**
+- Other agents complete audit reports
+- Say "export to Teamwork" or "create tasks from this"
+- Findings need project tracking
+- Ask "can we track these in Teamwork?"
+
+**What it does:**
+- Converts audit findings to Teamwork tasks
+- Maps severity to priority (Critical→P0, High→P1)
+- Groups related issues into epics
+- Links dependencies
+
+**Example:**
+```
+You: "Export these security findings to Teamwork"
+Claude: "I'll export these 8 security findings.
+
+**Analysis:**
+- 1 Critical (SQL injection) → P0
+- 3 High (XSS vulnerabilities) → P1
+- 4 Medium (CSRF) → P2
+
+**Plan:**
+- Create epic: 'Security Fixes'
+- 8 individual bug report tasks
+- Link dependencies
+
+Creating tasks now...
+
+✓ Export complete! Created:
+- Epic: SEC-2024 (link)
+- SEC-101: SQL Injection (P0)
+- SEC-102-104: XSS Issues (P1)
+- SEC-105-108: CSRF (P2)"
+```
+
+**Related Command:** `/teamwork export` - For explicit audit export
+
+---
+
 ## How to Use Agent Skills
 
 ### Natural Conversation
@@ -526,6 +637,9 @@ Don't try to "game" the system—just describe what you need:
 | performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
 | security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
 | coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
+| teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |
+| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `/teamwork status` |
+| teamwork-exporter | "export to Teamwork" | Audit export | `/teamwork export` |
 
 ## Integration with Workflow
 

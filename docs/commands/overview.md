@@ -130,6 +130,33 @@ Comprehensive audits of live websites using Chrome DevTools.
 
 ---
 
+### 📋 [Project Management](project-management.md)
+
+Integrate with Teamwork for task tracking and project coordination.
+
+| Command | Description |
+|---------|-------------|
+| `/teamwork [operation] [args]` | Create, update, and manage Teamwork tasks with expert guidance |
+
+**Operations**:
+- `/teamwork create [options]` - Create task with automatic template selection
+- `/teamwork update <ticket> [options]` - Update existing task
+- `/teamwork export <report> [options]` - Export audit findings as tasks
+- `/teamwork link <ticket> [options]` - Link git changes to ticket
+- `/teamwork status <ticket>` - Quick status check
+
+**Use cases**:
+- Converting user stories to tracked tasks
+- Exporting audit findings for project planning
+- Linking PRs to Teamwork tickets
+- Checking task status without leaving CLI
+
+**Task Templates**: Big Task/Epic, Little Task, QA Handoff, Bug Report
+
+**Requirements**: Teamwork MCP Server
+
+---
+
 ## Platform-Specific Features
 
 ### Drupal Support
