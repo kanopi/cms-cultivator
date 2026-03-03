@@ -7,6 +7,83 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-03-02
+
+### Added
+
+- **Teamwork Project Management Integration** - Complete workflow for Kanopi Teamwork projects
+  - `/teamwork` command with 5 operations (create/update/export/link/status)
+  - Template-based task creation (Big Task/Epic, Little Task, QA Handoff, Bug Report)
+  - Automatic template selection based on context
+  - **teamwork-specialist agent** - Orchestrates all Teamwork operations
+  - **teamwork-task-creator skill** - Context-aware template selection
+  - **teamwork-integrator skill** - Quick lookups and status checks (read-only)
+  - **teamwork-exporter skill** - Convert audit findings to Teamwork tasks
+  - Priority mapping (Critical→P0, High→P1, Medium→P2, Low→P3, Info→P4)
+  - CMS-specific context (Drupal multidev, WordPress staging, NextJS deployment)
+  - Batch export with epic creation for multiple related findings
+  - Dependency linking between tasks
+  - MCP tool integration via ToolSearch (on-demand loading)
+  - Provides formatted markdown fallback if MCP unavailable
+
+- **Template System for Agent Maintainability** - Extracted large skill/agent content to templates
+  - 25 new template files created in `templates/` subdirectories
+  - Skills refactored to stay under 500-line guideline:
+    - teamwork-task-creator: 618→192 lines (4 template files)
+    - teamwork-integrator: 569→239 lines (6 template files)
+    - teamwork-exporter: 793→237 lines (11 template files + subdirectory)
+  - Agent refactored: teamwork-specialist: 838→541 lines (4 template files)
+  - Follows established pattern from documentation-generator and test-scaffolding
+  - All content remains accessible via markdown links in Templates/References sections
+
+- **Integration with Existing Commands**
+  - `/pr-create` - Auto-links PRs to Teamwork tickets
+  - `/audit-*` - Export findings as tracked tasks
+  - `/quality-*` - Export code quality improvements
+  - Commit workflow - Detect ticket numbers in branches and messages
+
+### Changed
+
+- **Documentation Improvements** - Clarified tool constraints and formatting requirements
+  - Added explicit tool availability warnings to live-audit-specialist
+  - Documented troubleshooting for tool access issues
+  - Added CRITICAL OUTPUT RULE to workflow-specialist
+  - Updated pr-commit-msg and pr-create prompts with strict formatting
+  - Prevent agents from writing preambles before approval headers
+
+- **CSV Export Documentation** - Improved format requirements and error prevention
+  - Added critical CSV formatting rules with clear DO/DON'T examples
+  - Emphasized TASK column is required on every row (no tasklist-only rows)
+  - Documented markdown-in-quotes pattern for DESCRIPTION column
+  - Expanded CSV example to show full task description template usage
+  - Added parsing logic section explaining row generation patterns
+  - Included Python code example for correct CSV row creation
+
+- **Teamwork MCP Server Information** - Updated server details and setup instructions
+
+### Documentation
+
+- **New Documentation Pages**
+  - `docs/project-management/teamwork-integration.md` - Comprehensive Teamwork guide
+    - MCP server setup instructions
+    - Task template decision guide
+    - Integration with audit commands
+    - Best practices and CMS-specific examples
+  - `docs/commands/project-management.md` - Project Management category page
+  - Updated `docs/agents-and-skills.md` with new skills and agent mapping
+  - Updated `docs/commands/overview.md` with Project Management section
+  - Updated `zensical.toml` navigation
+
+### Requirements
+
+- **Optional Dependency**: Teamwork MCP server for full integration
+  - Required for task creation, updates, and status checks
+  - Falls back to formatted markdown output if unavailable
+
+### Notes
+
+This release introduces comprehensive Teamwork integration for Kanopi's project management workflow, following the "Agents Orchestrate, Skills Guide, Commands Interface" architecture. The new template system improves maintainability by keeping agent and skill files under 500 lines while preserving all functionality through linked templates.
+
 ## [0.7.1] - 2026-02-11
 
 ### Added
@@ -675,7 +752,9 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...HEAD
+[0.8.1]: https://github.com/kanopi/cms-cultivator/compare/0.8.0...0.8.1
+[0.8.0]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/kanopi/cms-cultivator/compare/0.6.1...0.6.0
 [0.6.1]: https://github.com/kanopi/cms-cultivator/compare/0.6.0...0.6.1
