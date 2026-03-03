@@ -29,7 +29,8 @@ nav = [
     "commands/design-workflow.md",
     "commands/documentation.md",
     "commands/testing.md",
-    "commands/code-quality.md"
+    "commands/code-quality.md",
+    "commands/project-management.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
   {"WordPress Skills" = "wordpress-skills.md"},
