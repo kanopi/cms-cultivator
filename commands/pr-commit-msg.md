@@ -30,7 +30,7 @@ Spawn the **workflow-specialist** agent using:
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Generate a conventional commit message from the user's staged changes. First, gather git context by running: git status, git diff --cached (for staged changes), git log (for recent commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification. Format your FINAL output with ONLY the commit message - NO summaries, NO explanations, ONLY the complete commit message and approval request.")
+     prompt="Generate a conventional commit message from the user's staged changes. First, gather git context by running: git status, git diff --cached (for staged changes), git log (for recent commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification. CRITICAL OUTPUT FORMAT: Your response must START IMMEDIATELY with '=== COMMIT MESSAGE READY FOR APPROVAL ===' followed by the commit message. DO NOT write ANY text before this header. NO context, NO summaries, NO explanations like 'I've analyzed...' or 'Good, GitHub CLI...'. Your ENTIRE response must be ONLY: 1. The header '=== COMMIT MESSAGE READY FOR APPROVAL ===' 2. The complete commit message in a code block 3. The separator '===================================' 4. The approval request 'Reply \"approve\" to commit with this message, or provide your edits.' NOTHING ELSE. No preamble, no summary, no analysis notes.")
 ```
 
 The workflow specialist will:

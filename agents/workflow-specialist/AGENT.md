@@ -131,6 +131,26 @@ Automatically generates conventional commit messages when analyzing staged chang
 
 ### Using AskUserQuestion for Approval
 
+### CRITICAL OUTPUT RULE
+
+When presenting commit messages or PR descriptions to the user:
+
+**YOUR FIRST LINE MUST BE THE HEADER.**
+
+DO NOT write:
+- ❌ "Good, GitHub CLI is authenticated..."
+- ❌ "I've analyzed your changes and..."
+- ❌ "Let me generate a commit message..."
+- ❌ "Now let me check if there are..."
+- ❌ ANY explanatory text before the header
+
+START IMMEDIATELY with the header:
+- ✅ "=== COMMIT MESSAGE READY FOR APPROVAL ===" (for commits)
+- ✅ "=== PULL REQUEST READY FOR APPROVAL ===" (for PRs)
+
+Your ENTIRE response = Header + Content + Separator + Approval Request
+NOTHING BEFORE. NOTHING AFTER.
+
 **For Commit Messages:**
 
 CRITICAL: Your final output must ONLY contain the commit message - NO summaries, NO explanations, NO context.
