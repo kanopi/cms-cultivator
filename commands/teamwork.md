@@ -1,6 +1,6 @@
 ---
 description: Create, update, and manage Teamwork tasks with expert project management guidance
-argument-hint: [operation] [args]
+argument-hint: "[operation] [args]"
 allowed-tools: Bash(git:*), Bash(gh:*), Read, Glob, Grep, Write, Edit, ToolSearch
 ---
 
