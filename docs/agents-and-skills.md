@@ -21,6 +21,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **security-specialist** - OWASP Top 10 vulnerability scanning
 - **documentation-specialist** - API docs, guides, and changelogs
 - **code-quality-specialist** - Code standards and technical debt assessment
+- **gtm-specialist** - Google Tag Manager performance auditing (requires Chrome DevTools MCP)
 
 **Orchestrators** (delegate to other agents):
 
@@ -96,6 +97,7 @@ PR with new features:
 | workflow-specialist | `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release` | testing, security, accessibility |
 | accessibility-specialist | `/audit-a11y` | (none - leaf) |
 | performance-specialist | `/audit-perf` | (none - leaf) |
+| gtm-specialist | `/audit-gtm` | (none - leaf) |
 | security-specialist | `/audit-security` | (none - leaf) |
 | testing-specialist | `/test-generate`, `/test-plan`, `/test-coverage` | security, accessibility |
 | documentation-specialist | `/docs-generate` | (none - leaf) |
@@ -111,6 +113,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | workflow-specialist | commit-message-generator |
 | accessibility-specialist | accessibility-checker |
 | performance-specialist | performance-analyzer |
+| gtm-specialist | gtm-performance-audit |
 | security-specialist | security-scanner |
 | testing-specialist | test-scaffolding, test-plan-generator, coverage-analyzer |
 | documentation-specialist | documentation-generator |
@@ -635,6 +638,7 @@ Don't try to "game" the system—just describe what you need:
 | test-plan-generator | "test plan", "QA" | Test scenarios | `/test-plan` |
 | accessibility-checker | "accessible?", "WCAG" | Element checks | `/audit-a11y` |
 | performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
+| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `/audit-gtm` |
 | security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
 | coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
 | teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |

@@ -71,6 +71,12 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 **Purpose**: Analyze test coverage gaps
 **Related Command**: `/test-coverage`
 
+### 10. gtm-performance-audit
+
+**Triggers**: "GTM", "tag manager", "marketing tags", "tracking tags slow", "too many tags"
+**Purpose**: Audit Google Tag Manager for performance impact
+**Related Command**: `/audit-gtm`
+
 ## How Skills Work
 
 ### Automatic Activation
