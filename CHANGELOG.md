@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-03-04
+
+### Added
+
+- **GTM Performance Audit** - Comprehensive Google Tag Manager performance analysis
+  - `/audit-gtm` command with flexible argument modes (--quick, --standard, --comprehensive)
+  - **gtm-specialist agent** - Leaf specialist for GTM container analysis and tag profiling
+  - **gtm-performance-audit skill** - Automatic GTM performance guidance during conversation
+  - 14-point issue detection: sync scripts, blocking tags, large payloads, main thread blocking,
+    missing conditional firing, trigger optimization, duplicate tags, orphaned tags, expensive
+    variables, missing async, Custom HTML audit, server-side candidates, consent gaps, firing order
+  - Chrome DevTools MCP integration for live profiling (required)
+  - CMS-specific patterns for Drupal (google_tag module) and WordPress (GTM4WP, Site Kit)
+  - Core Web Vitals impact mapping per tag
+  - GTM-specific scope control: `--scope=container=<GTM-ID>`
+  - GTM-specific options: `--container-id`, `--with-container-json`, `--url`
+  - Legacy focus areas: container, tags, triggers, datalayer, custom-html, consent
+  - Report file output: `audit-gtm-YYYY-MM-DD-HHMM.md`
+
+### Changed
+
+- **Plugin Metadata** - Version bumped to 0.9.0
+  - Agent count: 14 → 16 (added gtm-specialist, fixed teamwork-specialist count)
+  - Command count: 24 → 25 (added audit-gtm)
+  - Skill count: 14 → 18 (added gtm-performance-audit, corrected existing count)
+  - Keywords: Added "gtm", "google-tag-manager"
+
+- **Test Suite** - Updated for GTM integration
+  - Agent count validation: 14 → 16
+  - Added gtm-specialist and teamwork-specialist to expected agents list
+  - Added gtm-specialist to leaf specialists list
+  - New tests: audit-gtm references gtm-specialist, gtm-specialist has skill
+
+### Documentation
+
+- New documentation page: `docs/commands/gtm-performance.md`
+- Updated `docs/commands/overview.md` with GTM audit in Performance section
+- Updated `docs/commands/performance.md` with GTM cross-reference
+- Updated `docs/agents-and-skills.md` with gtm-specialist and gtm-performance-audit
+- Updated `skills/README.md` with gtm-performance-audit entry
+- Updated `zensical.toml` navigation with GTM page
+- Updated `CHANGELOG.md` with 0.9.0 release notes
+
+### Requirements
+
+- **Required Dependency**: Chrome DevTools MCP server for GTM auditing
+  - No fallback mode - Chrome DevTools MCP is required
+  - Provides live page profiling, network waterfall capture, and JavaScript execution
+
 ## [0.8.1] - 2026-03-02
 
 ### Added
@@ -752,7 +801,8 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/kanopi/cms-cultivator/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1
