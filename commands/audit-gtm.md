@@ -1,24 +1,101 @@
 ---
 description: Comprehensive Google Tag Manager performance audit analyzing container size, tag execution, trigger efficiency, and Core Web Vitals impact
 argument-hint: "[options]"
-allowed-tools: Task, Bash(git:*)
+allowed-tools: Task, Bash(git:*), Read, mcp__chrome-devtools__*
 ---
 
-Spawn the **gtm-specialist** agent using:
+## How This Command Works
+
+This command collects live page data via Chrome DevTools MCP, then passes the data to the gtm-specialist agent for analysis and report generation.
+
+**IMPORTANT**: MCP tools are only available in the main conversation context, NOT inside Task subagents. That's why data collection happens HERE, not inside the agent.
+
+### Phase 1: Data Collection (you do this — 3 tool calls total)
+
+**Step 1: Get the target URL**
+
+Parse arguments for `--url=<value>`. If no URL provided, ask the user for one before continuing. Do not proceed without a URL.
+
+**Step 2: Navigate to the target URL**
+
+```
+mcp__chrome-devtools__navigate_page(url="<target-url>")
+```
+
+If this call fails (tool not found, MCP not connected), skip to "If Chrome DevTools MCP is NOT available" below. If it succeeds, continue.
+
+**Step 3: Run collector + get supplemental data (all in ONE message)**
+
+Make these 3 tool calls in a SINGLE message so the user only sees one approval prompt:
+
+```
+mcp__chrome-devtools__evaluate_script(function="<compact inline collector — see below>")
+mcp__chrome-devtools__list_network_requests()
+mcp__chrome-devtools__list_console_messages()
+```
+
+**IMPORTANT**: Do NOT read the full collector script from `agents/gtm-specialist/scripts/gtm-audit-collector.js` — it is 50KB and too large to pass as a parameter. Instead, write a compact inline collector function directly in the evaluate_script call. The compact collector must collect: GTM container IDs, performance timing (TTFB/FCP/DCL/load), CWV (LCP/CLS), long tasks/TBT, head/body scripts with blocking status and vendor identification, resource timing for tracking domains, DataLayer contents, consent platform detection, vendor globals, GA4/Ads/UA IDs from page scripts, cookies, CMS/WordPress detection, and async GTM container source fetch with tag type parsing. Wrap each section in try/catch so one failure doesn't break the whole collection.
+
+### Phase 2: Analysis (agent does this)
+
+Pass ALL collected data to the gtm-specialist agent:
 
 ```
 Task(cms-cultivator:gtm-specialist:gtm-specialist,
-     prompt="Audit Google Tag Manager implementation for performance impact with the following parameters:
-       - Depth mode: [quick/standard/comprehensive - parsed from arguments, default: standard]
-       - Scope: [current-pr/container/entire - parsed from arguments, default: entire]
-       - Format: [report/json/summary - parsed from arguments, default: report]
-       - Container ID: [GTM-XXXX if provided via --container-id]
-       - Container JSON: [file path if provided via --with-container-json]
-       - Target URL: [URL if provided via --url]
-       - Focus area: [use legacy focus argument if provided, otherwise 'complete analysis']
-       - Files to analyze: [file list based on scope]
-     Analyze container configuration, measure tag execution timing, identify blocking tags, evaluate trigger efficiency, and map impact to Core Web Vitals. Requires Chrome DevTools MCP. Save the comprehensive audit report to a file (audit-gtm-YYYY-MM-DD-HHMM.md) and present the file path to the user.")
+     prompt="Analyze this GTM audit data and generate a comprehensive report.
+
+TARGET URL: <url>
+DEPTH MODE: <quick/standard/comprehensive>
+FORMAT: <report/json/summary>
+
+## Collector Script Results (from Chrome DevTools MCP evaluate_script)
+
+<paste the full JSON result from Step 5>
+
+## Network Requests (from Chrome DevTools MCP list_network_requests)
+
+<paste network request results from Step 6>
+
+## Console Messages (from Chrome DevTools MCP list_console_messages)
+
+<paste console message results from Step 6>
+
+## Instructions
+
+1. Parse the collector data above — do NOT run any mcp__chrome-devtools__ tools (they are not available to you)
+2. Do NOT use Bash curl to re-fetch the page or container — all data is provided above
+3. Run all 14 issue detection checks against the provided data
+4. Generate the audit report and save to audit-gtm-DOMAIN-YYYY-MM-DD-HHMM.md (domain from URL, strip www., dots to hyphens)
+5. Present the executive summary and file path")
 ```
+
+### If Chrome DevTools MCP is NOT available
+
+Collect data yourself using Bash curl at the command level, then pass it to the agent:
+
+```
+# Fetch page HTML
+Bash(curl -sL "<url>") → save output as PAGE_HTML
+
+# Extract GTM container ID from HTML, then fetch container
+Bash(curl -s "https://www.googletagmanager.com/gtm.js?id=<GTM-ID>") → save output as CONTAINER_JS
+
+# Pass to agent
+Task(cms-cultivator:gtm-specialist:gtm-specialist,
+     prompt="Chrome DevTools MCP was not available. Analyze this data collected via HTTP fallback.
+       - Target URL: <url>
+       - Depth mode: <mode>
+       - Format: <format>
+       Note in the report that CWV metrics are not available (HTTP-only collection).
+
+       ## Page HTML
+       <PAGE_HTML>
+
+       ## GTM Container Source
+       <CONTAINER_JS>")
+```
+
+---
 
 ## Arguments
 
@@ -103,28 +180,14 @@ For backward compatibility, single-word focus areas without `--` prefix are trea
 /audit-gtm consent --scope=current-pr
 ```
 
-## Usage
-
-**Full Audit:**
-- `/audit-gtm` - Complete GTM performance analysis
-
-**Focus Areas:**
-- `/audit-gtm container` - Container size and structure
-- `/audit-gtm tags` - Individual tag performance
-- `/audit-gtm triggers` - Trigger efficiency
-- `/audit-gtm datalayer` - DataLayer analysis
-- `/audit-gtm custom-html` - Custom HTML tag audit
-- `/audit-gtm consent` - Consent mode compliance
-
 ---
 
 ## Tool Usage
 
 **Allowed operations:**
-- Spawn gtm-specialist agent
+- Collect page data via Chrome DevTools MCP (navigate, evaluate_script, network, console)
+- Spawn gtm-specialist agent with collected data
 - Analyze GTM integration code in codebase
-- Profile tag execution via Chrome DevTools MCP
-- Measure Core Web Vitals impact
 - Generate performance reports with remediation plans
 
 **Not allowed:**
@@ -132,129 +195,18 @@ For backward compatibility, single-word focus areas without `--` prefix are trea
 - Do not enter GTM admin credentials
 - Do not modify tracking code without explicit approval
 
-The gtm-specialist agent performs all audit operations.
-
----
-
-## How It Works
-
-This command spawns the **gtm-specialist** agent, which uses the **gtm-performance-audit** skill and performs comprehensive GTM audits using Chrome DevTools MCP.
-
-### 1. Parse Arguments
-
-The command first parses the arguments to determine the audit parameters:
-
-**Depth mode:**
-- Check for `--quick`, `--standard`, or `--comprehensive` flags
-- Default: `--standard` (if not specified)
-
-**Scope:**
-- Check for `--scope=<value>` flag
-- If `--scope=current-pr`: Get GTM-related changed files using `git diff --name-only origin/main...HEAD`
-- If `--scope=container=<id>`: Focus on specific container
-- Default: `--scope=entire` (analyze full GTM setup)
-
-**Format:**
-- Check for `--format=<value>` flag
-- Options: `report` (default), `json`, `summary`
-- Default: `--format=report`
-
-**GTM options:**
-- Check for `--container-id=<value>`, `--url=<value>`, `--with-container-json=<value>`
-- Pass through to agent
-
-**Legacy focus area:**
-- If argument doesn't start with `--`, treat as legacy focus area
-- Examples: `container`, `tags`, `triggers`, `datalayer`, `custom-html`, `consent`
-- Can be combined with new flags: `/audit-gtm tags --quick`
-
-### 2. Determine Files to Analyze
-
-Based on the scope parameter:
-
-**For `current-pr`:**
-```bash
-git diff --name-only origin/main...HEAD | grep -iE '(gtm|google.tag|tag.manager|datalayer)'
-```
-
-**For `container=<id>`:**
-Focus analysis on the specified container.
-
-**For `entire`:**
-Analyze all GTM integration points in the codebase plus live page profiling.
-
-### 3. Spawn GTM Specialist
-
-Pass all parsed parameters to the agent:
-```
-Task(cms-cultivator:gtm-specialist:gtm-specialist,
-     prompt="Run GTM performance audit with:
-       - Depth mode: {depth}
-       - Scope: {scope}
-       - Format: {format}
-       - Container ID: {container_id or 'detect from page'}
-       - Container JSON: {json_path or 'none'}
-       - Target URL: {url or 'ask user'}
-       - Focus area: {focus or 'complete analysis'}
-       - Files to analyze: {file_list}")
-```
-
-### The GTM Specialist Will
-
-1. **Establish Baseline Performance**:
-   - Navigate to target URL via Chrome DevTools MCP
-   - Measure navigation timing, paint metrics, CWV
-   - Capture GTM resource loading waterfall
-
-2. **Analyze GTM Container**:
-   - Evaluate container size and tag inventory
-   - Parse container JSON if provided
-   - Identify tag types, triggers, and variables
-
-3. **Run 14 Issue Detection Checks**:
-   - Synchronous script loading
-   - Blocking tags (>50ms main thread)
-   - Large payloads (>100KB)
-   - Main thread blocking
-   - Missing conditional firing
-   - Trigger optimization
-   - Duplicate tags
-   - Orphaned tags
-   - Expensive variables
-   - Missing async attributes
-   - Custom HTML best practices
-   - Server-side candidates
-   - Consent mode gaps
-   - Tag firing order
-
-4. **Map CWV Impact**:
-   - Correlate tag execution with LCP delta
-   - Measure INP impact from tag scripts
-   - Check CLS impact from tag-injected elements
-
-5. **Generate Actionable Report**:
-   - Executive summary with key metrics
-   - Tag inventory table with timing
-   - Prioritized findings with GTM-specific fix steps
-   - Network waterfall visualization
-   - Implementation checklist
-
-6. **Platform-specific analysis**:
-   - **Drupal**: google_tag module config, template injection, hook implementations
-   - **WordPress**: GTM4WP settings, header.php injection, WooCommerce integration
-
 ---
 
 ## Requirements
 
-**Required**: Chrome DevTools MCP Server
+**Required**: Chrome DevTools MCP Server (for best results)
 
-This command requires an active Chrome DevTools MCP connection to perform live page profiling, tag execution measurement, and network waterfall capture.
+This command uses Chrome DevTools MCP for live page profiling. Without it, the audit falls back to HTTP-based analysis with reduced accuracy.
 
 **Setup:**
 1. Install Chrome DevTools MCP server
 2. Configure in Claude Code settings
-3. Open Chrome browser with target page
+3. Open Chrome browser
 4. Run the audit command
 
 ---
@@ -268,22 +220,6 @@ This command requires an active Chrome DevTools MCP connection to perform live p
 ## Agent Used
 
 **gtm-specialist** - GTM performance specialist with expertise in container optimization, tag execution profiling, trigger efficiency, and CWV impact mapping for Drupal and WordPress.
-
-## What Makes This Different
-
-**Before (manual GTM review):**
-- Check GTM admin for tag count manually
-- No execution timing data
-- Miss blocking tags and consent gaps
-- Generic "reduce tags" advice
-
-**With gtm-specialist:**
-- Automated container analysis with tag inventory
-- Real execution timing per tag via Chrome DevTools
-- 14-point issue detection with CWV impact mapping
-- GTM-specific fix steps with exact navigation paths
-- CMS-specific patterns (Drupal/WordPress)
-- Prioritized remediation checklist
 
 ---
 

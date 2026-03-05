@@ -59,10 +59,12 @@ Before auditing, determine the audit mode:
 User asks about GTM performance
     |
     v
-Ask for: target URL, GTM container ID (GTM-XXXX)
+URL provided? → NO → Ask for target URL (STOP until answered)
+    |
+   YES
     |
     v
-Optional: container JSON export, critical tags list
+Proceed autonomously (no further permission prompts needed)
     |
     v
 Phase 1: Baseline Performance (before GTM analysis)
@@ -88,103 +90,57 @@ Before starting the audit, gather from the user:
 
 ## Phase 1: Baseline Performance
 
-Measure page performance to establish the GTM impact baseline.
+Measure page performance using the **single-pass audit collector script** — one `evaluate_script` call replaces all individual measurement scripts.
 
-### Navigation Timing
+### Step 1: Read the Collector Script
 
-```javascript
-// Use mcp__chrome-devtools__evaluate_script
-() => {
-  const timing = performance.getEntriesByType('navigation')[0];
-  return {
-    domContentLoaded: timing.domContentLoadedEventEnd - timing.startTime,
-    loadComplete: timing.loadEventEnd - timing.startTime,
-    ttfb: timing.responseStart - timing.startTime,
-    domInteractive: timing.domInteractive - timing.startTime
-  };
-}
+```
+Read: agents/gtm-specialist/scripts/gtm-audit-collector.js
 ```
 
-### Paint Metrics
+### Step 2: Navigate and Run the Collector
 
-```javascript
-// Use mcp__chrome-devtools__evaluate_script
-() => {
-  const paint = performance.getEntriesByType('paint');
-  const entries = {};
-  paint.forEach(p => { entries[p.name] = p.startTime; });
-  return entries;
-}
+```
+mcp__chrome-devtools__navigate_page(url="<target-url>")
 ```
 
-### GTM Resource Identification
+Wait for the page to fully load, then execute:
 
-```javascript
-// Use mcp__chrome-devtools__evaluate_script
-() => {
-  const resources = performance.getEntriesByType('resource');
-  const gtmResources = resources.filter(r =>
-    r.name.includes('googletagmanager.com') ||
-    r.name.includes('google-analytics.com') ||
-    r.name.includes('gtag/js') ||
-    r.name.includes('gtm.js')
-  );
-  return gtmResources.map(r => ({
-    name: r.name,
-    duration: r.duration,
-    transferSize: r.transferSize,
-    initiatorType: r.initiatorType,
-    startTime: r.startTime
-  }));
-}
+```
+mcp__chrome-devtools__evaluate_script(function="<full content of gtm-audit-collector.js>")
 ```
 
-### Network Waterfall
+This single call returns a structured JSON object containing:
+- Navigation timing (TTFB, DCL, load complete)
+- Paint metrics (FCP, first paint)
+- Core Web Vitals (LCP with element, CLS, INP estimate, with ratings)
+- Long Tasks / Total Blocking Time
+- All `<head>` scripts with blocking/async/defer status
+- All GTM and third-party tracking resources (40+ vendors)
+- DataLayer contents and unique events
+- Consent platform detection (Google Consent Mode v2, TrustArc, OneTrust, etc.)
+- Window-global vendor fingerprinting (60+ vendors)
+- GA4 Measurement IDs, Conversion IDs, legacy UA IDs
 
-Use `mcp__chrome-devtools__list_network_requests` to capture:
-- All requests initiated by GTM
-- Third-party domains loaded via tags
-- Request timing and sizes
-- Blocking vs. async loading patterns
+### Step 3: Supplemental Data (if needed)
 
-### Console Errors
+Run these only if the collector output is insufficient for a specific check:
 
-Use `mcp__chrome-devtools__list_console_messages` to check for:
-- GTM-related JavaScript errors
-- Tag execution failures
-- DataLayer errors
-- Consent-related warnings
-
-### Core Web Vitals Measurement
-
-```javascript
-// Use mcp__chrome-devtools__evaluate_script
-() => {
-  return new Promise((resolve) => {
-    const metrics = {};
-
-    // LCP
-    new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      metrics.lcp = entries[entries.length - 1].startTime;
-    }).observe({ type: 'largest-contentful-paint', buffered: true });
-
-    // CLS
-    let clsValue = 0;
-    new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        if (!entry.hadRecentInput) clsValue += entry.value;
-      }
-      metrics.cls = clsValue;
-    }).observe({ type: 'layout-shift', buffered: true });
-
-    // Resolve after collecting
-    setTimeout(() => resolve(metrics), 3000);
-  });
-}
+**Console errors** (check for GTM JS errors):
+```
+mcp__chrome-devtools__list_console_messages()
 ```
 
-Use `mcp__chrome-devtools__performance_start_trace` and `mcp__chrome-devtools__performance_stop_trace` for detailed profiling data including main thread blocking time.
+**Raw network waterfall** (for precise HAR timing):
+```
+mcp__chrome-devtools__list_network_requests()
+```
+
+**Deep CPU profiling** (comprehensive depth mode only):
+```
+mcp__chrome-devtools__performance_start_trace(reload=true, autoStop=true)
+mcp__chrome-devtools__performance_stop_trace()
+```
 
 ## Phase 2: GTM Container Analysis
 
