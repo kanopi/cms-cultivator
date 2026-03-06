@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-03-05
+
+### Added
+
+- **Frontmatter Validation Script** - New development tool for quality assurance
+  - `scripts/validate-frontmatter.sh` - Comprehensive YAML frontmatter validation
+  - Validates frontmatter presence and YAML syntax across all markdown files
+  - Checks required fields for commands (description, allowed-tools), agents (name, description, tools), and skills (name, description)
+  - Verifies non-empty values for all required fields
+  - Validates name consistency between agent/skill files and directory names
+  - Color-coded output: errors (red), warnings (yellow), success (green)
+  - Exit codes for CI/CD integration (0=success, 1=errors)
+  - Python-based YAML parser using `yaml.safe_load()`
+  - Validation summary with error and warning counts
+
+- **Validation Documentation** - Comprehensive guide for contributors
+  - New section in `docs/contributing.md` - "Validating Frontmatter"
+  - Documents validation script usage and common frontmatter issues
+  - Explains required fields for each file type (commands, agents, skills)
+  - Provides examples of common YAML syntax errors
+  - Includes pre-commit hook integration example
+  - Updated `CLAUDE.md` with validation instructions and scripts directory documentation
+
+### Fixed
+
+- **YAML Frontmatter Bug** - Fixed unquoted square brackets in command frontmatter
+  - `commands/teamwork.md` - Quoted `argument-hint` value to prevent YAML parsing errors
+  - Changed from `argument-hint: [operation] [args]` to `argument-hint: "[operation] [args]"`
+  - Square brackets in YAML must be quoted when used as string values
+  - Prevents YAML parser from interpreting brackets as array syntax
+
+### Changed
+
+- **Test Suite Updates** - Updated BATS tests for current project state
+  - Increased expected agent count from 14 to 15 (includes teamwork-specialist)
+  - Added `teamwork-specialist` to expected agent directories list
+  - All 105 BATS tests passing
+
+### Documentation
+
+- **File Organization** - Updated project structure documentation in `CLAUDE.md`
+  - Added `scripts/` directory with `validate-frontmatter.sh` documentation
+  - Updated agent count from 14 to 15 agents
+  - Updated command count documentation
+  - Added "Frontmatter Validation" section in testing approach
+  - Comprehensive validation workflow documentation
+
+### Development
+
+- **Quality Assurance Tooling** - New validation infrastructure for maintainers
+  - Prevents YAML syntax errors from reaching production
+  - Catches missing required fields before merge
+  - Ensures consistency between file names and frontmatter values
+  - Provides clear error messages for quick debugging
+  - Foundation for pre-commit hooks and CI/CD validation
+
+### Notes
+
+This patch release adds development tooling to prevent YAML frontmatter errors. The validation script should be run before committing changes to commands, agents, or skills. This is a development-time tool that improves plugin quality but does not affect runtime behavior.
+
 ## [0.8.1] - 2026-03-02
 
 ### Added
@@ -752,7 +812,8 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.2...HEAD
+[0.8.2]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...0.8.2
 [0.8.1]: https://github.com/kanopi/cms-cultivator/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1
