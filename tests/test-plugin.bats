@@ -269,7 +269,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 14 ]
+  [ "$count" -eq 15 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -281,9 +281,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (14)" {
+@test "agent count matches expected (15)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 14 ]
+  [ "$count" -eq 15 ]
 }
 
 @test "expected agent directories exist" {
@@ -300,6 +300,7 @@ setup() {
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
+    "teamwork-specialist"
     "testing-specialist"
     "workflow-specialist"
   )

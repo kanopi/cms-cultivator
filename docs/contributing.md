@@ -138,6 +138,62 @@ zensical build --clean
 - `argument-hint`: Show optional arguments in square brackets
 - `allowed-tools`: List all tools the command can use
 
+### Validating Frontmatter
+
+Before committing changes to commands, agents, or skills, validate that all frontmatter is properly formatted.
+
+#### Run the validation script
+
+```bash
+./scripts/validate-frontmatter.sh
+```
+
+This script checks:
+
+- **Frontmatter presence** - All files have valid YAML frontmatter
+- **Required fields** - All mandatory fields exist for each file type
+- **YAML syntax** - Frontmatter can be parsed without errors
+- **Non-empty values** - All required fields have content
+- **Name consistency** - Agent and skill names match directory names
+
+#### Common frontmatter issues
+
+**Unquoted square brackets** - Always quote argument-hint values containing brackets:
+
+```yaml
+# ❌ Wrong
+argument-hint: [operation] [args]
+
+# ✅ Correct
+argument-hint: "[operation] [args]"
+```
+
+**Missing required fields** - Each file type has required fields:
+
+**Commands** (`commands/*.md`):
+- `description` - Brief one-line description
+- `allowed-tools` - Tools the command can use
+- `argument-hint` - Optional argument syntax (recommended)
+
+**Agents** (`agents/*/AGENT.md`):
+- `name` - Agent name (must match directory)
+- `description` - When/how to invoke this agent
+- `tools` - Available tools
+
+**Skills** (`skills/*/SKILL.md`):
+- `name` - Skill name (must match directory)
+- `description` - Trigger terms and use cases
+
+#### Add validation to CI/CD
+
+Consider adding the validation script to your pre-commit hook or CI/CD pipeline:
+
+```bash
+# .git/hooks/pre-commit
+#!/bin/bash
+./scripts/validate-frontmatter.sh || exit 1
+```
+
 ---
 
 ## Pull Request Process
