@@ -20,8 +20,22 @@ Spawn the **workflow-specialist** agent to handle the complete release preparati
 
 ```
 Task(cms-cultivator:workflow-specialist:workflow-specialist,
-     prompt="Prepare release artifacts for the current branch. User's focus: [use argument if provided, otherwise 'all']. Follow the complete release workflow: (1) Analyze changes since last release, categorize commits by conventional commit type, detect CMS-specific changes and deployment requirements, (2) Generate changelog following Keep a Changelog format, (3) Create comprehensive deployment checklist with pre/post checks and rollback plan, (4) Format your FINAL output with ONLY the artifacts (changelog, deployment checklist, PR updates) - NO summaries, NO explanations, ONLY the complete artifacts and approval request, (5) After approval, update PR description via gh CLI and provide artifacts for manual use.")
+     prompt="Prepare release artifacts for the current branch. User's focus: [use argument if provided, otherwise 'all']. Follow the complete release workflow: (1) Analyze changes since last release, categorize commits by conventional commit type, detect CMS-specific changes and deployment requirements, (2) Generate changelog following Keep a Changelog format, (3) Create comprehensive deployment checklist with pre/post checks and rollback plan, (4) CRITICAL OUTPUT FORMAT: Your response must START IMMEDIATELY with '=== RELEASE ARTIFACTS READY FOR APPROVAL ===' followed by the artifacts. DO NOT write ANY text before this header. NO context, NO summaries, NO explanations like 'I've analyzed...' or 'Good, GitHub CLI...'. Your ENTIRE response must be ONLY: 1. The header '=== RELEASE ARTIFACTS READY FOR APPROVAL ===' 2. The complete changelog, deployment checklist, and PR updates with clear section headers 3. The separator '===================================' 4. The approval request 'Reply \"approve\" to update the PR and save these artifacts, or provide your edits.' NOTHING ELSE. No preamble, no summary, no analysis notes. (5) After approval, update PR description via gh CLI and provide artifacts for manual use.")
 ```
+
+### Your Role as Main Agent
+
+**CRITICAL:** When you receive output from the workflow-specialist:
+
+1. **If the output starts with `=== RELEASE ARTIFACTS READY FOR APPROVAL ===`:**
+   - Present it DIRECTLY to the user WITHOUT any additional commentary
+   - Do NOT add "Let me show you" or "Here's what was generated"
+   - Do NOT explain what happened or provide context
+   - Simply output the workflow-specialist's response verbatim
+
+2. **Wait for user response** (approve/edits)
+
+3. **Resume the workflow-specialist agent** with the user's response using the agentId
 
 ### Workflow Steps (Automated)
 
