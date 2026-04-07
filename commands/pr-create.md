@@ -13,6 +13,20 @@ Task(cms-cultivator:workflow-specialist:workflow-specialist,
      prompt="Create a pull request from the current branch. Arguments: [use ticket number and --concise flag if provided]. Follow the complete PR creation workflow: (1) Analyze git changes and detect CMS-specific modifications, (2) Run quality checks as needed (skip in --concise mode unless critical), (3) Generate comprehensive PR description following the project template, (4) CRITICAL OUTPUT FORMAT: Your response must START IMMEDIATELY with '=== PULL REQUEST READY FOR APPROVAL ===' followed by the PR content. DO NOT write ANY text before this header. NO context, NO summaries, NO explanations like 'I've analyzed...' or 'Good, GitHub CLI...'. Your ENTIRE response must be ONLY: 1. The header '=== PULL REQUEST READY FOR APPROVAL ===' 2. The PR title and complete description with all sections 3. The separator '===================================' 4. The approval request 'Reply \"approve\" to create this PR, or provide your edits.' NOTHING ELSE. No preamble, no summary, no analysis notes. (5) Wait for user approval, then create the PR using gh CLI.")
 ```
 
+### Your Role as Main Agent
+
+**CRITICAL:** When you receive output from the workflow-specialist:
+
+1. **If the output starts with `=== PULL REQUEST READY FOR APPROVAL ===`:**
+   - Present it DIRECTLY to the user WITHOUT any additional commentary
+   - Do NOT add "Let me show you" or "Here's what was generated"
+   - Do NOT explain what happened or provide context
+   - Simply output the workflow-specialist's response verbatim
+
+2. **Wait for user response** (approve/edits)
+
+3. **Resume the workflow-specialist agent** with the user's response using the agentId
+
 ### Workflow Steps (Automated)
 
 The workflow specialist automatically executes these steps:
