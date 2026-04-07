@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-04-07
+
+### Documentation
+
+- **Workflow Specialist Approval Process** - Clarified main agent role for approval workflows
+  - Added explicit instructions for main agent handling of formatted output from workflow-specialist
+  - Documented presentation patterns for pr-create (PR descriptions), pr-commit-msg (commit messages), and pr-release (release artifacts)
+  - Added output format header to pr-release prompt for consistency with other approval workflows
+  - Prevents main agent from adding unnecessary explanations before presenting content requiring user approval
+  - Ensures clean, consistent approval workflow user experience across all PR-related commands
+  - Applies to `/pr-create`, `/pr-commit-msg`, and `/pr-release` commands
+  - Updated `commands/pr-create.md`, `commands/pr-commit-msg.md`, and `commands/pr-release.md`
+
+### Notes
+
+This patch release focuses on improving the user experience during approval workflows by ensuring the main agent presents formatted output cleanly without unnecessary commentary. This provides a more streamlined interaction when creating PRs, generating commit messages, or preparing release artifacts.
+
 ## [0.8.2] - 2026-03-05
 
 ### Added
