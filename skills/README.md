@@ -155,6 +155,12 @@ Detailed instructions for Claude on how to execute this skill...
 3. **Detailed instructions** - Provide step-by-step workflow
 4. **Examples** - Show expected interactions
 
+### 10. strategic-thinking
+
+**Triggers**: "should we do this?", "help me decide", "what are the trade-offs", "help me think through this", "is this the right approach?", "pros and cons", "help me think through"
+**Purpose**: Guide significant decisions using Brene Brown's 5 Cs of Strategic Thinking (Context, Color, Connective Tissue, Cost, Consequence) from *Strong Ground*
+**Related Command**: None — skill-only
+
 ## Adding New Skills
 
 To add a new Agent Skill:

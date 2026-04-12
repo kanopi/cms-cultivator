@@ -3,7 +3,7 @@ name: design-specialist
 description: Use this agent when you need to convert design references into production-ready CMS code for WordPress or Drupal projects. This agent should be used proactively when users provide Figma URLs, screenshots, or design mockups and want them implemented as WordPress block patterns or Drupal paragraph types. It orchestrates complete design-to-code workflows by analyzing design inputs, generating responsive CMS components, spawning responsive-styling-specialist for CSS generation, creating test pages, spawning browser-validator-specialist for comprehensive validation, and reporting detailed technical results with file paths and specifications.
 
 tools: Read, Glob, Grep, Bash, Write, Edit, Task, ToolSearch, figma MCP, chrome-devtools MCP, playwright MCP
-skills: design-analyzer, responsive-styling
+skills: design-analyzer, responsive-styling, strategic-thinking
 model: sonnet
 color: purple
 ---
@@ -386,6 +386,16 @@ Use the field mapping to generate:
 4. SCSS styles based on design specifications
 
 Download image assets to: `modules/custom/{module}/assets/images/{paragraph-name}/`
+
+#### Step 3: Choose Implementation Approach
+
+Before detecting MCP availability, apply the **5 Cs of Strategic Thinking** (from the `strategic-thinking` skill) when the implementation path is unclear or a significant trade-off exists:
+
+- **Context** — Does the project have constraints that favor one approach? (e.g., production deployment pipeline, team familiarity with YAML config, CI/CD that imports config automatically)
+- **Cost** — MCP-based creation is faster to execute but requires MCP availability; YAML generation requires a manual import step but is portable and version-controllable
+- **Consequence** — If MCP tools fail mid-creation, can the work be recovered? YAML files are always inspectable; MCP state may not be
+
+When the path is truly unclear, surface the trade-off to the user rather than silently defaulting.
 
 #### Step 3: Detect Drupal MCP Availability
 ```bash
