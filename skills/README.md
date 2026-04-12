@@ -71,6 +71,12 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 **Purpose**: Analyze test coverage gaps
 **Related Command**: `/test-coverage`
 
+### 10. gtm-performance-audit
+
+**Triggers**: "GTM", "tag manager", "marketing tags", "tracking tags slow", "too many tags"
+**Purpose**: Audit Google Tag Manager for performance impact
+**Related Command**: `/audit-gtm`
+
 ## How Skills Work
 
 ### Automatic Activation
@@ -154,6 +160,12 @@ Detailed instructions for Claude on how to execute this skill...
 2. **Specific description** - Explain exactly when to use this vs. related commands
 3. **Detailed instructions** - Provide step-by-step workflow
 4. **Examples** - Show expected interactions
+
+### 10. strategic-thinking
+
+**Triggers**: "should we do this?", "help me decide", "what are the trade-offs", "help me think through this", "is this the right approach?", "pros and cons", "help me think through"
+**Purpose**: Guide significant decisions using Brene Brown's 5 Cs of Strategic Thinking (Context, Color, Connective Tissue, Cost, Consequence) from *Strong Ground*
+**Related Command**: None — skill-only
 
 ## Adding New Skills
 

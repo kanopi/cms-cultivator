@@ -1,6 +1,6 @@
 # CMS Cultivator
 
-![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
+![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
 Specialist agents, slash commands, and auto-invoked skills for Drupal/WordPress development.

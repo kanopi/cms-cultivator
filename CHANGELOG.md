@@ -7,53 +7,159 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.8.0] - 2026-02-17
-
-### Added
-
-- **Structured Data Specialist Agent** - Audit JSON-LD/Schema.org on any website
-  - `agents/structured-data-specialist/AGENT.md` - Leaf specialist for structured data auditing
-  - Scans live pages via Chrome DevTools MCP (no code access required)
-  - Extracts and validates `<script type="application/ld+json">` blocks
-  - Validates against Google Rich Results requirements (required vs recommended properties)
-  - Quality scoring and grading system (A-F, Coverage/Completeness/Validity/Graph Design)
-  - Priority/severity ratings with business value justification
-  - Cross-page entity graph design with stable @id conventions
-  - CMS detection from page output (Drupal Schema.org Metatag, WordPress Yoast/RankMath)
-  - Optional codebase analysis when local code is available
-  - Supports 18+ Schema.org types including educational types
-
-- **Structured Data Analyzer Skill** - Conversational JSON-LD/Schema.org assistance
-  - `skills/structured-data-analyzer/SKILL.md` - Auto-invoked when discussing structured data
-  - Triggers on "JSON-LD", "Schema.org", "structured data", "rich results"
-  - Quick checks on specific pages, templates, or code snippets
-  - Decision framework for choosing Schema.org types
-  - Platform-specific guidance for Drupal and WordPress
-
-- **Structured Data Audit Command** - `/audit-structured-data <url> [options]`
-  - `commands/audit-structured-data.md` - User-facing command
-  - URL-first pattern: works against any website without code access
-  - Flexible argument modes: `--quick`, `--standard`, `--comprehensive`
-  - Scope control: `--scope=url`, `--scope=sitemap`, `--scope=content-type`
-  - Output formats: `--format=report`, `--format=json`, `--format=summary`, `--format=checklist`
-  - Legacy focus areas: `jsonld`, `richresults`, `ecommerce`, `articles`, `events`, etc.
-  - Report generation: `audit-structured-data-YYYY-MM-DD-HHMM.md`
-  - Compatible with `/export-audit-csv` for PM tool export
-
-### Changed
-
-- **Test Suite** - Updated counts and added new tests
-  - Agent count increased from 13 to 14 agents
-  - Command count increased from 23 to 24 commands
-  - Added 5 new tests for structured data specialist
-  - Added structured-data-specialist to leaf specialists array
+## [0.8.3] - 2026-04-07
 
 ### Documentation
 
-- Updated `docs/commands/overview.md` with structured data audit command
-- Updated `docs/agents-and-skills.md` with structured-data-specialist and structured-data-analyzer
-- Added cross-reference to `/audit-structured-data` in `commands/audit-live-site.md`
-- Updated README.md with structured data audit command
+- **Workflow Specialist Approval Process** - Clarified main agent role for approval workflows
+  - Added explicit instructions for main agent handling of formatted output from workflow-specialist
+  - Documented presentation patterns for pr-create (PR descriptions), pr-commit-msg (commit messages), and pr-release (release artifacts)
+  - Added output format header to pr-release prompt for consistency with other approval workflows
+  - Prevents main agent from adding unnecessary explanations before presenting content requiring user approval
+  - Ensures clean, consistent approval workflow user experience across all PR-related commands
+  - Applies to `/pr-create`, `/pr-commit-msg`, and `/pr-release` commands
+  - Updated `commands/pr-create.md`, `commands/pr-commit-msg.md`, and `commands/pr-release.md`
+
+### Notes
+
+This patch release focuses on improving the user experience during approval workflows by ensuring the main agent presents formatted output cleanly without unnecessary commentary. This provides a more streamlined interaction when creating PRs, generating commit messages, or preparing release artifacts.
+
+## [0.8.2] - 2026-03-05
+
+### Added
+
+- **Frontmatter Validation Script** - New development tool for quality assurance
+  - `scripts/validate-frontmatter.sh` - Comprehensive YAML frontmatter validation
+  - Validates frontmatter presence and YAML syntax across all markdown files
+  - Checks required fields for commands (description, allowed-tools), agents (name, description, tools), and skills (name, description)
+  - Verifies non-empty values for all required fields
+  - Validates name consistency between agent/skill files and directory names
+  - Color-coded output: errors (red), warnings (yellow), success (green)
+  - Exit codes for CI/CD integration (0=success, 1=errors)
+  - Python-based YAML parser using `yaml.safe_load()`
+  - Validation summary with error and warning counts
+
+- **Validation Documentation** - Comprehensive guide for contributors
+  - New section in `docs/contributing.md` - "Validating Frontmatter"
+  - Documents validation script usage and common frontmatter issues
+  - Explains required fields for each file type (commands, agents, skills)
+  - Provides examples of common YAML syntax errors
+  - Includes pre-commit hook integration example
+  - Updated `CLAUDE.md` with validation instructions and scripts directory documentation
+
+### Fixed
+
+- **YAML Frontmatter Bug** - Fixed unquoted square brackets in command frontmatter
+  - `commands/teamwork.md` - Quoted `argument-hint` value to prevent YAML parsing errors
+  - Changed from `argument-hint: [operation] [args]` to `argument-hint: "[operation] [args]"`
+  - Square brackets in YAML must be quoted when used as string values
+  - Prevents YAML parser from interpreting brackets as array syntax
+
+### Changed
+
+- **Test Suite Updates** - Updated BATS tests for current project state
+  - Increased expected agent count from 14 to 15 (includes teamwork-specialist)
+  - Added `teamwork-specialist` to expected agent directories list
+  - All 105 BATS tests passing
+
+### Documentation
+
+- **File Organization** - Updated project structure documentation in `CLAUDE.md`
+  - Added `scripts/` directory with `validate-frontmatter.sh` documentation
+  - Updated agent count from 14 to 15 agents
+  - Updated command count documentation
+  - Added "Frontmatter Validation" section in testing approach
+  - Comprehensive validation workflow documentation
+
+### Development
+
+- **Quality Assurance Tooling** - New validation infrastructure for maintainers
+  - Prevents YAML syntax errors from reaching production
+  - Catches missing required fields before merge
+  - Ensures consistency between file names and frontmatter values
+  - Provides clear error messages for quick debugging
+  - Foundation for pre-commit hooks and CI/CD validation
+
+### Notes
+
+This patch release adds development tooling to prevent YAML frontmatter errors. The validation script should be run before committing changes to commands, agents, or skills. This is a development-time tool that improves plugin quality but does not affect runtime behavior.
+
+## [0.8.1] - 2026-03-02
+
+### Added
+
+- **Teamwork Project Management Integration** - Complete workflow for Kanopi Teamwork projects
+  - `/teamwork` command with 5 operations (create/update/export/link/status)
+  - Template-based task creation (Big Task/Epic, Little Task, QA Handoff, Bug Report)
+  - Automatic template selection based on context
+  - **teamwork-specialist agent** - Orchestrates all Teamwork operations
+  - **teamwork-task-creator skill** - Context-aware template selection
+  - **teamwork-integrator skill** - Quick lookups and status checks (read-only)
+  - **teamwork-exporter skill** - Convert audit findings to Teamwork tasks
+  - Priority mapping (Critical→P0, High→P1, Medium→P2, Low→P3, Info→P4)
+  - CMS-specific context (Drupal multidev, WordPress staging, NextJS deployment)
+  - Batch export with epic creation for multiple related findings
+  - Dependency linking between tasks
+  - MCP tool integration via ToolSearch (on-demand loading)
+  - Provides formatted markdown fallback if MCP unavailable
+
+- **Template System for Agent Maintainability** - Extracted large skill/agent content to templates
+  - 25 new template files created in `templates/` subdirectories
+  - Skills refactored to stay under 500-line guideline:
+    - teamwork-task-creator: 618→192 lines (4 template files)
+    - teamwork-integrator: 569→239 lines (6 template files)
+    - teamwork-exporter: 793→237 lines (11 template files + subdirectory)
+  - Agent refactored: teamwork-specialist: 838→541 lines (4 template files)
+  - Follows established pattern from documentation-generator and test-scaffolding
+  - All content remains accessible via markdown links in Templates/References sections
+
+- **Integration with Existing Commands**
+  - `/pr-create` - Auto-links PRs to Teamwork tickets
+  - `/audit-*` - Export findings as tracked tasks
+  - `/quality-*` - Export code quality improvements
+  - Commit workflow - Detect ticket numbers in branches and messages
+
+### Changed
+
+- **Documentation Improvements** - Clarified tool constraints and formatting requirements
+  - Added explicit tool availability warnings to live-audit-specialist
+  - Documented troubleshooting for tool access issues
+  - Added CRITICAL OUTPUT RULE to workflow-specialist
+  - Updated pr-commit-msg and pr-create prompts with strict formatting
+  - Prevent agents from writing preambles before approval headers
+
+- **CSV Export Documentation** - Improved format requirements and error prevention
+  - Added critical CSV formatting rules with clear DO/DON'T examples
+  - Emphasized TASK column is required on every row (no tasklist-only rows)
+  - Documented markdown-in-quotes pattern for DESCRIPTION column
+  - Expanded CSV example to show full task description template usage
+  - Added parsing logic section explaining row generation patterns
+  - Included Python code example for correct CSV row creation
+
+- **Teamwork MCP Server Information** - Updated server details and setup instructions
+
+### Documentation
+
+- **New Documentation Pages**
+  - `docs/project-management/teamwork-integration.md` - Comprehensive Teamwork guide
+    - MCP server setup instructions
+    - Task template decision guide
+    - Integration with audit commands
+    - Best practices and CMS-specific examples
+  - `docs/commands/project-management.md` - Project Management category page
+  - Updated `docs/agents-and-skills.md` with new skills and agent mapping
+  - Updated `docs/commands/overview.md` with Project Management section
+  - Updated `zensical.toml` navigation
+
+### Requirements
+
+- **Optional Dependency**: Teamwork MCP server for full integration
+  - Required for task creation, updates, and status checks
+  - Falls back to formatted markdown output if unavailable
+
+### Notes
+
+This release introduces comprehensive Teamwork integration for Kanopi's project management workflow, following the "Agents Orchestrate, Skills Guide, Commands Interface" architecture. The new template system improves maintainability by keeping agent and skill files under 500 lines while preserving all functionality through linked templates.
 
 ## [0.7.1] - 2026-02-11
 
@@ -723,7 +829,10 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...HEAD
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.2...HEAD
+[0.8.2]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...0.8.2
+[0.8.1]: https://github.com/kanopi/cms-cultivator/compare/0.8.0...0.8.1
+[0.8.0]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/kanopi/cms-cultivator/compare/0.6.1...0.6.0
 [0.6.1]: https://github.com/kanopi/cms-cultivator/compare/0.6.0...0.6.1

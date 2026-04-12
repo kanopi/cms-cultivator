@@ -22,6 +22,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **documentation-specialist** - API docs, guides, and changelogs
 - **code-quality-specialist** - Code standards and technical debt assessment
 - **structured-data-specialist** - JSON-LD/Schema.org auditing for SEO and AI discoverability
+- **gtm-specialist** - Google Tag Manager performance auditing (requires Chrome DevTools MCP)
 
 **Orchestrators** (delegate to other agents):
 
@@ -97,6 +98,7 @@ PR with new features:
 | workflow-specialist | `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release` | testing, security, accessibility |
 | accessibility-specialist | `/audit-a11y` | (none - leaf) |
 | performance-specialist | `/audit-perf` | (none - leaf) |
+| gtm-specialist | `/audit-gtm` | (none - leaf) |
 | security-specialist | `/audit-security` | (none - leaf) |
 | testing-specialist | `/test-generate`, `/test-plan`, `/test-coverage` | security, accessibility |
 | documentation-specialist | `/docs-generate` | (none - leaf) |
@@ -113,12 +115,16 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | workflow-specialist | commit-message-generator |
 | accessibility-specialist | accessibility-checker |
 | performance-specialist | performance-analyzer |
+| gtm-specialist | gtm-performance-audit |
 | security-specialist | security-scanner |
 | testing-specialist | test-scaffolding, test-plan-generator, coverage-analyzer |
 | documentation-specialist | documentation-generator |
 | code-quality-specialist | code-standards-checker |
 | structured-data-specialist | structured-data-analyzer |
 | live-audit-specialist | (none - pure orchestrator) |
+| teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
+| live-audit-specialist | strategic-thinking |
+| design-specialist | design-analyzer, responsive-styling, strategic-thinking |
 
 ### Why Agents?
 
@@ -481,6 +487,160 @@ Use @id: '/blog/slug/#article' for entity linking."
 ```
 
 **Related Command:** `/audit-structured-data` - For comprehensive site-wide structured data audits with scoring
+### 10. teamwork-task-creator
+
+**Automatically triggers when you:**
+- Say "create a task" or "make a ticket"
+- Mention "track this work" or "create Teamwork task"
+- Provide requirements that need documentation
+- Ask "how do I create a task?"
+
+**What it does:**
+- Performs context-aware template selection
+- Uses appropriate task template (bug/feature/qa/epic)
+- Ensures all required sections included
+- Provides properly formatted Teamwork task
+
+**Example:**
+```
+You: "Create a task for fixing the broken newsletter signup"
+Claude: "I'll create a Bug Report task since you mentioned 'broken'.
+
+I need a few more details:
+1. What's the exact error?
+2. Where does this happen? (URL)
+3. What browser did you observe this on?
+4. What were the steps that led to the issue?
+
+Once you provide these, I'll create a complete bug report."
+```
+
+**Related Command:** `/teamwork create` - For explicit Teamwork task creation
+
+---
+
+### 11. teamwork-integrator
+
+**Automatically triggers when you:**
+- Mention ticket numbers (PROJ-123, SITE-456)
+- Ask "what's the status of [ticket]?"
+- Say "show me task [number]"
+- Reference Teamwork tasks conversationally
+
+**What it does:**
+- Quick status checks (read-only)
+- Retrieves task details
+- Links tickets in PR descriptions
+- Provides project context
+
+**Example:**
+```
+You: "What's the status of PROJ-123?"
+Claude: "Let me check that for you...
+
+## PROJ-123 Status
+
+**Title:** Implement user authentication
+**Status:** In Progress ⏳
+**Assignee:** jane.developer
+**Priority:** P1 (High)
+**Due:** Jan 20, 2024
+
+**Link:** https://example.teamwork.com/tasks/123
+
+Jane updated this 2 hours ago: 'Google OAuth working on staging'"
+```
+
+**Related Command:** `/teamwork status` - For explicit status checks
+
+---
+
+### 12. teamwork-exporter
+
+**Automatically triggers when you:**
+- Other agents complete audit reports
+- Say "export to Teamwork" or "create tasks from this"
+- Findings need project tracking
+- Ask "can we track these in Teamwork?"
+
+**What it does:**
+- Converts audit findings to Teamwork tasks
+- Maps severity to priority (Critical→P0, High→P1)
+- Groups related issues into epics
+- Links dependencies
+
+**Example:**
+```
+You: "Export these security findings to Teamwork"
+Claude: "I'll export these 8 security findings.
+
+**Analysis:**
+- 1 Critical (SQL injection) → P0
+- 3 High (XSS vulnerabilities) → P1
+- 4 Medium (CSRF) → P2
+
+**Plan:**
+- Create epic: 'Security Fixes'
+- 8 individual bug report tasks
+- Link dependencies
+
+Creating tasks now...
+
+✓ Export complete! Created:
+- Epic: SEC-2024 (link)
+- SEC-101: SQL Injection (P0)
+- SEC-102-104: XSS Issues (P1)
+- SEC-105-108: CSRF (P2)"
+```
+
+**Related Command:** `/teamwork export` - For explicit audit export
+
+---
+
+### 13. strategic-thinking
+
+**Automatically triggers when you:**
+- Ask "should we do this?" or "is this the right approach?"
+- Say "help me decide" or "help me think through this"
+- Ask "what are the trade-offs?" or "pros and cons?"
+- Are weighing options about architecture, tooling, platform, or delegating work
+- Face a prioritization or go/no-go decision
+
+**What it does:**
+- Guides you through Brene Brown's 5 Cs of Strategic Thinking from *Strong Ground*
+- Works through Context, Color, Connective Tissue, Cost, and Consequence conversationally
+- Asks 1–2 focused questions per C to surface what's known and what's missing
+- Synthesizes findings into a structured analysis with a clear recommendation
+
+**The 5 Cs:**
+- **Context** — History, parallel work, stakeholder expectations, prerequisites
+- **Color** — Vision of success, urgency, ideation vs. committed decision
+- **Connective Tissue** — Dependencies, ripple effects, anticipatory thinking
+- **Cost** — Time, money, bandwidth, focus, opportunity cost
+- **Consequence** — Stakes, cost of inaction, risk of getting it wrong
+
+**Example:**
+```
+You: "Should we migrate to headless for this project?"
+Claude: "Let's think through this with the 5 Cs. Context first: has the team
+tried headless before, or is there a reason the current architecture was chosen?"
+
+[... works through each C ...]
+
+## Strategic Analysis: Headless Architecture Decision
+
+### Context
+- Previous attempt abandoned due to editorial complexity — root cause not resolved
+
+### Consequence
+- Repeating the same failure has high organizational cost
+
+## Recommendation
+Defer until editorial workflow requirements are defined.
+Confidence: High | Next step: Document editorial requirements first
+```
+
+**Related Command:** None — this skill activates conversationally for any significant decision
 
 ---
 
@@ -567,9 +727,14 @@ Don't try to "game" the system—just describe what you need:
 | test-plan-generator | "test plan", "QA" | Test scenarios | `/test-plan` |
 | accessibility-checker | "accessible?", "WCAG" | Element checks | `/audit-a11y` |
 | performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
+| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `/audit-gtm` |
 | security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
 | coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
 | structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `/audit-structured-data` |
+| teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |
+| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `/teamwork status` |
+| teamwork-exporter | "export to Teamwork" | Audit export | `/teamwork export` |
+| strategic-thinking | "should we do this?", "help me decide" | Decision making | None |
 
 ## Integration with Workflow
 

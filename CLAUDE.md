@@ -315,10 +315,18 @@ cms-cultivator/
 │   ├── docs.yml             # Zensical deployment
 │   └── test.yml             # BATS test automation
 ├── commands/                # 24 slash command files (*.md)
+├── agents/                  # Specialist agent directories
+│   ├── accessibility-specialist/
+│   ├── security-specialist/
+│   ├── performance-specialist/
+│   ├── teamwork-specialist/
+│   └── ...                  # 15 total agents
+├── commands/                # 25 slash command files (*.md)
 │   ├── pr-*.md              # PR workflow commands
 │   ├── audit-*.md           # Audit commands (comprehensive)
 │   ├── test-*.md            # Testing commands
 │   ├── quality-*.md         # Quality commands
+│   ├── teamwork.md          # Teamwork integration
 │   └── docs-generate.md     # Documentation command
 ├── skills/                  # Agent Skill directories
 │   ├── commit-message-generator/
@@ -332,6 +340,7 @@ cms-cultivator/
 │   ├── coverage-analyzer/
 │   ├── structured-data-analyzer/
 │   └── README.md            # Skills overview
+│   └── README.md            # Skills overview (17 total)
 ├── docs/                    # Zensical documentation site
 │   ├── commands/            # Command category pages
 │   ├── kanopi-tools/        # Kanopi integration docs
@@ -339,6 +348,8 @@ cms-cultivator/
 │   ├── index.md             # Home page
 │   ├── quick-start.md       # Getting started guide
 │   └── contributing.md      # Contribution guidelines
+├── scripts/
+│   └── validate-frontmatter.sh  # Frontmatter validation script
 ├── tests/
 │   └── test-plugin.bats     # 54 BATS tests
 ├── zensical.toml            # Zensical configuration
@@ -424,6 +435,22 @@ cms-cultivator/
 - DDEV commands: `Bash(ddev:*), Bash(ddev theme-build:*)` (specific or wildcard)
 
 ## Testing Approach
+
+### Frontmatter Validation
+
+Before committing changes, validate all frontmatter:
+
+```bash
+./scripts/validate-frontmatter.sh
+```
+
+This script validates:
+- Frontmatter presence and YAML syntax
+- Required fields for commands, agents, and skills
+- Non-empty values
+- Name consistency between files and directories
+
+See [Contributing Guide](docs/contributing.md#validating-frontmatter) for details.
 
 ### Manual Testing
 

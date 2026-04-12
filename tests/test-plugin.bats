@@ -273,7 +273,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 14 ]
+  [ "$count" -eq 16 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -285,9 +285,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (14)" {
+@test "agent count matches expected (16)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 14 ]
+  [ "$count" -eq 16 ]
 }
 
 @test "expected agent directories exist" {
@@ -298,11 +298,14 @@ setup() {
     "design-specialist"
     "documentation-specialist"
     "drupalorg-issue-specialist"
+    "drupal-pantheon-devops-specialist"
     "drupalorg-mr-specialist"
+    "gtm-specialist"
     "live-audit-specialist"
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
+    "teamwork-specialist"
     "testing-specialist"
     "structured-data-specialist"
     "workflow-specialist"
@@ -414,6 +417,7 @@ setup() {
     "browser-validator-specialist"
     "code-quality-specialist"
     "documentation-specialist"
+    "gtm-specialist"
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
@@ -695,6 +699,21 @@ setup() {
   agent_file="agents/responsive-styling-specialist/AGENT.md"
   if ! grep -q "responsive-styling" "$agent_file"; then
     echo "responsive-styling-specialist missing responsive-styling skill"
+    return 1
+  fi
+}
+
+@test "audit-gtm references gtm-specialist" {
+  if ! grep -qi "gtm-specialist\|gtm specialist" commands/audit-gtm.md; then
+    echo "audit-gtm should reference gtm-specialist"
+    return 1
+  fi
+}
+
+@test "gtm-specialist has gtm-performance-audit skill" {
+  agent_file="agents/gtm-specialist/AGENT.md"
+  if ! grep -q "gtm-performance-audit" "$agent_file"; then
+    echo "gtm-specialist missing gtm-performance-audit skill"
     return 1
   fi
 }
