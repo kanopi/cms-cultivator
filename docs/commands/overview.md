@@ -42,7 +42,8 @@ Optimize site speed and improve Core Web Vitals.
 
 | Command | Description |
 |---------|-------------|
-| `/audit-perf [focus]` | Comprehensive performance analysis and Core Web Vitals optimization |
+| `/audit-perf [options]` | Comprehensive performance analysis and Core Web Vitals optimization |
+| `/audit-gtm [options]` | Google Tag Manager performance audit (container size, tag execution, CWV impact) |
 
 **Usage modes**:
 - `/audit-perf` - Full performance audit across all areas
@@ -51,6 +52,10 @@ Optimize site speed and improve Core Web Vitals.
 - `/audit-perf [metric]` - Optimize specific vital (lcp, inp, fid, cls)
 - `/audit-perf lighthouse` - Generate Lighthouse performance report
 - `/audit-perf report` - Generate stakeholder-friendly performance report
+- `/audit-gtm` - Full GTM performance audit with tag profiling
+- `/audit-gtm [focus]` - Focused GTM analysis (container, tags, triggers, consent)
+
+**Requirements**: `/audit-gtm` requires Chrome DevTools MCP Server
 
 ---
 

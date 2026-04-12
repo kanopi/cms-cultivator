@@ -126,4 +126,19 @@ Export results as JSON for automated pipelines:
 - `fid` - First Input Delay optimization (legacy)
 - `cls` - Cumulative Layout Shift fixes
 
+## Related: GTM Performance Audit
+
+If third-party tags or Google Tag Manager are impacting performance, use the dedicated GTM audit:
+
+```bash
+/audit-gtm --url=https://example.com
+```
+
+The **[GTM Performance Audit](gtm-performance.md)** provides:
+- Container size and tag inventory analysis
+- Individual tag execution profiling
+- 14-point issue detection (blocking tags, consent gaps, orphaned tags, etc.)
+- CWV impact mapping per tag
+- GTM-specific remediation steps
+
 See [Commands Overview](overview.md) for detailed usage.

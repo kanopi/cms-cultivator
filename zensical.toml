@@ -24,6 +24,7 @@ nav = [
     "commands/pr-workflow.md",
     "commands/accessibility.md",
     "commands/performance.md",
+    "commands/gtm-performance.md",
     "commands/security.md",
     "commands/live-site-auditing.md",
     "commands/design-workflow.md",
