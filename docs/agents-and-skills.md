@@ -119,7 +119,8 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | documentation-specialist | documentation-generator |
 | code-quality-specialist | code-standards-checker |
 | teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
-| live-audit-specialist | (none - pure orchestrator) |
+| live-audit-specialist | strategic-thinking |
+| design-specialist | design-analyzer, responsive-styling, strategic-thinking |
 
 ### Why Agents?
 
@@ -555,6 +556,53 @@ Creating tasks now...
 
 ---
 
+### 13. strategic-thinking
+
+**Automatically triggers when you:**
+- Ask "should we do this?" or "is this the right approach?"
+- Say "help me decide" or "help me think through this"
+- Ask "what are the trade-offs?" or "pros and cons?"
+- Are weighing options about architecture, tooling, platform, or delegating work
+- Face a prioritization or go/no-go decision
+
+**What it does:**
+- Guides you through Brene Brown's 5 Cs of Strategic Thinking from *Strong Ground*
+- Works through Context, Color, Connective Tissue, Cost, and Consequence conversationally
+- Asks 1–2 focused questions per C to surface what's known and what's missing
+- Synthesizes findings into a structured analysis with a clear recommendation
+
+**The 5 Cs:**
+- **Context** — History, parallel work, stakeholder expectations, prerequisites
+- **Color** — Vision of success, urgency, ideation vs. committed decision
+- **Connective Tissue** — Dependencies, ripple effects, anticipatory thinking
+- **Cost** — Time, money, bandwidth, focus, opportunity cost
+- **Consequence** — Stakes, cost of inaction, risk of getting it wrong
+
+**Example:**
+```
+You: "Should we migrate to headless for this project?"
+Claude: "Let's think through this with the 5 Cs. Context first: has the team
+tried headless before, or is there a reason the current architecture was chosen?"
+
+[... works through each C ...]
+
+## Strategic Analysis: Headless Architecture Decision
+
+### Context
+- Previous attempt abandoned due to editorial complexity — root cause not resolved
+
+### Consequence
+- Repeating the same failure has high organizational cost
+
+## Recommendation
+Defer until editorial workflow requirements are defined.
+Confidence: High | Next step: Document editorial requirements first
+```
+
+**Related Command:** None — this skill activates conversationally for any significant decision
+
+---
+
 ## How to Use Agent Skills
 
 ### Natural Conversation
@@ -644,6 +692,7 @@ Don't try to "game" the system—just describe what you need:
 | teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |
 | teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `/teamwork status` |
 | teamwork-exporter | "export to Teamwork" | Audit export | `/teamwork export` |
+| strategic-thinking | "should we do this?", "help me decide" | Decision making | None |
 
 ## Integration with Workflow
 

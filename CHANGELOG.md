@@ -7,54 +7,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.9.0] - 2026-03-04
-
-### Added
-
-- **GTM Performance Audit** - Comprehensive Google Tag Manager performance analysis
-  - `/audit-gtm` command with flexible argument modes (--quick, --standard, --comprehensive)
-  - **gtm-specialist agent** - Leaf specialist for GTM container analysis and tag profiling
-  - **gtm-performance-audit skill** - Automatic GTM performance guidance during conversation
-  - 14-point issue detection: sync scripts, blocking tags, large payloads, main thread blocking,
-    missing conditional firing, trigger optimization, duplicate tags, orphaned tags, expensive
-    variables, missing async, Custom HTML audit, server-side candidates, consent gaps, firing order
-  - Chrome DevTools MCP integration for live profiling (required)
-  - CMS-specific patterns for Drupal (google_tag module) and WordPress (GTM4WP, Site Kit)
-  - Core Web Vitals impact mapping per tag
-  - GTM-specific scope control: `--scope=container=<GTM-ID>`
-  - GTM-specific options: `--container-id`, `--with-container-json`, `--url`
-  - Legacy focus areas: container, tags, triggers, datalayer, custom-html, consent
-  - Report file output: `audit-gtm-YYYY-MM-DD-HHMM.md`
-
-### Changed
-
-- **Plugin Metadata** - Version bumped to 0.9.0
-  - Agent count: 14 → 16 (added gtm-specialist, fixed teamwork-specialist count)
-  - Command count: 24 → 25 (added audit-gtm)
-  - Skill count: 14 → 18 (added gtm-performance-audit, corrected existing count)
-  - Keywords: Added "gtm", "google-tag-manager"
-
-- **Test Suite** - Updated for GTM integration
-  - Agent count validation: 14 → 16
-  - Added gtm-specialist and teamwork-specialist to expected agents list
-  - Added gtm-specialist to leaf specialists list
-  - New tests: audit-gtm references gtm-specialist, gtm-specialist has skill
+## [0.8.3] - 2026-04-07
 
 ### Documentation
 
-- New documentation page: `docs/commands/gtm-performance.md`
-- Updated `docs/commands/overview.md` with GTM audit in Performance section
-- Updated `docs/commands/performance.md` with GTM cross-reference
-- Updated `docs/agents-and-skills.md` with gtm-specialist and gtm-performance-audit
-- Updated `skills/README.md` with gtm-performance-audit entry
-- Updated `zensical.toml` navigation with GTM page
-- Updated `CHANGELOG.md` with 0.9.0 release notes
+- **Workflow Specialist Approval Process** - Clarified main agent role for approval workflows
+  - Added explicit instructions for main agent handling of formatted output from workflow-specialist
+  - Documented presentation patterns for pr-create (PR descriptions), pr-commit-msg (commit messages), and pr-release (release artifacts)
+  - Added output format header to pr-release prompt for consistency with other approval workflows
+  - Prevents main agent from adding unnecessary explanations before presenting content requiring user approval
+  - Ensures clean, consistent approval workflow user experience across all PR-related commands
+  - Applies to `/pr-create`, `/pr-commit-msg`, and `/pr-release` commands
+  - Updated `commands/pr-create.md`, `commands/pr-commit-msg.md`, and `commands/pr-release.md`
 
-### Requirements
+### Notes
 
-- **Required Dependency**: Chrome DevTools MCP server for GTM auditing
-  - No fallback mode - Chrome DevTools MCP is required
-  - Provides live page profiling, network waterfall capture, and JavaScript execution
+This patch release focuses on improving the user experience during approval workflows by ensuring the main agent presents formatted output cleanly without unnecessary commentary. This provides a more streamlined interaction when creating PRs, generating commit messages, or preparing release artifacts.
+
+## [0.8.2] - 2026-03-05
+
+### Added
+
+- **Frontmatter Validation Script** - New development tool for quality assurance
+  - `scripts/validate-frontmatter.sh` - Comprehensive YAML frontmatter validation
+  - Validates frontmatter presence and YAML syntax across all markdown files
+  - Checks required fields for commands (description, allowed-tools), agents (name, description, tools), and skills (name, description)
+  - Verifies non-empty values for all required fields
+  - Validates name consistency between agent/skill files and directory names
+  - Color-coded output: errors (red), warnings (yellow), success (green)
+  - Exit codes for CI/CD integration (0=success, 1=errors)
+  - Python-based YAML parser using `yaml.safe_load()`
+  - Validation summary with error and warning counts
+
+- **Validation Documentation** - Comprehensive guide for contributors
+  - New section in `docs/contributing.md` - "Validating Frontmatter"
+  - Documents validation script usage and common frontmatter issues
+  - Explains required fields for each file type (commands, agents, skills)
+  - Provides examples of common YAML syntax errors
+  - Includes pre-commit hook integration example
+  - Updated `CLAUDE.md` with validation instructions and scripts directory documentation
+
+### Fixed
+
+- **YAML Frontmatter Bug** - Fixed unquoted square brackets in command frontmatter
+  - `commands/teamwork.md` - Quoted `argument-hint` value to prevent YAML parsing errors
+  - Changed from `argument-hint: [operation] [args]` to `argument-hint: "[operation] [args]"`
+  - Square brackets in YAML must be quoted when used as string values
+  - Prevents YAML parser from interpreting brackets as array syntax
+
+### Changed
+
+- **Test Suite Updates** - Updated BATS tests for current project state
+  - Increased expected agent count from 14 to 15 (includes teamwork-specialist)
+  - Added `teamwork-specialist` to expected agent directories list
+  - All 105 BATS tests passing
+
+### Documentation
+
+- **File Organization** - Updated project structure documentation in `CLAUDE.md`
+  - Added `scripts/` directory with `validate-frontmatter.sh` documentation
+  - Updated agent count from 14 to 15 agents
+  - Updated command count documentation
+  - Added "Frontmatter Validation" section in testing approach
+  - Comprehensive validation workflow documentation
+
+### Development
+
+- **Quality Assurance Tooling** - New validation infrastructure for maintainers
+  - Prevents YAML syntax errors from reaching production
+  - Catches missing required fields before merge
+  - Ensures consistency between file names and frontmatter values
+  - Provides clear error messages for quick debugging
+  - Foundation for pre-commit hooks and CI/CD validation
+
+### Notes
+
+This patch release adds development tooling to prevent YAML frontmatter errors. The validation script should be run before committing changes to commands, agents, or skills. This is a development-time tool that improves plugin quality but does not affect runtime behavior.
 
 ## [0.8.1] - 2026-03-02
 
@@ -801,8 +829,8 @@ live-audit-specialist       → (no skills, pure orchestrator)
 - **Licensing**:
   - GPL-2.0-or-later license (Drupal-compatible)
 
-[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.9.0...HEAD
-[0.9.0]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...0.9.0
+[Unreleased]: https://github.com/kanopi/cms-cultivator/compare/0.8.2...HEAD
+[0.8.2]: https://github.com/kanopi/cms-cultivator/compare/0.8.1...0.8.2
 [0.8.1]: https://github.com/kanopi/cms-cultivator/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/kanopi/cms-cultivator/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/kanopi/cms-cultivator/compare/0.7.0...0.7.1

@@ -33,6 +33,20 @@ Task(cms-cultivator:workflow-specialist:workflow-specialist,
      prompt="Generate a conventional commit message from the user's staged changes. First, gather git context by running: git status, git diff --cached (for staged changes), git log (for recent commit history). Analyze the changes, review recent commit style for consistency, and create a properly formatted commit message following Conventional Commits specification. CRITICAL OUTPUT FORMAT: Your response must START IMMEDIATELY with '=== COMMIT MESSAGE READY FOR APPROVAL ===' followed by the commit message. DO NOT write ANY text before this header. NO context, NO summaries, NO explanations like 'I've analyzed...' or 'Good, GitHub CLI...'. Your ENTIRE response must be ONLY: 1. The header '=== COMMIT MESSAGE READY FOR APPROVAL ===' 2. The complete commit message in a code block 3. The separator '===================================' 4. The approval request 'Reply \"approve\" to commit with this message, or provide your edits.' NOTHING ELSE. No preamble, no summary, no analysis notes.")
 ```
 
+### Your Role as Main Agent
+
+**CRITICAL:** When you receive output from the workflow-specialist:
+
+1. **If the output starts with `=== COMMIT MESSAGE READY FOR APPROVAL ===`:**
+   - Present it DIRECTLY to the user WITHOUT any additional commentary
+   - Do NOT add "Let me show you" or "Here's what was generated"
+   - Do NOT explain what happened or provide context
+   - Simply output the workflow-specialist's response verbatim
+
+2. **Wait for user response** (approve/edits)
+
+3. **Resume the workflow-specialist agent** with the user's response using the agentId
+
 The workflow specialist will:
 1. Gather git context (status, staged diff, commit history)
 2. Apply the **commit-message-generator** skill

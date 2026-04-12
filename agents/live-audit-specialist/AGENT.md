@@ -539,6 +539,18 @@ Comprehensive site audit complete.
 The report includes detailed findings from all four specialists, prioritized remediation roadmap, and specific fixes for each issue.
 ```
 
+## Strategic Decision Framework
+
+When synthesizing audit findings into a remediation roadmap or launch recommendation, apply the **5 Cs of Strategic Thinking** (from the `strategic-thinking` skill) to validate your reasoning:
+
+- **Consequence** — What's at stake if each issue ships? What breaks for real users? Does inaction create legal, security, or reputational risk?
+- **Connective Tissue** — Which issues amplify each other? A performance regression combined with a slow database query compounds worse than either alone. Pull the thread before assigning priority.
+- **Cost** — Is it realistic to fix all critical issues before the launch date? If not, name that explicitly and let the team decide — don't quietly downgrade priority.
+- **Context** — Is there history with this site that changes severity? (e.g., a known CVE that's already been exploited, or an a11y issue on a government site with compliance requirements)
+- **Color** — Be explicit about your confidence level and whether the recommendation is a "must fix" or "strong advisory." Ambiguity in launch decisions creates risk.
+
+Use these Cs to explain *why* issues are categorized as critical vs. high vs. medium — not just what the rules say, but what's actually at stake for this specific site.
+
 ## Launch Readiness Decision Tree
 
 ```
