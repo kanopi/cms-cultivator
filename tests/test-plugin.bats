@@ -71,6 +71,10 @@ setup() {
   [ "$non_md_count" -eq 0 ]
 }
 
+@test "command count matches expected (24)" {
+  count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
+  [ "$count" -eq 24 ]
+}
 
 # ==============================================================================
 # COMMAND FRONTMATTER TESTS
@@ -303,6 +307,7 @@ setup() {
     "security-specialist"
     "teamwork-specialist"
     "testing-specialist"
+    "structured-data-specialist"
     "workflow-specialist"
   )
 
@@ -416,6 +421,7 @@ setup() {
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
+    "structured-data-specialist"
   )
 
   for agent in "${leaf_specialists[@]}"; do
@@ -710,6 +716,42 @@ setup() {
     echo "gtm-specialist missing gtm-performance-audit skill"
     return 1
   fi
+}
+
+# ==============================================================================
+# STRUCTURED DATA SPECIALIST TESTS
+# ==============================================================================
+
+@test "structured data audit command exists" {
+  [ -f "commands/audit-structured-data.md" ]
+}
+
+@test "audit-structured-data references structured-data-specialist" {
+  if ! grep -qi "structured-data-specialist\|structured data specialist" commands/audit-structured-data.md; then
+    echo "audit-structured-data should reference structured-data-specialist"
+    return 1
+  fi
+}
+
+@test "structured-data-specialist has structured-data-analyzer skill" {
+  agent_file="agents/structured-data-specialist/AGENT.md"
+  if ! grep -q "structured-data-analyzer" "$agent_file"; then
+    echo "structured-data-specialist missing structured-data-analyzer skill"
+    return 1
+  fi
+}
+
+@test "structured-data-specialist has chrome-devtools MCP tools" {
+  agent_file="agents/structured-data-specialist/AGENT.md"
+  tools=$(sed -n 's/^tools: *//p' "$agent_file")
+  if ! echo "$tools" | grep -q "chrome-devtools MCP"; then
+    echo "structured-data-specialist should have chrome-devtools MCP tools"
+    return 1
+  fi
+}
+
+@test "structured-data-analyzer skill exists" {
+  [ -f "skills/structured-data-analyzer/SKILL.md" ]
 }
 
 # ==============================================================================

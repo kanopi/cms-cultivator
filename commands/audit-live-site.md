@@ -42,6 +42,15 @@ The live-audit specialist will:
 
 ---
 
+## Related Commands
+
+- **[`/audit-structured-data`](audit-structured-data.md)** - Audit JSON-LD/Schema.org structured data for SEO and AI discoverability
+- **[`/audit-perf`](audit-perf.md)** - Focused Core Web Vitals and performance optimization
+- **[`/audit-a11y`](audit-a11y.md)** - Focused WCAG 2.1 Level AA compliance audit
+- **[`/audit-security`](audit-security.md)** - Focused OWASP Top 10 vulnerability scanning
+
+---
+
 ## Tool Usage
 
 **Allowed operations:**

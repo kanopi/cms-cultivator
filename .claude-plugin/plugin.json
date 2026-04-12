@@ -34,6 +34,10 @@
     "responsive-design",
     "browser-validation",
     "chrome-devtools-mcp",
+    "structured-data",
+    "json-ld",
+    "schema-org",
+    "seo"
     "gtm",
     "google-tag-manager",
     "devops",

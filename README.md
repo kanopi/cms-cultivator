@@ -60,6 +60,7 @@ Comprehensive performance, accessibility, and security audits with flexible argu
 - `/audit-security [options]` - OWASP Top 10 vulnerability scanning
 - `/audit-perf [options]` - Core Web Vitals and optimization
 - `/quality-analyze [options]` - Code quality and technical debt
+- `/audit-structured-data <url> [options]` - JSON-LD/Schema.org for SEO and AI discoverability
 - `/audit-live-site [url]` - Comprehensive parallel audit (all specialists)
 - `/export-audit-csv [report-file]` - Export audit findings to CSV for project management tools
 
@@ -141,7 +142,7 @@ Audit and quality commands now support multiple operation modes:
 Commands spawn specialized agents that orchestrate complex workflows:
 
 **Review/Audit Agents** (Green):
-- accessibility-specialist, code-quality-specialist, security-specialist, performance-specialist
+- accessibility-specialist, code-quality-specialist, security-specialist, performance-specialist, structured-data-specialist
 
 **Generation Agents** (Blue):
 - documentation-specialist, testing-specialist, responsive-styling-specialist
@@ -158,7 +159,7 @@ Model-invoked skills that activate during conversation:
 - accessibility-checker, security-scanner, performance-analyzer
 - commit-message-generator, test-scaffolding, coverage-analyzer
 - documentation-generator, test-plan-generator, code-standards-checker
-- design-analyzer, responsive-styling, browser-validator
+- structured-data-analyzer, design-analyzer, responsive-styling, browser-validator
 
 ### How It Works
 
