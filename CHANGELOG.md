@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **DevOps Setup Documentation** - Documentation for `/devops-setup` command and `drupal-pantheon-devops-specialist` agent
+  - New `docs/commands/devops.md` page with full workflow documentation, prerequisites, and manual follow-up tasks
+  - Added DevOps Setup section to `docs/commands/overview.md`
+  - Added `drupal-pantheon-devops-specialist` to agent tables in `docs/agents-and-skills.md`
+  - Updated `zensical.toml` nav to include devops docs page
+
+### Fixed
+
+- **BATS test agent count** - Updated agent count assertions from 16 to 17 to match current codebase
+
 ## [0.8.3] - 2026-04-07
 
 ### Documentation
