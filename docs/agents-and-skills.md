@@ -23,6 +23,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **code-quality-specialist** - Code standards and technical debt assessment
 - **structured-data-specialist** - JSON-LD/Schema.org auditing for SEO and AI discoverability
 - **gtm-specialist** - Google Tag Manager performance auditing (requires Chrome DevTools MCP)
+- **drupal-pantheon-devops-specialist** - Kanopi DevOps onboarding for Drupal/Pantheon projects
 
 **Orchestrators** (delegate to other agents):
 
@@ -105,6 +106,7 @@ PR with new features:
 | live-audit-specialist | `/audit-live-site` | performance, accessibility, security, code-quality |
 | code-quality-specialist | `/quality-analyze`, `/quality-standards` | (none - leaf) |
 | structured-data-specialist | `/audit-structured-data` | (none - leaf) |
+| drupal-pantheon-devops-specialist | `/devops-setup` | (none - leaf) |
 
 ### Agent-to-Skill Mapping
 
@@ -121,6 +123,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | documentation-specialist | documentation-generator |
 | code-quality-specialist | code-standards-checker |
 | structured-data-specialist | structured-data-analyzer |
+| drupal-pantheon-devops-specialist | (none) |
 | live-audit-specialist | (none - pure orchestrator) |
 | teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
 | live-audit-specialist | strategic-thinking |

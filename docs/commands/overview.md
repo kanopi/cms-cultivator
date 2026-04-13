@@ -100,6 +100,23 @@ Generate tests and analyze test coverage.
 
 ---
 
+### 🔧 [DevOps Setup](devops.md)
+
+Automate Kanopi's Drupal/Pantheon DevOps onboarding for new projects.
+
+| Command | Description |
+|---------|-------------|
+| `/devops-setup [git-url]` | Full Kanopi DevOps onboarding (GitHub, Pantheon, CircleCI, code quality) |
+
+**What it automates**:
+- GitHub repo creation + branch protection + team access
+- Pantheon Redis + New Relic via Terminus
+- DDEV, CircleCI, Cypress, code quality tools, quicksilver scripts
+
+**Requirements**: GitHub CLI (`gh`), Terminus CLI
+
+---
+
 ### 📊 [Code Quality](code-quality.md)
 
 Maintain code quality and reduce technical debt.
@@ -222,4 +239,5 @@ Extend CMS Cultivator with additional skills.
 - **[PR Workflow Commands](pr-workflow.md)** - Detailed PR workflow guide
 - **[Accessibility Commands](accessibility.md)** - WCAG compliance guide
 - **[Performance Commands](performance.md)** - Optimization strategies
+- **[DevOps Setup](devops.md)** - Drupal/Pantheon onboarding automation
 - **[Quick Start](../quick-start.md)** - Common workflow examples

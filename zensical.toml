@@ -31,6 +31,7 @@ nav = [
     "commands/documentation.md",
     "commands/testing.md",
     "commands/code-quality.md",
+    "commands/devops.md",
     "commands/project-management.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
@@ -47,7 +48,8 @@ nav = [
     "kanopi-tools/ddev-commands.md"
   ]},
   {"Reference" = [
-    "reference/markdown-style-guide.md"
+    "reference/markdown-style-guide.md",
+    "reference/agent-skills-reference.md"
   ]},
   {"Testing" = "testing.md"},
   {"Contributing" = "contributing.md"}
