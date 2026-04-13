@@ -7,17 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-04-13
+
 ### Added
 
-- **DevOps Setup Documentation** - Documentation for `/devops-setup` command and `drupal-pantheon-devops-specialist` agent
-  - New `docs/commands/devops.md` page with full workflow documentation, prerequisites, and manual follow-up tasks
+- **Agent Skills Reference Guide** - New documentation page explaining the shift from slash commands to Agent Skills
+  - `docs/reference/agent-skills-reference.md` — covers skill types, installation, plugin structure, two-tier pattern, and official Anthropic resources
+  - Added to `zensical.toml` nav under the Reference section
+
+- **DevOps Setup Documentation** - Full documentation page for the `/devops-setup` command
+  - `docs/commands/devops.md` — workflow phases, prerequisites, phase-by-phase breakdown, and manual follow-up tasks
   - Added DevOps Setup section to `docs/commands/overview.md`
   - Added `drupal-pantheon-devops-specialist` to agent tables in `docs/agents-and-skills.md`
-  - Updated `zensical.toml` nav to include devops docs page
+  - Updated `zensical.toml` nav to include the devops docs page
+
+- **Beads Issue Tracking** - Initialized `.beads/` directory for lightweight issue tracking
+  - `AGENTS.md` — documents agents available in this repository
 
 ### Fixed
 
-- **BATS test agent count** - Updated agent count assertions from 16 to 17 to match current codebase
+- **BATS test assertions** - Updated command count (24→27), agent count (16→17), and agent list to match current codebase state
 
 ## [0.8.3] - 2026-04-07
 
