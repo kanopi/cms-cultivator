@@ -48,7 +48,8 @@ nav = [
     "kanopi-tools/ddev-commands.md"
   ]},
   {"Reference" = [
-    "reference/markdown-style-guide.md"
+    "reference/markdown-style-guide.md",
+    "reference/agent-skills-reference.md"
   ]},
   {"Testing" = "testing.md"},
   {"Contributing" = "contributing.md"}
