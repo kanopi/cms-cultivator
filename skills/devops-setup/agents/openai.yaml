@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: DevOps Setup"
+  short_description: "Automate Kanopi's complete Drupal/Pantheon DevOps setup — irreversible multi-system operation requiring explicit confirmation."

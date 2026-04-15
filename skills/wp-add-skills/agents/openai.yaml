@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: WP Add Skills"
+  short_description: "Install 13 official WordPress agent-skills from WordPress/agent-skills repository with user confirmation before installation."

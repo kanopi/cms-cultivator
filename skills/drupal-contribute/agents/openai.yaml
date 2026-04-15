@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Drupal Contribute"
+  short_description: "Full drupal.org contribution workflow creating issues and merge requests with guided manual steps."

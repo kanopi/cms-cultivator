@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Quality Audit"
+  short_description: "Comprehensive code quality analysis and technical debt assessment for Drupal and WordPress."

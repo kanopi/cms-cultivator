@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Drupal MR"
+  short_description: "Create or list merge requests for drupal.org projects via git.drupalcode.org with guided git operations."

@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Security Audit"
+  short_description: "Comprehensive OWASP Top 10 security vulnerability scanning for Drupal and WordPress."

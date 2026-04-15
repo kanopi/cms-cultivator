@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Accessibility Audit"
+  short_description: "Comprehensive WCAG 2.1 Level AA accessibility audit for Drupal and WordPress projects."
