@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a pull request or analyze local changes using the workflow specialist. Auto-activates when user mentions reviewing a PR, asks for code review, wants to analyze their changes before submitting, or mentions "pr-review self". Invoke when user provides a PR number to review or says "review self", "review my changes", or "pr review". Supports focus areas: code, security, breaking, testing, size, performance.
+description: "Review a pull request or analyze local changes using the workflow specialist. Auto-activates when user mentions reviewing a PR, asks for code review, wants to analyze their changes before submitting, or mentions \"pr-review self\". Invoke when user provides a PR number to review or says \"review self\", \"review my changes\", or \"pr review\". Supports focus areas: code, security, breaking, testing, size, performance."
 ---
 
 # PR Review

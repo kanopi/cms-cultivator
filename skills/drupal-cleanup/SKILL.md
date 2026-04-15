@@ -1,6 +1,6 @@
 ---
 name: drupal-cleanup
-description: List and clean up cloned drupal.org repositories in the local cache (~/.cache/drupal-contrib/). Invoke when user asks to list, remove, or clean up cloned Drupal contrib repos, says "cleanup drupal repos", "remove cloned drupal projects", or uses /drupal-cleanup. Has side effects: permanently deletes repository clones. Requires user confirmation before deletion.
+description: "List and clean up cloned drupal.org repositories in the local cache (~/.cache/drupal-contrib/). Invoke when user asks to list, remove, or clean up cloned Drupal contrib repos, says \"cleanup drupal repos\", \"remove cloned drupal projects\", or uses /drupal-cleanup. Has side effects: permanently deletes repository clones. Requires user confirmation before deletion."
 ---
 
 # Drupal Cleanup

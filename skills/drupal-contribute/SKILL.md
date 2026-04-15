@@ -1,6 +1,6 @@
 ---
 name: drupal-contribute
-description: Full drupal.org contribution workflow — create an issue and set up a merge request together. Invoke when user wants to contribute to a Drupal module, says "contribute to drupal.org", "create a drupal.org issue and MR", or uses /drupal-contribute. Requires user interaction at two manual steps (CAPTCHA-protected issue creation and issue fork creation). Has side effects: clones repos to ~/.cache/drupal-contrib/ and creates drupal.org issues.
+description: "Full drupal.org contribution workflow — create an issue and set up a merge request together. Invoke when user wants to contribute to a Drupal module, says \"contribute to drupal.org\", \"create a drupal.org issue and MR\", or uses /drupal-contribute. Requires user interaction at two manual steps (CAPTCHA-protected issue creation and issue fork creation). Has side effects: clones repos to ~/.cache/drupal-contrib/ and creates drupal.org issues."
 ---
 
 # Drupal Contribute

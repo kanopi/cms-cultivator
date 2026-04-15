@@ -1,6 +1,6 @@
 ---
 name: wp-add-skills
-description: Install official WordPress agent-skills from the WordPress/agent-skills GitHub repository. Invoke when user asks to install WordPress skills, says "add WordPress skills", "install WordPress agent skills", or uses /wp-add-skills. Has side effects: clones a repository, installs 13 skills to the global skills directory. Requires user confirmation before installation. Supports --list and --update flags.
+description: "Install official WordPress agent-skills from the WordPress/agent-skills GitHub repository. Invoke when user asks to install WordPress skills, says \"add WordPress skills\", \"install WordPress agent skills\", or uses /wp-add-skills. Has side effects: clones a repository, installs 13 skills to the global skills directory. Requires user confirmation before installation. Supports --list and --update flags."
 ---
 
 # WP Add Skills
