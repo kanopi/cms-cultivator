@@ -1,16 +1,16 @@
-# Commands Overview
+# Skills Overview
 
-CMS Cultivator provides specialized commands organized into categories. Each command integrates seamlessly with Drupal and WordPress projects.
+CMS Cultivator provides 38 Agent Skills organized into categories. Each skill integrates seamlessly with Drupal and WordPress projects and works across Claude Code, Claude Desktop, and OpenAI Codex.
 
 ---
 
-## Command Categories
+## Skill Categories
 
 ### 🔄 [PR Workflow](pr-workflow.md)
 
 Streamline pull request creation, review, and deployment.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/pr-create [ticket]` | Create pull request with generated description |
 | `/pr-review [pr-number\|self] [focus]` | Review PR or analyze your own changes (size, breaking changes, test plan) |
@@ -23,7 +23,7 @@ Streamline pull request creation, review, and deployment.
 
 Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/audit-a11y [focus]` | Comprehensive accessibility audit with WCAG 2.1 Level AA compliance |
 
@@ -40,7 +40,7 @@ Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
 Optimize site speed and improve Core Web Vitals.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/audit-perf [options]` | Comprehensive performance analysis and Core Web Vitals optimization |
 | `/audit-gtm [options]` | Google Tag Manager performance audit (container size, tag execution, CWV impact) |
@@ -63,7 +63,7 @@ Optimize site speed and improve Core Web Vitals.
 
 Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/audit-security [focus]` | Comprehensive security audit with vulnerability scanning and compliance reporting |
 
@@ -78,7 +78,7 @@ Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
 Generate and maintain project documentation.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/docs-generate [type]` | Generate documentation (API, README, guides, changelog) |
 
@@ -90,7 +90,7 @@ Generate and maintain project documentation.
 
 Generate tests and analyze test coverage.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/test-generate [type]` | Generate test scaffolding (unit, integration, e2e, data) |
 | `/test-coverage` | Analyze test coverage and identify untested code paths |
@@ -104,7 +104,7 @@ Generate tests and analyze test coverage.
 
 Automate Kanopi's Drupal/Pantheon DevOps onboarding for new projects.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/devops-setup [git-url]` | Full Kanopi DevOps onboarding (GitHub, Pantheon, CircleCI, code quality) |
 
@@ -121,7 +121,7 @@ Automate Kanopi's Drupal/Pantheon DevOps onboarding for new projects.
 
 Maintain code quality and reduce technical debt.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/quality-analyze [focus]` | Analyze code quality (refactoring, complexity, technical debt) |
 | `/quality-standards` | Check code against standards (PHPCS, ESLint, Drupal/WordPress) |
@@ -134,7 +134,7 @@ Maintain code quality and reduce technical debt.
 
 Comprehensive audits of live websites using Chrome DevTools.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/audit-live-site [url]` | Full site audit for performance, accessibility, SEO, and security |
 | `/audit-structured-data <url> [options]` | Audit JSON-LD/Schema.org for SEO and AI discoverability |
@@ -158,7 +158,7 @@ Comprehensive audits of live websites using Chrome DevTools.
 
 Integrate with Teamwork for task tracking and project coordination.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/teamwork [operation] [args]` | Create, update, and manage Teamwork tasks with expert guidance |
 
@@ -207,12 +207,12 @@ Integrate with Teamwork for task tracking and project coordination.
 
 ## Integration with Kanopi Tools
 
-Commands automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/overview.md):
+Skills automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/overview.md):
 
-- **Quality Commands** use `ddev composer code-check`, `phpstan`, `rector-check`
-- **Performance Commands** suggest `ddev theme-build` and `ddev critical-run`
-- **Security Commands** use `ddev composer audit` and `npm audit`
-- **Testing Commands** leverage `ddev cypress-run` for E2E tests
+- **Quality skills** use `ddev composer code-check`, `phpstan`, `rector-check`
+- **Performance skills** suggest `ddev theme-build` and `ddev critical-run`
+- **Security skills** use `ddev composer audit` and `npm audit`
+- **Testing skills** leverage `ddev cypress-run` for E2E tests
 
 ---
 
@@ -220,7 +220,7 @@ Commands automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/ov
 
 Extend CMS Cultivator with additional skills.
 
-| Command | Description |
+| Skill | Description |
 |---------|-------------|
 | `/wp-add-skills [options]` | Install official WordPress agent-skills globally |
 
@@ -236,8 +236,8 @@ Extend CMS Cultivator with additional skills.
 
 ## Next Steps
 
-- **[PR Workflow Commands](pr-workflow.md)** - Detailed PR workflow guide
-- **[Accessibility Commands](accessibility.md)** - WCAG compliance guide
-- **[Performance Commands](performance.md)** - Optimization strategies
+- **[PR Workflow Skills](pr-workflow.md)** - Detailed PR workflow guide
+- **[Accessibility Skills](accessibility.md)** - WCAG compliance guide
+- **[Performance Skills](performance.md)** - Optimization strategies
 - **[DevOps Setup](devops.md)** - Drupal/Pantheon onboarding automation
 - **[Quick Start](../quick-start.md)** - Common workflow examples

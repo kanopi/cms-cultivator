@@ -4,22 +4,21 @@ This file provides context for Claude (or other AI assistants) when working on t
 
 ## Project Overview
 
-**CMS Cultivator** is a Claude Code plugin providing specialized slash commands and Agent Skills for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts.
+**CMS Cultivator** is a Claude Code plugin providing specialized Agent Skills for Drupal and WordPress development. It integrates with Kanopi's DDEV add-ons and standardized Composer scripts. Skills work across Claude Code, Claude Desktop, and OpenAI Codex.
 
-### Architecture: "Agents Orchestrate, Skills Guide, Commands Interface"
+### Architecture: "Agents Orchestrate, Skills Guide"
 
 - **Specialist Agents** (`/agents/`) - Autonomous agents that orchestrate complex workflows by spawning other agents in parallel. Use fully qualified names when referencing: `cms-cultivator:agent-name:agent-name`
-- **Agent Skills** (`/skills/`) - Detailed "how-to" documentation with complete workflows, examples, and instructions. Single source of truth.
-- **Slash Commands** (`/commands/`) - User-facing interfaces that spawn agents or reference skills. Quick start guides.
+- **Agent Skills** (`/skills/`) - Detailed "how-to" documentation with complete workflows, examples, and instructions. Single source of truth and universal invocation format.
 
 ## Key Architectural Decisions
 
-### Hybrid Architecture: Agents + Commands + Skills
+### Architecture: Agents + Skills
 
-**Three complementary systems:**
+**Two complementary systems:**
 
 1. **Specialist Agents** (`/agents/`)
-   - Autonomous agents spawned by commands or other agents
+   - Autonomous agents spawned by skills or other agents
    - Orchestrate complex workflows with parallel execution
    - Each agent has a specific domain expertise
    - **IMPORTANT:** When agents reference other agents via the Task tool, use fully qualified names: `cms-cultivator:agent-name:agent-name`
@@ -30,92 +29,7 @@ This file provides context for Claude (or other AI assistants) when working on t
    - Complete technical documentation
    - Detailed workflows, examples, best practices
    - **Single source of truth** for implementation details
-
-3. **Slash Commands** (`/commands/`)
-   - User-invoked (explicit `/command` triggering)
-   - Quick start guides
-   - Reference agents and/or skills for detailed instructions
-   - When to use command vs. skill
-
-### Command Structure
-
-Each command is a Markdown file in `/commands/` with YAML frontmatter:
-
-```yaml
----
-description: Brief one-line description
-argument-hint: [optional-arg]
-allowed-tools: Bash(git:*), Read, Glob, Grep, Write
----
-```
-
-**Commands reference skills:**
-```markdown
-## How It Works
-
-This command uses the **skill-name** Agent Skill.
-
-**For complete workflow and technical details**, see:
-→ [`skills/skill-name/SKILL.md`](../skills/skill-name/SKILL.md)
-```
-
-**Important conventions:**
-- Commands support both direct tool execution AND DDEV-wrapped execution
-- Example: Allow both `composer` and `ddev composer` in `allowed-tools`
-- Platform-agnostic: Commands work for both Drupal and WordPress projects
-- Commands are concise (90-200 lines), skills are comprehensive (150-300 lines)
-
-### Flexible Argument Mode System (v0.6.0+)
-
-Four audit/quality commands support flexible argument modes for different use cases:
-
-**Commands with flexible modes:**
-- `/audit-a11y [options]`
-- `/audit-perf [options]`
-- `/audit-security [options]`
-- `/quality-analyze [options]`
-
-**Argument categories:**
-
-1. **Depth Modes** - Control thoroughness:
-   - `--quick` - Fast checks, critical issues only (~5 min)
-   - `--standard` - Comprehensive analysis (default, ~15 min)
-   - `--comprehensive` - Deep dive with best practices (~30 min)
-
-2. **Scope Control** - Limit what's analyzed:
-   - `--scope=current-pr` - Only files in current PR (requires `Bash(git:*)`)
-   - `--scope=module=<name>` - Specific module/directory
-   - `--scope=file=<path>` - Single file
-   - `--scope=entire` - Full codebase (default)
-   - Command-specific scopes (e.g., `--scope=frontend`, `--scope=auth`)
-
-3. **Output Formats** - Control presentation:
-   - `--format=report` - Detailed markdown (default)
-   - `--format=json` - Machine-readable for CI/CD
-   - `--format=summary` - Executive summary
-   - `--format=checklist` - Simple pass/fail list
-   - Command-specific formats (e.g., `--format=sarif` for security)
-
-4. **Thresholds** - Quality gates:
-   - Performance: `--target=good|needs-improvement`
-   - Security: `--min-severity=high|medium|low`
-   - Quality: `--max-complexity=N`, `--min-grade=A|B|C`
-
-5. **Legacy Focus Areas** - Backward compatible:
-   - Single-word arguments without `--` prefix still work
-   - Examples: `/audit-a11y contrast`, `/audit-perf queries`, `/audit-security xss`
-   - Can be combined with new modes: `/audit-a11y contrast --quick --scope=current-pr`
-
-**Agent Mode Handling:**
-
-When agents receive mode parameters, they must:
-- Parse depth mode and adjust analysis thoroughness
-- Apply scope filters to file selection
-- Format output according to specified format
-- Apply threshold filters to results
-- Include mode handling in "How It Works" section
-
-See `docs/guides/using-argument-modes.md` for complete usage guide.
+   - Universal invocation format across Claude Code, Claude Desktop, and OpenAI Codex
 
 ### Agent Structure
 
@@ -170,7 +84,7 @@ Task(cms-cultivator:code-quality-specialist:code-quality-specialist, prompt="...
 
 ### Kanopi Integration
 
-Commands automatically reference Kanopi-specific tools when available:
+Skills automatically reference Kanopi-specific tools when available:
 
 - **Composer Scripts**: `ddev composer code-check`, `phpstan`, `rector-check`, etc.
 - **DDEV Commands**: `ddev theme-build`, `ddev cypress-run`, `ddev critical-run`, etc.
@@ -189,32 +103,16 @@ Commands automatically reference Kanopi-specific tools when available:
 
 ### Adding a New Feature
 
-**Two scenarios:**
-
-#### Scenario A: Feature with Both Command and Skill
-
-1. **Create skill first**: `/skills/feature-name/SKILL.md`
+1. **Create skill**: `/skills/feature-name/SKILL.md`
    - Add YAML frontmatter with name and description
    - Write complete workflow (150-300 lines)
    - Include all code examples, patterns, best practices
    - Add Drupal and WordPress examples
 
-2. **Create command**: `/commands/feature-name.md`
-   - Add frontmatter with description and allowed-tools
-   - Write quick start (90-200 lines)
-   - Reference skill for detailed instructions
-   - Add "When to Use" section explaining command vs. skill
-
-3. **Update documentation**:
-   - Add to `docs/agent-skills.md` (skill)
-   - Add to `docs/commands/overview.md` (command)
+2. **Update documentation**:
+   - Add to `docs/agents-and-skills.md`
+   - Update `skills/README.md`
    - Update README if needed
-
-#### Scenario B: Command Only (No Skill)
-
-For explicit workflows that shouldn't auto-activate (PR creation, releases, etc.):
-1. Create command with full documentation
-2. No corresponding skill needed
 
 ### Updating Existing Features
 
@@ -222,18 +120,7 @@ For explicit workflows that shouldn't auto-activate (PR creation, releases, etc.
 
 To update a feature:
 1. **Update the skill** (`/skills/feature-name/SKILL.md`)
-2. Command automatically reflects changes (it references the skill)
-3. No need to update both!
-
-When updating command files:
-- Keep them concise and reference-focused
-- Don't duplicate content from skills
-- Update "When to Use" if invocation patterns change
-
-Example:
-```yaml
-allowed-tools: Bash(composer:*), Bash(ddev composer:*), Bash(npm:*), Bash(ddev exec npm:*)
-```
+2. No need to update anything else — the skill is the authoritative source
 
 ### Documentation Updates
 
@@ -286,24 +173,17 @@ description: Analyzes code quality, performance, security, accessibility, and mo
 4. **Scope boundaries**: What this skill does NOT do
    - Example: "Performs focused checks on specific elements" (not comprehensive audits)
 
-#### Skill vs. Command Decision Guide
+#### When to Create a New Skill
 
 **Create an Agent Skill when:**
 - ✅ Users might ask about this conversationally
 - ✅ Quick, focused assistance on specific code/elements
-- ✅ Common question that shouldn't require command knowledge
+- ✅ Common question that shouldn't require explicit invocation
 - ✅ Can be triggered by natural language patterns
-
-**Create only a Slash Command when:**
 - ✅ Explicit workflow with side effects (PR creation, releases)
 - ✅ Comprehensive project-wide analysis (full audits)
-- ✅ Requires specific targeting (PR number, file paths)
 - ✅ Batch operations across many files
 - ✅ Formal reports for stakeholders
-
-**Create both (Skill + Command) when:**
-- ✅ Users need both quick checks AND comprehensive analysis
-- ✅ Example: accessibility-checker (quick) + /audit-a11y (comprehensive)
 
 ## File Organization
 
@@ -311,24 +191,20 @@ description: Analyzes code quality, performance, security, accessibility, and mo
 cms-cultivator/
 ├── .claude-plugin/
 │   └── plugin.json          # Claude Code plugin metadata (version, description)
+├── .codex-plugin/
+│   └── plugin.json          # OpenAI Codex plugin manifest
+├── .codex/
+│   └── agents/              # 17 .toml Codex agent translation files
 ├── .github/workflows/
 │   ├── docs.yml             # Zensical deployment
 │   └── test.yml             # BATS test automation
-├── commands/                # 24 slash command files (*.md)
 ├── agents/                  # Specialist agent directories
 │   ├── accessibility-specialist/
 │   ├── security-specialist/
 │   ├── performance-specialist/
 │   ├── teamwork-specialist/
-│   └── ...                  # 15 total agents
-├── commands/                # 25 slash command files (*.md)
-│   ├── pr-*.md              # PR workflow commands
-│   ├── audit-*.md           # Audit commands (comprehensive)
-│   ├── test-*.md            # Testing commands
-│   ├── quality-*.md         # Quality commands
-│   ├── teamwork.md          # Teamwork integration
-│   └── docs-generate.md     # Documentation command
-├── skills/                  # Agent Skill directories
+│   └── ...                  # 17 total agents
+├── skills/                  # Agent Skill directories (38 total)
 │   ├── commit-message-generator/
 │   ├── code-standards-checker/
 │   ├── test-scaffolding/
@@ -340,18 +216,17 @@ cms-cultivator/
 │   ├── coverage-analyzer/
 │   ├── structured-data-analyzer/
 │   └── README.md            # Skills overview
-│   └── README.md            # Skills overview (17 total)
 ├── docs/                    # Zensical documentation site
-│   ├── commands/            # Command category pages
+│   ├── commands/            # Skill category documentation pages
 │   ├── kanopi-tools/        # Kanopi integration docs
-│   ├── agent-skills.md      # Agent Skills guide
+│   ├── agents-and-skills.md # Agents & Skills guide
 │   ├── index.md             # Home page
 │   ├── quick-start.md       # Getting started guide
 │   └── contributing.md      # Contribution guidelines
 ├── scripts/
 │   └── validate-frontmatter.sh  # Frontmatter validation script
 ├── tests/
-│   └── test-plugin.bats     # 54 BATS tests
+│   └── test-plugin.bats     # 75 BATS tests
 ├── zensical.toml            # Zensical configuration
 ├── CHANGELOG.md             # Version history (Keep a Changelog format)
 ├── CLAUDE.md                # This file (AI assistant context)
@@ -361,24 +236,17 @@ cms-cultivator/
 ## Important Files to NOT Modify
 
 - **Plugin metadata**: `.claude-plugin/plugin.json`
-- **Command frontmatter**: Changing `allowed-tools` affects what Claude can execute
 - **GitHub Actions**: `.github/workflows/docs.yml` (stable deployment)
 
 ## Code Conventions
 
-### Command Files
+### Skill Files
 
 - Use `## Heading 2` for major sections
 - Use `###  Heading 3` for subsections
 - Include code examples with proper syntax highlighting (```bash, ```php, ```javascript)
 - Provide both Drupal AND WordPress examples where applicable
-- For flexible mode commands, document all argument options:
-  - Depth modes (--quick, --standard, --comprehensive)
-  - Scope control options
-  - Output format options
-  - Command-specific thresholds
-  - Legacy focus areas (for backward compatibility)
-- For simple commands, document all focus parameters and their options
+- Skills are comprehensive (150-300 lines)
 
 ### Documentation
 
@@ -420,19 +288,11 @@ cms-cultivator/
 
 ### Frontmatter Standards
 
-**Description**: Brief imperative statement (e.g., "Generate PR description from git changes")
+**Description**: Brief imperative statement describing when and how to invoke the skill. Include trigger terms and use cases.
 
-**Argument-hint**: Show optional args in square brackets:
-- For flexible mode commands: `[options]` (audit-a11y, audit-perf, audit-security, quality-analyze)
-- For simple focus commands: `[focus-area]`
-- For commands with specific args: `[ticket-number]`, `[file-path]`, etc.
-
-**Allowed-tools**: List all tools, including both variants:
-- Git operations: `Bash(git:*)` (required for `--scope=current-pr`)
-- GitHub CLI: `Bash(gh:*)`
-- Composer: `Bash(composer:*), Bash(ddev composer:*)`
-- File operations: `Read, Glob, Grep, Write, Edit`
-- DDEV commands: `Bash(ddev:*), Bash(ddev theme-build:*)` (specific or wildcard)
+**Required fields for skills:**
+- `name`: Kebab-case skill identifier matching the directory name
+- `description`: When to invoke, what it does, specific trigger phrases
 
 ## Testing Approach
 
@@ -446,9 +306,10 @@ Before committing changes, validate all frontmatter:
 
 This script validates:
 - Frontmatter presence and YAML syntax
-- Required fields for commands, agents, and skills
+- Required fields for agents and skills
 - Non-empty values
 - Name consistency between files and directories
+- `openai.yaml` policy files for Codex compatibility
 
 See [Contributing Guide](docs/contributing.md#validating-frontmatter) for details.
 
@@ -456,9 +317,9 @@ See [Contributing Guide](docs/contributing.md#validating-frontmatter) for detail
 
 1. **Install locally**: `ln -s $(pwd) ~/.config/claude/plugins/cms-cultivator`
 2. **Enable**: `claude plugins enable cms-cultivator`
-3. **Test command**: Open Claude Code and run `/command-name`
+3. **Test skill**: Open Claude Code and use natural language to trigger the skill
 4. **Verify**:
-   - Command executes without errors
+   - Skill activates on expected trigger phrases
    - Output is formatted correctly
    - Examples work for both Drupal and WordPress
    - Kanopi integration works (if applicable)
@@ -472,7 +333,7 @@ zensical serve          # Preview at http://localhost:8000
 
 ### Cross-Platform Testing
 
-Test commands with:
+Test skills with:
 - Drupal project (with and without Kanopi add-on)
 - WordPress project (with and without Kanopi add-on)
 - Non-DDEV setup (direct tool execution)
@@ -481,7 +342,7 @@ Test commands with:
 
 ### Platform Detection Pattern
 
-Commands should work on both platforms. Use conditional examples:
+Skills should work on both platforms. Use conditional examples:
 
 ```markdown
 **Drupal:**
@@ -513,78 +374,13 @@ For projects without Kanopi tooling, analyze files directly:
 ...
 ```
 
-### Argument Mode Pattern (Audit/Quality Commands)
-
-For commands with flexible argument modes (`/audit-a11y`, `/audit-perf`, `/audit-security`, `/quality-analyze`):
-
-```markdown
-## Usage
-
-**Quick checks (pre-commit):**
-```bash
-/audit-a11y --quick --scope=current-pr
-```
-
-**Standard analysis (PR review, default):**
-```bash
-/audit-a11y --standard --scope=current-pr
-# or simply:
-/audit-a11y --scope=current-pr
-```
-
-**Comprehensive audit (pre-release):**
-```bash
-/audit-a11y --comprehensive --format=summary
-```
-
-**CI/CD integration:**
-```bash
-/audit-a11y --standard --format=json > results.json
-```
-
-## Arguments
-
-### Depth Modes
-- `--quick` - Critical issues only (~5 min)
-- `--standard` - Full audit (default, ~15 min)
-- `--comprehensive` - Deep analysis (~30 min)
-
-### Scope Control
-- `--scope=current-pr` - Only PR files
-- `--scope=module=<name>` - Specific module
-- `--scope=entire` - Full codebase (default)
-
-### Output Formats
-- `--format=report` - Detailed markdown (default)
-- `--format=json` - JSON for CI/CD
-- `--format=summary` - Executive summary
-
-### Legacy Focus Areas (Still Supported)
-- `focus1`, `focus2`, `focus3` - Single-word focus areas
-- Can combine with new modes: `/command focus1 --quick`
-```
-
-### Simple Focus Parameter Pattern (Other Commands)
-
-For commands without flexible modes:
-
-```markdown
-## Usage
-
-- `/command` - Run all analyses
-- `/command focus1` - Focus on specific area
-- `/command focus2` - Focus on different area
-
-**Focus options**: `focus1`, `focus2`, `focus3`
-```
-
 ## Dependencies
 
 ### Runtime Dependencies (User's Machine)
 
 - Claude Code CLI
 - Git
-- GitHub CLI (`gh`) - for PR commands
+- GitHub CLI (`gh`) - for PR skills
 - Optional: DDEV - for Kanopi projects
 - Optional: Lighthouse - for performance commands
 
@@ -612,38 +408,30 @@ Install: `pip install zensical`
 
 ## Troubleshooting for AI Assistants
 
-### When adding Kanopi integration to commands
+### When adding Kanopi integration to skills
 
 1. Check if the tool exists in Kanopi add-ons (see `docs/kanopi-tools/overview.md`)
-2. Add to `allowed-tools` frontmatter with `ddev composer:*` or `ddev:*` patterns
-3. Add "Quick Start (Kanopi Projects)" section
-4. Don't remove generic instructions
-
-### When command suggestions fail
-
-- Verify `allowed-tools` includes necessary patterns
-- Check if tool needs DDEV (`ddev exec`) or runs locally
-- See `docs/reference/tools-analysis.md` for tool execution contexts
+2. Add a "Quick Start (Kanopi Projects)" section
+3. Don't remove generic instructions
 
 ### When documentation builds fail
 
 - Run `zensical build --clean` to see errors
 - Check for broken links in navigation (`zensical.toml`)
 - Verify all referenced files exist in `docs/`
-- Check frontmatter YAML syntax in command files
+- Check frontmatter YAML syntax in skill files
 - Verify TOML syntax in `zensical.toml`
 
 ## Future Enhancements
 
 Ideas for future development:
 
-1. **Additional Commands**: Database migration analysis, deployment verification, etc.
+1. **Additional Skills**: Database migration analysis, deployment verification, etc.
 2. **Enhanced Kanopi Integration**: Auto-detect Kanopi projects and adjust output
 3. **Configuration File**: `.cms-cultivator.yml` for project-specific settings
 4. **MCP Integration**: Connect to Model Context Protocol servers for enhanced capabilities
-5. **Command Aliases**: Shorter versions of common commands
-6. **Interactive Modes**: Multi-step workflows with user input
+5. **Interactive Modes**: Multi-step workflows with user input
 
 ---
 
-Last updated: 2026-02-17
+Last updated: 2026-04-15

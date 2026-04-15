@@ -1,19 +1,14 @@
 # CMS Cultivator Agent Skills
 
-This directory contains 9 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
+This directory contains 38 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
 
 ## What Are Agent Skills?
 
 Agent Skills are **model-invoked** capabilities—Claude decides when to use them based on your conversation, without you needing to type explicit commands.
 
-### Skills vs. Slash Commands
+### How Agent Skills Are Invoked
 
-| Feature | Slash Commands | Agent Skills |
-|---------|----------------|--------------|
-| **Location** | `/commands/` directory | `/skills/` directory |
-| **Invocation** | User types `/command` | Claude activates automatically |
-| **Use Case** | Explicit workflows | Conversational assistance |
-| **Example** | `/pr-create PROJ-123` | "I need to commit my changes" |
+Agent Skills are the universal invocation format — they work in Claude Code, Claude Desktop, and OpenAI Codex. Claude activates them automatically based on conversation context, or they can be explicitly invoked by name.
 
 ## Available Skills
 
@@ -75,7 +70,96 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 
 **Triggers**: "GTM", "tag manager", "marketing tags", "tracking tags slow", "too many tags"
 **Purpose**: Audit Google Tag Manager for performance impact
-**Related Command**: `/audit-gtm`
+
+### 11. accessibility-audit
+
+**Triggers**: "/audit-a11y", "full accessibility audit", "WCAG compliance report", "comprehensive accessibility analysis"
+**Purpose**: Comprehensive WCAG 2.1 Level AA accessibility audit, spawns accessibility-specialist for full site analysis
+
+### 12. performance-audit
+
+**Triggers**: "/audit-perf", "full performance audit", "Core Web Vitals analysis", "LCP, INP, CLS"
+**Purpose**: Comprehensive performance analysis and Core Web Vitals optimization, spawns performance-specialist
+
+### 13. security-audit
+
+**Triggers**: "/audit-security", "full security audit", "OWASP compliance review", "comprehensive vulnerability scanning"
+**Purpose**: Comprehensive OWASP Top 10 security vulnerability scanning, spawns security-specialist
+
+### 14. quality-audit
+
+**Triggers**: "/quality-analyze", "full code quality audit", "technical debt assessment", "comprehensive code quality analysis"
+**Purpose**: Comprehensive code quality analysis and technical debt assessment, spawns code-quality-specialist
+
+### 15. live-site-audit
+
+**Triggers**: "/audit-live-site", "comprehensive site health assessment", "full multi-dimensional audit", "unified audit report"
+**Purpose**: Multi-dimensional site audit orchestrating performance, accessibility, security, and code quality specialists in parallel
+
+### 16. pr-review
+
+**Triggers**: "review a PR", "code review", "review my changes", "pr-review self", PR number provided
+**Purpose**: Review a pull request or analyze local changes using the workflow-specialist agent
+
+### 17. audit-export
+
+**Triggers**: "export audit to CSV", "create tasks from audit", audit report file provided with export request
+**Purpose**: Export audit findings from markdown report files to Teamwork-compatible CSV format for project management tools
+
+### 18. audit-report
+
+**Triggers**: "generate a client report from this audit", "create an executive summary", "non-technical version of this audit", "summarize audit findings for stakeholders"
+**Purpose**: Generate client-facing executive summaries from existing audit report files
+
+### 19. design-to-wp-block
+
+**Triggers**: "create a WordPress block from this design", "convert this Figma to a block pattern", Figma URL with WordPress context
+**Purpose**: Create WordPress block patterns from Figma designs or screenshots using the design-specialist agent
+
+### 20. design-to-drupal-paragraph
+
+**Triggers**: "create a Drupal paragraph from this design", "convert this mockup to a paragraph type", design reference with Drupal context
+**Purpose**: Create Drupal paragraph types from Figma designs or screenshots using the design-specialist agent
+
+### 21. pr-create
+
+**Triggers**: "create a PR", "submit a PR", "open a pull request", "/pr-create"
+**Purpose**: Generate PR description and create a GitHub pull request using the workflow-specialist agent (requires user confirmation)
+
+### 22. pr-release
+
+**Triggers**: "prepare a release", "generate a changelog", "create a deployment checklist", "/pr-release"
+**Purpose**: Generate changelog entries, deployment checklists, and update PR descriptions for releases (requires user confirmation)
+
+### 23. devops-setup
+
+**Triggers**: "set up DevOps for a new project", "onboard a Pantheon site", "/devops-setup"
+**Purpose**: Automate Kanopi's complete Drupal/Pantheon DevOps onboarding workflow (requires explicit user confirmation at each phase)
+
+### 24. drupal-contribute
+
+**Triggers**: "contribute to drupal.org", "create a drupal.org issue and MR", "/drupal-contribute"
+**Purpose**: Full drupal.org contribution workflow — create an issue and set up a merge request together
+
+### 25. drupal-issue
+
+**Triggers**: "create a drupal.org issue", "open a drupal issue", "/drupal-issue"
+**Purpose**: Create, update, and manage issues on drupal.org using a guided clipboard and browser workflow
+
+### 26. drupal-mr
+
+**Triggers**: "create a drupal.org MR", "set up a merge request for issue", "/drupal-mr"
+**Purpose**: Create and manage merge requests for drupal.org projects via git.drupalcode.org
+
+### 27. drupal-cleanup
+
+**Triggers**: "cleanup drupal repos", "remove cloned drupal projects", "/drupal-cleanup"
+**Purpose**: List and clean up cloned drupal.org repositories in the local cache (~/.cache/drupal-contrib/)
+
+### 28. wp-add-skills
+
+**Triggers**: "add WordPress skills", "install WordPress agent skills", "/wp-add-skills"
+**Purpose**: Install official WordPress agent-skills from the WordPress/agent-skills GitHub repository
 
 ## How Skills Work
 
@@ -101,16 +185,16 @@ No need to remember command syntax—just express what you need:
 ✅ "Does this follow Drupal standards?"
 ```
 
-### Complementary to Commands
+### Focused vs. Comprehensive Skills
 
-Skills provide quick, conversational help. Commands provide comprehensive analysis:
+Some skills provide quick, conversational help; others run comprehensive analyses:
 
-- **Skill**: "Is this secure?" → Quick security scan of shown code
-- **Command**: `/audit-security` → Full OWASP Top 10 site-wide scan
+- **Focused skill**: "Is this secure?" → `security-scanner` → Quick security scan of shown code
+- **Comprehensive skill**: "Run a full security audit" → `security-audit` → Full OWASP Top 10 site-wide scan
 
 ## File Structure
 
-Each skill has its own directory with a `SKILL.md` file:
+Each skill has its own directory with a `SKILL.md` file. Skills that require explicit user confirmation also include an `agents/openai.yaml` policy file for Codex compatibility:
 
 ```
 skills/
@@ -130,8 +214,52 @@ skills/
 │   └── SKILL.md
 ├── security-scanner/
 │   └── SKILL.md
-└── coverage-analyzer/
-    └── SKILL.md
+├── coverage-analyzer/
+│   └── SKILL.md
+├── accessibility-audit/
+│   └── SKILL.md
+├── performance-audit/
+│   └── SKILL.md
+├── security-audit/
+│   └── SKILL.md
+├── quality-audit/
+│   └── SKILL.md
+├── live-site-audit/
+│   └── SKILL.md
+├── pr-review/
+│   └── SKILL.md
+├── audit-export/
+│   └── SKILL.md
+├── audit-report/
+│   └── SKILL.md
+├── design-to-wp-block/
+│   └── SKILL.md
+├── design-to-drupal-paragraph/
+│   └── SKILL.md
+├── pr-create/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── pr-release/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── devops-setup/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── drupal-contribute/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── drupal-issue/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── drupal-mr/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── drupal-cleanup/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+└── wp-add-skills/
+    ├── SKILL.md
+    └── agents/openai.yaml
 ```
 
 ## SKILL.md Format
@@ -205,7 +333,7 @@ If a skill isn't activating:
 1. Check the description has clear trigger terms
 2. Verify your phrasing matches expected triggers
 3. Be more explicit about context
-4. Consider if a slash command is more appropriate
+4. Try invoking the skill by name explicitly
 
 ## Skill Activation Philosophy
 
@@ -216,10 +344,10 @@ If a skill isn't activating:
 ✅ Immediate feedback needed
 ✅ User doesn't know specific command name
 
-### When Commands Work Better
+### When to Use Comprehensive Skills
 
-✅ Comprehensive project-wide analysis
-✅ Structured workflows with side effects
+✅ Comprehensive project-wide analysis (`accessibility-audit`, `security-audit`, etc.)
+✅ Structured workflows with side effects (`pr-create`, `pr-release`, `devops-setup`)
 ✅ Batch operations across multiple files
 ✅ CI/CD integration
 ✅ Formal reports for stakeholders

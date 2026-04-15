@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-04-15
+
+### Added
+- 18 new skills: `accessibility-audit`, `performance-audit`, `security-audit`, `quality-audit`, `live-site-audit`, `pr-review`, `audit-export`, `audit-report`, `design-to-wp-block`, `design-to-drupal-paragraph`, `pr-create`, `pr-release`, `devops-setup`, `drupal-contribute`, `drupal-issue`, `drupal-mr`, `drupal-cleanup`, `wp-add-skills`
+- OpenAI Codex compatibility layer: `.codex-plugin/plugin.json` manifest and `skills/*/agents/openai.yaml` invocation policies for 14 skills that require explicit user confirmation
+- `.codex/agents/` directory with 17 `.toml` agent translation files for Codex compatibility
+- Two-tier environment detection pattern in all new skills (Tier 1: portable, Tier 2: Claude Code enhanced)
+
+### Changed
+- Removed `commands/` directory entirely — skills are now the universal invocation format across Claude Code, Claude Desktop, and OpenAI Codex
+- All 17 AGENT.md files updated with expanded `skills` arrays and improved trigger descriptions
+- `drupalorg-issue-specialist` model changed from `sonnet` to `haiku` for cost optimization
+- `.claude-plugin/plugin.json` version bumped to `1.0.0`
+- `validate-frontmatter.sh` updated: removed commands validation, added `openai.yaml` policy validation
+- BATS tests rewritten: 75 tests covering new skill/Codex structure (was 54 tests)
+
 ## [0.9.1] - 2026-04-13
 
 ### Added
