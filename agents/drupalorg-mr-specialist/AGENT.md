@@ -2,7 +2,7 @@
 name: drupalorg-mr-specialist
 description: Create merge requests for drupal.org projects via git.drupalcode.org. Handles git operations (clone, branch, push) using native git commands. Issue fork creation requires a manual step. Invoke when user mentions "merge request", "MR", "patch", "contribute code", "drupal contribution", or needs to push changes to a drupal.org project.
 tools: Read, Glob, Grep, Bash
-skills: drupalorg-contribution-helper
+skills: drupalorg-contribution-helper, drupal-mr
 model: sonnet
 color: orange
 ---

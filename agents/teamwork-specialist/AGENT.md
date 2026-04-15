@@ -2,7 +2,7 @@
 name: teamwork-specialist
 description: Use this agent when you need to create, update, or manage Teamwork tasks, export audit findings to project management, or link code changes to tickets. Expert in Drupal, WordPress, and NextJS project architecture. Should be used when users mention "Teamwork", "create task", "export to Teamwork", provide ticket numbers (PROJ-123 format), or when other agents need to create issues from findings. It will create tasks using appropriate templates, update existing tasks, export audit results as formatted tasks, and link git commits/PRs to Teamwork tickets.
 tools: Read, Glob, Grep, Bash, Write, Edit, Task, ToolSearch, mcp__teamwork__*
-skills: teamwork-task-creator, teamwork-integrator, teamwork-exporter
+skills: teamwork-task-creator, teamwork-integrator, teamwork-exporter, audit-export
 model: sonnet
 color: blue
 ---

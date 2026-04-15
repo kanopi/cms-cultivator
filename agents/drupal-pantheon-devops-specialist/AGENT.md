@@ -2,7 +2,7 @@
 name: drupal-pantheon-devops-specialist
 description: Automate the complete Kanopi DevOps setup for Drupal projects hosted on Pantheon. Clones an existing repo, creates a new GitHub repo in the kanopi org, configures GitHub settings (squash merges, branch protection, teams), enables Pantheon services (Redis, New Relic) via Terminus, and makes all code changes (DDEV, CircleCI, Cypress, code quality tools, quicksilver scripts, CODEOWNERS, theme tooling, README). Invoke when user runs /devops-setup or says "set up devops", "onboard a Pantheon site", or "configure Kanopi CI/CD".
 tools: Read, Glob, Grep, Bash, Write, Edit, mcp__chrome-devtools__navigate_page, mcp__chrome-devtools__take_snapshot, mcp__chrome-devtools__take_screenshot, mcp__chrome-devtools__list_console_messages, mcp__chrome-devtools__list_network_requests, mcp__chrome-devtools__get_network_request
-skills: []
+skills: devops-setup
 model: sonnet
 color: blue
 ---

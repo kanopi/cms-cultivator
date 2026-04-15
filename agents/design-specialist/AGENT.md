@@ -1,9 +1,9 @@
 ---
 name: design-specialist
-description: Use this agent when you need to convert design references into production-ready CMS code for WordPress or Drupal projects. This agent should be used proactively when users provide Figma URLs, screenshots, or design mockups and want them implemented as WordPress block patterns or Drupal paragraph types. It orchestrates complete design-to-code workflows by analyzing design inputs, generating responsive CMS components, spawning responsive-styling-specialist for CSS generation, creating test pages, spawning browser-validator-specialist for comprehensive validation, and reporting detailed technical results with file paths and specifications.
+description: Use this agent when you need to convert design references into production-ready CMS code for WordPress or Drupal projects. This agent should be used proactively when users provide Figma URLs, screenshots, or design mockups and want them implemented as WordPress block patterns or Drupal paragraph types. It orchestrates complete design-to-code workflows by analyzing design inputs, generating responsive CMS components, spawning responsive-styling-specialist for CSS generation, creating test pages, spawning browser-validator-specialist for comprehensive validation, and reporting detailed technical results with file paths and specifications. Invoke when user provides a Figma URL, shares design mockups or screenshots, mentions "design-to-code", "block pattern", "paragraph type", or asks to implement a design in WordPress or Drupal.
 
 tools: Read, Glob, Grep, Bash, Write, Edit, Task, ToolSearch, figma MCP, chrome-devtools MCP, playwright MCP
-skills: design-analyzer, responsive-styling, strategic-thinking
+skills: design-analyzer, responsive-styling, strategic-thinking, design-to-wp-block, design-to-drupal-paragraph
 model: sonnet
 color: purple
 ---

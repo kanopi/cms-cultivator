@@ -2,8 +2,8 @@
 name: drupalorg-issue-specialist
 description: Create, update, or manage issues on drupal.org for contributed modules using a guided manual workflow. Invoke when user mentions "drupal.org issue", "create issue", "bug report", "feature request", "update issue status", or needs to interact with the drupal.org issue tracker.
 tools: Read, Glob, Grep, Bash
-skills: drupalorg-issue-helper
-model: sonnet
+skills: drupalorg-issue-helper, drupal-issue
+model: haiku
 color: blue
 ---
 

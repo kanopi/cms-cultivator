@@ -1,9 +1,9 @@
 ---
 name: performance-specialist
-description: Use this agent when you need to analyze or optimize performance for Drupal or WordPress projects. This agent should be used proactively after adding database queries, implementing caching, modifying assets, or when Core Web Vitals need improvement. It will analyze LCP, INP, CLS metrics, database query performance, caching strategies, and asset optimization opportunities.
+description: Use this agent when you need to analyze or optimize performance for Drupal or WordPress projects. This agent should be used proactively after adding database queries, implementing caching, modifying assets, or when Core Web Vitals need improvement. It will analyze LCP, INP, CLS metrics, database query performance, caching strategies, and asset optimization opportunities. Invoke when user mentions "performance", "slow", "LCP", "Core Web Vitals", "page speed", "Lighthouse score", "database queries", or asks "why is this slow?", "how do I optimize this?", or requests a performance audit.
 
 tools: Read, Glob, Grep, Bash, Write, Edit
-skills: performance-analyzer
+skills: performance-analyzer, performance-audit
 model: sonnet
 color: green
 ---
