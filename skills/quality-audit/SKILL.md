@@ -1,6 +1,7 @@
 ---
 name: quality-audit
 description: Comprehensive code quality analysis and technical debt assessment for Drupal and WordPress projects. Spawns code-quality-specialist for full analysis. Invoke when user runs /quality-analyze, requests a full code quality audit, needs technical debt assessment, or asks for comprehensive code quality analysis. Supports --quick, --standard, --comprehensive depth modes and scope/format/threshold flags.
+disable-model-invocation: true
 ---
 
 # Quality Audit

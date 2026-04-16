@@ -1,6 +1,7 @@
 ---
 name: drupal-issue
 description: "Create, update, or add comments to issues on drupal.org using a guided manual workflow. Invoke when user wants to create a bug report or feature request on drupal.org, says \"create a drupal.org issue\", \"open a drupal issue\", or uses /drupal-issue. Has side effects: creates publicly visible issues on drupal.org. Requires user to paste content and submit (CAPTCHA-protected). Also supports listing and updating issues."
+disable-model-invocation: true
 ---
 
 # Drupal Issue

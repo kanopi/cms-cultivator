@@ -1,6 +1,7 @@
 ---
 name: performance-audit
 description: Comprehensive performance analysis and Core Web Vitals optimization for Drupal and WordPress projects. Spawns performance-specialist for full analysis. Invoke when user runs /audit-perf, requests a full performance audit, needs Core Web Vitals analysis (LCP, INP, CLS), or asks for comprehensive performance assessment. Supports --quick, --standard, --comprehensive depth modes and scope/format/target flags.
+disable-model-invocation: true
 ---
 
 # Performance Audit

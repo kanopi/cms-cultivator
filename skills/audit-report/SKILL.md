@@ -1,6 +1,7 @@
 ---
 name: audit-report
 description: Generate client-facing executive summaries from existing audit report files. Transforms technical CMS Cultivator audit findings into non-technical stakeholder reports. Invoke when user asks to "generate a client report from this audit", "create an executive summary", "make a non-technical version of this audit", or "summarize audit findings for stakeholders". Requires an existing audit report file as input.
+disable-model-invocation: true
 ---
 
 # Audit Report

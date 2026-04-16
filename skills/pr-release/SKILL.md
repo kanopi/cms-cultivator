@@ -1,6 +1,7 @@
 ---
 name: pr-release
 description: Generate changelog, deployment checklist, and update PR for release using the workflow-specialist agent. Invoke when user asks to prepare a release, generate a changelog, create a deployment checklist, or uses /pr-release. Requires user confirmation before updating the PR (irreversible GitHub action). Supports version numbers and focus areas (changelog/deploy/update).
+disable-model-invocation: true
 ---
 
 # PR Release

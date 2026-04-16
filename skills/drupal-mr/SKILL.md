@@ -1,6 +1,7 @@
 ---
 name: drupal-mr
 description: "Create or list merge requests for drupal.org projects via git.drupalcode.org. Invoke when user wants to create a merge request for a drupal.org issue, says \"create a drupal.org MR\", \"set up a merge request for issue\", or uses /drupal-mr. Has side effects: clones repos to ~/.cache/drupal-contrib/ and pushes to git.drupalcode.org. Requires one manual step (issue fork creation via web UI)."
+disable-model-invocation: true
 ---
 
 # Drupal MR

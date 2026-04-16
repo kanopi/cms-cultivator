@@ -701,6 +701,102 @@ setup() {
 }
 
 # ==============================================================================
+# CLAUDE CODE INVOCATION POLICY TESTS
+# ==============================================================================
+
+@test "skills with openai.yaml also have disable-model-invocation in SKILL.md" {
+  for yaml_file in skills/*/agents/openai.yaml; do
+    [ -f "$yaml_file" ] || continue
+    skill_dir=$(basename "$(dirname "$(dirname "$yaml_file")")")
+    skill_file="skills/$skill_dir/SKILL.md"
+    if ! grep -q "^disable-model-invocation: true" "$skill_file"; then
+      echo "$skill_file has openai.yaml but missing disable-model-invocation: true"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# CODEX TOML AGENT TESTS
+# ==============================================================================
+
+@test "codex agents directory exists" {
+  [ -d ".codex/agents" ]
+}
+
+@test "codex agent TOML count matches AGENT.md count (17)" {
+  toml_count=$(find .codex/agents -name "*.toml" | wc -l)
+  [ "$toml_count" -eq 17 ]
+}
+
+@test "every AGENT.md directory has a corresponding TOML agent" {
+  for agent_dir in agents/*/; do
+    agent_name=$(basename "$agent_dir")
+    if [ ! -f ".codex/agents/${agent_name}.toml" ]; then
+      echo "Missing TOML for agent: $agent_name"
+      return 1
+    fi
+  done
+}
+
+@test "every TOML agent has a corresponding AGENT.md directory" {
+  for toml_file in .codex/agents/*.toml; do
+    agent_name=$(basename "$toml_file" .toml)
+    if [ ! -d "agents/$agent_name" ]; then
+      echo "TOML $toml_file has no matching agents/$agent_name/ directory"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have required name field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^name = " "$toml_file"; then
+      echo "Missing name field in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have required description field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^description = " "$toml_file"; then
+      echo "Missing description in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have developer_instructions field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^developer_instructions" "$toml_file"; then
+      echo "Missing developer_instructions in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "TOML agent names match their filenames" {
+  for toml_file in .codex/agents/*.toml; do
+    file_name=$(basename "$toml_file" .toml)
+    toml_name=$(grep "^name = " "$toml_file" | head -1 | sed 's/^name = "\(.*\)"/\1/')
+    if [ "$file_name" != "$toml_name" ]; then
+      echo "Name mismatch in $toml_file: file=$file_name, toml=$toml_name"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have model field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^model = " "$toml_file"; then
+      echo "Missing model field in $toml_file"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
 # INTEGRATION TESTS (Optional - require external tools)
 # ==============================================================================
 

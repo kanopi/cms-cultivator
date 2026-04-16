@@ -1,6 +1,7 @@
 ---
 name: pr-create
 description: Generate PR description and create a GitHub pull request using the workflow-specialist agent. Invoke when user explicitly asks to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
+disable-model-invocation: true
 ---
 
 # PR Create

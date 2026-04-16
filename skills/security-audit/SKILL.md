@@ -1,6 +1,7 @@
 ---
 name: security-audit
 description: Comprehensive OWASP Top 10 security vulnerability scanning and compliance reporting for Drupal and WordPress. Spawns security-specialist for full analysis. Invoke when user runs /audit-security, requests a full security audit, needs OWASP compliance review, or asks for comprehensive vulnerability scanning. Supports --quick, --standard, --comprehensive depth modes and scope/format/severity flags.
+disable-model-invocation: true
 ---
 
 # Security Audit

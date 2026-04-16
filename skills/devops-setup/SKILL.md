@@ -1,6 +1,7 @@
 ---
 name: devops-setup
 description: Automate Kanopi's complete Drupal/Pantheon DevOps setup for a new project. Invoke when user explicitly asks to set up DevOps for a new project, onboard a Pantheon site to Kanopi's CI/CD pipeline, or uses /devops-setup. This is an irreversible multi-system setup requiring explicit user confirmation at each phase. Creates GitHub repos, configures Pantheon services, and makes code changes.
+disable-model-invocation: true
 ---
 
 # DevOps Setup

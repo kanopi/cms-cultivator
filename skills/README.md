@@ -257,9 +257,27 @@ skills/
 ├── drupal-cleanup/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
-└── wp-add-skills/
-    ├── SKILL.md
-    └── agents/openai.yaml
+├── wp-add-skills/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── browser-validator/
+│   └── SKILL.md
+├── design-analyzer/
+│   └── SKILL.md
+├── drupalorg-contribution-helper/
+│   └── SKILL.md
+├── drupalorg-issue-helper/
+│   └── SKILL.md
+├── responsive-styling/
+│   └── SKILL.md
+├── structured-data-analyzer/
+│   └── SKILL.md
+├── teamwork-exporter/
+│   └── SKILL.md
+├── teamwork-integrator/
+│   └── SKILL.md
+└── teamwork-task-creator/
+    └── SKILL.md
 ```
 
 ## SKILL.md Format
@@ -289,11 +307,65 @@ Detailed instructions for Claude on how to execute this skill...
 3. **Detailed instructions** - Provide step-by-step workflow
 4. **Examples** - Show expected interactions
 
-### 10. strategic-thinking
+### 29. strategic-thinking
 
 **Triggers**: "should we do this?", "help me decide", "what are the trade-offs", "help me think through this", "is this the right approach?", "pros and cons", "help me think through"
 **Purpose**: Guide significant decisions using Brene Brown's 5 Cs of Strategic Thinking (Context, Color, Connective Tissue, Cost, Consequence) from *Strong Ground*
 **Related Command**: None — skill-only
+
+### 30. browser-validator
+
+**Triggers**: "validate in browser", "test responsive design", "check in Chrome", "test this in a real browser"
+**Purpose**: Validate design implementations in real Chrome browser at 320px, 768px, and 1024px+ breakpoints. Checks WCAG AA compliance, captures screenshots, validates interactions.
+**Related Agent**: browser-validator-specialist
+
+### 31. design-analyzer
+
+**Triggers**: Figma URL provided, "analyze this design", "extract design specs", "what are the design requirements"
+**Purpose**: Extract technical requirements from Figma designs or screenshots for CMS implementation. Produces structured specs for responsive-styling-specialist.
+**Related Skills**: design-to-wp-block, design-to-drupal-paragraph
+
+### 32. drupalorg-contribution-helper
+
+**Triggers**: "help with drupal.org contribution", "drupal.org git workflow", "how do I contribute to drupal", "drupal contrib help"
+**Purpose**: Quick guidance on drupal.org contribution workflows: clone, branch, push, and MR creation steps without full automation.
+**Related Command**: `/drupal-contribute`
+
+### 33. drupalorg-issue-helper
+
+**Triggers**: "help with drupal.org issue", "drupal issue template", "how to file a drupal bug", "drupal.org issue format"
+**Purpose**: Quick help formatting drupal.org issues — bug reports, feature requests, templates — without running the full /drupal-issue workflow.
+**Related Command**: `/drupal-issue`
+
+### 34. responsive-styling
+
+**Triggers**: "create responsive styles", "mobile-first CSS", "SCSS for this component", "breakpoints for this layout"
+**Purpose**: Generate mobile-first responsive CSS/SCSS for Drupal and WordPress components with proper breakpoints (768px, 1024px), WCAG AA contrast, and touch-friendly targets.
+**Related Agent**: responsive-styling-specialist
+
+### 35. structured-data-analyzer
+
+**Triggers**: "structured data", "JSON-LD", "schema.org", "rich results", "audit structured data"
+**Purpose**: Audit and generate Schema.org JSON-LD markup for SEO, rich snippets, and AI discoverability. Validates against schema.org spec.
+**Related Agent**: structured-data-specialist
+
+### 36. teamwork-exporter
+
+**Triggers**: "export audit to Teamwork", "create Teamwork tasks from audit", "send findings to Teamwork"
+**Purpose**: Export audit findings as formatted Teamwork task entries in CSV format for project management ingestion.
+**Related Agent**: teamwork-specialist
+
+### 37. teamwork-integrator
+
+**Triggers**: "find Teamwork task", "look up ticket", ticket number provided (e.g. PROJ-123), "link to Teamwork"
+**Purpose**: Look up Teamwork tasks, cross-reference with code changes, and provide project management context during development.
+**Related Agent**: teamwork-specialist
+
+### 38. teamwork-task-creator
+
+**Triggers**: "create a Teamwork task", "add this to Teamwork", "log this as a task", "create task for this issue"
+**Purpose**: Create properly formatted Teamwork task objects from conversation context for project management integration.
+**Related Agent**: teamwork-specialist
 
 ## Adding New Skills
 

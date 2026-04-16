@@ -1,6 +1,7 @@
 ---
 name: accessibility-audit
 description: Comprehensive WCAG 2.1 Level AA accessibility audit for Drupal and WordPress projects. Spawns accessibility-specialist for full site analysis. Invoke when user runs /audit-a11y, requests a full accessibility audit, needs a WCAG compliance report, or asks for comprehensive accessibility analysis across pages or modules. Supports --quick, --standard, --comprehensive depth modes and scope/format flags.
+disable-model-invocation: true
 ---
 
 # Accessibility Audit
