@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Drupal Issue"
+  short_description: "Create, update, or list issues on drupal.org using a guided clipboard and browser workflow."

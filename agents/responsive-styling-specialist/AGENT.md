@@ -1,6 +1,6 @@
 ---
 name: responsive-styling-specialist
-description: Use this agent when you need mobile-first responsive CSS/SCSS for Drupal or WordPress components. This agent should be used proactively when creating new UI components, implementing design mockups, or after the design-specialist analyzes design requirements. It will generate production-ready styles with proper breakpoints (768px, 1024px), WCAG AA color contrast compliance (4.5:1 normal text, 3:1 large text), touch-friendly interfaces (44px minimum targets), proper focus indicators, reduced motion support, and responsive typography with exact technical specifications.
+description: Use this agent when you need mobile-first responsive CSS/SCSS for Drupal or WordPress components. This agent should be used proactively when creating new UI components, implementing design mockups, or after the design-specialist analyzes design requirements. It will generate production-ready styles with proper breakpoints (768px, 1024px), WCAG AA color contrast compliance (4.5:1 normal text, 3:1 large text), touch-friendly interfaces (44px minimum targets), proper focus indicators, reduced motion support, and responsive typography with exact technical specifications. Invoke when user mentions "responsive", "mobile styles", "breakpoints", "SCSS", "CSS for component", or when the design-specialist spawns this agent for CSS generation after extracting design requirements.
 
 tools: Read, Write, Edit, Grep, figma MCP
 skills: responsive-styling

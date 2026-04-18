@@ -1,0 +1,23 @@
+{
+  "name": "cms-cultivator",
+  "version": "1.0.0",
+  "description": "38 skills + 17 agents for Drupal and WordPress. Works in Claude Code, Claude Desktop, and OpenAI Codex.",
+  "author": {
+    "name": "Kanopi Studios",
+    "email": "code@kanopi.com",
+    "url": "https://kanopi.com"
+  },
+  "homepage": "https://kanopi.github.io/cms-cultivator/",
+  "repository": "https://github.com/kanopi/cms-cultivator",
+  "license": "GPL-2.0-or-later",
+  "keywords": ["drupal", "wordpress", "accessibility", "performance", "security", "cms", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CMS Cultivator",
+    "shortDescription": "Drupal & WordPress skills: audits, PR workflows, design-to-code, Drupal.org contribution",
+    "developerName": "Kanopi Studios",
+    "category": "Development",
+    "composerIcon": "./assets/icon-64.png",
+    "websiteURL": "https://kanopi.github.io/cms-cultivator/"
+  }
+}

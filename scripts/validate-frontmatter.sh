@@ -76,69 +76,6 @@ has_frontmatter() {
     head -n 1 "$file" | grep -q "^---$"
 }
 
-echo "📄 Validating Commands (commands/*.md)"
-echo "=========================================="
-
-for file in commands/*.md; do
-    filename=$(basename "$file")
-    echo -n "  Checking $filename... "
-
-    if ! has_frontmatter "$file"; then
-        echo -e "${RED}✗${NC} Missing frontmatter"
-        ((errors++))
-        continue
-    fi
-
-    # Validate YAML syntax
-    if ! yaml_error=$(validate_yaml_syntax "$file"); then
-        echo -e "${RED}✗${NC} Invalid YAML syntax: $yaml_error"
-        ((errors++))
-        continue
-    fi
-
-    fm=$(extract_frontmatter "$file")
-
-    # Check required fields
-    if ! has_field "$fm" "description"; then
-        echo -e "${RED}✗${NC} Missing required field: description"
-        ((errors++))
-        continue
-    fi
-
-    if ! has_field "$fm" "allowed-tools"; then
-        echo -e "${RED}✗${NC} Missing required field: allowed-tools"
-        ((errors++))
-        continue
-    fi
-
-    # Check for empty values
-    desc=$(get_field_value "$fm" "description")
-    if [ -z "$desc" ]; then
-        echo -e "${RED}✗${NC} Empty description"
-        ((errors++))
-        continue
-    fi
-
-    tools=$(get_field_value "$fm" "allowed-tools")
-    if [ -z "$tools" ]; then
-        echo -e "${RED}✗${NC} Empty allowed-tools"
-        ((errors++))
-        continue
-    fi
-
-    # Optional: warn if argument-hint looks like it should be present
-    if ! has_field "$fm" "argument-hint"; then
-        if [[ "$filename" == *"audit"* ]] || [[ "$filename" == *"quality-analyze"* ]]; then
-            echo -e "${YELLOW}⚠${NC}  No argument-hint (consider adding [options] or [focus-area])"
-            ((warnings++))
-            continue
-        fi
-    fi
-
-    echo -e "${GREEN}✓${NC}"
-done
-
-echo ""
 echo "🤖 Validating Agents (agents/*/AGENT.md)"
 echo "=========================================="
 
@@ -271,6 +208,35 @@ for file in skills/*/SKILL.md; do
     fi
 
     echo -e "${GREEN}✓${NC}"
+done
+
+echo ""
+echo "⚙️  Validating Codex Invocation Policy (skills/*/agents/openai.yaml)"
+echo "=========================================="
+
+for file in skills/*/agents/openai.yaml; do
+    if [ -f "$file" ]; then
+        skill_dir=$(basename "$(dirname "$(dirname "$file")")")
+        echo -n "  Checking $skill_dir/agents/openai.yaml... "
+
+        # Validate YAML syntax
+        if command -v python3 &> /dev/null; then
+            if ! yaml_error=$(python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>&1); then
+                echo -e "${RED}✗${NC} Invalid YAML: $yaml_error"
+                ((errors++))
+                continue
+            fi
+        fi
+
+        # Check for required policy field
+        if ! grep -q "allow_implicit_invocation:" "$file"; then
+            echo -e "${RED}✗${NC} Missing policy.allow_implicit_invocation"
+            ((errors++))
+            continue
+        fi
+
+        echo -e "${GREEN}✓${NC}"
+    fi
 done
 
 echo ""

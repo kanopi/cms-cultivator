@@ -1,6 +1,6 @@
 ---
 name: structured-data-specialist
-description: Use this agent when you need to audit structured data (JSON-LD, Schema.org, rich results) on any website or for Drupal/WordPress projects. This agent should be used proactively before launches, after content type changes, or when SEO/AI discoverability needs improvement. It will scan live pages for existing JSON-LD blocks, identify content types suitable for structured data, validate against Google Rich Results requirements, recommend cross-page entity graph design with stable @id conventions, and generate comprehensive reports with example JSON-LD implementations.
+description: Use this agent when you need to audit structured data (JSON-LD, Schema.org, rich results) on any website or for Drupal/WordPress projects. This agent should be used proactively before launches, after content type changes, or when SEO/AI discoverability needs improvement. It will scan live pages for existing JSON-LD blocks, identify content types suitable for structured data, validate against Google Rich Results requirements, recommend cross-page entity graph design with stable @id conventions, and generate comprehensive reports with example JSON-LD implementations. Invoke when user mentions "structured data", "JSON-LD", "schema.org", "rich results", "rich snippets", "SEO markup", or asks about schema validation, Google Rich Results eligibility, or AI discoverability.
 tools: Read, Glob, Grep, Bash, Write, Edit, chrome-devtools MCP
 skills: structured-data-analyzer
 model: sonnet

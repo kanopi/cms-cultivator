@@ -1,8 +1,8 @@
 ---
 name: accessibility-specialist
-description: Use this agent when you need to check WCAG 2.1 Level AA compliance for Drupal or WordPress components. This agent should be used proactively after creating UI components, forms, or interactive elements, especially before committing changes or creating pull requests. It will validate semantic HTML, ARIA attributes, keyboard navigation, color contrast (4.5:1 minimum), and screen reader compatibility.
+description: Use this agent when you need to check WCAG 2.1 Level AA compliance for Drupal or WordPress components. This agent should be used proactively after creating UI components, forms, or interactive elements, especially before committing changes or creating pull requests. It will validate semantic HTML, ARIA attributes, keyboard navigation, color contrast (4.5:1 minimum), and screen reader compatibility. Invoke when user mentions "accessibility", "a11y", "WCAG", "screen reader", "keyboard navigation", "color contrast", or asks "is this accessible?", "does this meet accessibility standards?", or requests a comprehensive accessibility audit.
 tools: Read, Glob, Grep, Bash, Write, Edit
-skills: accessibility-checker
+skills: accessibility-checker, accessibility-audit
 model: sonnet
 color: green
 ---

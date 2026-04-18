@@ -1,0 +1,9 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Live Site Audit"
+  short_description: "Comprehensive multi-dimensional site audit orchestrating performance, accessibility, security, and code quality specialists."
+dependencies:
+  tools:
+    - name: chrome-devtools
+      required: false
