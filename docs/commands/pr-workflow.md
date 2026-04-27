@@ -1,18 +1,19 @@
-# PR Workflow Commands
+# PR Workflow Skills
 
-Streamline pull request creation, review, and deployment with 4 specialized commands.
+Streamline pull request creation, review, and deployment with 4 specialized skills.
 
 ---
 
-## Commands
+## Skills
 
-### `/pr-create [ticket-number]`
+### `pr-create [ticket-number]`
 
 Create pull request directly on GitHub with generated description.
 
 **Usage:**
 ```bash
 /pr-create 123
+# or: "create a PR for PROJ-123"
 ```
 
 **What it does:**
@@ -35,7 +36,7 @@ Create pull request directly on GitHub with generated description.
 
 ---
 
-### `/pr-review [pr-number|self] [focus]`
+### `pr-review [pr-number|self] [focus]`
 
 Review a pull request or analyze your own changes before creating a PR.
 
@@ -81,7 +82,7 @@ Review a pull request or analyze your own changes before creating a PR.
 
 ---
 
-### `/pr-commit-msg`
+### `pr-commit-msg`
 
 Generate conventional commit messages from staged changes.
 
@@ -106,7 +107,7 @@ git add .
 
 ---
 
-### `/pr-release [focus]`
+### `pr-release [focus]`
 
 Generate changelog, deployment checklist, and update PR for release.
 
@@ -131,7 +132,7 @@ Generate changelog, deployment checklist, and update PR for release.
 
 ---
 
-## Workflows
+## Workflow Examples
 
 ### Complete PR Workflow
 
@@ -227,9 +228,9 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 
 ---
 
-## Command Comparison
+## Skill Comparison
 
-### When to use each command:
+### When to use each skill:
 
 **`/pr-create`**
 - You're ready to create a PR
@@ -290,6 +291,6 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 ## Next Steps
 
 - **[Quick Start](../quick-start.md)** - Common workflow examples
-- **[Commands Overview](overview.md)** - All commands
+- **[Skills Overview](overview.md)** - All skills
 - **[Code Quality Commands](code-quality.md)** - Maintain code quality
 - **[Security Commands](security.md)** - Security scanning

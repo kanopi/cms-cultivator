@@ -2,13 +2,13 @@
 
 Comprehensive audit of live websites using Chrome DevTools for performance, accessibility, SEO, and security analysis.
 
-## Command
+## Skill
 
-`/audit-live-site [url]` - Full site audit for performance, accessibility, SEO, and security
+`audit-live-site [url]` — Full site audit for performance, accessibility, SEO, and security
 
 ## Requirements
 
-**Chrome DevTools MCP Server** is required for this command.
+**Chrome DevTools MCP Server** is required for this skill.
 
 Install from: https://github.com/modelcontextprotocol/servers
 
@@ -168,4 +168,4 @@ Import-ready task list with:
 4. **Review manually** - Validate automated findings
 5. **Track over time** - Regular audits show trends
 
-See [Commands Overview](overview.md) for all available commands.
+See [Skills Overview](overview.md) for all available skills.

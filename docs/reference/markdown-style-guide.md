@@ -430,7 +430,7 @@ Use relative paths from the docs root:
 
 ```markdown
 See [Installation Guide](../installation.md) for setup.
-See [Commands Overview](../commands/overview.md) for all commands.
+See [Skills Overview](../commands/overview.md) for all skills.
 ```
 
 ### Section Links

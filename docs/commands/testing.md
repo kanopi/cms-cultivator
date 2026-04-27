@@ -1,11 +1,13 @@
-# Testing Commands
+# Testing Skills
 
-Generate tests and analyze coverage with 3 specialized commands.
+Generate tests and analyze coverage with 3 specialized skills.
 
-## Commands
+## Skills
 
-- `/test-generate [type]` - Generate test scaffolding
-- `/test-coverage` - Analyze test coverage
-- `/test-plan` - Generate QA test plan
+- `test-generate [type]` — Generate test scaffolding
+- `test-coverage` — Analyze test coverage
+- `test-plan` — Generate QA test plan
 
-See [Commands Overview](overview.md) for detailed usage.
+**Auto-invoked triggers:** "I need tests for this class", "what's not tested", "generate a test plan"
+
+See [Skills Overview](overview.md) for detailed usage.

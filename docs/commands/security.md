@@ -1,10 +1,10 @@
-# Security Commands
+# Security Skills
 
 Scan for OWASP Top 10 vulnerabilities, CVEs, and security misconfigurations with flexible argument modes.
 
-## Command
+## Skill
 
-`/audit-security [options]` - Comprehensive security audit with vulnerability scanning and compliance reporting
+`audit-security [options]` — Comprehensive security audit with vulnerability scanning and compliance reporting
 
 ## Flexible Argument Modes
 
@@ -157,4 +157,4 @@ Export results as SARIF or JSON for security tools:
 - Remediation roadmap
 - Compliance status (OWASP, CWE)
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

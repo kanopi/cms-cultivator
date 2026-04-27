@@ -3,11 +3,11 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing specialized slash commands and auto-invoked Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a comprehensive Claude Code plugin providing 38 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
-### Slash Commands (User-Invoked)
+### 38 Agent Skills
 - **🔄 PR Workflow** - Streamline pull requests from commit to deployment
 - **♿ Accessibility** - Ensure WCAG 2.1 Level AA compliance
 - **⚡ Performance** - Optimize Core Web Vitals and page speed
@@ -17,14 +17,7 @@
 - **📝 Documentation** - Generate comprehensive project documentation
 - **🧪 Testing** - Create tests and analyze coverage
 - **📊 Code Quality** - Maintain standards and reduce technical debt
-
-### Agent Skills (Auto-Invoked)
-- **🤖 Intelligent Skills** - Claude automatically helps during conversation
-  - Commit message generation
-  - Code standards checking
-  - Test scaffolding
-  - Documentation generation
-  - And more...
+- **🤖 Auto-Invoked** - Claude activates skills automatically during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need help
 
@@ -38,7 +31,7 @@
 |---------|-------------|
 | **[Getting Started](installation.md)** | Installation and initial setup |
 | **[Quick Start](quick-start.md)** | Common workflows and examples |
-| **[Commands](commands/overview.md)** | Complete command reference |
+| **[Skills](commands/overview.md)** | Complete skills reference |
 | **[Agents & Skills](agents-and-skills.md)** | Specialist agents and auto-invoked skills |
 | **[Kanopi Tools](kanopi-tools/overview.md)** | Integration with Kanopi's DDEV add-ons |
 
@@ -46,24 +39,22 @@
 
 ## 🚀 Quick Example
 
+Natural language (skills auto-activate):
+```
+"I need to commit my changes"       → generates commit message
+"Is this button accessible?"        → checks accessibility
+"This query is slow"                → analyzes performance
+"Does this follow Drupal standards?" → checks code standards
+```
+
+Explicit invocation:
 ```bash
-# Create PR with generated description
-/pr-create PROJ-123
-
-# Review your changes before submitting
-/pr-review self
-
-# Run accessibility audit
-/audit-a11y
-
-# Analyze performance
-/audit-perf
-
-# Check security
-/audit-security
-
-# Analyze code quality
-/quality-analyze
+/pr-create PROJ-123   # Create PR with generated description
+/pr-review self       # Review your changes before submitting
+/audit-a11y           # Run accessibility audit
+/audit-perf           # Analyze performance
+/audit-security       # Check security
+/quality-analyze      # Analyze code quality
 ```
 
 ---
@@ -72,7 +63,7 @@
 
 ### For Developers
 
-#### Natural Language (Agent Skills auto-activate)
+#### Natural Language (Skills auto-activate)
 
 - "I need to commit my changes" → Generates commit message
 - "Is this button accessible?" → Checks accessibility
@@ -80,7 +71,7 @@
 - "Does this follow WordPress standards?" → Checks code standards
 - "I need tests for this class" → Generates test scaffolding
 
-#### Explicit Commands
+#### Explicit Invocation
 
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
@@ -94,7 +85,7 @@
 - "Is this secure?" → Security check
 - "What should QA test?" → Test plan generation
 
-#### Explicit Commands
+#### Explicit Invocation
 
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
 - **Performance audits**: `/audit-perf` - Identify bottlenecks
@@ -102,7 +93,7 @@
 
 ### For Project Managers
 
-#### Explicit Commands (Reports)
+#### Explicit Invocation (Reports)
 
 - **Stakeholder reports**: `/audit-perf report` - Executive-friendly reports
 - **Compliance reports**: `/audit-a11y report` - Accessibility documentation
@@ -164,5 +155,5 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Commands](commands/overview.md)** - Discover all available commands
+3. **[Explore Skills](commands/overview.md)** - Discover all 38 available skills
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons

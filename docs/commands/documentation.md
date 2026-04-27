@@ -1,11 +1,11 @@
-# Documentation Commands
+# Documentation Skills
 
 Generate and maintain project documentation.
 
-## Commands
+## Skills
 
-- `/docs-generate [type]` - Generate documentation
+- `docs-generate [type]` — Generate documentation
 
 **Types:** `api`, `readme`, `changelog`, `guide user`, `guide developer`, `guide deployment`, `guide admin`
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

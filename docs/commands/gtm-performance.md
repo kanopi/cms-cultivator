@@ -1,10 +1,10 @@
-# GTM Performance Commands
+# GTM Performance Skills
 
 Audit Google Tag Manager implementations for performance impact with flexible argument modes.
 
-## Command
+## Skill
 
-`/audit-gtm [options]` - Comprehensive GTM performance audit analyzing container size, tag execution, trigger efficiency, and Core Web Vitals impact
+`audit-gtm [options]` — Comprehensive GTM performance audit analyzing container size, tag execution, trigger efficiency, and Core Web Vitals impact
 
 ## Requirements
 
@@ -157,4 +157,4 @@ Export results as JSON for automated pipelines:
 - **[Live Site Audit](live-site-auditing.md)** - Comprehensive audit (perf + a11y + security + quality)
 - **[Security Audit](security.md)** - Security audit (includes third-party script risks)
 
-See [Commands Overview](overview.md) for all available commands.
+See [Skills Overview](overview.md) for all available skills.

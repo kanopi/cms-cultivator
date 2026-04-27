@@ -1,12 +1,12 @@
-# Design Workflow Commands
+# Design Workflow Skills
 
 Accelerate design-to-code workflows with automated component generation, responsive styling, and browser validation.
 
 ---
 
-## Commands
+## Skills
 
-### `/design-to-block [design-source] [pattern-name] [theme-namespace]`
+### `design-to-wp-block [design-source] [pattern-name] [theme-namespace]`
 
 Create WordPress block patterns from design references (Figma URLs, screenshots, mockups).
 
@@ -55,7 +55,7 @@ Create WordPress block patterns from design references (Figma URLs, screenshots,
 
 ---
 
-### `/design-to-paragraph [design-source] [paragraph-name] [module-name]`
+### `design-to-drupal-paragraph [design-source] [paragraph-name] [module-name]`
 
 Create Drupal paragraph types from design references.
 
@@ -107,7 +107,7 @@ Create Drupal paragraph types from design references.
 
 ---
 
-### `/design-validate [test-url] [design-reference]`
+### `browser-validator [test-url] [design-reference]`
 
 Validate design implementations in browser with comprehensive checks.
 

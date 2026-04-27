@@ -814,18 +814,18 @@ Agent allows this and marks sections as "TBD"
 
 ---
 
-## Related Commands
+## Related Skills
 
-- [`/pr-create`](../commands/pr-create.md) - Auto-links PRs to tickets
-- [`/audit-security`](../commands/audit-security.md) - Can export findings
-- [`/audit-perf`](../commands/audit-perf.md) - Can export findings
-- [`/audit-a11y`](../commands/audit-a11y.md) - Can export findings
-- [`/quality-analyze`](../commands/quality-analyze.md) - Can export tasks
+- [`pr-create`](../commands/pr-workflow.md) — Auto-links PRs to tickets
+- [`audit-security`](../commands/security.md) — Can export findings
+- [`audit-perf`](../commands/performance.md) — Can export findings
+- [`audit-a11y`](../commands/accessibility.md) — Can export findings
+- [`quality-analyze`](../commands/code-quality.md) — Can export tasks
 
 ---
 
 ## Further Reading
 
 - [Agents and Skills Overview](../agents-and-skills.md)
-- [Commands Overview](../commands/overview.md)
+- [Skills Overview](../commands/overview.md)
 - [Quick Start Guide](../quick-start.md)

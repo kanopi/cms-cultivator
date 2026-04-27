@@ -590,11 +590,11 @@ Follow this decision tree:
 
 ## Additional Resources
 
-- [Accessibility Commands](../commands/accessibility.md) - Full accessibility audit documentation
-- [Performance Commands](../commands/performance.md) - Full performance audit documentation
-- [Security Commands](../commands/security.md) - Full security audit documentation
-- [Code Quality Commands](../commands/code-quality.md) - Full quality analysis documentation
-- [Commands Overview](../commands/overview.md) - All available commands
+- [Accessibility Skills](../commands/accessibility.md) - Full accessibility audit documentation
+- [Performance Skills](../commands/performance.md) - Full performance audit documentation
+- [Security Skills](../commands/security.md) - Full security audit documentation
+- [Code Quality Skills](../commands/code-quality.md) - Full quality analysis documentation
+- [Skills Overview](../commands/overview.md) - All available skills
 
 ---
 

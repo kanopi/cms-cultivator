@@ -1,10 +1,10 @@
-# Performance Commands
+# Performance Skills
 
 Optimize Core Web Vitals and page speed with flexible argument modes for different use cases.
 
-## Command
+## Skill
 
-`/audit-perf [options]` - Comprehensive performance analysis and Core Web Vitals optimization
+`audit-perf [options]` — Comprehensive performance analysis and Core Web Vitals optimization
 
 ## Flexible Argument Modes
 
@@ -141,4 +141,4 @@ The **[GTM Performance Audit](gtm-performance.md)** provides:
 - CWV impact mapping per tag
 - GTM-specific remediation steps
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

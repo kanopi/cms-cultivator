@@ -1,10 +1,10 @@
-# Accessibility Commands
+# Accessibility Skills
 
 Ensure WCAG 2.1 Level AA compliance with flexible argument modes for different use cases.
 
-## Command
+## Skill
 
-`/audit-a11y [options]` - Comprehensive accessibility audit with WCAG 2.1 Level AA compliance
+`audit-a11y [options]` — Comprehensive accessibility audit with WCAG 2.1 Level AA compliance
 
 ## Flexible Argument Modes
 
@@ -100,4 +100,4 @@ Export results as JSON for automated pipelines:
 /audit-a11y --comprehensive --format=report
 ```
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

@@ -356,7 +356,7 @@ df -h ~
 
 ### CMS Cultivator
 
-- **Commands Overview**: [commands/overview.md](commands/overview.md)
+- **Skills Overview**: [commands/overview.md](commands/overview.md)
 - **Quick Start Guide**: [quick-start.md](quick-start.md)
 - **Contributing**: [contributing.md](contributing.md)
 

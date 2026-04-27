@@ -180,29 +180,29 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ## Verifying Installation
 
-### Test a Command
+### Test a Skill
 
-Open Claude Code in any project and try a command:
+Open Claude Code in any project and try a skill by name or natural language:
 
 ```bash
 /quality-standards
 ```
 
-All slash commands should now be available!
+Or just say: "Does this follow Drupal coding standards?" — skills activate automatically in conversation.
 
-### List Available Commands
+### List Available Skills
 
-In Claude Code, type `/` to see all available commands. CMS Cultivator commands are organized by category:
+In Claude Code, type `/` to see all available skills. CMS Cultivator skills are organized by category:
 
 - **PR Workflow**: `/pr-create`, `/pr-review`, `/pr-commit-msg`, `/pr-release`
 - **Accessibility**: `/audit-a11y` (with flexible modes)
 - **Performance**: `/audit-perf` (with flexible modes)
 - **Security**: `/audit-security` (with flexible modes)
 - **Live Site Auditing**: `/audit-live-site` (orchestrator)
-- **Design Workflow**: `/design-to-block`, `/design-to-paragraph`, `/design-validate`
-- **Testing**: `/test-generate`, `/test-coverage`, `/test-plan`
+- **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`
+- **Testing**: auto-invoked (say "I need tests for this class")
 - **Code Quality**: `/quality-analyze`, `/quality-standards`
-- **Documentation**: `/docs-generate`
+- **Documentation**: auto-invoked (say "document this function")
 
 ---
 
@@ -364,7 +364,7 @@ chmod -R 755 ~/.claude/plugins/cms-cultivator
 cat ~/.claude/plugins/cms-cultivator/.claude-plugin/plugin.json
 
 # Verify directory structure
-ls ~/.claude/plugins/cms-cultivator/commands/
+ls ~/.claude/plugins/cms-cultivator/skills/
 
 # Check plugin integrity
 cd ~/.claude/plugins/cms-cultivator
@@ -393,7 +393,7 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Commands Overview](commands/overview.md)** - Explore all 14 commands
+- **[Skills Overview](commands/overview.md)** - Explore all 38 skills
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 

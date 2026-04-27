@@ -1,13 +1,13 @@
-# Code Quality Commands
+# Code Quality Skills
 
 Maintain standards and reduce technical debt with flexible argument modes for different use cases.
 
-## Commands
+## Skills
 
-- `/quality-analyze [options]` - Comprehensive code quality analysis and technical debt assessment
-- `/quality-standards [standard]` - Check coding standards compliance (PHPCS, ESLint)
+- `quality-analyze [options]` — Comprehensive code quality analysis and technical debt assessment
+- `quality-standards [standard]` — Check coding standards compliance (PHPCS, ESLint)
 
-## quality-analyze Command
+## quality-analyze Skill
 
 ### Flexible Argument Modes
 
@@ -130,7 +130,7 @@ Export results as JSON for quality gates:
 /quality-analyze --standard --scope=recent-changes
 ```
 
-## quality-standards Command
+## quality-standards Skill
 
 Check coding standards compliance with PHPCS/ESLint for Drupal and WordPress projects.
 
@@ -140,4 +140,4 @@ Check coding standards compliance with PHPCS/ESLint for Drupal and WordPress pro
 /quality-standards wordpress # WordPress coding standards
 ```
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

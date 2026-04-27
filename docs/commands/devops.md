@@ -2,9 +2,9 @@
 
 Automate Kanopi's complete Drupal/Pantheon DevOps onboarding workflow for new projects.
 
-## Command
+## Skill
 
-`/devops-setup [git-url]` — Full Kanopi DevOps onboarding: GitHub repo creation, Pantheon services, CircleCI, and code quality tooling
+`devops-setup [git-url]` — Full Kanopi DevOps onboarding: GitHub repo creation, Pantheon services, CircleCI, and code quality tooling
 
 ## Quick Start
 
