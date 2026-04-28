@@ -10,7 +10,7 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
 
 - Git
 - Python 3.x (for Zensical documentation)
-- Claude Code CLI (for testing commands)
+- Claude Code CLI or OpenAI Codex (for testing skills)
 - Basic knowledge of Markdown
 
 ### Setting Up Development Environment
@@ -29,6 +29,8 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
    ```
 
 4. **Test the plugin locally**:
+
+   **Claude Code:**
    ```bash
    # Link to Claude Code plugins directory, from WITHIN the cms-cultivator directory
    mkdir -p ~/.config/claude/plugins
@@ -36,56 +38,77 @@ Thank you for your interest in contributing to CMS Cultivator! This document pro
    claude plugins enable cms-cultivator
    ```
 
+   **OpenAI Codex:**
+   ```bash
+   # Link to Codex plugins directory, from WITHIN the cms-cultivator directory
+   mkdir -p ~/.codex/plugins
+   ln -s "$(pwd)" ~/.codex/plugins/cms-cultivator
+   # Then add ~/.agents/plugins/marketplace.json pointing to ~/.codex/plugins/cms-cultivator
+   # and restart Codex
+   ```
+
 ---
 
 ## Making Changes
 
-### Adding a New Command
+### Adding a New Skill
 
-#### 1. Create command file in `/commands/`
+#### 1. Create the skill directory and file
 
 ```bash
-touch commands/my-new-command.md
+mkdir -p skills/my-new-skill
+touch skills/my-new-skill/SKILL.md
 ```
 
-#### 2. Add frontmatter at the top
+#### 2. Add frontmatter and content
 
 ```yaml
 ---
-description: Brief description of what the command does
-argument-hint: [optional-arg]
-allowed-tools: Bash(git:*), Read, Glob, Grep, Write
+name: my-new-skill
+description: Automatically [action] when user [trigger phrase]. Invoke when user mentions "[term1]", "[term2]", or asks "[example question]".
 ---
 ```
 
-#### 3. Write command documentation
+Then write the skill content — workflow steps, examples, Drupal/WordPress-specific guidance.
 
-- Clear usage instructions
-- Example outputs
-- Drupal/WordPress-specific considerations
-- Integration with Kanopi tools (if applicable)
-
-#### 4. Test the command
+#### 3. Validate frontmatter
 
 ```bash
-# In Claude Code
-/my-new-command
+./scripts/validate-frontmatter.sh
+```
+
+#### 4. Test the skill locally
+
+**Claude Code:**
+```bash
+# Trigger via natural language
+"[describe scenario that should activate the skill]"
+
+# Or invoke explicitly
+/my-new-skill
+```
+
+**OpenAI Codex:**
+```bash
+# Trigger via natural language — same as Claude Code
+# Or invoke explicitly
+@my-new-skill
 ```
 
 #### 5. Add to documentation
 
-- Update `docs/commands/overview.md`
-- Add detailed guide if needed
+- Update `docs/commands/overview.md` with the new skill entry
+- Update `docs/agents-and-skills.md` if the skill spawns agents
 
-### Updating Existing Commands
+### Updating Existing Skills
 
-#### 1. Modify command file in `/commands/`
+#### 1. Modify the skill file in `skills/skill-name/SKILL.md`
 
 #### 2. Test thoroughly
 
-- Try different arguments
-- Test with both Drupal and WordPress projects
-- Verify Kanopi tool integration
+- Trigger via natural language
+- Try with both Drupal and WordPress projects
+- Verify Kanopi tool integration if applicable
 
 #### 3. Update documentation if behavior changed
 
@@ -134,9 +157,14 @@ zensical build --clean
 
 ### Frontmatter
 
-- `description`: Brief one-line description
-- `argument-hint`: Show optional arguments in square brackets
-- `allowed-tools`: List all tools the command can use
+**Skills** (`skills/*/SKILL.md`):
+- `name`: Skill identifier in kebab-case (must match directory name)
+- `description`: When to invoke, trigger phrases, and use cases
+
+**Agents** (`agents/*/AGENT.md`):
+- `name`: Agent name in kebab-case (must match directory name)
+- `description`: When and how to invoke this agent
+- `tools`: Available tools list
 
 ### Validating Frontmatter
 
@@ -169,11 +197,6 @@ argument-hint: "[operation] [args]"
 ```
 
 **Missing required fields** - Each file type has required fields:
-
-**Commands** (`commands/*.md`):
-- `description` - Brief one-line description
-- `allowed-tools` - Tools the command can use
-- `argument-hint` - Optional argument syntax (recommended)
 
 **Agents** (`agents/*/AGENT.md`):
 - `name` - Agent name (must match directory)

@@ -1,10 +1,9 @@
 # Agents and Skills
 
-CMS Cultivator features a three-tier architecture:
+CMS Cultivator features a two-tier architecture:
 
-1. **Specialist Agents** - Orchestrate complex workflows (spawned by commands)
-2. **Slash Commands** - User-facing interfaces (you invoke explicitly)
-3. **Agent Skills** - Knowledge base (Claude invokes automatically during conversation)
+1. **Specialist Agents** - Orchestrate complex workflows (spawned by skills)
+2. **Agent Skills** - Knowledge base (auto-invoked by context, or explicitly invoked)
 
 ---
 
@@ -92,21 +91,21 @@ PR with new features:
       → May spawn accessibility-specialist (if UI tests needed)
 ```
 
-### Agent-to-Command Mapping
+### Agent-to-Skill Mapping (Spawned By)
 
-| Agent | Used By Commands | Can Delegate To |
-|-------|------------------|-----------------|
-| workflow-specialist | `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release` | testing, security, accessibility |
-| accessibility-specialist | `/audit-a11y` | (none - leaf) |
-| performance-specialist | `/audit-perf` | (none - leaf) |
-| gtm-specialist | `/audit-gtm` | (none - leaf) |
-| security-specialist | `/audit-security` | (none - leaf) |
-| testing-specialist | `/test-generate`, `/test-plan`, `/test-coverage` | security, accessibility |
-| documentation-specialist | `/docs-generate` | (none - leaf) |
-| live-audit-specialist | `/audit-live-site` | performance, accessibility, security, code-quality |
-| code-quality-specialist | `/quality-analyze`, `/quality-standards` | (none - leaf) |
-| structured-data-specialist | `/audit-structured-data` | (none - leaf) |
-| drupal-pantheon-devops-specialist | `/devops-setup` | (none - leaf) |
+| Agent | Spawned By Skills | Can Delegate To |
+|-------|-------------------|-----------------|
+| workflow-specialist | `pr-commit-msg`, `pr-create`, `pr-review`, `pr-release` | testing, security, accessibility |
+| accessibility-specialist | `accessibility-audit` | (none - leaf) |
+| performance-specialist | `performance-audit` | (none - leaf) |
+| gtm-specialist | `gtm-performance-audit` | (none - leaf) |
+| security-specialist | `security-audit` | (none - leaf) |
+| testing-specialist | `test-generate`, `test-plan`, `test-coverage` | security, accessibility |
+| documentation-specialist | `docs-generate` | (none - leaf) |
+| live-audit-specialist | `live-site-audit` | performance, accessibility, security, code-quality |
+| code-quality-specialist | `quality-audit`, `quality-standards` | (none - leaf) |
+| structured-data-specialist | `structured-data-analyzer` | (none - leaf) |
+| drupal-pantheon-devops-specialist | `devops-setup` | (none - leaf) |
 
 ### Agent-to-Skill Mapping
 
@@ -149,14 +148,15 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 
 Agent Skills are **model-invoked** capabilities—Claude decides when to use them based on your conversation context, without you needing to remember specific command names.
 
-### Three-Tier System Explained
+### Two-Tier System Explained
 
-| Feature | Slash Commands | Specialist Agents | Agent Skills |
-|---------|----------------|-------------------|--------------|
-| **Invocation** | User types `/command` | Commands spawn agents | Claude activates automatically |
-| **Use Case** | User-facing interface | Multi-step orchestration | Conversational assistance |
-| **Execution** | Spawns an agent | Coordinates workflow | Provides knowledge |
-| **Example** | `/pr-create PROJ-123` | workflow-specialist orchestrates PR creation | "I need to commit my changes" |
+| Feature | Specialist Agents | Agent Skills |
+|---------|-------------------|--------------|
+| **Invocation** | Spawned by skills | Claude activates automatically, or user invokes explicitly |
+| **Use Case** | Multi-step orchestration | Conversational assistance |
+| **Execution** | Coordinates workflow with tools | Provides knowledge and guidance |
+| **Example** | workflow-specialist orchestrates PR creation | "I need to commit my changes" → commit-message-generator activates |
+| **Explicit invoke** | — | `/pr-create PROJ-123` (Claude Code) or `@pr-create` (Codex) |
 
 ### Available Skills
 
@@ -663,23 +663,27 @@ Simply talk to Claude naturally—the skills activate automatically:
 
 No need to remember command names or syntax!
 
-### When to Use Slash Commands Instead
+### When to Invoke Skills Explicitly
 
-Use explicit slash commands when you want:
+Use explicit skill invocation when you want:
 
 **Full comprehensive analysis:**
-- `/audit-a11y` - Complete WCAG audit (not just one element)
-- `/audit-perf` - Full performance analysis with Lighthouse
-- `/audit-security` - Complete OWASP Top 10 scan
+- `audit-a11y` / `@audit-a11y` - Complete WCAG audit (not just one element)
+- `audit-perf` / `@audit-perf` - Full performance analysis with Lighthouse
+- `audit-security` / `@audit-security` - Complete OWASP Top 10 scan
 
 **Structured workflows:**
-- `/pr-create` - Create PR with full description
-- `/pr-review 123` - Review specific PR
-- `/pr-release` - Generate changelog and deployment notes
+- `pr-create` / `@pr-create` - Create PR with full description
+- `pr-review 123` / `@pr-review 123` - Review specific PR
+- `pr-release` / `@pr-release` - Generate changelog and deployment notes
 
 **Batch operations:**
-- `/test-generate` - Generate tests for entire module
-- `/docs-generate api` - Generate all API documentation
+- `test-generate` / `@test-generate` - Generate tests for entire module
+- `docs-generate api` / `@docs-generate api` - Generate all API documentation
+
+!!! tip "Syntax by platform"
+    Claude Code: prefix with `/` (e.g. `/pr-create PROJ-123`)
+    OpenAI Codex: prefix with `@` (e.g. `@pr-create PROJ-123`)
 
 ## Skill Activation Tips
 
@@ -721,23 +725,23 @@ Don't try to "game" the system—just describe what you need:
 
 ## Skills Reference Table
 
-| Skill | Triggers On | Best For | Related Command |
-|-------|-------------|----------|-----------------|
-| commit-message-generator | "commit", "staged" | Quick commits | `/pr-commit-msg` |
-| code-standards-checker | "standards", "style" | Code review | `/quality-standards` |
-| test-scaffolding | "need tests", "how to test" | Single class tests | `/test-generate` |
-| documentation-generator | "document", "API docs" | Quick docblocks | `/docs-generate` |
-| test-plan-generator | "test plan", "QA" | Test scenarios | `/test-plan` |
-| accessibility-checker | "accessible?", "WCAG" | Element checks | `/audit-a11y` |
-| performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
-| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `/audit-gtm` |
-| security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
-| coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
-| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `/audit-structured-data` |
-| teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |
-| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `/teamwork status` |
-| teamwork-exporter | "export to Teamwork" | Audit export | `/teamwork export` |
-| strategic-thinking | "should we do this?", "help me decide" | Decision making | None |
+| Skill | Triggers On | Best For | Explicit Invocation |
+|-------|-------------|----------|---------------------|
+| commit-message-generator | "commit", "staged" | Quick commits | `pr-commit-msg` |
+| code-standards-checker | "standards", "style" | Code review | `quality-standards` |
+| test-scaffolding | "need tests", "how to test" | Single class tests | `test-generate` |
+| documentation-generator | "document", "API docs" | Quick docblocks | `docs-generate` |
+| test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan` |
+| accessibility-checker | "accessible?", "WCAG" | Element checks | `audit-a11y` |
+| performance-analyzer | "slow", "optimize" | Query optimization | `audit-perf` |
+| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `audit-gtm` |
+| security-scanner | "secure?", "exploit" | Code security | `audit-security` |
+| coverage-analyzer | "coverage", "untested" | Test gaps | `test-coverage` |
+| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `audit-structured-data` |
+| teamwork-task-creator | "create task", "make ticket" | Single task creation | `teamwork create` |
+| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `teamwork status` |
+| teamwork-exporter | "export to Teamwork" | Audit export | `teamwork export` |
+| strategic-thinking | "should we do this?", "help me decide" | Decision making | — |
 
 ## Integration with Workflow
 
@@ -771,14 +775,15 @@ Agent Skills are project-level by default. To disable:
 ```
 
 **To prevent auto-activation:**
-Simply use explicit slash commands instead—Claude will respect your explicit command choice.
+Simply invoke the skill explicitly—Claude will respect your explicit choice.
 
 ## Learning More
 
 - **General Skills Documentation**: [Claude Code Skills](https://code.claude.com/docs/en/skills)
+- **Codex Plugin Documentation**: [OpenAI Codex Plugins](https://developers.openai.com/codex/plugins)
 - **Creating Custom Skills**: See [Contributing](contributing.md) guide
-- **Slash Commands Reference**: See [Commands Overview](commands/overview.md)
+- **Skills Reference**: See [Skills Overview](commands/overview.md)
 
 ---
 
-**Key Takeaway**: Agent Skills make CMS Cultivator proactive—Claude helps automatically when it sees you need assistance, while Slash Commands give you explicit control over comprehensive workflows.
+**Key Takeaway**: Agent Skills make CMS Cultivator proactive—Claude helps automatically when it sees you need assistance, while explicit invocation gives you direct control over comprehensive workflows.

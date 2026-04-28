@@ -4,7 +4,10 @@ Get started with CMS Cultivator in minutes! This guide covers the most common wo
 
 CMS Cultivator provides **two ways to work**:
 1. **Talk naturally** - Agent Skills automatically help when you need it
-2. **Use commands** - Explicit `/command` for full control
+2. **Use skills explicitly** - In Claude Code, use `/skill-name`. In Codex, use `@skill-name`.
+
+!!! note "Platform compatibility"
+    Natural language activation works the same on Claude Code, Claude Desktop, and OpenAI Codex. Explicit invocation syntax differs: Claude Code uses `/pr-create`, Codex uses `@pr-create`.
 
 ---
 

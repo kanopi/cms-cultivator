@@ -11,7 +11,7 @@ Specialist agents and 38 auto-invoked skills for Drupal/WordPress development. W
 
 ## Quick Start
 
-**Via Marketplace (Recommended)**
+**Claude Code — Via Marketplace (Recommended)**
 
 ```bash
 # Add the Claude Toolbox marketplace
@@ -21,10 +21,20 @@ Specialist agents and 38 auto-invoked skills for Drupal/WordPress development. W
 /plugin install cms-cultivator@claude-toolbox
 ```
 
-**Direct Install**
+**Claude Code — Direct Install**
 
 ```bash
 /plugin install https://github.com/kanopi/cms-cultivator
+```
+
+**OpenAI Codex — Via Marketplace**
+
+```bash
+# Add the Kanopi marketplace
+codex plugin marketplace add kanopi/claude-toolbox
+
+# Open the plugin browser and install CMS Cultivator
+codex/plugins
 ```
 
 See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) for complete setup instructions.
@@ -140,7 +150,7 @@ Integrates with [Kanopi's DDEV add-ons](https://kanopi.github.io/cms-cultivator/
 ## Requirements
 
 **Required:**
-- Claude Code CLI
+- Claude Code CLI **or** OpenAI Codex
 - Git
 
 **Optional:**
