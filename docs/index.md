@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a comprehensive Claude Code plugin providing 38 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
+**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing 38 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, and maintain documentation across your projects.
 
 ## ✨ Features
 
@@ -20,6 +20,7 @@
 - **🤖 Auto-Invoked** - Claude activates skills automatically during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need help
+- **🌐 Multi-Platform** - Works in Claude Code, Claude Desktop, and OpenAI Codex
 
 [Learn about Agents & Skills →](agents-and-skills.md)
 
@@ -132,7 +133,7 @@ CMS Cultivator integrates seamlessly with [Kanopi's DDEV add-ons](kanopi-tools/o
 
 ## 📋 Requirements
 
-- Claude Code CLI
+- Claude Code CLI **or** OpenAI Codex
 - Git
 - GitHub CLI (`gh`) for PR creation commands
 - Optional: Lighthouse, WebPageTest for performance analysis

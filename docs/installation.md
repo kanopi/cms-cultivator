@@ -1,6 +1,6 @@
 # Installation
 
-CMS Cultivator can be installed globally for all projects or per-project for team collaboration.
+CMS Cultivator can be installed in Claude Code, Claude Desktop, or OpenAI Codex — globally for all projects or per-project for team collaboration.
 
 ---
 
@@ -8,14 +8,14 @@ CMS Cultivator can be installed globally for all projects or per-project for tea
 
 Before installing CMS Cultivator, ensure you have:
 
-- **Claude Code CLI** installed and configured
+- **Claude Code CLI** or **OpenAI Codex** installed and configured
 - **Git** for version control
 - **GitHub CLI** (`gh`) for PR creation commands (optional)
 - **DDEV** (for Kanopi projects) - [Install DDEV](https://ddev.readthedocs.io/en/stable/)
 
 ---
 
-## Installation Methods
+## Claude Code Installation
 
 !!! info "Global vs Project Installation"
     - **Methods 1-3** (Marketplace, Direct, Manual) install plugins **globally** - available in all your projects
@@ -178,21 +178,180 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ---
 
+## OpenAI Codex Installation
+
+CMS Cultivator includes a `.codex-plugin/plugin.json` manifest and Codex-compatible TOML agent files. Install it via the Codex plugin system.
+
+### Codex Method 1: Via Marketplace (Recommended)
+
+Add the Kanopi marketplace and install from the Codex plugin browser.
+
+#### Step 1: Add the Kanopi Marketplace
+
+```bash
+codex plugin marketplace add kanopi/claude-toolbox
+```
+
+#### Step 2: Open the Plugin Browser
+
+```bash
+codex/plugins
+```
+
+Browse to CMS Cultivator, open its details, and select **Install plugin**.
+
+#### Step 3: Start a New Thread
+
+After installation, start a new Codex thread. Skills activate automatically from context, or invoke explicitly with `@skill-name` (e.g. `@pr-create`).
+
+#### Updating Via Marketplace
+
+```bash
+codex plugin marketplace upgrade
+```
+
+---
+
+### Codex Method 2: Personal Installation (Manual)
+
+Install directly to your personal Codex plugins directory. **Installs globally for all your projects.**
+
+#### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/kanopi/cms-cultivator ~/.codex/plugins/cms-cultivator
+```
+
+#### Step 2: Create a Personal Marketplace File
+
+Create or update `~/.agents/plugins/marketplace.json`:
+
+```json
+{
+  "name": "kanopi-plugins",
+  "interface": {
+    "displayName": "Kanopi Plugins"
+  },
+  "plugins": [
+    {
+      "name": "cms-cultivator",
+      "source": {
+        "source": "local",
+        "path": "./cms-cultivator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}
+```
+
+#### Step 3: Restart Codex and Install
+
+Restart Codex, then open `codex/plugins`, find CMS Cultivator under the Kanopi Plugins marketplace, and install it.
+
+#### Updating Manual Installation
+
+```bash
+cd ~/.codex/plugins/cms-cultivator
+git pull origin main
+```
+
+Then restart Codex to pick up the changes.
+
+---
+
+### Codex Method 3: Repo-Scoped Installation
+
+Share the plugin with your team by configuring it in your project repository. **Installs per-project - only available in this specific project.**
+
+#### Step 1: Add the Plugin to Your Repo
+
+```bash
+git clone https://github.com/kanopi/cms-cultivator plugins/cms-cultivator
+```
+
+Or add it as a git submodule:
+
+```bash
+git submodule add https://github.com/kanopi/cms-cultivator plugins/cms-cultivator
+```
+
+#### Step 2: Create a Repo Marketplace File
+
+Create `$REPO_ROOT/.agents/plugins/marketplace.json`:
+
+```json
+{
+  "name": "project-plugins",
+  "plugins": [
+    {
+      "name": "cms-cultivator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cms-cultivator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}
+```
+
+#### Step 3: Commit to Repository
+
+```bash
+git add .agents/plugins/marketplace.json plugins/cms-cultivator
+git commit -m "Add CMS Cultivator plugin for Codex"
+git push
+```
+
+#### Team Member Setup
+
+When team members open the project in Codex, they run `codex/plugins`, find CMS Cultivator under the project marketplace, and install it.
+
+---
+
+### Disabling the Codex Plugin
+
+To keep the plugin installed but turn it off, edit `~/.codex/config.toml`:
+
+```toml
+[plugins."cms-cultivator@kanopi-plugins"]
+enabled = false
+```
+
+Then restart Codex.
+
+---
+
 ## Verifying Installation
 
 ### Test a Skill
 
-Open Claude Code in any project and try a skill by name or natural language:
+**Claude Code** — open in any project and try a skill by name or natural language:
 
 ```bash
 /quality-standards
 ```
 
-Or just say: "Does this follow Drupal coding standards?" — skills activate automatically in conversation.
+**Codex** — start a new thread and invoke explicitly or by natural language:
+
+```
+@quality-standards
+```
+
+Or just say: "Does this follow Drupal coding standards?" — skills activate automatically in conversation on both platforms.
 
 ### List Available Skills
 
-In Claude Code, type `/` to see all available skills. CMS Cultivator skills are organized by category:
+In Claude Code, type `/` to see all available skills. In Codex, type `@` to see installed plugin skills. CMS Cultivator skills are organized by category:
 
 - **PR Workflow**: `/pr-create`, `/pr-review`, `/pr-commit-msg`, `/pr-release`
 - **Accessibility**: `/audit-a11y` (with flexible modes)
@@ -371,12 +530,18 @@ cd ~/.claude/plugins/cms-cultivator
 git status
 ```
 
-### Project Settings Not Working
+### Project Settings Not Working (Claude Code)
 
 1. **Verify trust**: Ensure the project folder is trusted in Claude Code
 2. **Check JSON syntax**: Validate `.claude/settings.json` with a JSON linter
 3. **Restart Claude Code**: Close and reopen Claude Code after changing settings
 4. **Check marketplace availability**: Ensure `extraKnownMarketplaces` is configured correctly
+
+### Codex Plugin Not Appearing
+
+1. **Verify marketplace file**: Check that `marketplace.json` is valid JSON and `source.path` is correct
+2. **Restart Codex**: Codex reads marketplace files on startup
+3. **Check config**: Verify `~/.codex/config.toml` doesn't have the plugin set to `enabled = false`
 
 ---
 
