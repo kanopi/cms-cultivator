@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-04-28
+
+### Added
+- OpenAI Codex installation documentation: marketplace CLI, personal, and repo-scoped methods
+- Platform compatibility note in quick-start guide (`@skill-name` for Codex, `/skill-name` for Claude Code)
+- Codex section to `docs/reference/agent-skills-reference.md`
+
+### Fixed
+- `docs/agents-and-skills.md`: updated stale three-tier architecture description to two-tier (Specialist Agents + Agent Skills); removed slash commands as a separate tier
+- `docs/contributing.md`: replaced stale `commands/` workflow with skills-based workflow for adding new features; removed stale `commands/*.md` frontmatter field references
+- `docs/agents-and-skills.md`: Agent-to-Command Mapping table updated to Agent-to-Skill Mapping
+
+### Changed
+- `docs/index.md`, `README.md`: updated plugin description to reflect multi-platform support (Claude Code, Claude Desktop, OpenAI Codex)
+- `docs/installation.md`: restructured prerequisites and verification sections to cover both Claude Code and Codex
+
 ## [1.0.0] - 2026-04-15
 
 ### Added
