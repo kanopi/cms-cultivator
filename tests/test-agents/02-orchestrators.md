@@ -1,8 +1,8 @@
 # Test 02: Orchestrator Agents
 
-**Category:** Orchestration & Delegation
-**Agents Tested:** 3 orchestrators
-**Expected Behavior:** Agents spawn, access skills, CAN delegate to other agents
+**Category:** Orchestration & Workflow Coordination
+**Agents Tested:** 2 orchestrators
+**Expected Behavior:** Agents perform inline quality checks (no subagent spawning)
 
 ---
 
@@ -21,10 +21,10 @@ User: Run /pr-create and generate a comprehensive PR description
 1. ✅ Command spawns `workflow-specialist` agent
 2. ✅ Agent accesses `commit-message-generator` skill
 3. ✅ Agent analyzes git changes
-4. ✅ Agent SHOULD delegate to specialists based on change type:
-   - If UI changes → spawn `accessibility-specialist`
-   - If security code → spawn `security-specialist`
-   - If tests needed → spawn `testing-specialist`
+4. ✅ Agent performs inline quality checks based on change type:
+   - If UI changes → reviews accessibility concerns inline using Read/Grep
+   - If security code → reviews security concerns inline using Read/Grep
+   - If tests needed → reviews test coverage inline using Read/Glob
 5. ✅ Agent compiles all findings into PR description
 
 ### Verification Checklist - Phase 1: Initial Spawn
@@ -32,17 +32,17 @@ User: Run /pr-create and generate a comprehensive PR description
 - [ ] Skill loaded: commit-message-generator
 - [ ] Git analysis performed (git status, git diff)
 
-### Verification Checklist - Phase 2: Delegation
-- [ ] Agent mentions spawning specialist(s)
-- [ ] Task tool used to spawn other agents
-- [ ] Multiple agents executed (check for parallel execution)
-- [ ] Agent types spawned:
-  - [ ] accessibility-specialist (if UI changes)
-  - [ ] security-specialist (if security code)
-  - [ ] testing-specialist (if tests needed)
+### Verification Checklist - Phase 2: Inline Quality Checks
+- [ ] Agent identifies relevant quality concerns from diff
+- [ ] Agent uses Read/Grep to inspect code inline (NOT Task tool)
+- [ ] No other agents spawned
+- [ ] Quality findings noted from inline analysis:
+  - [ ] Accessibility concerns (if UI changes)
+  - [ ] Security concerns (if security code)
+  - [ ] Test coverage (if new code)
 
 ### Verification Checklist - Phase 3: Compilation
-- [ ] PR description includes findings from all specialists
+- [ ] PR description includes inline quality findings
 - [ ] Conventional commit message generated
 - [ ] Testing checklist included
 - [ ] Security considerations mentioned (if applicable)
@@ -60,13 +60,13 @@ User: Run /pr-create and generate a comprehensive PR description
 [Generated from git analysis]
 
 ### Security Review
-[From security-specialist]
+[From inline analysis]
 
 ### Accessibility Check
-[From accessibility-specialist]
+[From inline analysis]
 
 ### Testing
-[From testing-specialist]
+[From test coverage review]
 
 ### Checklist
 - [ ] Tests pass
@@ -74,19 +74,19 @@ User: Run /pr-create and generate a comprehensive PR description
 - [ ] Accessibility verified
 ```
 
-### Delegation Verification
+### Inline Analysis Verification
 ```
 Expected log output:
-1. "Spawning accessibility-specialist to review UI changes..."
-2. "Spawning security-specialist to review authentication code..."
-3. "Spawning testing-specialist to verify test coverage..."
-4. [parallel execution of 3 agents]
-5. "Compiling findings from specialists..."
+1. "Analyzing git changes..."
+2. "Detected UI component changes — checking accessibility inline..."
+3. "Detected authentication code — reviewing security concerns..."
+4. "Checking test coverage for new code..."
+5. "Compiling PR description with quality findings..."
 ```
 
 ---
 
-## Test 2.2: Testing Specialist (Semi-Orchestrator)
+## Test 2.2: Testing Specialist (Inline Quality Checks)
 
 ### Setup
 - New feature code without tests
@@ -101,27 +101,27 @@ User: Run /test-generate for the UserAuthentication class
 1. ✅ Command spawns `testing-specialist` agent
 2. ✅ Agent accesses test-scaffolding skill
 3. ✅ Agent analyzes code to be tested
-4. ✅ Agent SHOULD delegate for specialized tests:
-   - If security-critical → spawn `security-specialist` for security test scenarios
-   - If UI component → spawn `accessibility-specialist` for a11y test scenarios
-5. ✅ Agent generates comprehensive test suite
+4. ✅ Agent generates security and accessibility test scenarios INLINE:
+   - If security-critical → generates security test cases directly (SQL injection, XSS, CSRF patterns)
+   - If UI component → generates accessibility test cases directly (keyboard nav, ARIA, contrast)
+5. ✅ Agent generates comprehensive test suite with all scenarios integrated
 
 ### Verification Checklist - Phase 1: Initial Analysis
 - [ ] testing-specialist spawned successfully
 - [ ] Skills loaded: test-scaffolding, test-plan-generator, coverage-analyzer
 - [ ] Code analysis performed
 
-### Verification Checklist - Phase 2: Conditional Delegation
+### Verification Checklist - Phase 2: Inline Scenario Generation
 - [ ] Agent identifies security-critical code
-- [ ] Agent spawns security-specialist (if applicable)
+- [ ] Agent generates security test scenarios inline (NOT via Task tool)
 - [ ] Agent identifies UI components
-- [ ] Agent spawns accessibility-specialist (if applicable)
+- [ ] Agent generates accessibility test scenarios inline (NOT via Task tool)
 
 ### Verification Checklist - Phase 3: Test Generation
 - [ ] Unit tests generated
 - [ ] Integration tests generated
-- [ ] Security test scenarios included (if security code)
-- [ ] Accessibility test scenarios included (if UI code)
+- [ ] Security test scenarios included inline (if security code)
+- [ ] Accessibility test scenarios included inline (if UI code)
 - [ ] Test coverage analysis provided
 
 ### Output Format Validation
@@ -131,131 +131,37 @@ class UserAuthenticationTest extends TestCase {
   // [Generated unit tests]
 }
 
-// Security Tests (from security-specialist)
+// Security Tests (generated inline)
 class UserAuthenticationSecurityTest extends TestCase {
   public function testSqlInjectionPrevention() {
-    // [Security-focused test]
+    // [Security test — generated inline by testing-specialist]
   }
 }
 
-// Accessibility Tests (from accessibility-specialist)
+// Accessibility Tests (generated inline)
 class LoginFormAccessibilityTest extends TestCase {
   public function testKeyboardNavigation() {
-    // [A11y-focused test]
+    // [A11y test — generated inline by testing-specialist]
   }
 }
 ```
 
-### Delegation Verification
+### Inline Generation Verification
 ```
 Expected log output:
 1. "Analyzing UserAuthentication class..."
 2. "Detected security-sensitive authentication logic"
-3. "Spawning security-specialist for security test scenarios..."
+3. "Generating security test scenarios inline..."
 4. "Detected login form UI component"
-5. "Spawning accessibility-specialist for a11y test scenarios..."
-6. "Generating comprehensive test suite..."
+5. "Generating accessibility test scenarios inline..."
+6. "Compiling comprehensive test suite..."
 ```
 
 ---
 
-## Test 2.3: Live Audit Specialist (Pure Orchestrator)
+## Test 2.3: Orchestration Edge Cases
 
-### Setup
-- Live website or staging environment
-- Mix of accessibility, performance, security, and code quality issues
-
-### Test Procedure
-```
-User: Run /audit-live-site https://example.com
-```
-
-### Expected Behavior
-1. ✅ Command spawns `live-audit-specialist` agent
-2. ✅ Agent has NO skills (pure orchestrator)
-3. ✅ Agent MUST delegate to ALL 4 leaf specialists IN PARALLEL:
-   - `performance-specialist`
-   - `accessibility-specialist`
-   - `security-specialist`
-   - `code-quality-specialist`
-4. ✅ Agent waits for all specialists to complete
-5. ✅ Agent synthesizes findings into unified report
-
-### Verification Checklist - Phase 1: Orchestration Setup
-- [ ] live-audit-specialist spawned successfully
-- [ ] Agent confirms it's a pure orchestrator
-- [ ] No skills loaded for this agent
-
-### Verification Checklist - Phase 2: Parallel Delegation
-- [ ] Agent spawns ALL 4 specialists
-- [ ] Specialists spawned in parallel (not sequential)
-- [ ] Task tool used 4 times
-- [ ] Specialists spawned:
-  - [ ] performance-specialist
-  - [ ] accessibility-specialist
-  - [ ] security-specialist
-  - [ ] code-quality-specialist
-
-### Verification Checklist - Phase 3: Synthesis
-- [ ] Agent waits for all specialists to complete
-- [ ] Findings from all 4 specialists included
-- [ ] Unified executive summary generated
-- [ ] Issues prioritized across all categories
-- [ ] Remediation roadmap provided
-
-### Output Format Validation
-```markdown
-# Live Site Audit Report
-
-## Executive Summary
-- Overall Health Score: 72/100
-- Critical Issues: 3
-- High Priority: 8
-- Medium Priority: 15
-- Low Priority: 22
-
-## Critical Issues (All Specialists)
-1. [SECURITY] SQL Injection vulnerability - database.php:89
-2. [A11Y] Missing alt text blocks screen readers - index.php:42
-3. [PERF] 8s page load time exceeds threshold
-
-## Performance Findings
-[From performance-specialist]
-
-## Accessibility Findings
-[From accessibility-specialist]
-
-## Security Findings
-[From security-specialist]
-
-## Code Quality Findings
-[From code-quality-specialist]
-
-## Remediation Roadmap
-Priority 1: Fix critical security issues (Est: 4h)
-Priority 2: Address accessibility blockers (Est: 6h)
-Priority 3: Optimize performance (Est: 8h)
-Priority 4: Refactor code quality (Est: 16h)
-```
-
-### Parallel Execution Verification
-```
-Expected log output (concurrent):
-1. "Gathering site context..."
-2. "Spawning 4 specialists in parallel..."
-3. "  └─→ performance-specialist"
-4. "  └─→ accessibility-specialist"
-5. "  └─→ security-specialist"
-6. "  └─→ code-quality-specialist"
-7. [All 4 agents run simultaneously]
-8. "All specialists completed. Synthesizing findings..."
-```
-
----
-
-## Test 2.4: Orchestration Edge Cases
-
-### Test 2.4.1: Workflow Specialist - No Delegation Needed
+### Test 2.3.1: Workflow Specialist - No Quality Checks Needed
 
 **Setup:** Simple typo fix in documentation
 
@@ -267,15 +173,15 @@ User: Run /pr-create for a README typo fix
 **Expected Behavior:**
 - [ ] workflow-specialist spawns
 - [ ] Agent analyzes changes
-- [ ] Agent determines NO specialists needed (just docs)
-- [ ] Agent generates simple PR description WITHOUT delegation
+- [ ] Agent determines NO quality checks needed (just docs)
+- [ ] Agent generates simple PR description WITHOUT inline analysis
 - [ ] No other agents spawned
 
-**Verification:** Agent should be smart enough NOT to delegate when unnecessary.
+**Verification:** Agent should be smart enough NOT to run quality checks when unnecessary.
 
 ---
 
-### Test 2.4.2: Testing Specialist - No Security/A11y Code
+### Test 2.3.2: Testing Specialist - No Security/A11y Code
 
 **Setup:** Simple utility function with no security or UI concerns
 
@@ -287,81 +193,57 @@ User: Generate tests for the formatDate() utility function
 **Expected Behavior:**
 - [ ] testing-specialist spawns
 - [ ] Agent analyzes code
-- [ ] Agent determines NO specialists needed
-- [ ] Agent generates unit tests WITHOUT delegation
+- [ ] Agent determines NO security/a11y scenarios needed
+- [ ] Agent generates unit tests WITHOUT inline security/a11y generation
 - [ ] No other agents spawned
 
-**Verification:** Agent should avoid unnecessary delegation.
-
----
-
-### Test 2.4.3: Live Audit Specialist - Always Delegates
-
-**Setup:** Any live site
-
-**Test Procedure:**
-```
-User: Run /audit-live-site [any-url]
-```
-
-**Expected Behavior:**
-- [ ] live-audit-specialist spawns
-- [ ] Agent ALWAYS delegates (pure orchestrator)
-- [ ] All 4 specialists spawned REGARDLESS of site
-- [ ] Cannot skip delegation
-
-**Verification:** Pure orchestrators MUST always delegate.
+**Verification:** Agent should avoid unnecessary inline analysis.
 
 ---
 
 ## Summary: Orchestrator Test Results
 
-| Agent | Spawn | Skills | Delegates | Parallel | Synthesis | Edge Cases |
-|-------|-------|--------|-----------|----------|-----------|------------|
+| Agent | Spawn | Skills | Inline Checks | No Agent Spawning | Synthesis | Edge Cases |
+|-------|-------|--------|---------------|-------------------|-----------|------------|
 | workflow-specialist | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | testing-specialist | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| live-audit-specialist | ☐ | N/A | ☐ | ☐ | ☐ | ☐ |
 
 **Pass Criteria:** All checkboxes must be ✅
 
 ---
 
-## Delegation Patterns Summary
+## Orchestration Patterns Summary
 
 ### workflow-specialist
-- **Delegation:** Conditional (based on change type)
-- **Delegates To:** testing, security, accessibility
-- **Pattern:** Parallel when multiple specialists needed
+- **Quality Checks:** Inline (Read/Grep/Bash on own tools)
+- **Spawns Agents:** Never — no Task tool
+- **Pattern:** Sequential inline analysis then PR generation
 - **Skills Used:** commit-message-generator
 
 ### testing-specialist
-- **Delegation:** Conditional (based on code type)
-- **Delegates To:** security, accessibility
-- **Pattern:** Sequential or parallel depending on needs
+- **Quality Checks:** Inline (generates security/a11y test scenarios directly)
+- **Spawns Agents:** Never — no Task tool
+- **Pattern:** Analyze → generate tests → add inline specialist scenarios
 - **Skills Used:** test-scaffolding, test-plan-generator, coverage-analyzer
 
-### live-audit-specialist
-- **Delegation:** Always (pure orchestrator)
-- **Delegates To:** performance, accessibility, security, code-quality
-- **Pattern:** Parallel (all 4 simultaneously)
-- **Skills Used:** None
+---
+
+## Note: live-site-audit Skill Spawning
+
+The `/audit-live-site` command spawns 4 leaf specialists IN PARALLEL directly from the **main Claude Code session** (via the live-site-audit skill). This is NOT handled by an orchestrator agent — the main session does the synthesis after all agents complete. See `tests/test-agents/04-orchestration.md` Test 4.4 for details.
 
 ---
 
 ## Common Issues & Debugging
 
-### Orchestrator Doesn't Delegate
-- Check: Does agent have Task tool in frontmatter?
-- Check: Agent prompt mentions orchestration/delegation?
-- Check: Target specialist exists and is valid?
+### Orchestrator Tries to Spawn Other Agents
+- Check: Agent AGENT.md frontmatter should NOT have `Task` in tools line
+- Check: Agent documentation should describe inline analysis, not delegation
+- Fix: Agent should use Read/Grep/Bash to check code inline
 
-### Delegation Not Parallel
-- Check: Agent documentation specifies parallel execution?
-- Check: Multiple Task tool calls in single message?
-
-### Specialists Not Accessible
-- Check: Target specialist names correct?
-- Check: Target specialists exist in agents/ directory?
+### Inline Analysis Not Happening
+- Check: Agent prompt includes instructions for inline security/a11y checks?
+- Check: Agent identifies relevant code patterns before generating tests?
 
 ---
 

@@ -55,11 +55,11 @@ mcp__plugin_figma_figma__get_screenshot(fileKey, nodeId)
 
 Extract: colors (hex), typography, spacing, layout structure, component hierarchy.
 
-**Step 2: Spawn design-specialist with specifications**
+**Step 2: Spawn design-specialist for code generation**
 
 ```
-Task(cms-cultivator:design-specialist:design-specialist,
-     prompt="Create a WordPress block pattern from the provided design specifications.
+Agent(subagent_type="cms-cultivator:design-specialist:design-specialist",
+      prompt="Create a WordPress block pattern from the provided design specifications.
 
 ## Design Specifications (Pre-Fetched)
 {extracted colors, typography, spacing, layout structure}
@@ -71,17 +71,61 @@ Task(cms-cultivator:design-specialist:design-specialist,
 ## Requirements
 - Native WordPress blocks only (Group, Cover, Heading, Paragraph, Buttons, Image, Columns)
 - Pattern file: wp-content/themes/{theme}/patterns/{pattern-slug}.php
-- SCSS: wp-content/themes/{theme}/assets/styles/scss/patterns/_{pattern-slug}.scss
-- Editor SCSS: _{pattern-slug}-editor.scss
 - Mobile-first, WCAG AA, 44px touch targets
 
-## Process
-1. Analyze design → generate block pattern PHP
-2. Spawn responsive-styling-specialist for SCSS (wait for completion)
-3. Create test page
-4. Spawn browser-validator-specialist for validation (wait for completion)
-5. Report results with file paths")
+## Output Required
+Return the structured report including:
+- Generated file paths
+- SCSS paths section (component name, front-end path, editor path)
+- Design specifications section (colors, typography, spacing)
+- Test page URL and screenshots directory")
 ```
+
+**Step 3: Spawn responsive-styling-specialist** using the SCSS paths and design specs from Step 2 output:
+
+```
+Agent(subagent_type="cms-cultivator:responsive-styling-specialist:responsive-styling-specialist",
+      prompt="Generate mobile-first responsive SCSS for the {pattern-name} WordPress block pattern.
+
+Component: {component from design-specialist output}
+File paths:
+- Front-end: {front-end SCSS path from design-specialist output}
+- Editor: {editor SCSS path from design-specialist output}
+
+Design specifications:
+{colors, typography, spacing from design-specialist output}
+
+Requirements:
+- Mobile-first (base → 768px → 1024px)
+- WCAG AA color contrast (4.5:1 normal text, 3:1 large text)
+- Touch-friendly targets (44px minimum)
+- Proper focus indicators (2px outline)
+- Reduced motion support
+- Generate TWO files: front-end SCSS and editor SCSS (prefixed with .editor-styles-wrapper)")
+```
+
+**Step 4: Spawn browser-validator-specialist** using the test page URL from Step 2 output:
+
+```
+Agent(subagent_type="cms-cultivator:browser-validator-specialist:browser-validator-specialist",
+      prompt="Validate the WordPress block pattern implementation.
+
+Test URL: {test page URL from design-specialist output}
+Design reference: {original design source}
+
+Validation requirements:
+- Test responsive breakpoints: 320px, 768px, 1024px+
+- Capture screenshots at each breakpoint
+- Check WCAG AA accessibility (contrast, keyboard nav, focus indicators, semantic HTML)
+- Validate interactions (hover, click, focus states)
+- Check JavaScript console for errors
+- Compare with original design reference
+- Generate detailed technical report with file paths and remediation steps
+
+Save screenshots to: {screenshots dir from design-specialist output}")
+```
+
+**Step 5: Report** — present the block pattern file paths, CSS paths, and browser validation results to the user.
 
 ## What Gets Created
 

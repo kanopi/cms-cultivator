@@ -43,11 +43,11 @@ When Task() is unavailable:
 
 When running in Claude Code with Task() available:
 
-**Spawn design-specialist for Drupal paragraph creation**:
+**Step 2: Spawn design-specialist for code generation**:
 
 ```
-Task(cms-cultivator:design-specialist:design-specialist,
-     prompt="Create a Drupal paragraph type from the provided design.
+Agent(subagent_type="cms-cultivator:design-specialist:design-specialist",
+      prompt="Create a Drupal paragraph type from the provided design.
 
 ## Design Reference
 {design source - Figma URL or screenshot path}
@@ -64,11 +64,60 @@ Task(cms-cultivator:design-specialist:design-specialist,
    - If available: create paragraph type via MCP
    - If not: generate YAML configuration files
 3. Generate Twig template (semantic HTML, BEM classes)
-4. Spawn responsive-styling-specialist for mobile-first SCSS (wait for completion)
-5. Create test node (if MCP available) or provide manual instructions
-6. Spawn browser-validator-specialist for validation (wait for completion)
-7. Report results with file paths and next steps")
+4. Create test node (if MCP available) or provide manual instructions
+
+## Output Required
+Return the structured report including:
+- YAML and template file paths
+- SCSS path section (component name, root class, file path)
+- Design specifications section (colors, typography, spacing)
+- Test node URL (or instructions) and screenshots directory")
 ```
+
+**Step 3: Spawn responsive-styling-specialist** using the SCSS path and design specs from Step 2 output:
+
+```
+Agent(subagent_type="cms-cultivator:responsive-styling-specialist:responsive-styling-specialist",
+      prompt="Generate mobile-first responsive SCSS for the {paragraph_name} Drupal paragraph.
+
+Component: {component from design-specialist output}
+Root class: {root class from design-specialist output}
+File path: {SCSS file path from design-specialist output}
+
+Design specifications:
+{colors, typography, spacing from design-specialist output}
+
+Requirements:
+- Mobile-first (base → 768px → 1024px)
+- WCAG AA color contrast (4.5:1 normal text, 3:1 large text)
+- Touch-friendly targets (44px minimum)
+- Proper focus indicators (2px outline)
+- Reduced motion support
+- Use root class as BEM parent")
+```
+
+**Step 4: Spawn browser-validator-specialist** using the test node URL from Step 2 output:
+
+```
+Agent(subagent_type="cms-cultivator:browser-validator-specialist:browser-validator-specialist",
+      prompt="Validate the Drupal paragraph type implementation.
+
+Test URL: {test node URL from design-specialist output, or skip if manual creation required}
+Design reference: {original design source}
+
+Validation requirements:
+- Test responsive breakpoints: 320px, 768px, 1024px+
+- Capture screenshots at each breakpoint
+- Check WCAG AA accessibility
+- Validate interactions
+- Check JavaScript console
+- Compare with original design
+- Generate detailed technical report
+
+Save screenshots to: {screenshots dir from design-specialist output}")
+```
+
+**Step 5: Report** — present the paragraph type file paths, SCSS path, and browser validation results to the user.
 
 ## Field Types
 

@@ -271,7 +271,7 @@ git commit -m "[selected message]"
 ### 🔍 Live Site Auditing
 
 ```bash
-/audit-live-site              # Comprehensive live site audit (orchestrator)
+/audit-live-site              # Comprehensive live site audit
                               # Runs performance, accessibility, security, and quality checks in parallel
 ```
 

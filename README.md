@@ -107,7 +107,7 @@ Skills spawn specialized agents that orchestrate complex workflows:
 - documentation-specialist, testing-specialist, responsive-styling-specialist
 
 **Orchestrators:**
-- workflow-specialist, live-audit-specialist, design-specialist
+- workflow-specialist, design-specialist
 
 **Browser Validation:**
 - browser-validator-specialist
@@ -128,12 +128,20 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 
 ```
 pr-create skill → workflow-specialist
-    ├─→ Analyzes changes
-    ├─→ Spawns testing-specialist (parallel)
-    ├─→ Spawns security-specialist (parallel)
-    ├─→ Spawns accessibility-specialist (parallel)
+    ├─→ Analyzes git changes
+    ├─→ Reviews test coverage inline
+    ├─→ Checks security concerns inline
+    ├─→ Checks accessibility concerns inline
     ↓
 Unified PR description → Create PR
+
+live-site-audit skill (main session)
+    ├─→ Spawns performance-specialist (parallel)
+    ├─→ Spawns accessibility-specialist (parallel)
+    ├─→ Spawns security-specialist (parallel)
+    ├─→ Spawns code-quality-specialist (parallel)
+    ↓
+Synthesize findings → Unified audit report
 ```
 
 ---
