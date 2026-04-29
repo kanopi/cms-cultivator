@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-04-29
+
+### Changed
+- `live-site-audit` skill: spawns 4 leaf specialists in parallel directly from
+  the main session, replacing delegation through `live-audit-specialist`
+- `design-specialist` agent: scoped to code generation only; removed Task-based
+  subagent spawning
+- `design-to-wp-block`, `design-to-drupal-paragraph` skills: orchestration
+  rewritten as 3-step sequential Agent calls (design-specialist →
+  responsive-styling → browser-validator)
+- `workflow-specialist` agent: replaces Task delegation with inline quality
+  checks using Read/Grep/Bash tools
+- `testing-specialist` agent: replaces Task delegation with inline security and
+  accessibility test scenario generation
+- `tests/02-orchestrators.md`, `tests/04-orchestration.md`: rewritten to verify
+  inline checks and skill-level spawning
+- README, `docs/agents-and-skills.md`, `docs/quick-start.md`,
+  `docs/installation.md`: updated to reflect new orchestration model
+
+### Removed
+- `agents/live-audit-specialist/AGENT.md`: agent deleted; orchestration
+  responsibility moved to the `live-site-audit` skill
+
 ## [1.0.1] - 2026-04-28
 
 ### Added
