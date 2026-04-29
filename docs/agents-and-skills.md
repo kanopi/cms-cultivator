@@ -24,11 +24,11 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **gtm-specialist** - Google Tag Manager performance auditing (requires Chrome DevTools MCP)
 - **drupal-pantheon-devops-specialist** - Kanopi DevOps onboarding for Drupal/Pantheon projects
 
-**Orchestrators** (delegate to other agents):
+**Orchestrators** (coordinate complex workflows):
 
-- **workflow-specialist** - PR workflows (delegates to testing, security, accessibility)
-- **live-audit-specialist** - Comprehensive site audits (delegates to performance, accessibility, security, code-quality)
-- **testing-specialist** - Test generation and coverage (delegates to security, accessibility)
+- **workflow-specialist** - PR workflows (inline quality checks: testing, security, accessibility)
+- **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
+- **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
 
 ### How Agents Work
 
@@ -39,10 +39,9 @@ Spawns workflow-specialist
     ↓
     ├─→ Analyzes git changes
     ├─→ Generates commit message (uses commit-message-generator skill)
-    ├─→ Spawns testing-specialist (if tests changed)
-    │   └─→ May spawn security-specialist (for security tests)
-    ├─→ Spawns security-specialist (if security-critical code)
-    ├─→ Spawns accessibility-specialist (if UI changes)
+    ├─→ Reviews test coverage inline (if tests changed)
+    ├─→ Checks security concerns inline (if security-critical code)
+    ├─→ Checks accessibility concerns inline (if UI changes)
     ↓
 Compiles all findings into PR description
     ↓
@@ -51,16 +50,14 @@ Creates PR via GitHub CLI
 
 ### Agent Orchestration Patterns
 
-#### Parallel Execution
+#### Skill-Level Parallel Spawning
 
-The **live-audit-specialist** spawns all 4 leaf specialists simultaneously:
+The **live-site-audit skill** spawns all 4 leaf specialists simultaneously from the main session:
 
 ```
 /audit-live-site https://example.com
     ↓
-Spawns live-audit-specialist
-    ↓
-Spawns ALL in parallel:
+Main session spawns ALL in parallel:
     ├─→ performance-specialist (Core Web Vitals)
     ├─→ accessibility-specialist (WCAG compliance)
     ├─→ security-specialist (vulnerability scan)
@@ -68,44 +65,58 @@ Spawns ALL in parallel:
     ↓
 Waits for all results
     ↓
-Synthesizes unified report:
+Main session synthesizes unified report:
     - Executive summary
     - Critical issues
     - Prioritized remediation roadmap
 ```
 
-#### Conditional Delegation
+#### Inline Quality Checks
 
-The **workflow-specialist** intelligently delegates based on code changes:
+The **workflow-specialist** performs quality checks inline based on code changes:
 
 ```
 PR with UI changes:
-  → Spawns accessibility-specialist
+  → Reviews accessibility concerns inline using Read/Grep
 
 PR with authentication code:
-  → Spawns security-specialist
+  → Reviews security concerns inline using Read/Grep
 
 PR with new features:
-  → Spawns testing-specialist
-      → May spawn security-specialist (if security tests needed)
-      → May spawn accessibility-specialist (if UI tests needed)
+  → Reviews test coverage inline using Read/Glob
+```
+
+#### Sequential Skill-Level Spawning
+
+The **design-to-wp-block** and **design-to-drupal-paragraph** skills orchestrate sequential agent calls:
+
+```
+/design-to-wp-block [figma-url]
+    ↓
+Spawns design-specialist (code generation)
+    ↓
+Spawns responsive-styling-specialist (SCSS from design-specialist output)
+    ↓
+Spawns browser-validator-specialist (validation from test URL)
 ```
 
 ### Agent-to-Skill Mapping (Spawned By)
 
-| Agent | Spawned By Skills | Can Delegate To |
-|-------|-------------------|-----------------|
-| workflow-specialist | `pr-commit-msg`, `pr-create`, `pr-review`, `pr-release` | testing, security, accessibility |
-| accessibility-specialist | `accessibility-audit` | (none - leaf) |
-| performance-specialist | `performance-audit` | (none - leaf) |
-| gtm-specialist | `gtm-performance-audit` | (none - leaf) |
-| security-specialist | `security-audit` | (none - leaf) |
-| testing-specialist | `test-generate`, `test-plan`, `test-coverage` | security, accessibility |
-| documentation-specialist | `docs-generate` | (none - leaf) |
-| live-audit-specialist | `live-site-audit` | performance, accessibility, security, code-quality |
-| code-quality-specialist | `quality-audit`, `quality-standards` | (none - leaf) |
-| structured-data-specialist | `structured-data-analyzer` | (none - leaf) |
-| drupal-pantheon-devops-specialist | `devops-setup` | (none - leaf) |
+| Agent | Spawned By Skills | Notes |
+|-------|-------------------|-------|
+| workflow-specialist | `pr-commit-msg`, `pr-create`, `pr-review`, `pr-release` | Inline quality checks |
+| accessibility-specialist | `accessibility-audit`, `live-site-audit` | Leaf |
+| performance-specialist | `performance-audit`, `live-site-audit` | Leaf |
+| gtm-specialist | `gtm-performance-audit` | Leaf |
+| security-specialist | `security-audit`, `live-site-audit` | Leaf |
+| testing-specialist | `test-generate`, `test-plan`, `test-coverage` | Inline security/a11y test scenarios |
+| documentation-specialist | `docs-generate` | Leaf |
+| code-quality-specialist | `quality-audit`, `quality-standards`, `live-site-audit` | Leaf |
+| structured-data-specialist | `structured-data-analyzer` | Leaf |
+| drupal-pantheon-devops-specialist | `devops-setup` | Leaf |
+| design-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Code generation only |
+| responsive-styling-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Leaf |
+| browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `design-validate` | Leaf |
 
 ### Agent-to-Skill Mapping
 
@@ -123,9 +134,7 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | code-quality-specialist | code-standards-checker |
 | structured-data-specialist | structured-data-analyzer |
 | drupal-pantheon-devops-specialist | (none) |
-| live-audit-specialist | (none - pure orchestrator) |
 | teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
-| live-audit-specialist | strategic-thinking |
 | design-specialist | design-analyzer, responsive-styling, strategic-thinking |
 
 ### Why Agents?

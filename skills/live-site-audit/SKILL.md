@@ -32,41 +32,47 @@ When Task() or browser tools are unavailable:
 
 ### Tier 2 — Claude Code Enhanced
 
-When running in Claude Code with Task() available:
+When running in Claude Code with the Agent tool available:
 
-**Spawn all 4 specialists in parallel** (single message with 4 Task calls):
+**Step 1: Spawn all 4 specialists in parallel** — send a single message containing all 4 Agent calls:
 
 ```
-Task(cms-cultivator:live-audit-specialist:live-audit-specialist,
-     prompt="Perform comprehensive site audit by orchestrating 4 specialists in parallel.
+Agent(subagent_type="cms-cultivator:performance-specialist:performance-specialist",
+      prompt="Analyze performance for {URL}. Working directory: {cwd}.
+      Check: Core Web Vitals, LCP/INP/CLS, render-blocking assets, image optimization,
+      caching strategy, TTFB. Return structured findings with severity levels and
+      specific file paths or URLs where issues are found.")
 
-Site context:
-- Site URL: {url from argument or 'local development'}
-- CMS: {Drupal/WordPress - detect from codebase if local}
-- Environment: {production/staging/local}
+Agent(subagent_type="cms-cultivator:accessibility-specialist:accessibility-specialist",
+      prompt="Audit WCAG 2.1 AA compliance for {URL}. Working directory: {cwd}.
+      Check: semantic HTML, ARIA, keyboard navigation, color contrast (4.5:1), alt text,
+      form labels, skip links, focus indicators, touch targets. Return structured findings
+      with WCAG criterion references and severity levels.")
 
-CRITICAL: Spawn all 4 specialists IMMEDIATELY in a single message with 4 Task calls. Do NOT gather context yourself - it is provided above. Synthesize findings into unified report. Save to audit-live-site-YYYY-MM-DD-HHMM.md and suggest: 'Use the audit-export skill to export findings as CSV tasks.'")
+Agent(subagent_type="cms-cultivator:security-specialist:security-specialist",
+      prompt="Scan for OWASP Top 10 vulnerabilities at {URL}. Working directory: {cwd}.
+      Check: XSS, SQL injection, CSRF, auth issues, security headers, exposed endpoints,
+      sensitive file exposure, dependency vulnerabilities. Return structured findings
+      with severity levels and specific remediation steps.")
+
+Agent(subagent_type="cms-cultivator:code-quality-specialist:code-quality-specialist",
+      prompt="Analyze code quality in {cwd}.
+      Check: PHPCS standards, cyclomatic complexity, design patterns, SOLID principles,
+      technical debt, code smells, documentation coverage. Return structured findings
+      with severity levels and file paths.")
 ```
 
-The live-audit-specialist will:
-1. **Spawn 4 specialists in parallel**:
-   - **performance-specialist** — Core Web Vitals, asset optimization, caching
-   - **accessibility-specialist** — WCAG 2.1 AA compliance, keyboard navigation, ARIA
-   - **security-specialist** — OWASP vulnerabilities, authentication, CVE scanning
-   - **code-quality-specialist** — Technical debt, coding standards, complexity
+**Step 2: Wait for all 4 specialists to return results.**
 
-2. **Synthesize unified report** with:
-   - Executive summary with overall health score
-   - Critical issues across all dimensions
-   - Cross-domain issue identification
-   - Prioritized remediation roadmap (High → Medium → Low)
-   - Estimated effort and business impact
+**Step 3: Synthesize directly** — do not spawn another agent. Using all four specialist outputs:
 
-3. **Generate deliverables**:
-   - Audit report file (`audit-live-site-YYYY-MM-DD-HHMM.md`)
-   - Technical audit report for developers
-   - Executive summary for stakeholders
-   - Performance, accessibility, security, and quality scores
+1. Calculate per-category health scores (0–100) and overall weighted score (Performance 25%, Accessibility 25%, Security 30%, Code Quality 20%)
+2. Identify cross-domain issues (problems that appear in multiple specialist reports)
+3. Deduplicate and categorize all issues: Critical → High → Medium → Low
+4. Build a phased remediation roadmap
+5. Write the report to `audit-live-site-YYYY-MM-DD-HHMM.md` in the working directory
+6. Present the executive summary, health score, and file path to the user
+7. Suggest: "Use the audit-export skill to export findings as CSV tasks."
 
 ## Report Format
 

@@ -87,15 +87,15 @@ Automatically generates conventional commit messages when analyzing staged chang
    └─→ Show: COMPLETE PR title + full description with all sections
    └─→ End with: "Reply 'approve' to create this PR, or provide your edits."
 
-5. Detect Code Type & Spawn Specialists (Parallel)
-   ├─→ Standard mode: Run all applicable specialists
-   ├─→ If tests exist/needed → Task(cms-cultivator:testing-specialist:testing-specialist)
-   ├─→ If security-critical → Task(cms-cultivator:security-specialist:security-specialist)
-   └─→ If UI changes → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
-   └─→ Concise mode: Skip specialists unless critical security/accessibility issues detected
+5. Run Quality Checks Inline (using own tools)
+   ├─→ Standard mode: Run all applicable checks directly using Read/Grep/Bash
+   ├─→ If tests exist/needed → review test coverage using Read/Glob
+   ├─→ If security-critical code → scan for vulnerabilities using Grep patterns
+   └─→ If UI changes → check accessibility patterns using Grep/Read
+   └─→ Concise mode: Skip checks unless critical security/accessibility issues detected
 
 6. Compile Findings
-   └─→ Synthesize specialist reports into unified PR description
+   └─→ Incorporate quality check results into PR description
    └─→ Apply concise formatting if --concise mode
    └─→ Present updated FULL description for final approval
 
@@ -118,11 +118,11 @@ Automatically generates conventional commit messages when analyzing staged chang
    ├─→ Test coverage gaps?
    └─→ Accessibility issues?
 
-4. Spawn Relevant Specialists
-   └─→ Task(cms-cultivator:specialist:specialist) for each area
+4. Run Quality Checks Inline
+   └─→ Analyze security, testing, accessibility directly using Read/Grep/Bash
 
 5. Compile Review
-   └─→ Unified report with specialist findings
+   └─→ Unified report with findings
 ```
 
 ## User Approval Process

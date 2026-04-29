@@ -357,7 +357,7 @@ In Claude Code, type `/` to see all available skills. In Codex, type `@` to see 
 - **Accessibility**: `/audit-a11y` (with flexible modes)
 - **Performance**: `/audit-perf` (with flexible modes)
 - **Security**: `/audit-security` (with flexible modes)
-- **Live Site Auditing**: `/audit-live-site` (orchestrator)
+- **Live Site Auditing**: `/audit-live-site` (parallel multi-specialist audit)
 - **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`
 - **Testing**: auto-invoked (say "I need tests for this class")
 - **Code Quality**: `/quality-analyze`, `/quality-standards`
