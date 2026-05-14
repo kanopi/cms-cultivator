@@ -606,6 +606,27 @@ setup() {
 }
 
 # ==============================================================================
+# PACKAGING SCRIPT
+# ==============================================================================
+
+@test "scripts/package-skills.sh exists and is executable" {
+  [ -x "scripts/package-skills.sh" ]
+}
+
+@test "scripts/package-skills.sh --list outputs every skill directory" {
+  expected=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+  actual=$(bash scripts/package-skills.sh --list | wc -l | tr -d ' ')
+  if [ "$actual" != "$expected" ]; then
+    echo "Expected $expected skills, --list returned $actual"
+    return 1
+  fi
+}
+
+@test "release-artifacts workflow exists" {
+  [ -f ".github/workflows/release-artifacts.yml" ]
+}
+
+# ==============================================================================
 # DOCS-VS-SKILLS CONSISTENCY
 # ==============================================================================
 

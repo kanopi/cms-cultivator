@@ -178,6 +178,46 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ---
 
+## Claude Desktop — Chat and CoWork
+
+Installing CMS Cultivator as a plugin in Claude Desktop only covers the embedded **Claude Code** surface. For **Chat** and **CoWork**, you need to upload skills individually as `.skill` files through Claude Desktop's Skills UI — there is no batch upload, marketplace integration, or public API for those surfaces today.
+
+To minimise the manual work, every CMS Cultivator GitHub release attaches pre-built `.skill` files (one per skill) and a bundled zip containing all of them.
+
+### Recommended: Download from a release
+
+1. Go to [the latest release](https://github.com/kanopi/cms-cultivator/releases/latest)
+2. Under **Assets**, download either:
+   - **`cms-cultivator-skills.zip`** — bundle of every skill (unzip locally to get the individual `.skill` files), or
+   - Individual **`<skill-name>.skill`** files for just the skills you want
+3. In Claude Desktop: **Settings → Skills → Upload Skill**
+4. Drag-and-drop each `.skill` file into the UI
+
+### Alternative: Build from source
+
+If you've cloned the repo, package the skills locally:
+
+```bash
+./scripts/package-skills.sh
+```
+
+This produces `dist/skills/<skill-name>.skill` for every skill, plus a bundled `dist/cms-cultivator-skills.zip`. Each `.skill` file is a zip containing `<skill-name>/SKILL.md` and any associated templates.
+
+**Useful options:**
+
+```bash
+./scripts/package-skills.sh                  # all skills + bundle
+./scripts/package-skills.sh frd-generator    # one skill only
+./scripts/package-skills.sh --list           # print the skill names
+./scripts/package-skills.sh --no-bundle      # skip the all-in-one zip
+```
+
+### Why the manual step exists
+
+The upload itself isn't automatable — Anthropic doesn't expose a Desktop API or a marketplace for Chat/CoWork skills today. The script and release artifacts only handle the packaging side. Once Anthropic ships either a Desktop skill API or marketplace integration for those surfaces, this section will get shorter.
+
+---
+
 ## OpenAI Codex Installation
 
 CMS Cultivator includes a `.codex-plugin/plugin.json` manifest and Codex-compatible TOML agent files. Install it via the Codex plugin system.

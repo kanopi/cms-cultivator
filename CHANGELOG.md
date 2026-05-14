@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `scripts/package-skills.sh` — packages each skill in `skills/` as a `.skill` zip in `dist/skills/`, plus a bundled `dist/cms-cultivator-skills.zip` containing all of them. Each `.skill` is ready to drag-and-drop into Claude Desktop's Skills UI (Chat and CoWork surfaces). Supports filtering by skill name, `--list`, and `--no-bundle`.
+- `.github/workflows/release-artifacts.yml` — attaches every `.skill` file and the bundle zip to every GitHub release automatically. Triggers on `release: published` for new tags, and supports `workflow_dispatch` to retroactively attach artifacts to an existing release.
+- `docs/installation.md` "Claude Desktop — Chat and CoWork" section explaining the upload process, where to download pre-built `.skill` artifacts from a release, and how to build them from source.
+- BATS tests for the packaging script (existence, executable, `--list` count matches actual skill count) and the release workflow file.
+
+### Notes
+The upload itself remains a manual step in Claude Desktop's UI — Anthropic doesn't expose a Desktop skill API or marketplace integration for Chat/CoWork surfaces today. This release automates everything we control on the plugin side (packaging + distribution).
+
 ## [1.2.1] - 2026-05-14
 
 ### Fixed
