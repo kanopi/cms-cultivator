@@ -766,6 +766,7 @@ Don't try to "game" the system—just describe what you need:
 | pm-meeting-prep | "prep me for my meeting", "check-in tomorrow" | Cross-source client meeting prep (Teamwork, Slack, Gmail, Fathom MCPs) | — |
 | project-heartbeat | "draft the heartbeat", "send a status update" | Client-facing status update messages (Teamwork, Slack, Fathom MCPs) | — |
 | qa-review | "QA this", "validate this multidev", "test the dev link" | Multidev validation report from a Teamwork task (Teamwork MCP, CoWork) | — |
+| strategist-site-audit | "audit this site for strategy", "strategist audit", "UX audit", "discovery audit" | Strategist-focused discovery audit: 21 UX Laws, content hierarchy, Lighthouse, qualitative data synthesis, Markdown summary + HTML Artifact (CoWork) | — |
 
 ## Integration with Workflow
 

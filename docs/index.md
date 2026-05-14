@@ -3,11 +3,11 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing 45 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, plan projects, and maintain documentation.
+**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing 46 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, plan projects, and maintain documentation.
 
 ## ✨ Features
 
-### 45 Agent Skills
+### 46 Agent Skills
 - **🔄 PR Workflow** - Streamline pull requests from commit to deployment
 - **♿ Accessibility** - Ensure WCAG 2.1 Level AA compliance
 - **⚡ Performance** - Optimize Core Web Vitals and page speed
@@ -19,6 +19,7 @@
 - **📊 Code Quality** - Maintain standards and reduce technical debt
 - **📋 Project Planning** - Generate FRDs, estimate story points, and export Teamwork backlogs
 - **🗂 PM Workflows** - Client request triage, meeting prep, project heartbeats, and full QA review (requires MCP servers)
+- **🧭 Strategy** - Strategist-focused discovery audits with 21 UX Laws, content hierarchy, and presentation-ready reports (requires CoWork)
 - **🤖 Auto-Invoked** - Claude activates skills automatically during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need help
@@ -158,5 +159,5 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Skills](commands/overview.md)** - Discover all 45 available skills
+3. **[Explore Skills](commands/overview.md)** - Discover all 46 available skills
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons

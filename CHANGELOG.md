@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `qa-review` skill: full QA validation of a multidev environment from a Teamwork task. Reads the task and all comments, extracts the multidev URL, detects the platform, builds a validation plan (base checklist + dynamic steps), executes via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary. (Teamwork MCP + CoWork)
 - `docs/commands/pm-workflows.md`: new documentation page covering all four PM skills with MCP setup notes
 
+**Strategy skill (discovery-phase, strategist-facing):**
+
+- `strategist-site-audit` skill: given a site URL and optional qualitative research data, navigates the site via CoWork, audits against all 21 UX Laws (Jakob's Law, Fitts's Law, Hick's Law, Miller's Law, Peak-End Rule, Von Restorff Effect, Aesthetic-Usability Effect, Doherty Threshold, Laws of Proximity / Similarity / Common Region / Uniform Connectedness / Prägnanz, Serial Position Effect, Zeigarnik Effect, Tesler's Law, Postel's Law, Goal-Gradient Effect, Occam's Razor, Pareto Principle, Parkinson's Law — all core principles from [lawsofux.com](https://lawsofux.com/)), reviews content hierarchy per page, synthesises optional qualitative data (A/B tests, surveys, heatmaps, analytics), runs Lighthouse, and produces two deliverables: a Project Knowledge Summary (Markdown) the strategist pastes into the client's Claude Desktop Project, and an iterable, print-safe HTML Artifact ready for client sharing. Audience: strategists, UX leads, PMs — not developers. (CoWork browser automation + optional web search)
+- `docs/commands/strategy.md`: new documentation page covering the strategist audit, deliverables, and tone conventions
+
 ### Removed
 - `agents/workflow-specialist/AGENT.md` — the orchestrator agent that wrapped the PR skills. The main session now invokes `pr-create`, `pr-review`, `pr-release`, and `commit-message-generator` directly. No agent in between.
 - `.codex/agents/workflow-specialist.toml` — corresponding Codex agent translation.
@@ -42,13 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Documentation and tests:**
 
-- Plugin description and counts updated to `45 skills + 15 agents` across `plugin.json`, `.codex-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`.
+- Plugin description and counts updated to `46 skills + 15 agents` across `plugin.json`, `.codex-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`.
 - Codex plugin version bumped to track the main plugin manifest.
-- `tests/test-plugin.bats`: skill count 38 → 45, agent count 17 → 15 (correcting both the `live-audit-specialist` removal from v1.0.2 that was missed in tests, and the new `workflow-specialist` removal). Replaced "workflow-specialist has X skill" tests with assertions that the agent is gone and PR skills no longer spawn it via `Task(...)`.
+- `tests/test-plugin.bats`: skill count 38 → 46, agent count 17 → 15 (correcting both the `live-audit-specialist` removal from v1.0.2 that was missed in tests, and the new `workflow-specialist` removal). Replaced "workflow-specialist has X skill" tests with assertions that the agent is gone and PR skills no longer spawn it via `Task(...)`. Added existence tests for the new planning, PM, and strategy skills, plus a test that `strategist-site-audit` covers all 21 UX Laws.
 - `tests/test-agents/*.md`: added v1.1.0 deprecation notes pointing to the new skill-level workflow.
 - `README.md`, `CLAUDE.md`, `docs/agents-and-skills.md`: removed workflow-specialist from agent lists, tables, and orchestration diagrams; documented the direct-invocation pattern.
 - `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0).
-- `zensical.toml` nav: added Planning and PM Workflows pages to the Skills section.
+- `zensical.toml` nav: added Planning, PM Workflows, and Strategy pages to the Skills section.
 
 ### Migration Notes
 - The companion repository `kanopi/cms-planner` is now deprecated. Its three skills are available natively in CMS Cultivator with the same names and YAML frontmatter; no slash command exists (the v1.0 refactor removed `commands/` — invoke `frd-generator` conversationally instead).
@@ -56,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All four PM skills depend on MCP servers. Without the relevant MCPs configured, the skills cannot fetch tasks, messages, recordings, or browser sessions. See `docs/commands/pm-workflows.md` for setup details.
 - `project-heartbeat` is written in Andrew Nichols's personal voice; other PMs are encouraged to adjust signature and tone after the draft is generated.
 - `qa-review` requires CoWork browser automation to execute validation steps; without it the skill produces only the plan, not the report.
+- `strategist-site-audit` is strategist-facing (discovery-phase) and intentionally separate from the developer-facing `accessibility-audit`, `performance-audit`, `security-audit`, and `live-site-audit` skills. It requires CoWork for screenshots and Lighthouse; without CoWork, falls back to a manual mode where the strategist supplies screenshots and runs Lighthouse via PageSpeed Insights themselves.
 
 ### Rationale for workflow-specialist Removal
 The workflow-specialist was the last remaining orchestrator that existed primarily to wrap a handful of skills. The PR skills already contained the full workflow; the agent added an extra `Task()` hop without meaningful value and produced inconsistent output framing across Tier 1 (portable) and Tier 2 (Claude Code enhanced) invocations. Removing it makes invocation identical across Claude Code, Claude Desktop, and Codex, and matches the pattern established in v1.0.2 when `live-audit-specialist` was removed in favor of skill-level spawning.

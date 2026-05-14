@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-Specialist agents and 45 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
+Specialist agents and 46 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)
 
@@ -105,6 +105,12 @@ Aggregate context from Teamwork, Slack, Gmail, and Fathom for client communicati
 - `project-heartbeat` - Draft a client-facing project status update (Teamwork + Slack + Fathom)
 - `qa-review` - Full QA validation of a multidev environment from a Teamwork task (Teamwork + CoWork browser automation)
 
+### Strategy
+Strategist-focused discovery audits — not developer audits. Requires CoWork.
+
+**Skills:**
+- `strategist-site-audit` - Audit a site against the 21 UX Laws (lawsofux.com), review content hierarchy, synthesise qualitative data, run Lighthouse, and produce a Project Knowledge Summary (Markdown) plus an iterable client-facing HTML Artifact (CoWork)
+
 **See [docs site](https://kanopi.github.io/cms-cultivator/) for complete skill reference and usage examples.**
 
 ---
@@ -128,7 +134,7 @@ Skills spawn specialized agents for focused, parallel work:
 
 PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
 
-### Agent Skills (45 total)
+### Agent Skills (46 total)
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
 - accessibility-checker, security-scanner, performance-analyzer
@@ -141,6 +147,7 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 - devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
 - frd-generator, story-point-estimator, csv-exporter
 - client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
+- strategist-site-audit
 
 ### How It Works
 
