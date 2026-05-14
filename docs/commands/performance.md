@@ -4,7 +4,7 @@ Optimize Core Web Vitals and page speed with flexible argument modes for differe
 
 ## Skill
 
-`audit-perf [options]` — Comprehensive performance analysis and Core Web Vitals optimization
+`performance-audit [options]` — Comprehensive performance analysis and Core Web Vitals optimization
 
 ## Flexible Argument Modes
 
@@ -12,9 +12,9 @@ CMS Cultivator now supports multiple operation modes for performance audits:
 
 ### Quick Checks During Development
 ```bash
-/audit-perf --quick --scope=current-pr
-/audit-perf --quick --format=metrics
-/audit-perf --quick --scope=frontend
+/performance-audit --quick --scope=current-pr
+/performance-audit --quick --format=metrics
+/performance-audit --quick --scope=frontend
 ```
 - ⚡ Fast execution (~5 min)
 - 🎯 Core Web Vitals only (LCP, INP, CLS)
@@ -23,9 +23,9 @@ CMS Cultivator now supports multiple operation modes for performance audits:
 
 ### Standard Audits (Default)
 ```bash
-/audit-perf
-/audit-perf --scope=current-pr
-/audit-perf --standard --scope=backend
+/performance-audit
+/performance-audit --scope=current-pr
+/performance-audit --standard --scope=backend
 ```
 - 🔍 Comprehensive analysis (~15 min)
 - ✅ CWV + database queries + assets + caching
@@ -33,9 +33,9 @@ CMS Cultivator now supports multiple operation modes for performance audits:
 
 ### Comprehensive Audits (Pre-Release)
 ```bash
-/audit-perf --comprehensive
-/audit-perf --comprehensive --format=summary
-/audit-perf --comprehensive --target=good
+/performance-audit --comprehensive
+/performance-audit --comprehensive --format=summary
+/performance-audit --comprehensive --target=good
 ```
 - 🔬 Deep analysis (~30 min)
 - 💎 Full profiling with performance budgets
@@ -86,7 +86,7 @@ Export results as JSON for automated pipelines:
 ```yaml
 # GitHub Actions example
 - name: Run performance audit
-  run: /audit-perf --standard --format=json > perf-results.json
+  run: /performance-audit --standard --format=json > perf-results.json
 
 - name: Check Core Web Vitals
   run: |
@@ -101,27 +101,27 @@ Export results as JSON for automated pipelines:
 
 **Pre-Commit:**
 ```bash
-/audit-perf --quick --scope=current-pr --format=metrics
+/performance-audit --quick --scope=current-pr --format=metrics
 ```
 
 **PR Review:**
 ```bash
-/audit-perf --standard --scope=current-pr
+/performance-audit --standard --scope=current-pr
 ```
 
 **Pre-Release:**
 ```bash
-/audit-perf --comprehensive --target=good --format=summary
+/performance-audit --comprehensive --target=good --format=summary
 ```
 
 **Frontend Only:**
 ```bash
-/audit-perf --standard --scope=frontend
+/performance-audit --standard --scope=frontend
 ```
 
 **Backend Only:**
 ```bash
-/audit-perf --standard --scope=backend
+/performance-audit --standard --scope=backend
 ```
 - `fid` - First Input Delay optimization (legacy)
 - `cls` - Cumulative Layout Shift fixes
@@ -131,7 +131,7 @@ Export results as JSON for automated pipelines:
 If third-party tags or Google Tag Manager are impacting performance, use the dedicated GTM audit:
 
 ```bash
-/audit-gtm --url=https://example.com
+/gtm-performance-audit --url=https://example.com
 ```
 
 The **[GTM Performance Audit](gtm-performance.md)** provides:

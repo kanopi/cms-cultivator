@@ -4,7 +4,7 @@ Generate and maintain project documentation.
 
 ## Skills
 
-- `docs-generate [type]` — Generate documentation
+- `documentation-generator [type]` — Generate documentation
 
 **Types:** `api`, `readme`, `changelog`, `guide user`, `guide developer`, `guide deployment`, `guide admin`
 

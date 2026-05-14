@@ -433,7 +433,7 @@ credentials incorrect. Need to verify:
 **Workflow:**
 ```bash
 # Run security audit
-/audit-security --comprehensive
+/security-audit --comprehensive
 
 # After audit completes, export findings
 /teamwork export --source=security --batch
@@ -479,7 +479,7 @@ credentials incorrect. Need to verify:
 
 **Workflow:**
 ```bash
-/audit-perf --comprehensive
+/performance-audit --comprehensive
 /teamwork export --source=performance
 ```
 
@@ -493,7 +493,7 @@ credentials incorrect. Need to verify:
 
 **Workflow:**
 ```bash
-/audit-a11y --standard
+/accessibility-audit --standard
 /teamwork export --source=accessibility --batch
 ```
 
@@ -507,7 +507,7 @@ credentials incorrect. Need to verify:
 
 **Workflow:**
 ```bash
-/quality-analyze --comprehensive
+/quality-audit --comprehensive
 /teamwork export --source=quality
 ```
 
@@ -817,10 +817,10 @@ Agent allows this and marks sections as "TBD"
 ## Related Skills
 
 - [`pr-create`](../commands/pr-workflow.md) — Auto-links PRs to tickets
-- [`audit-security`](../commands/security.md) — Can export findings
-- [`audit-perf`](../commands/performance.md) — Can export findings
-- [`audit-a11y`](../commands/accessibility.md) — Can export findings
-- [`quality-analyze`](../commands/code-quality.md) — Can export tasks
+- [`security-audit`](../commands/security.md) — Can export findings
+- [`performance-audit`](../commands/performance.md) — Can export findings
+- [`accessibility-audit`](../commands/accessibility.md) — Can export findings
+- [`quality-audit`](../commands/code-quality.md) — Can export tasks
 
 ---
 

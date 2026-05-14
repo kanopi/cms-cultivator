@@ -17,9 +17,9 @@ The PR workflow consists of four main stages:
 
 ## Stage 1: Creating Commits
 
-### Use `/pr-commit-msg`
+### Use `/commit-message-generator`
 
-As you work on your feature, create meaningful commits along the way using `/pr-commit-msg`.
+As you work on your feature, create meaningful commits along the way using `/commit-message-generator`.
 
 **Workflow:**
 
@@ -32,7 +32,7 @@ git add src/components/LoginForm.jsx
 git add tests/LoginForm.test.js
 
 # 3. Generate a commit message
-/pr-commit-msg
+/commit-message-generator
 ```
 
 **What it does:**
@@ -76,25 +76,25 @@ The workflow specialist generates commits following [Conventional Commits](https
 ```bash
 # Feature development
 git add src/features/notifications/
-/pr-commit-msg
+/commit-message-generator
 # Generates: feat(notifications): add real-time notification system
 git commit -m "[paste generated message]"
 
 # Bug fix
 git add src/utils/dateFormatter.js
-/pr-commit-msg
+/commit-message-generator
 # Generates: fix(utils): correct timezone handling in date formatter
 git commit -m "[paste generated message]"
 
 # Tests
 git add tests/notifications.test.js
-/pr-commit-msg
+/commit-message-generator
 # Generates: test(notifications): add unit tests for notification delivery
 git commit -m "[paste generated message]"
 
 # Documentation
 git add README.md docs/api/notifications.md
-/pr-commit-msg
+/commit-message-generator
 # Generates: docs(api): document notification system endpoints
 git commit -m "[paste generated message]"
 ```
@@ -432,23 +432,23 @@ git checkout -b feature/oauth-support
 
 # Make changes, commit frequently
 git add src/auth/oauth/
-/pr-commit-msg
+/commit-message-generator
 git commit -m "feat(auth): add OAuth provider abstraction"
 
 git add src/auth/oauth/google.js
-/pr-commit-msg
+/commit-message-generator
 git commit -m "feat(auth): implement Google OAuth provider"
 
 git add src/auth/oauth/github.js
-/pr-commit-msg
+/commit-message-generator
 git commit -m "feat(auth): implement GitHub OAuth provider"
 
 git add tests/auth/oauth.test.js
-/pr-commit-msg
+/commit-message-generator
 git commit -m "test(auth): add OAuth provider tests"
 
 git add docs/auth/oauth.md
-/pr-commit-msg
+/commit-message-generator
 git commit -m "docs(auth): document OAuth setup and usage"
 
 # === Pre-PR Phase ===
@@ -458,7 +458,7 @@ git commit -m "docs(auth): document OAuth setup and usage"
 
 # Fix any issues found
 git add src/auth/oauth/error-handling.js
-/pr-commit-msg
+/commit-message-generator
 git commit -m "fix(auth): improve OAuth error handling"
 
 # Self-review again
@@ -479,7 +479,7 @@ git push origin feature/oauth-support
 
 # Address feedback
 git add src/auth/oauth/rate-limit.js
-/pr-commit-msg
+/commit-message-generator
 git commit -m "feat(auth): add rate limiting to OAuth endpoints"
 
 git push origin feature/oauth-support
@@ -548,7 +548,7 @@ git push origin v2.0.0
 
 ## Troubleshooting
 
-### "No staged changes" error with `/pr-commit-msg`
+### "No staged changes" error with `/commit-message-generator`
 
 **Problem:** Command returns "No staged changes found"
 
@@ -557,7 +557,7 @@ git push origin v2.0.0
 # Stage your changes first
 git add <files>
 # Then generate commit message
-/pr-commit-msg
+/commit-message-generator
 ```
 
 ### PR creation fails with "Branch not pushed"
@@ -600,9 +600,9 @@ git fetch origin
 
 ---
 
-## Related Commands
+## Related Skills
 
-- **[`/pr-commit-msg`](../commands/pr-workflow.md#pr-commit-msg)** - Generate conventional commit messages
+- **[`/commit-message-generator`](../commands/pr-workflow.md#commit-message-generator)** - Generate conventional commit messages
 - **[`/pr-create`](../commands/pr-workflow.md#pr-create)** - Create pull request with auto-generated description
 - **[`/pr-review`](../commands/pr-workflow.md#pr-review)** - Review PR or self-review changes
 - **[`/pr-release`](../commands/pr-workflow.md#pr-release)** - Generate changelog and release documentation

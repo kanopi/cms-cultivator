@@ -338,13 +338,13 @@ Then restart Codex.
 **Claude Code** — open in any project and try a skill by name or natural language:
 
 ```bash
-/quality-standards
+/code-standards-checker
 ```
 
 **Codex** — start a new thread and invoke explicitly or by natural language:
 
 ```
-@quality-standards
+@code-standards-checker
 ```
 
 Or just say: "Does this follow Drupal coding standards?" — skills activate automatically in conversation on both platforms.
@@ -353,14 +353,14 @@ Or just say: "Does this follow Drupal coding standards?" — skills activate aut
 
 In Claude Code, type `/` to see all available skills. In Codex, type `@` to see installed plugin skills. CMS Cultivator skills are organized by category:
 
-- **PR Workflow**: `/pr-create`, `/pr-review`, `/pr-commit-msg`, `/pr-release`
-- **Accessibility**: `/audit-a11y` (with flexible modes)
-- **Performance**: `/audit-perf` (with flexible modes)
-- **Security**: `/audit-security` (with flexible modes)
-- **Live Site Auditing**: `/audit-live-site` (parallel multi-specialist audit)
+- **PR Workflow**: `/pr-create`, `/pr-review`, `/commit-message-generator`, `/pr-release`
+- **Accessibility**: `/accessibility-audit` (with flexible modes)
+- **Performance**: `/performance-audit` (with flexible modes)
+- **Security**: `/security-audit` (with flexible modes)
+- **Live Site Auditing**: `/live-site-audit` (parallel multi-specialist audit)
 - **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`
 - **Testing**: auto-invoked (say "I need tests for this class")
-- **Code Quality**: `/quality-analyze`, `/quality-standards`
+- **Code Quality**: `/quality-audit`, `/code-standards-checker`
 - **Documentation**: auto-invoked (say "document this function")
 
 ---
@@ -399,7 +399,7 @@ To use `/pr-create` and other PR commands:
 
 ### Lighthouse (for Performance Analysis)
 
-For `/audit-perf lighthouse`:
+For `/performance-audit lighthouse`:
 
 ```bash
 npm install -g lighthouse
@@ -555,10 +555,33 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 
 ---
 
+## Migrating from Pre-v1.0 Names
+
+Before v1.0, CMS Cultivator used a `commands/` directory with slash-command names. v1.0 moved entirely to skills and renamed everything. If you have muscle memory or stale docs referencing old names, here are the most common changes:
+
+- `/audit-a11y` → `/accessibility-audit`
+- `/audit-perf` → `/performance-audit`
+- `/audit-security` → `/security-audit`
+- `/quality-analyze` → `/quality-audit`
+- `/pr-commit-msg` → `/commit-message-generator`
+- `/docs-generate` → `/documentation-generator`
+- `/test-generate` → `/test-scaffolding`
+- `/test-plan` → `/test-plan-generator`
+- `/audit-live-site` → `/live-site-audit`
+- `/design-to-block` → `/design-to-wp-block`
+- `/design-to-paragraph` → `/design-to-drupal-paragraph`
+
+No aliases are registered for the old names — invoking a pre-v1.0 name produces no result. You can also just describe what you want in natural language; the right skill will activate automatically.
+
+For the complete mapping and the rationale behind the renaming, see the **[Skill Naming Convention](reference/skill-naming-convention.md)** reference page.
+
+---
+
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Skills Overview](commands/overview.md)** - Explore all 38 skills
+- **[Skills Overview](commands/overview.md)** - Explore all available skills
+- **[Skill Naming Convention](reference/skill-naming-convention.md)** - Why skills are named the way they are
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 

@@ -87,10 +87,10 @@ Tasks automatically include relevant context:
 Teamwork skills work seamlessly with:
 
 - **[pr-create](pr-workflow.md)** - Auto-links PRs to tickets
-- **[audit-security](security.md)** - Export security findings
-- **[audit-perf](performance.md)** - Export performance issues
-- **[audit-a11y](accessibility.md)** - Export accessibility violations
-- **[quality-analyze](code-quality.md)** - Export code quality tasks
+- **[security-audit](security.md)** - Export security findings
+- **[performance-audit](performance.md)** - Export performance issues
+- **[accessibility-audit](accessibility.md)** - Export accessibility violations
+- **[quality-audit](code-quality.md)** - Export code quality tasks
 
 ---
 

@@ -63,7 +63,7 @@ Presents full PR description for user approval → runs gh pr create
 The **live-site-audit skill** spawns all 4 leaf specialists simultaneously from the main session:
 
 ```
-/audit-live-site https://example.com
+/live-site-audit https://example.com
     ↓
 Main session spawns ALL in parallel:
     ├─→ performance-specialist (Core Web Vitals)
@@ -116,14 +116,14 @@ Spawns browser-validator-specialist (validation from test URL)
 | performance-specialist | `performance-audit`, `live-site-audit` | Leaf |
 | gtm-specialist | `gtm-performance-audit` | Leaf |
 | security-specialist | `security-audit`, `live-site-audit` | Leaf |
-| testing-specialist | `test-generate`, `test-plan`, `test-coverage` | Inline security/a11y test scenarios |
-| documentation-specialist | `docs-generate` | Leaf |
-| code-quality-specialist | `quality-audit`, `quality-standards`, `live-site-audit` | Leaf |
+| testing-specialist | `test-scaffolding`, `test-plan-generator`, `coverage-analyzer` | Inline security/a11y test scenarios |
+| documentation-specialist | `documentation-generator` | Leaf |
+| code-quality-specialist | `quality-audit`, `code-standards-checker`, `live-site-audit` | Leaf |
 | structured-data-specialist | `structured-data-analyzer` | Leaf |
 | drupal-pantheon-devops-specialist | `devops-setup` | Leaf |
 | design-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Code generation only |
 | responsive-styling-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Leaf |
-| browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `design-validate` | Leaf |
+| browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `browser-validator` | Leaf |
 
 PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — no agent is spawned.
 
@@ -205,7 +205,7 @@ fix(auth): resolve session timeout on remember-me login
 Would you like me to commit with this message?
 ```
 
-**Related Command:** `/pr-commit-msg` - For explicit commit message generation
+**Explicit invocation:** `/commit-message-generator` - For explicit commit message generation
 
 ---
 
@@ -235,7 +235,7 @@ Claude: "Let me check against WordPress Coding Standards...
 Overall good! Just add a docblock above the function."
 ```
 
-**Related Command:** `/quality-standards` - For comprehensive project-wide standards checks
+**Explicit invocation:** `/code-standards-checker` - For comprehensive project-wide standards checks
 
 ---
 
@@ -267,7 +267,7 @@ I'll create tests for:
 [Generates test file with complete structure]"
 ```
 
-**Related Command:** `/test-generate` - For batch test generation across modules
+**Explicit invocation:** `/test-scaffolding` - For batch test generation across modules
 
 ---
 
@@ -298,7 +298,7 @@ Claude: "I'll generate API documentation for your endpoint.
 - Usage example]"
 ```
 
-**Related Command:** `/docs-generate` - For comprehensive documentation projects
+**Explicit invocation:** `/documentation-generator` - For comprehensive documentation projects
 
 ---
 
@@ -331,7 +331,7 @@ Test Scenarios:
 [Generates complete test plan with steps and expected results]"
 ```
 
-**Related Command:** `/test-plan` - For comprehensive QA documentation
+**Explicit invocation:** `/test-plan-generator` - For comprehensive QA documentation
 
 ---
 
@@ -364,7 +364,7 @@ button:focus { outline: 2px solid #0066cc; }
 color: #333; /* Improves contrast to 4.8:1 */"
 ```
 
-**Related Command:** `/audit-a11y` - For comprehensive site-wide accessibility audits
+**Explicit invocation:** `/accessibility-audit` - For comprehensive site-wide accessibility audits
 
 ---
 
@@ -396,7 +396,7 @@ Fix: Use eager loading
 Impact: 101 queries → 2 queries (98% reduction)"
 ```
 
-**Related Command:** `/audit-perf` - For comprehensive performance audits with Core Web Vitals
+**Explicit invocation:** `/performance-audit` - For comprehensive performance audits with Core Web Vitals
 
 ---
 
@@ -430,7 +430,7 @@ $query = db_select('users')->condition('id', $id, '=');
 This prevents SQL injection attacks."
 ```
 
-**Related Command:** `/audit-security` - For comprehensive OWASP Top 10 security audits
+**Explicit invocation:** `/security-audit` - For comprehensive OWASP Top 10 security audits
 
 ---
 
@@ -467,7 +467,7 @@ Overall: 72%
 Recommendation: Add tests for payment/auth first."
 ```
 
-**Related Command:** `/test-coverage` - For comprehensive coverage analysis with trends
+**Explicit invocation:** `/coverage-analyzer` - For comprehensive coverage analysis with trends
 
 ---
 
@@ -507,7 +507,7 @@ Here's JSON-LD for your template:
 Use @id: '/blog/slug/#article' for entity linking."
 ```
 
-**Related Command:** `/audit-structured-data` - For comprehensive site-wide structured data audits with scoring
+**Explicit invocation:** `/structured-data-analyzer` - For comprehensive site-wide structured data audits with scoring
 ### 10. teamwork-task-creator
 
 **Automatically triggers when you:**
@@ -536,7 +536,7 @@ I need a few more details:
 Once you provide these, I'll create a complete bug report."
 ```
 
-**Related Command:** `/teamwork create` - For explicit Teamwork task creation
+**Explicit invocation:** `/teamwork-task-creator` in Claude Code, `@teamwork-task-creator` in Codex.
 
 ---
 
@@ -572,7 +572,7 @@ Claude: "Let me check that for you...
 Jane updated this 2 hours ago: 'Google OAuth working on staging'"
 ```
 
-**Related Command:** `/teamwork status` - For explicit status checks
+**Explicit invocation:** `/teamwork-integrator` in Claude Code, `@teamwork-integrator` in Codex.
 
 ---
 
@@ -614,7 +614,7 @@ Creating tasks now...
 - SEC-105-108: CSRF (P2)"
 ```
 
-**Related Command:** `/teamwork export` - For explicit audit export
+**Explicit invocation:** `/teamwork-exporter` in Claude Code, `@teamwork-exporter` in Codex.
 
 ---
 
@@ -661,7 +661,7 @@ Defer until editorial workflow requirements are defined.
 Confidence: High | Next step: Document editorial requirements first
 ```
 
-**Related Command:** None — this skill activates conversationally for any significant decision
+**Explicit invocation:** None — this skill activates conversationally for any significant decision
 
 ---
 
@@ -686,9 +686,9 @@ No need to remember command names or syntax!
 Use explicit skill invocation when you want:
 
 **Full comprehensive analysis:**
-- `audit-a11y` / `@audit-a11y` - Complete WCAG audit (not just one element)
-- `audit-perf` / `@audit-perf` - Full performance analysis with Lighthouse
-- `audit-security` / `@audit-security` - Complete OWASP Top 10 scan
+- `accessibility-audit` / `@accessibility-audit` - Complete WCAG audit (not just one element)
+- `performance-audit` / `@performance-audit` - Full performance analysis with Lighthouse
+- `security-audit` / `@security-audit` - Complete OWASP Top 10 scan
 
 **Structured workflows:**
 - `pr-create` / `@pr-create` - Create PR with full description
@@ -696,8 +696,8 @@ Use explicit skill invocation when you want:
 - `pr-release` / `@pr-release` - Generate changelog and deployment notes
 
 **Batch operations:**
-- `test-generate` / `@test-generate` - Generate tests for entire module
-- `docs-generate api` / `@docs-generate api` - Generate all API documentation
+- `test-scaffolding` / `@test-scaffolding` - Generate tests for entire module
+- `documentation-generator api` / `@documentation-generator api` - Generate all API documentation
 
 !!! tip "Syntax by platform"
     Claude Code: prefix with `/` (e.g. `/pr-create PROJ-123`)
@@ -745,17 +745,17 @@ Don't try to "game" the system—just describe what you need:
 
 | Skill | Triggers On | Best For | Explicit Invocation |
 |-------|-------------|----------|---------------------|
-| commit-message-generator | "commit", "staged" | Quick commits | `pr-commit-msg` |
-| code-standards-checker | "standards", "style" | Code review | `quality-standards` |
-| test-scaffolding | "need tests", "how to test" | Single class tests | `test-generate` |
-| documentation-generator | "document", "API docs" | Quick docblocks | `docs-generate` |
-| test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan` |
-| accessibility-checker | "accessible?", "WCAG" | Element checks | `audit-a11y` |
-| performance-analyzer | "slow", "optimize" | Query optimization | `audit-perf` |
-| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `audit-gtm` |
-| security-scanner | "secure?", "exploit" | Code security | `audit-security` |
-| coverage-analyzer | "coverage", "untested" | Test gaps | `test-coverage` |
-| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `audit-structured-data` |
+| commit-message-generator | "commit", "staged" | Quick commits | `commit-message-generator` |
+| code-standards-checker | "standards", "style" | Code review | `code-standards-checker` |
+| test-scaffolding | "need tests", "how to test" | Single class tests | `test-scaffolding` |
+| documentation-generator | "document", "API docs" | Quick docblocks | `documentation-generator` |
+| test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan-generator` |
+| accessibility-checker | "accessible?", "WCAG" | Element checks | `accessibility-audit` |
+| performance-analyzer | "slow", "optimize" | Query optimization | `performance-audit` |
+| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `gtm-performance-audit` |
+| security-scanner | "secure?", "exploit" | Code security | `security-audit` |
+| coverage-analyzer | "coverage", "untested" | Test gaps | `coverage-analyzer` |
+| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `structured-data-analyzer` |
 | teamwork-task-creator | "create task", "make ticket" | Single task creation | `teamwork create` |
 | teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `teamwork status` |
 | teamwork-exporter | "export to Teamwork" | Audit export | `teamwork export` |

@@ -595,6 +595,59 @@ setup() {
   [ -f "docs/commands/strategy.md" ]
 }
 
+@test "audit-export, drupal-contribution-skills, wordpress-meta doc pages exist" {
+  [ -f "docs/commands/audit-export.md" ]
+  [ -f "docs/commands/drupal-contribution-skills.md" ]
+  [ -f "docs/commands/wordpress-meta.md" ]
+}
+
+@test "skill naming convention reference exists" {
+  [ -f "docs/reference/skill-naming-convention.md" ]
+}
+
+# ==============================================================================
+# DOCS-VS-SKILLS CONSISTENCY
+# ==============================================================================
+
+@test "every skill referenced in docs/commands/*.md exists as a skill directory" {
+  # Extract all backtick-quoted skill names from category pages.
+  # Pattern: backtick + kebab-case word (3+ segments) + backtick.
+  # Only checks kebab-case identifiers with 2+ hyphens, which are very likely skill names.
+  # Skip pages that document non-skill items.
+  while IFS= read -r name; do
+    [ -z "$name" ] && continue
+    # Skip known non-skill names that appear in backticks in docs
+    case "$name" in
+      commit-message-generator|pr-create|pr-review|pr-release) ;;
+      accessibility-checker|accessibility-audit|security-scanner|security-audit) ;;
+      performance-analyzer|performance-audit|gtm-performance-audit) ;;
+      code-standards-checker|quality-audit|coverage-analyzer) ;;
+      test-scaffolding|test-plan-generator|documentation-generator) ;;
+      design-analyzer|design-to-wp-block|design-to-drupal-paragraph) ;;
+      responsive-styling|browser-validator|strategic-thinking) ;;
+      live-site-audit|structured-data-analyzer|audit-export|audit-report) ;;
+      frd-generator|story-point-estimator|csv-exporter) ;;
+      client-request-triage|pm-meeting-prep|project-heartbeat|qa-review) ;;
+      strategist-site-audit|devops-setup|wp-add-skills) ;;
+      drupal-contribute|drupal-issue|drupal-mr|drupal-cleanup) ;;
+      drupalorg-issue-helper|drupalorg-contribution-helper) ;;
+      teamwork-task-creator|teamwork-integrator|teamwork-exporter) ;;
+      # Known doc identifiers, file names, GitHub repos, library names — not skills
+      cms-cultivator|claude-toolbox|claude-dev-insights|cms-planner) ;;
+      agent-skills|design-system|block-themes|block-development|block-editor|block-patterns|block-api) ;;
+      kanopi-claude-plugins|claude-plugins-official|claude-chrome-mcp|codeql-action|bats-core) ;;
+      a-guide-to-flexbox|complete-guide-grid|coding-standards) ;;
+      twig-cs-fixer|phpstan-drupal|drupal-rector) ;;
+      *)
+        if [ ! -d "skills/$name" ]; then
+          echo "ERROR: docs/commands reference a non-existent skill: $name"
+          return 1
+        fi
+        ;;
+    esac
+  done < <(grep -rhoE '`[a-z][a-z0-9]+-[a-z0-9]+-[a-z0-9-]+`' docs/commands/ 2>/dev/null | tr -d '`' | sort -u)
+}
+
 # ==============================================================================
 # DOCUMENTATION TESTS
 # ==============================================================================

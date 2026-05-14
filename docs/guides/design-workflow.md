@@ -22,13 +22,13 @@ CMS Cultivator can analyze designs from two sources:
 
 **Figma URLs:**
 ```bash
-/design-to-block https://figma.com/file/abc123/Hero-Section
+/design-to-wp-block https://figma.com/file/abc123/Hero-Section
 ```
 
 **Screenshots/Images:**
 ```bash
 # First, show the design file to Claude
-/design-to-block hero-design.png
+/design-to-wp-block hero-design.png
 ```
 
 **What gets analyzed:**
@@ -83,7 +83,7 @@ CMS Cultivator can analyze designs from two sources:
 
 ## Stage 2A: WordPress Block Patterns
 
-### Use `/design-to-block [design-reference]`
+### Use `/design-to-wp-block [design-reference]`
 
 Create block patterns from designs for WordPress sites.
 
@@ -91,10 +91,10 @@ Create block patterns from designs for WordPress sites.
 
 ```bash
 # 1. Provide your design reference
-/design-to-block https://figma.com/file/abc123/Hero-Section
+/design-to-wp-block https://figma.com/file/abc123/Hero-Section
 
 # Or with a local image
-/design-to-block hero-design.png
+/design-to-wp-block hero-design.png
 ```
 
 **What it creates:**
@@ -259,7 +259,7 @@ Create block patterns from designs for WordPress sites.
 
 ## Stage 2B: Drupal Paragraph Types
 
-### Use `/design-to-paragraph [design-reference]`
+### Use `/design-to-drupal-paragraph [design-reference]`
 
 Create paragraph types from designs for Drupal sites.
 
@@ -267,10 +267,10 @@ Create paragraph types from designs for Drupal sites.
 
 ```bash
 # 1. Provide your design reference
-/design-to-paragraph https://figma.com/file/abc123/Hero-Section
+/design-to-drupal-paragraph https://figma.com/file/abc123/Hero-Section
 
 # Or with a local image
-/design-to-paragraph hero-design.png
+/design-to-drupal-paragraph hero-design.png
 ```
 
 **What it creates:**
@@ -579,7 +579,7 @@ drush config:import
 
 ## Stage 3: Browser Validation
 
-### Use `/design-validate [url]`
+### Use `/browser-validator [url]`
 
 Validate your implementation in a real browser using Chrome DevTools.
 
@@ -601,10 +601,10 @@ drush rs
 ddev launch
 
 # 2. Run validation on your page
-/design-validate http://localhost:8000/hero-section
+/browser-validator http://localhost:8000/hero-section
 
 # Or validate production
-/design-validate https://staging.example.com/new-page
+/browser-validator https://staging.example.com/new-page
 ```
 
 **What it validates:**
@@ -828,7 +828,7 @@ color: #005A9C; // 4.6:1 contrast
 
 ```bash
 # Re-run validation
-/design-validate http://localhost:8000/hero-section
+/browser-validator http://localhost:8000/hero-section
 
 # Should now pass all checks
 ```
@@ -846,7 +846,7 @@ Here's a typical workflow from design to deployment:
 # (Figma link or PNG/JPG file)
 
 # 2. Generate block pattern
-/design-to-block https://figma.com/file/abc123/Hero-Section
+/design-to-wp-block https://figma.com/file/abc123/Hero-Section
 
 # Output: patterns/hero-with-cta.php
 # - Block pattern structure
@@ -867,7 +867,7 @@ Here's a typical workflow from design to deployment:
 ddev launch
 
 # 6. Validate implementation
-/design-validate http://cms-cultivator.ddev.site/hero-test
+/browser-validator http://cms-cultivator.ddev.site/hero-test
 
 # Output shows:
 # ❌ Button contrast: 3.2:1 (needs 4.5:1)
@@ -879,7 +879,7 @@ ddev launch
 # - Increase button padding
 
 # 8. Re-validate
-/design-validate http://cms-cultivator.ddev.site/hero-test
+/browser-validator http://cms-cultivator.ddev.site/hero-test
 
 # ✅ All checks passed!
 
@@ -891,7 +891,7 @@ git push
 # === Drupal Paragraph Type Workflow ===
 
 # 1. Generate paragraph type
-/design-to-paragraph hero-design.png
+/design-to-drupal-paragraph hero-design.png
 
 # Output:
 # - Field configuration YAML
@@ -936,7 +936,7 @@ drush cr
 # - Save and view
 
 # 7. Validate implementation
-/design-validate http://cms-cultivator.ddev.site/node/123
+/browser-validator http://cms-cultivator.ddev.site/node/123
 
 # Output shows issues, fix and re-validate
 
@@ -1183,12 +1183,12 @@ ddev launch
 
 ---
 
-## Related Commands
+## Related Skills
 
-- **[`/design-to-block`](../commands/design-workflow.md#design-to-block)** - Create WordPress block patterns from designs
-- **[`/design-to-paragraph`](../commands/design-workflow.md#design-to-paragraph)** - Create Drupal paragraph types from designs
-- **[`/design-validate`](../commands/design-workflow.md#design-validate)** - Validate implementation in browser
-- **[`/audit-a11y`](../commands/accessibility.md)** - Comprehensive WCAG accessibility audit
+- **[`/design-to-wp-block`](../commands/design-workflow.md#design-to-wp-block)** - Create WordPress block patterns from designs
+- **[`/design-to-drupal-paragraph`](../commands/design-workflow.md#design-to-drupal-paragraph)** - Create Drupal paragraph types from designs
+- **[`/browser-validator`](../commands/design-workflow.md#browser-validator)** - Validate implementation in browser
+- **[`/accessibility-audit`](../commands/accessibility.md)** - Comprehensive WCAG accessibility audit
 
 ---
 

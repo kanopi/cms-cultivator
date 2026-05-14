@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+- Comprehensive docs audit and refresh. Replaced pre-v1.0 slash-command names (`audit-a11y`, `pr-commit-msg`, `quality-analyze`, `docs-generate`, `test-generate`, `test-coverage`, `test-plan`, `audit-live-site`, `audit-gtm`, `audit-structured-data`, `design-validate`, `design-to-block`, `design-to-paragraph`, etc.) with current skill names throughout `docs/`, `README.md`, `CLAUDE.md`, and `skills/README.md`.
+- Removed hardcoded skill and agent counts across all docs and plugin manifests — counts drift fast, so the docs now refer to "Agent Skills" and "specialist agents" without numbers.
+- Rewrote `docs/commands/overview.md` as a clean category index with all current skill names and categories (added Project Planning, PM Workflows, Strategy, Drupal.org Contribution, WordPress Meta).
+- Added `docs/reference/skill-naming-convention.md` documenting the naming convention and providing a complete pre-v1.0 → current mapping.
+- Added `docs/commands/audit-export.md` covering the cross-cutting `audit-export` and `audit-report` skills.
+- Added `docs/commands/drupal-contribution-skills.md` as a category page for the six Drupal.org contribution skills.
+- Added `docs/commands/wordpress-meta.md` for the `wp-add-skills` extension installer.
+- Added a "Migrating from Pre-v1.0 Names" section to `docs/installation.md`.
+- Updated `zensical.toml` nav with the new pages.
+- Refreshed `CLAUDE.md` and `docs/testing.md` "Last updated" dates; removed example references to removed agents (`live-audit-specialist`).
+- Renamed "Related Command" inline notes and "Related Commands" section headers to "Explicit invocation" / "Related Skills" — skills aren't commands.
+- Added a BATS test (`tests/test-plugin.bats`) that verifies every kebab-case identifier referenced in `docs/commands/*.md` matches an actual `skills/<name>/` directory, preventing future drift.
+
 ## [1.2.0] - 2026-05-14
 
 ### Removed

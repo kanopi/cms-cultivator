@@ -6,10 +6,10 @@ Complete guide to using flexible argument modes in CMS Cultivator commands.
 
 Four commands support advanced argument modes for flexible auditing and analysis:
 
-- **`/audit-a11y [options]`** - Accessibility audits
-- **`/audit-perf [options]`** - Performance audits
-- **`/audit-security [options]`** - Security audits
-- **`/quality-analyze [options]`** - Code quality analysis
+- **`/accessibility-audit [options]`** - Accessibility audits
+- **`/performance-audit [options]`** - Performance audits
+- **`/security-audit [options]`** - Security audits
+- **`/quality-audit [options]`** - Code quality analysis
 
 These modes allow you to:
 - 🚀 Run quick pre-commit checks
@@ -35,13 +35,13 @@ Control how thorough the analysis is:
 **Examples:**
 ```bash
 # Quick accessibility check
-/audit-a11y --quick
+/accessibility-audit --quick
 
 # Standard performance audit (default, can omit --standard)
-/audit-perf
+/performance-audit
 
 # Comprehensive security audit
-/audit-security --comprehensive
+/security-audit --comprehensive
 ```
 
 ---
@@ -74,19 +74,19 @@ Control what code is analyzed:
 **Examples:**
 ```bash
 # Check only PR files
-/audit-a11y --scope=current-pr
+/accessibility-audit --scope=current-pr
 
 # Check specific module
-/audit-perf --scope=module=src/components
+/performance-audit --scope=module=src/components
 
 # Check frontend performance only
-/audit-perf --scope=frontend
+/performance-audit --scope=frontend
 
 # Check authentication security
-/audit-security --scope=auth
+/security-audit --scope=auth
 
 # Check recent code changes
-/quality-analyze --scope=recent-changes
+/quality-audit --scope=recent-changes
 ```
 
 ---
@@ -116,19 +116,19 @@ Control how results are presented:
 **Examples:**
 ```bash
 # Get JSON for CI/CD
-/audit-a11y --format=json
+/accessibility-audit --format=json
 
 # Get executive summary
-/audit-perf --format=summary
+/performance-audit --format=summary
 
 # Get simple checklist
-/audit-a11y --format=checklist
+/accessibility-audit --format=checklist
 
 # Get SARIF for security tools
-/audit-security --format=sarif
+/security-audit --format=sarif
 
 # Get refactoring plan
-/quality-analyze --format=refactoring-plan
+/quality-audit --format=refactoring-plan
 ```
 
 ---
@@ -153,16 +153,16 @@ Set quality gates and severity filters:
 **Examples:**
 ```bash
 # Only report if failing "good" thresholds
-/audit-perf --target=good
+/performance-audit --target=good
 
 # Only report high-severity security issues
-/audit-security --min-severity=high
+/security-audit --min-severity=high
 
 # Report functions with complexity > 10
-/quality-analyze --max-complexity=10
+/quality-audit --max-complexity=10
 
 # Report files below B grade
-/quality-analyze --min-grade=B
+/quality-audit --min-grade=B
 ```
 
 ---
@@ -186,15 +186,15 @@ Single-word arguments without `--` prefix still work for backward compatibility:
 **Examples:**
 ```bash
 # Legacy syntax still works
-/audit-a11y contrast
-/audit-perf queries
-/audit-security xss
-/quality-analyze complexity
+/accessibility-audit contrast
+/performance-audit queries
+/security-audit xss
+/quality-audit complexity
 
 # Combine legacy focus with new modes
-/audit-a11y contrast --quick
-/audit-perf queries --scope=current-pr
-/audit-security xss --min-severity=high
+/accessibility-audit contrast --quick
+/performance-audit queries --scope=current-pr
+/security-audit xss --min-severity=high
 ```
 
 ---
@@ -207,16 +207,16 @@ Fast validation before committing changes:
 
 ```bash
 # Accessibility check
-/audit-a11y --quick --scope=current-pr --format=checklist
+/accessibility-audit --quick --scope=current-pr --format=checklist
 
 # Performance check
-/audit-perf --quick --scope=current-pr --format=metrics
+/performance-audit --quick --scope=current-pr --format=metrics
 
 # Security check
-/audit-security --quick --scope=current-pr --min-severity=high
+/security-audit --quick --scope=current-pr --min-severity=high
 
 # Quality check
-/quality-analyze --quick --scope=current-pr --max-complexity=10
+/quality-audit --quick --scope=current-pr --max-complexity=10
 ```
 
 **Characteristics:**
@@ -233,16 +233,16 @@ Standard validation for pull requests:
 
 ```bash
 # Accessibility review
-/audit-a11y --standard --scope=current-pr
+/accessibility-audit --standard --scope=current-pr
 
 # Performance review
-/audit-perf --standard --scope=current-pr
+/performance-audit --standard --scope=current-pr
 
 # Security review
-/audit-security --standard --scope=current-pr
+/security-audit --standard --scope=current-pr
 
 # Quality review
-/quality-analyze --standard --scope=current-pr
+/quality-audit --standard --scope=current-pr
 ```
 
 **Characteristics:**
@@ -259,16 +259,16 @@ Thorough validation before production deployment:
 
 ```bash
 # Comprehensive accessibility audit
-/audit-a11y --comprehensive --format=summary
+/accessibility-audit --comprehensive --format=summary
 
 # Comprehensive performance audit
-/audit-perf --comprehensive --target=good --format=summary
+/performance-audit --comprehensive --target=good --format=summary
 
 # Comprehensive security audit
-/audit-security --comprehensive --format=summary
+/security-audit --comprehensive --format=summary
 
 # Comprehensive quality analysis
-/quality-analyze --comprehensive --format=refactoring-plan
+/quality-audit --comprehensive --format=refactoring-plan
 ```
 
 **Characteristics:**
@@ -297,7 +297,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Accessibility Audit
-        run: /audit-a11y --standard --format=json > a11y.json
+        run: /accessibility-audit --standard --format=json > a11y.json
 
       - name: Check Failures
         run: |
@@ -313,7 +313,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Performance Audit
-        run: /audit-perf --standard --format=json > perf.json
+        run: /performance-audit --standard --format=json > perf.json
 
       - name: Check Core Web Vitals
         run: |
@@ -329,7 +329,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Security Audit
-        run: /audit-security --standard --format=sarif > security.sarif
+        run: /security-audit --standard --format=sarif > security.sarif
 
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v2
@@ -342,7 +342,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Quality Analysis
-        run: /quality-analyze --standard --format=json > quality.json
+        run: /quality-audit --standard --format=json > quality.json
 
       - name: Check Complexity
         run: |
@@ -363,29 +363,29 @@ Arguments can be combined for powerful, targeted audits:
 
 **Quick security check on user input with high severity only:**
 ```bash
-/audit-security --quick --scope=user-input --min-severity=high
+/security-audit --quick --scope=user-input --min-severity=high
 ```
 
 **Comprehensive accessibility audit on current PR with executive summary:**
 ```bash
-/audit-a11y --comprehensive --scope=current-pr --format=summary
+/accessibility-audit --comprehensive --scope=current-pr --format=summary
 ```
 
 **Standard performance audit on backend with JSON output:**
 ```bash
-/audit-perf --standard --scope=backend --format=json
+/performance-audit --standard --scope=backend --format=json
 ```
 
 **Quick quality check on module with strict complexity threshold:**
 ```bash
-/quality-analyze --quick --scope=module=src/api --max-complexity=8
+/quality-audit --quick --scope=module=src/api --max-complexity=8
 ```
 
 **Legacy focus combined with new modes:**
 ```bash
-/audit-a11y contrast --quick --scope=current-pr
-/audit-perf queries --standard --format=json
-/audit-security xss --comprehensive --min-severity=medium
+/accessibility-audit contrast --quick --scope=current-pr
+/performance-audit queries --standard --format=json
+/security-audit xss --comprehensive --min-severity=medium
 ```
 
 ---
@@ -398,13 +398,13 @@ Use `--quick` during development, `--comprehensive` before release:
 
 ```bash
 # During development (multiple times per day)
-/audit-a11y --quick --scope=current-pr
+/accessibility-audit --quick --scope=current-pr
 
 # Before creating PR (once per PR)
-/audit-a11y --standard --scope=current-pr
+/accessibility-audit --standard --scope=current-pr
 
 # Before release (once per release)
-/audit-a11y --comprehensive
+/accessibility-audit --comprehensive
 ```
 
 ### 2. Scope Early and Often
@@ -413,10 +413,10 @@ Use `--scope=current-pr` to catch issues early:
 
 ```bash
 # Good: Fast feedback on your changes
-/audit-security --quick --scope=current-pr
+/security-audit --quick --scope=current-pr
 
 # Slower: Analyzes entire codebase
-/audit-security --quick
+/security-audit --quick
 ```
 
 ### 3. Use JSON for Automation
@@ -425,10 +425,10 @@ Always use `--format=json` in CI/CD:
 
 ```bash
 # Good: Machine-readable for automation
-/audit-perf --standard --format=json > results.json
+/performance-audit --standard --format=json > results.json
 
 # Not ideal: Markdown harder to parse
-/audit-perf --standard > results.md
+/performance-audit --standard > results.md
 ```
 
 ### 4. Set Appropriate Thresholds
@@ -437,10 +437,10 @@ Use severity and quality thresholds to reduce noise:
 
 ```bash
 # During development: Focus on critical issues
-/audit-security --quick --min-severity=high
+/security-audit --quick --min-severity=high
 
 # Before release: Catch everything
-/audit-security --comprehensive --min-severity=low
+/security-audit --comprehensive --min-severity=low
 ```
 
 ### 5. Combine Formats
@@ -449,13 +449,13 @@ Use different formats for different audiences:
 
 ```bash
 # For developers (detailed)
-/audit-a11y --comprehensive --format=report
+/accessibility-audit --comprehensive --format=report
 
 # For stakeholders (high-level)
-/audit-a11y --comprehensive --format=summary
+/accessibility-audit --comprehensive --format=summary
 
 # For CI/CD (structured)
-/audit-a11y --comprehensive --format=json
+/accessibility-audit --comprehensive --format=json
 ```
 
 ---
@@ -483,21 +483,21 @@ Use different formats for different audiences:
 
 1. **Use scopes to limit analysis:**
    ```bash
-   /audit-a11y --quick --scope=current-pr  # Faster
-   /audit-a11y --quick                     # Slower
+   /accessibility-audit --quick --scope=current-pr  # Faster
+   /accessibility-audit --quick                     # Slower
    ```
 
 2. **Choose appropriate depth:**
    ```bash
-   /audit-perf --quick      # 5 min
-   /audit-perf --standard   # 15 min
-   /audit-perf --comprehensive  # 30 min
+   /performance-audit --quick      # 5 min
+   /performance-audit --standard   # 15 min
+   /performance-audit --comprehensive  # 30 min
    ```
 
 3. **Use targeted focus areas:**
    ```bash
-   /audit-security xss --quick  # Faster than full audit
-   /audit-security --quick      # Full OWASP Top 3
+   /security-audit xss --quick  # Faster than full audit
+   /security-audit --quick      # Full OWASP Top 3
    ```
 
 ---
@@ -511,13 +511,13 @@ Use different formats for different audiences:
 **Solution:** Ensure arguments start with `--` for new modes:
 ```bash
 # Wrong
-/audit-a11y quick
+/accessibility-audit quick
 
 # Correct
-/audit-a11y --quick
+/accessibility-audit --quick
 
 # Legacy (also correct)
-/audit-a11y contrast
+/accessibility-audit contrast
 ```
 
 ### "No files found in scope"
@@ -530,7 +530,7 @@ Use different formats for different audiences:
 git diff --name-only origin/main...HEAD
 
 # Then use that scope
-/audit-a11y --scope=current-pr
+/accessibility-audit --scope=current-pr
 ```
 
 ### "JSON output invalid"
@@ -540,7 +540,7 @@ git diff --name-only origin/main...HEAD
 **Solution:** Redirect only JSON to file:
 ```bash
 # Correct
-/audit-perf --format=json > results.json
+/performance-audit --format=json > results.json
 
 # Verify JSON
 jq . results.json
@@ -565,7 +565,7 @@ Defaults are:
 
 Yes! You can combine them:
 ```bash
-/audit-a11y contrast --quick --scope=current-pr
+/accessibility-audit contrast --quick --scope=current-pr
 ```
 
 ### Can I use these modes in scripts?
@@ -573,9 +573,9 @@ Yes! You can combine them:
 Absolutely! They're designed for both interactive and automated use:
 ```bash
 #!/bin/bash
-/audit-a11y --quick --scope=current-pr --format=json > a11y.json
-/audit-perf --quick --scope=current-pr --format=json > perf.json
-/audit-security --quick --scope=current-pr --format=json > security.json
+/accessibility-audit --quick --scope=current-pr --format=json > a11y.json
+/performance-audit --quick --scope=current-pr --format=json > perf.json
+/security-audit --quick --scope=current-pr --format=json > security.json
 ```
 
 ### How do I know which mode to use?

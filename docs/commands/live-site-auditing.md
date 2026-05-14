@@ -4,7 +4,7 @@ Comprehensive audit of live websites using Chrome DevTools for performance, acce
 
 ## Skill
 
-`audit-live-site [url]` — Full site audit for performance, accessibility, SEO, and security
+`live-site-audit [url]` — Full site audit for performance, accessibility, SEO, and security
 
 ## Requirements
 
@@ -119,7 +119,7 @@ Import-ready task list with:
 
 ```bash
 # Audit a live site
-/audit-live-site https://example.com
+/live-site-audit https://example.com
 
 # What happens:
 # 1. Validates Chrome DevTools MCP is available
