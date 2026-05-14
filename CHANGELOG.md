@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-05-14
+
+### Fixed
+- `.claude-plugin/plugin.json` description trimmed from 577 to 456 characters. Claude Desktop's plugin validator enforces a 500-character limit on the `description` field; uploads were rejected with `Plugin description must be at most 500 characters`. The trimmed version keeps all the key categories but drops the MCP-server enumeration into a shorter trailing sentence.
+
 ## [1.2.0] - 2026-05-14
 
 ### Documentation
