@@ -76,9 +76,10 @@ setup() {
   [ "$status" -eq 0 ]
 }
 
-@test "codex manifest version is 1.0.0" {
-  run jq -r '.version' .codex-plugin/plugin.json
-  [ "$output" = "1.0.0" ]
+@test "codex manifest version matches plugin manifest" {
+  codex_version=$(jq -r '.version' .codex-plugin/plugin.json)
+  plugin_version=$(jq -r '.version' .claude-plugin/plugin.json)
+  [ "$codex_version" = "$plugin_version" ]
 }
 
 # ==============================================================================
@@ -89,9 +90,9 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (38)" {
+@test "skill count matches expected (41)" {
   count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 38 ]
+  [ "$count" -eq 41 ]
 }
 
 @test "all skill directories have SKILL.md file" {
@@ -174,7 +175,7 @@ setup() {
 
 @test "agents directory contains expected subdirectories" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 17 ]
+  [ "$count" -eq 16 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -186,9 +187,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (17)" {
+@test "agent count matches expected (16)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 17 ]
+  [ "$count" -eq 16 ]
 }
 
 @test "expected agent directories exist" {
@@ -202,7 +203,6 @@ setup() {
     "drupal-pantheon-devops-specialist"
     "drupalorg-mr-specialist"
     "gtm-specialist"
-    "live-audit-specialist"
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
@@ -317,6 +317,7 @@ setup() {
     "accessibility-specialist"
     "browser-validator-specialist"
     "code-quality-specialist"
+    "design-specialist"
     "documentation-specialist"
     "drupal-pantheon-devops-specialist"
     "gtm-specialist"
@@ -339,8 +340,6 @@ setup() {
 
 @test "orchestrators have Task tool" {
   orchestrators=(
-    "design-specialist"
-    "live-audit-specialist"
     "testing-specialist"
     "workflow-specialist"
   )
@@ -354,18 +353,6 @@ setup() {
       return 1
     fi
   done
-}
-
-@test "live-audit-specialist has strategic-thinking and audit-report skills" {
-  agent_file="agents/live-audit-specialist/AGENT.md"
-  if ! grep -q "strategic-thinking" "$agent_file"; then
-    echo "live-audit-specialist missing strategic-thinking skill"
-    return 1
-  fi
-  if ! grep -q "audit-report" "$agent_file"; then
-    echo "live-audit-specialist missing audit-report skill"
-    return 1
-  fi
 }
 
 @test "accessibility-specialist has accessibility-checker skill" {
@@ -482,8 +469,6 @@ setup() {
 
 @test "orchestrators document delegation patterns" {
   orchestrators=(
-    "design-specialist"
-    "live-audit-specialist"
     "testing-specialist"
     "workflow-specialist"
   )
@@ -724,9 +709,9 @@ setup() {
   [ -d ".codex/agents" ]
 }
 
-@test "codex agent TOML count matches AGENT.md count (17)" {
+@test "codex agent TOML count matches AGENT.md count (16)" {
   toml_count=$(find .codex/agents -name "*.toml" | wc -l)
-  [ "$toml_count" -eq 17 ]
+  [ "$toml_count" -eq 16 ]
 }
 
 @test "every AGENT.md directory has a corresponding TOML agent" {

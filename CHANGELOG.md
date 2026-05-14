@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-13
+
+### Added
+- `frd-generator` skill: generate comprehensive Functional Requirements Documents with 10-section structure, requirement numbering (FR-XXX, TR-XXX, US-XXX, UI-XXX, DR-XXX, NFR-XXX, TS-XXX, RISK-XXX), and platform-specific subsections for Drupal recipes and WordPress block themes; ported from kanopi/cms-planner
+- `story-point-estimator` skill: Fibonacci-based story point estimation (1, 2, 3, 5, 8, 13, 21, 34+) with hour conversions, platform-specific adjustments, and velocity calculations; ported from kanopi/cms-planner
+- `csv-exporter` skill: convert FRD requirements into Teamwork-ready CSV backlog with three-level task hierarchy, story-point-to-hours conversion, and consistent tagging; ported from kanopi/cms-planner
+- `docs/commands/planning.md`: new documentation page covering the project planning workflow
+
+### Changed
+- Plugin description and skill count updated from 38 to 41 across `plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`
+- Codex plugin version bumped to track the main plugin manifest
+- `tests/test-plugin.bats`: updated expected skill count (38 → 41) and agent count (17 → 16, removing the deleted `live-audit-specialist` references that were missed in v1.0.2)
+- `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0)
+- `zensical.toml` nav: added Planning page to the Skills section
+
+### Migration Notes
+- The companion repository `kanopi/cms-planner` is now deprecated. Its three skills are available natively in CMS Cultivator with the same names and YAML frontmatter; no slash command exists (the v1.0 refactor removed `commands/` — invoke `frd-generator` conversationally instead).
+- The `frd-specialist` agent from cms-planner was intentionally not migrated; the three skills handle FRD generation directly without an orchestrating agent.
+
 ## [1.0.2] - 2026-04-29
 
 ### Changed

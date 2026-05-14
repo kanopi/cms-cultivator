@@ -751,6 +751,9 @@ Don't try to "game" the system—just describe what you need:
 | teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `teamwork status` |
 | teamwork-exporter | "export to Teamwork" | Audit export | `teamwork export` |
 | strategic-thinking | "should we do this?", "help me decide" | Decision making | — |
+| frd-generator | "FRD", "functional requirements document", "structure requirements" | Project planning | — |
+| story-point-estimator | "story points", "estimate this", "how long will this take?" | Sprint estimation | — |
+| csv-exporter | "export to CSV", "Teamwork backlog", "import to Teamwork" | Backlog generation | — |
 
 ## Integration with Workflow
 
