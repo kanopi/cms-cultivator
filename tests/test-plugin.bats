@@ -173,9 +173,9 @@ setup() {
   [ -d "agents" ]
 }
 
-@test "agents directory contains expected subdirectories" {
+@test "agents directory contains expected subdirectories (15)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 16 ]
+  [ "$count" -eq 15 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -187,9 +187,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (16)" {
+@test "agent count matches expected (15)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 16 ]
+  [ "$count" -eq 15 ]
 }
 
 @test "expected agent directories exist" {
@@ -209,7 +209,6 @@ setup() {
     "teamwork-specialist"
     "testing-specialist"
     "structured-data-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${expected_agents[@]}"; do
@@ -341,7 +340,6 @@ setup() {
 @test "orchestrators have Task tool" {
   orchestrators=(
     "testing-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -371,20 +369,18 @@ setup() {
   fi
 }
 
-@test "workflow-specialist has commit-message-generator skill" {
-  agent_file="agents/workflow-specialist/AGENT.md"
-  if ! grep -q "commit-message-generator" "$agent_file"; then
-    echo "workflow-specialist missing commit-message-generator skill"
-    return 1
-  fi
+@test "workflow-specialist agent does not exist (removed in v1.1.0)" {
+  [ ! -d "agents/workflow-specialist" ]
+  [ ! -f ".codex/agents/workflow-specialist.toml" ]
 }
 
-@test "workflow-specialist has pr-create skill" {
-  agent_file="agents/workflow-specialist/AGENT.md"
-  if ! grep -q "pr-create" "$agent_file"; then
-    echo "workflow-specialist missing pr-create skill"
-    return 1
-  fi
+@test "PR skills reference no workflow-specialist Task spawn" {
+  for skill in pr-create pr-review pr-release commit-message-generator; do
+    if grep -qE "Task\(cms-cultivator:workflow-specialist" "skills/$skill/SKILL.md"; then
+      echo "skill $skill still spawns workflow-specialist via Task()"
+      return 1
+    fi
+  done
 }
 
 @test "design-specialist has design-analyzer skill" {
@@ -470,7 +466,6 @@ setup() {
 @test "orchestrators document delegation patterns" {
   orchestrators=(
     "testing-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -740,9 +735,9 @@ setup() {
   [ -d ".codex/agents" ]
 }
 
-@test "codex agent TOML count matches AGENT.md count (16)" {
+@test "codex agent TOML count matches AGENT.md count (15)" {
   toml_count=$(find .codex/agents -name "*.toml" | wc -l)
-  [ "$toml_count" -eq 16 ]
+  [ "$toml_count" -eq 15 ]
 }
 
 @test "every AGENT.md directory has a corresponding TOML agent" {

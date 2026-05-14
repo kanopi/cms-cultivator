@@ -214,13 +214,13 @@ After gathering information through the 5 Cs, present a structured analysis:
 
 ## Integration with CMS Cultivator
 
-This skill is embedded in three specialist agents at their key decision points:
+This skill is referenced from several other skills and agents at their key decision points:
 
-- **live-audit-specialist** — Applies the 5 Cs when prioritizing remediation roadmaps and making launch recommendations. Consequence and Connective Tissue drive issue severity; Cost validates what's achievable in each sprint.
+- **live-site-audit** skill — Applies the 5 Cs when prioritizing remediation roadmaps and making launch recommendations. Consequence and Connective Tissue drive issue severity; Cost validates what's achievable in each sprint.
 
-- **workflow-specialist** — Applies Color and Consequence when deciding whether to block a PR or proceed conditionally. Color distinguishes exploratory PRs from production releases. Consequence surfaces what ships broken if the gate is bypassed.
+- **pr-review** skill — Applies Color and Consequence when deciding whether to recommend "approve" vs. "request changes". Color distinguishes exploratory PRs from production releases; Consequence surfaces what ships broken if the issues are ignored.
 
-- **design-specialist** — Applies Context and Cost when choosing between implementation approaches (e.g., MCP-based vs. YAML fallback, block pattern vs. paragraph type variant). Context surfaces project constraints; Cost surfaces the long-term maintenance reality.
+- **design-specialist** agent — Applies Context and Cost when choosing between implementation approaches (e.g., MCP-based vs. YAML fallback, block pattern vs. paragraph type variant). Context surfaces project constraints; Cost surfaces the long-term maintenance reality.
 
 ## Example Interactions
 

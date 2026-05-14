@@ -26,12 +26,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `qa-review` skill: full QA validation of a multidev environment from a Teamwork task. Reads the task and all comments, extracts the multidev URL, detects the platform, builds a validation plan (base checklist + dynamic steps), executes via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary. (Teamwork MCP + CoWork)
 - `docs/commands/pm-workflows.md`: new documentation page covering all four PM skills with MCP setup notes
 
+### Removed
+- `agents/workflow-specialist/AGENT.md` — the orchestrator agent that wrapped the PR skills. The main session now invokes `pr-create`, `pr-review`, `pr-release`, and `commit-message-generator` directly. No agent in between.
+- `.codex/agents/workflow-specialist.toml` — corresponding Codex agent translation.
+
 ### Changed
-- Plugin description and skill count updated from 38 to 45 across `plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`
-- Codex plugin version bumped to track the main plugin manifest
-- `tests/test-plugin.bats`: updated expected skill count (38 → 45) and agent count (17 → 16, removing the deleted `live-audit-specialist` references that were missed in v1.0.2)
-- `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0)
-- `zensical.toml` nav: added Planning and PM Workflows pages to the Skills section
+
+**PR workflows now run directly from the main session (no orchestrator agent):**
+
+- `skills/pr-create/SKILL.md` rewritten: removed the Tier 1/Tier 2 split that existed because the agent was Tier 2-only. The skill is now single-tier and runs the full PR creation workflow (analyze git changes, detect CMS context, inline quality checks, draft description, present for approval, run `gh pr create`) directly. Same approval header format (`=== PULL REQUEST READY FOR APPROVAL ===`) preserved.
+- `skills/pr-review/SKILL.md` rewritten: removed agent spawning. The skill performs all PR/self-review analysis inline (code, security, breaking changes, testing, size, performance) with the same CMS-specific checks.
+- `skills/pr-release/SKILL.md` rewritten: removed agent spawning. Inline changelog generation, deployment checklist creation, and PR description updates. Same approval header (`=== RELEASE ARTIFACTS READY FOR APPROVAL ===`) preserved.
+- `skills/commit-message-generator/SKILL.md`: removed the "when used via workflow-specialist agent" branch; clarified that the skill is invoked directly.
+- `skills/strategic-thinking/SKILL.md`: updated integration notes to point to skills (live-site-audit, pr-review) instead of removed agents.
+
+**Documentation and tests:**
+
+- Plugin description and counts updated to `45 skills + 15 agents` across `plugin.json`, `.codex-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`.
+- Codex plugin version bumped to track the main plugin manifest.
+- `tests/test-plugin.bats`: skill count 38 → 45, agent count 17 → 15 (correcting both the `live-audit-specialist` removal from v1.0.2 that was missed in tests, and the new `workflow-specialist` removal). Replaced "workflow-specialist has X skill" tests with assertions that the agent is gone and PR skills no longer spawn it via `Task(...)`.
+- `tests/test-agents/*.md`: added v1.1.0 deprecation notes pointing to the new skill-level workflow.
+- `README.md`, `CLAUDE.md`, `docs/agents-and-skills.md`: removed workflow-specialist from agent lists, tables, and orchestration diagrams; documented the direct-invocation pattern.
+- `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0).
+- `zensical.toml` nav: added Planning and PM Workflows pages to the Skills section.
 
 ### Migration Notes
 - The companion repository `kanopi/cms-planner` is now deprecated. Its three skills are available natively in CMS Cultivator with the same names and YAML frontmatter; no slash command exists (the v1.0 refactor removed `commands/` — invoke `frd-generator` conversationally instead).
@@ -39,6 +56,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All four PM skills depend on MCP servers. Without the relevant MCPs configured, the skills cannot fetch tasks, messages, recordings, or browser sessions. See `docs/commands/pm-workflows.md` for setup details.
 - `project-heartbeat` is written in Andrew Nichols's personal voice; other PMs are encouraged to adjust signature and tone after the draft is generated.
 - `qa-review` requires CoWork browser automation to execute validation steps; without it the skill produces only the plan, not the report.
+
+### Rationale for workflow-specialist Removal
+The workflow-specialist was the last remaining orchestrator that existed primarily to wrap a handful of skills. The PR skills already contained the full workflow; the agent added an extra `Task()` hop without meaningful value and produced inconsistent output framing across Tier 1 (portable) and Tier 2 (Claude Code enhanced) invocations. Removing it makes invocation identical across Claude Code, Claude Desktop, and Codex, and matches the pattern established in v1.0.2 when `live-audit-specialist` was removed in favor of skill-level spawning.
 
 ## [1.0.2] - 2026-04-29
 

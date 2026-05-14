@@ -1,21 +1,22 @@
 ---
 name: pr-create
-description: Generate PR description and create a GitHub pull request using the workflow-specialist agent. Invoke when user explicitly asks to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
+description: Generate a PR description and create a GitHub pull request. Invoke when user explicitly asks to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
 disable-model-invocation: true
 ---
 
 # PR Create
 
-Generate PR description and create a GitHub pull request using the workflow-specialist agent.
+Generate a comprehensive PR description and create a GitHub pull request. The main session runs this skill directly — no orchestrator agent is involved.
 
 ## ⚠️ Side Effect Warning
 
 **This skill creates a GitHub pull request** — a publicly visible, permanent action that:
+
 - Pushes your branch to the remote repository
 - Creates a PR visible to all repository members
 - Triggers CI/CD pipelines and notifications
 
-**Confirmation required** before any of these actions are taken. The skill will present the complete PR description for your review and wait for explicit approval.
+**Confirmation required** before any of these actions are taken. Present the complete PR description for the user's review and wait for explicit approval before running `gh pr create`.
 
 ## Usage
 
@@ -30,102 +31,167 @@ Generate PR description and create a GitHub pull request using the workflow-spec
 - GitHub CLI (`gh`) installed and authenticated
 - Remote repository accessible
 
-## Environment Detection
+## Workflow
 
-### Tier 1 — Portable (Claude Desktop, Codex, any environment)
+### 1. Parse arguments
 
-When Task() or gh CLI are unavailable:
+- Look for a ticket reference (e.g., `PROJ-123`) in the arguments, current branch name, or recent commit messages.
+- Look for `--concise` flag in the arguments. Concise mode produces shorter descriptions and skips non-critical quality checks.
 
-1. **Gather git context** — Ask user to share: current branch, recent commits, changed files
-2. **Extract ticket number** — From branch name, commits, or user input
-3. **Detect CMS changes** — Ask user about or analyze provided diff for:
-   - Drupal: config changes, update hooks, module changes
-   - WordPress: theme changes, ACF fields, CPT registrations
-4. **Generate PR description** following the project template:
-   - User story and description
-   - Acceptance criteria
-   - Deployment notes
-   - Steps to validate
-5. **Present for approval** — Display the complete PR title and description
-6. **⛔ STOP: Wait for explicit user approval** before proceeding
-7. **After approval**: Provide the `gh pr create` command for the user to run manually
+### 2. Verify prerequisites
 
-### Tier 2 — Claude Code Enhanced
+Run in parallel:
 
-When running in Claude Code with Task() and git/gh CLI available:
+- `git status` — confirm working tree is clean (or staged changes are intended for the PR)
+- `git branch --show-current` — confirm we're not on `main`/`master`
+- `gh auth status` — confirm GitHub CLI is authenticated
+- `git remote -v` — confirm the repo has a remote
 
-1. **Verify prerequisites** — Ensure changes are committed, not on main branch
-2. **Spawn workflow-specialist**:
-   ```
-   Task(cms-cultivator:workflow-specialist:workflow-specialist,
-        prompt="Create a pull request from the current branch. Arguments: {ticket-number if provided, --concise flag if provided}. Follow the complete PR creation workflow: (1) Analyze git changes and detect CMS-specific modifications, (2) Run quality checks as needed (skip in --concise mode unless critical), (3) Generate comprehensive PR description following the project template, (4) CRITICAL OUTPUT FORMAT: Your response must START IMMEDIATELY with '=== PULL REQUEST READY FOR APPROVAL ===' followed by the PR content. DO NOT write ANY text before this header. (5) Wait for user approval, then create the PR using gh CLI.")
-   ```
-3. **Present output directly** — When workflow-specialist returns `=== PULL REQUEST READY FOR APPROVAL ===`, display verbatim to user
-4. **⛔ STOP: Wait for user approval** (approve or provide edits)
-5. **After approval** — Resume workflow-specialist with approval to execute `gh pr create`
+If on `main`/`master`, stop and tell the user to switch to a feature branch first. If `gh` isn't authenticated, suggest `gh auth login` and provide manual instructions instead.
 
-## Confirmation Protocol
+### 3. Analyze changes
 
-The skill will always present this sequence:
+Run in parallel:
+
+- `git log --oneline <base>..HEAD` — full commit history on this branch
+- `git diff <base>...HEAD` — full diff
+- `git diff --stat <base>...HEAD` — files changed summary
+
+Where `<base>` is typically `main` or `1.x` (whichever the repo uses as the default branch — check with `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`).
+
+### 4. Detect CMS context
+
+Scan the diff for platform-specific changes:
+
+**Drupal indicators:**
+- Files under `config/sync/` → flag config import needed
+- `hook_update_N` definitions in `.module` or `.install` → flag database update
+- Changes to services, render arrays, or cache tags → flag cache clear
+- New module dependencies in `*.info.yml` or `composer.json`
+
+**WordPress indicators:**
+- ACF JSON files in `acf-json/` → flag field re-sync
+- `register_post_type`, `register_taxonomy`, or rewrite rule changes → flag permalink flush
+- Theme template changes or new plugin activations → flag cache clear / plugin activation
+- Block changes (`block.json`, `src/blocks/`) → flag editor cache
+
+### 5. Run inline quality checks (skip in --concise mode unless critical)
+
+Use Read, Grep, and Bash directly — no Task() spawns required:
+
+- **Tests** — Grep for new functions/classes and check if matching tests exist in the project's test directory. Note untested code in the PR description.
+- **Security** — Grep the diff for risky patterns: raw SQL concatenation, `eval`, `unserialize`, missing nonce/CSRF checks (WP `wp_verify_nonce`, Drupal Form API), unescaped output (`echo $user_input`, missing `esc_html`/`esc_attr`/`Html::escape`).
+- **Accessibility** — If UI/template files changed, Grep for: missing `alt=`, missing `aria-label` on icon buttons, color-only state indicators, missing form labels.
+- **Performance** — Look for new database queries inside loops (N+1), missing caching, large asset imports without lazy loading.
+
+Note findings briefly in the PR description's relevant sections. Do **not** block PR creation on findings — surface them so the reviewer can decide.
+
+### 6. Generate PR description
+
+Use the template below. Adjust verbosity for `--concise` mode.
+
+```markdown
+## Description
+Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
+- [ ] Was AI used in this pull request?
+
+> As a [role], I need to [action] so that [benefit].
+
+[Summary of changes in 2–4 sentences. What changed and why.]
+
+## Acceptance Criteria
+* [Specific, testable criteria]
+* [One bullet per criterion]
+
+## Assumptions
+* [Anything reviewers/PMs should know — known issues, scope decisions]
+
+## Steps to Validate
+1. [Explicit testing instructions with URLs where applicable]
+2. [Cover the happy path and at least one edge case]
+
+## Affected URL
+[Multidev or staging URL]
+
+## Deploy Notes
+[Config imports, cache clearing, database updates, plugin activations, permalink flushes — anything required for deployment]
+```
+
+In concise mode:
+- Description paragraph is 1–2 sentences
+- Acceptance Criteria and Steps to Validate as bullets (2–4 each)
+- Deploy Notes only if there are real deployment requirements
+- All template sections still present
+
+### 7. Present for approval
+
+Your response **must start immediately** with the approval header. No preamble, no summary, no "I've analyzed your changes" — start with the header.
 
 ```
 === PULL REQUEST READY FOR APPROVAL ===
 
-**Title**: [PR Title]
+**Title:** <conventional commit style PR title>
 
-## Description
-[Full PR description]
+**Description:**
+
+<full PR description with all sections>
 
 ===================================
 
 Reply "approve" to create this PR, or provide your edits.
 ```
 
-**No PR will be created until you reply "approve".**
+### 8. Wait for explicit user approval
 
-## PR Description Template
+⛔ **Do not run `gh pr create` until the user replies "approve" or provides edits.**
 
-```markdown
-## Description
-Teamwork Ticket(s): [PROJ-123](link)
-- [ ] Was AI used in this pull request?
+- If approved → proceed to step 9 with the presented content.
+- If user provides edits → use their edited version verbatim and proceed to step 9.
+- If user declines → stop. No PR created.
 
-> As a developer, I need to...
+### 9. Create the PR
 
-[Summary of changes]
-
-## Acceptance Criteria
-* [Specific, testable criteria]
-
-## Assumptions
-* [Known limitations]
-
-## Steps to Validate
-1. [Testing instructions]
-
-## Affected URL
-[link to test site]
-
-## Deploy Notes
-[Config imports, cache clearing, database updates]
+```bash
+gh pr create --base <default-branch> --head <current-branch> --title "<title>" --body "$(cat <<'EOF'
+<approved description>
+EOF
+)"
 ```
 
-## Concise Mode
+Return the PR URL to the user. Suggest next steps (e.g., assigning reviewers, running `/pr-release` later for the release).
 
-Use `--concise` for smaller tasks/bug fixes:
-- Shorter descriptions (2-3 sentences)
-- Fewer specialist quality checks
-- Essential deployment notes only
-- Same required template sections
+## Environment fallback (no `gh` CLI / no Task tool)
 
-## CMS-Specific Detection
+If `gh` is unavailable (Claude Desktop, Codex without `gh`, restricted environment):
 
-**Drupal**: Config changes → config import needed; update hooks → database updates; services → cache clear
+1. Run steps 1–7 normally — present the PR title and description.
+2. After approval, **provide the `gh pr create` command** for the user to run manually, with the body pre-formatted in a heredoc they can paste.
+3. Do not attempt to create the PR yourself.
 
-**WordPress**: ACF changes → re-sync fields; CPT changes → flush permalinks; theme changes → clear cache
+## Title Conventions
+
+Use conventional commit style: `<type>(<scope>): <description>`
+
+- `feat(auth): add two-factor authentication`
+- `fix(checkout): resolve cart total calculation`
+- `refactor(api): consolidate response handlers`
+- `chore(deps): update React to 18.3`
+
+## CMS-Specific Detection Quick Reference
+
+**Drupal:**
+- Config changes → `drush config:import` after deploy
+- Update hooks → `drush updatedb`
+- Service/render changes → `drush cache:rebuild`
+
+**WordPress:**
+- ACF JSON changes → re-sync fields from `acf-json/`
+- CPT/taxonomy/rewrite changes → flush permalinks (Settings → Permalinks → Save)
+- Theme/plugin changes → clear caching plugin
+- Block changes → may need browser cache clear for editor
 
 ## Related Skills
 
-- **pr-review** — Self-review before creating PR
-- **commit-message-generator** — Generate commit message first
-- **pr-release** — Create release PR with changelog
+- **pr-review** — Self-review before creating the PR
+- **commit-message-generator** — Generate the commit messages that feed into the PR
+- **pr-release** — Generate changelog + deployment checklist for the release PR

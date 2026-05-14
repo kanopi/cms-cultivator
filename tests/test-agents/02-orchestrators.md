@@ -1,8 +1,10 @@
 # Test 02: Orchestrator Agents
 
 **Category:** Orchestration & Workflow Coordination
-**Agents Tested:** 2 orchestrators
-**Expected Behavior:** Agents perform inline quality checks (no subagent spawning)
+**Agents Tested:** 1 orchestrator (testing-specialist)
+**Expected Behavior:** Agent performs inline quality checks (no subagent spawning beyond what's defined in the agent's tools list)
+
+> **History:** `workflow-specialist` was removed in v1.1.0 (PR skills now run directly from the main session). Skip Test 2.1 — it's preserved here for historical context. The `pr-create`, `pr-review`, `pr-release`, and `commit-message-generator` skills are tested as skill-level workflows, not via this orchestrator suite.
 
 ---
 

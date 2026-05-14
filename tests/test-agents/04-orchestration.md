@@ -12,8 +12,10 @@ In Claude Code, only the **main session** can spawn agents. Agents CANNOT spawn 
 (the `Agent` tool is not available to spawned subagents). CMS Cultivator's orchestration model:
 
 - **Skill-level spawning**: Skills in the main session spawn agents in parallel or sequentially
-- **Inline analysis**: Orchestrator agents (workflow-specialist, testing-specialist) do quality checks inline using their own tools
+- **Inline analysis**: The `testing-specialist` agent performs quality checks inline using its own tools. PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) also run inline — they are skills invoked directly by the main session, with no orchestrator agent.
 - **No recursive spawning**: No agent spawns another agent
+
+> **History:** `workflow-specialist` was removed in v1.1.0; sections below that reference it are preserved for historical context but should be skipped.
 
 ---
 

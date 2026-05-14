@@ -1,127 +1,205 @@
 ---
 name: pr-review
-description: "Review a pull request or analyze local changes using the workflow specialist. Auto-activates when user mentions reviewing a PR, asks for code review, wants to analyze their changes before submitting, or mentions \"pr-review self\". Invoke when user provides a PR number to review or says \"review self\", \"review my changes\", or \"pr review\". Supports focus areas: code, security, breaking, testing, size, performance."
+description: "Review a pull request or analyze local changes before submitting. Auto-activates when user mentions reviewing a PR, asks for code review, wants to analyze their changes before submitting, or mentions \"pr-review self\". Invoke when user provides a PR number to review or says \"review self\", \"review my changes\", or \"pr review\". Supports focus areas: code, security, breaking, testing, size, performance."
 ---
 
 # PR Review
 
-Review a pull request or analyze your local changes using the workflow-specialist agent.
+Review a pull request or analyze your local changes before submitting. The main session runs this skill directly — no orchestrator agent is involved.
 
 ## Usage
 
 **Review someone else's PR:**
-- Ask: "Review PR #123" or "Review pull request 456"
+- "Review PR #123" / "Review pull request 456"
 - With focus: "Review PR #123 for security issues"
 
-**Analyze your own changes (before creating PR):**
-- Ask: "Review my changes" or "Self-review before PR"
+**Self-review your own changes before creating a PR:**
+- "Review my changes" / "Self-review before PR"
 - With focus: "Check my changes for breaking changes"
 
-**Focus options**: `code`, `security`, `breaking`, `testing`, `size`, `performance`
+**Focus options:** `code`, `security`, `breaking`, `testing`, `size`, `performance` (or `all` for a comprehensive review).
 
-## Environment Detection
+## Workflow
 
-### Tier 1 — Portable (Claude Desktop, Codex, any environment)
+### 1. Determine target
 
-When Task() or gh CLI are unavailable:
+- **PR number provided** (e.g., `PR #123`, `pr-review 456`) → review that PR.
+- **"self" / "my changes" / "before submitting"** → review local changes against the default branch.
+- **No clear target** → ask the user which one they want.
 
-1. **Determine target** — PR number or "self" (local changes)
-2. **Gather context** — Use Read and Grep to examine files, look for git diff output if provided
-3. **Analyze changes directly** based on focus area:
-   - **Code quality**: Readability, naming, documentation, consistency
-   - **Security**: Input validation, output encoding, authentication patterns
-   - **Breaking changes**: API/function signature changes, database schema changes
-   - **Testing**: Test coverage presence, test quality, missing test scenarios
-   - **Size**: Estimate scope from files mentioned or shown
-   - **Performance**: Query patterns, caching, asset loading
-4. **Generate review** — Structured findings with Required Changes and Suggestions sections
-5. **Provide overall recommendation** — Approve / Request Changes / Comment
+### 2. Gather context
 
-**Note for Tier 1**: Without git access, ask the user to share the diff or changed files for analysis.
+**For PR review (Tier 2 with `gh` available):**
 
-### Tier 2 — Claude Code Enhanced
+Run in parallel:
 
-When running in Claude Code with Task() and git/gh CLI available:
+- `gh pr view <number> --json title,body,baseRefName,headRefName,author,additions,deletions,changedFiles`
+- `gh pr diff <number>`
+- `gh pr checks <number>` (if CI status matters)
 
-1. **Determine target** — Parse PR number or "self" from request
-2. **Gather context automatically**:
-   - For PR review: `gh pr view {number}` and `gh pr diff {number}`
-   - For self-review: `git branch`, `git log main...HEAD`, `git diff main...HEAD`
-3. **Spawn workflow-specialist**:
-   ```
-   Task(cms-cultivator:workflow-specialist:workflow-specialist,
-        prompt="Review changes comprehensively. Target: {PR number or 'self'}. Focus area: {focus or 'all aspects'}. For self-reviews: gather branch info, commits, diffs, file stats. For PR reviews: use gh pr view and gh pr diff. Orchestrate specialists in parallel as needed (testing, security, accessibility). Provide detailed code review with actionable recommendations.")
-   ```
-4. **Present review** to user
+**For self-review:**
 
-## Review Dimensions
+Determine the default branch (`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`) — usually `main` or `1.x`. Then run in parallel:
 
-### Code Quality
-- Readability, maintainability, consistency
-- Documentation and naming conventions
-- Project convention adherence
-- Design patterns and SOLID principles
+- `git branch --show-current`
+- `git log --oneline <default>..HEAD`
+- `git diff --stat <default>...HEAD`
+- `git diff <default>...HEAD`
 
-### Security
-- Input validation and output encoding
-- SQL injection and XSS vulnerabilities
-- Authentication/authorization checks
-- Secrets and credentials in code
-- CMS-specific security patterns
+**For portable environments (no `gh`):**
 
-### Testing
-- Test coverage for new/modified code
-- Test quality and edge case coverage
-- Automated test recommendations
+Ask the user to share the PR description, the diff, or the file list. Do as much analysis as the provided context allows; note what would have been checked with full access.
 
-### Size & Complexity
-- Lines changed, files affected
-- Size category: XS (< 10), S (10–100), M (100–400), L (400–1000), XL (> 1000)
-- Split recommendations for XL PRs
+### 3. Classify size and complexity
 
-### Breaking Changes
-- API/function signature changes
-- Database schema changes
-- Dependency version changes
-- CMS-specific breaking changes (config, permissions, routes)
+| Size | Lines changed |
+|------|---------------|
+| XS | < 10 |
+| S | 10–100 |
+| M | 100–400 |
+| L | 400–1,000 |
+| XL | > 1,000 — recommend splitting |
 
-## CMS-Specific Analysis
+Complexity is a judgment call: low for isolated changes, high for cross-cutting refactors or unfamiliar areas.
 
-**Drupal**: Config management, update hooks, Database API usage, cache tags/contexts, access control, services/DI, Form API, module dependencies
+### 4. Run inline analysis by focus area
 
-**WordPress**: Theme templates and hierarchy, hooks and filters, $wpdb->prepare(), nonce verification, capability checks, sanitization/escaping, ACF field exports, Gutenberg blocks
+Use Read, Grep, and Bash directly. Spawn no agents — the skill performs the analysis itself.
 
-## Review Output Format
+#### Code quality (`code`)
+
+- Readability, naming, function length, duplication
+- Project convention adherence (compare against neighbor files)
+- Design patterns and SOLID principles where applicable
+- Magic numbers, hard-coded strings, dead code
+
+#### Security (`security`)
+
+- **Input handling:** unvalidated `$_GET`/`$_POST`, request params used directly in queries or output
+- **SQL:** raw concatenation vs. prepared statements (`$wpdb->prepare`, `db_select` placeholders)
+- **Output escaping:** unescaped echo, missing `esc_html`/`esc_attr`/`esc_url`/`Html::escape`/`Xss::filter`
+- **Auth:** missing capability checks (`current_user_can`), missing nonce verification (`wp_verify_nonce`), missing Drupal access checks
+- **Secrets:** API keys, tokens, passwords committed in code
+- **Deserialization:** `unserialize` on user input
+- **File handling:** path traversal, unrestricted uploads
+
+#### Breaking changes (`breaking`)
+
+- Function/method signature changes (public API)
+- Database schema changes (table/column drops, type changes)
+- Removed routes, endpoints, hooks, filters, services
+- Dependency major version bumps in `composer.json`/`package.json`
+- Config schema changes that won't migrate cleanly
+- Permission/capability changes
+
+#### Testing (`testing`)
+
+- New/modified code without corresponding tests
+- Test quality: do the assertions actually cover the behavior?
+- Edge cases: empty input, null, large input, concurrent access
+- Test isolation: do tests pollute state?
+
+#### Size (`size`)
+
+- Lines/files counts
+- Mixed concerns (refactor + feature + bugfix in one PR)
+- Suggest split points for XL PRs
+
+#### Performance (`performance`)
+
+- N+1 queries inside loops
+- Missing caching on expensive operations
+- Large unminified assets, missing lazy-load
+- Synchronous external HTTP calls in request path
+- Cache invalidation patterns
+
+### 5. CMS-specific checks
+
+**Drupal:**
+
+- Config management: `config/sync/` changes match code changes
+- Update hooks: present for schema changes
+- Database API: no raw queries; `db_query`/`db_select` with placeholders
+- Cache tags / contexts on render arrays
+- Access control on routes and entity operations
+- Services in `*.services.yml` properly wired
+
+**WordPress:**
+
+- `$wpdb->prepare()` on all dynamic queries
+- Nonce verification on form/AJAX handlers
+- Capability checks (`current_user_can`) before admin actions
+- Sanitization on input (`sanitize_text_field`, `wp_kses`)
+- Escaping on output (`esc_html`, `esc_attr`, `esc_url`)
+- ACF field group exports in `acf-json/`
+- Gutenberg block `block.json` correct, attributes typed
+
+### 6. Produce the review
 
 ```markdown
-# PR Review — [Title or "Local Changes"]
+# PR Review — <title or "Local Changes">
 
-**Size**: [XS/S/M/L/XL] ([X] files, +[Y]/-[Z] lines)
-**Complexity**: [Low/Medium/High]
+**Size:** <XS/S/M/L/XL> (<N> files, +<X>/-<Y> lines)
+**Complexity:** <Low/Medium/High>
 
 ## Summary
-[Overall assessment]
+<2–4 sentence overall assessment>
 
 ## Required Changes
+
 ### Critical Issues
-- [ ] **[Issue]** (file.php:123) — [Problem and fix]
+- [ ] **<issue>** (`<file>:<line>`) — <problem and recommended fix>
 
 ### Security Concerns
-- [ ] **[Issue]** (file.php:456) — [Risk and fix]
+- [ ] **<issue>** (`<file>:<line>`) — <risk and fix>
 
 ## Suggestions
+
 ### Performance
+- <bullet>
+
 ### Code Quality
+- <bullet>
+
+### Testing Gaps
+- <bullet>
 
 ## Test Plan
-[Specific test cases]
+- <specific test case>
+- <specific test case>
 
 ## Overall Recommendation
-- [ ] Approve / Request Changes / Comment
+- [ ] Approve
+- [ ] Request Changes
+- [ ] Comment
 ```
+
+Each finding should be **specific** (`auth.php:42`, not "authentication code"), include **why** it matters, and **suggest a fix**. Avoid generic checklist output.
+
+### 7. Optional: post the review to GitHub
+
+If reviewing a PR (not self-review) and the user wants the review posted:
+
+1. Present the review to the user first.
+2. Ask: "Post this as a PR review on GitHub? (approve / request changes / comment)"
+3. On approval, use `gh pr review <number> --<action> --body "$(cat <<'EOF'\n<review>\nEOF\n)"`.
+
+Self-reviews stay local — they're not posted anywhere.
+
+## Strategic Decision Framework
+
+When deciding whether to recommend "approve" vs. "request changes," apply the **5 Cs** from the `strategic-thinking` skill:
+
+- **Color** — Production hotfix vs. exploratory branch sets different bars.
+- **Consequence** — What breaks if this ships with the issues you found?
+- **Cost** — How much rework do the required changes represent?
+- **Connective Tissue** — Does this PR affect other in-flight work?
+
+Use these to provide a recommendation with reasoning, not just a verdict.
 
 ## Related Skills
 
-- **commit-message-generator** — Generate commit messages before review
-- **pr-create** — Create PR after passing self-review
-- **security-scanner** — Deep security checks on specific code
+- **commit-message-generator** — Used during PR creation
+- **pr-create** — Create the PR after a passing self-review
+- **security-scanner** — Deep security checks on specific code shown inline
+- **accessibility-checker** — Element-level accessibility checks
