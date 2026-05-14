@@ -352,20 +352,17 @@ Detailed instructions for Claude on how to execute this skill...
 ### 36. teamwork-exporter
 
 **Triggers**: "export audit to Teamwork", "create Teamwork tasks from audit", "send findings to Teamwork"
-**Purpose**: Export audit findings as formatted Teamwork task entries in CSV format for project management ingestion.
-**Related Agent**: teamwork-specialist
+**Purpose**: Export audit findings as formatted Teamwork task entries in CSV format for project management ingestion. Runs directly from the main session using the Teamwork MCP.
 
 ### 37. teamwork-integrator
 
 **Triggers**: "find Teamwork task", "look up ticket", ticket number provided (e.g. PROJ-123), "link to Teamwork"
-**Purpose**: Look up Teamwork tasks, cross-reference with code changes, and provide project management context during development.
-**Related Agent**: teamwork-specialist
+**Purpose**: Look up Teamwork tasks (read-only), cross-reference with code changes, and provide project management context during development. Runs directly from the main session using the Teamwork MCP.
 
 ### 38. teamwork-task-creator
 
 **Triggers**: "create a Teamwork task", "add this to Teamwork", "log this as a task", "create task for this issue"
-**Purpose**: Create properly formatted Teamwork task objects from conversation context for project management integration.
-**Related Agent**: teamwork-specialist
+**Purpose**: Create properly formatted Teamwork task objects from conversation context. Runs directly from the main session using the Teamwork MCP.
 
 ### 39. frd-generator
 

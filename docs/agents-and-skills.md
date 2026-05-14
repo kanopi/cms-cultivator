@@ -142,8 +142,9 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | code-quality-specialist | code-standards-checker |
 | structured-data-specialist | structured-data-analyzer |
 | drupal-pantheon-devops-specialist | (none) |
-| teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
 | design-specialist | design-analyzer, responsive-styling, strategic-thinking |
+
+Teamwork skills (`teamwork-task-creator`, `teamwork-integrator`, `teamwork-exporter`) and PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — they use the relevant MCP server (Teamwork MCP, GitHub CLI) without an orchestrator agent.
 
 ### Why Agents?
 

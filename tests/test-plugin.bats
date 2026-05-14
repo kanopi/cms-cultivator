@@ -173,9 +173,9 @@ setup() {
   [ -d "agents" ]
 }
 
-@test "agents directory contains expected subdirectories (15)" {
+@test "agents directory contains expected subdirectories (14)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 15 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -187,9 +187,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (15)" {
+@test "agent count matches expected (14)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 15 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "expected agent directories exist" {
@@ -206,7 +206,6 @@ setup() {
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
-    "teamwork-specialist"
     "testing-specialist"
     "structured-data-specialist"
   )
@@ -378,6 +377,20 @@ setup() {
   for skill in pr-create pr-review pr-release commit-message-generator; do
     if grep -qE "Task\(cms-cultivator:workflow-specialist" "skills/$skill/SKILL.md"; then
       echo "skill $skill still spawns workflow-specialist via Task()"
+      return 1
+    fi
+  done
+}
+
+@test "teamwork-specialist agent does not exist (removed in v1.2.0)" {
+  [ ! -d "agents/teamwork-specialist" ]
+  [ ! -f ".codex/agents/teamwork-specialist.toml" ]
+}
+
+@test "Teamwork skills reference no teamwork-specialist Task spawn" {
+  for skill in teamwork-task-creator teamwork-integrator teamwork-exporter; do
+    if grep -qE "Task\(cms-cultivator:teamwork-specialist" "skills/$skill/SKILL.md"; then
+      echo "skill $skill still spawns teamwork-specialist via Task()"
       return 1
     fi
   done
@@ -773,9 +786,9 @@ setup() {
   [ -d ".codex/agents" ]
 }
 
-@test "codex agent TOML count matches AGENT.md count (15)" {
+@test "codex agent TOML count matches AGENT.md count (14)" {
   toml_count=$(find .codex/agents -name "*.toml" | wc -l)
-  [ "$toml_count" -eq 15 ]
+  [ "$toml_count" -eq 14 ]
 }
 
 @test "every AGENT.md directory has a corresponding TOML agent" {
