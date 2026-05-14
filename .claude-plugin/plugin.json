@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
   "version": "1.2.0",
-  "description": "46 skills + 14 agents for Drupal/WordPress. Skills run directly from the main session using MCP servers (Teamwork, Slack, Gmail, Fathom, CoWork, GitHub); agents are spawned for focused parallel work (audits, design-to-code, browser validation). FRD generation, story point estimation, CSV export, strategist UX audits, and Drupal.org contribution integration. PM workflows: client triage, meeting prep, project heartbeats, QA review. Drupal/Pantheon DevOps automation.",
+  "description": "Agent Skills and specialist agents for Drupal and WordPress development. Skills run directly from the main session using MCP servers (Teamwork, Slack, Gmail, Fathom, CoWork, GitHub); agents are spawned for focused parallel work (audits, design-to-code, browser validation). Covers PR workflows, accessibility / performance / security / quality audits, design-to-code, FRD generation with story points and CSV export, strategist UX audits, PM workflows (client triage, meeting prep, project heartbeats, QA review), Drupal.org contribution, and Drupal/Pantheon DevOps automation.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",

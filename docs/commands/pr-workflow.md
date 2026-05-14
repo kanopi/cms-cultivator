@@ -82,7 +82,7 @@ Review a pull request or analyze your own changes before creating a PR.
 
 ---
 
-### `pr-commit-msg`
+### `commit-message-generator`
 
 Generate conventional commit messages from staged changes.
 
@@ -92,7 +92,7 @@ Generate conventional commit messages from staged changes.
 git add .
 
 # Generate commit message options
-/pr-commit-msg
+/commit-message-generator
 ```
 
 **What it generates:**
@@ -139,12 +139,12 @@ Generate changelog, deployment checklist, and update PR for release.
 ```bash
 # 1. During development - commit frequently
 git add feature.php
-/pr-commit-msg            # Generate conventional commit
+/commit-message-generator            # Generate conventional commit
 
 # 2. Before creating PR - self-review
 /pr-review self           # Analyze your own changes
-/quality-standards        # Check code standards
-/audit-security secrets  # Check for exposed secrets
+/code-standards-checker        # Check code standards
+/security-audit secrets  # Check for exposed secrets
 
 # 3. Create PR
 /pr-create PROJ-123    # Generates description and creates PR
@@ -248,7 +248,7 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 - Need size/complexity check
 - Want to catch issues early
 
-**`/pr-commit-msg`**
+**`/commit-message-generator`**
 - Making a commit
 - Want consistent commit message format
 - Following conventional commits

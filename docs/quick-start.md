@@ -34,15 +34,15 @@ Just describe what you need in plain English:
 
 **No need to remember command names!** Claude automatically helps based on context.
 
-See [Agents & Skills Guide](agents-and-skills.md) for all 8 specialist agents and 9 available skills.
+See [Agents & Skills Guide](agents-and-skills.md) for the full list of specialist agents and skills.
 
 ---
 
-## Explicit Commands (Full Control)
+## Explicit Invocation (Full Control)
 
-When you want comprehensive analysis or specific workflows:
+When you want comprehensive analysis or specific workflows, invoke a skill by name. In Claude Code: `/skill-name`. In Codex: `@skill-name`. In Claude Desktop: type the skill name and Claude will load it.
 
-### Your First Commands
+### Your First Invocations
 
 ### 1. Create a Pull Request
 
@@ -80,7 +80,7 @@ Before creating a PR, check your work:
 Check your code for WCAG compliance:
 
 ```bash
-/audit-a11y
+/accessibility-audit
 ```
 
 **What it checks:**
@@ -96,7 +96,7 @@ Check your code for WCAG compliance:
 Find performance bottlenecks:
 
 ```bash
-/audit-perf
+/performance-audit
 ```
 
 **What it analyzes:**
@@ -110,7 +110,7 @@ Find performance bottlenecks:
 Scan for vulnerabilities:
 
 ```bash
-/audit-security
+/security-audit
 ```
 
 **What it scans:**
@@ -124,7 +124,7 @@ Scan for vulnerabilities:
 Check coding standards:
 
 ```bash
-/quality-standards
+/code-standards-checker
 ```
 
 **What it checks:**
@@ -143,10 +143,10 @@ Check coding standards:
 /pr-review self
 
 # 2. Run quality checks
-/quality-standards
+/code-standards-checker
 
 # 3. Check for security issues
-/audit-security secrets
+/security-audit secrets
 
 # 4. Create the PR (auto-generates description)
 /pr-create PROJ-123
@@ -159,7 +159,7 @@ Check coding standards:
 git add .
 
 # 2. Generate commit message
-/pr-commit-msg
+/commit-message-generator
 
 # 3. Commit with selected message
 git commit -m "[selected message]"
@@ -177,27 +177,27 @@ git commit -m "[selected message]"
 /pr-review 456 performance   # Performance review
 
 # 3. Check specific concerns
-/audit-a11y contrast
-/audit-perf queries
-/audit-security deps
+/accessibility-audit contrast
+/performance-audit queries
+/security-audit deps
 ```
 
 ### Workflow 4: Before Deployment
 
 ```bash
 # 1. Run comprehensive audits
-/audit-perf
-/audit-a11y
-/audit-security
+/performance-audit
+/accessibility-audit
+/security-audit
 
 # 2. Generate release artifacts
 /pr-release changelog
 /pr-release deploy
 
 # 3. Create compliance reports
-/audit-perf report
-/audit-a11y report
-/audit-security report
+/performance-audit report
+/accessibility-audit report
+/security-audit report
 ```
 
 ### Workflow 5: Working on Kanopi Projects
@@ -205,16 +205,16 @@ git commit -m "[selected message]"
 ```bash
 # 1. Run Kanopi quality checks
 # (commands automatically use ddev composer scripts)
-/quality-analyze     # Uses ddev composer code-check
-/quality-standards   # Uses ddev composer code-sniff
-/test-coverage       # Uses ddev cypress-run
+/quality-audit     # Uses ddev composer code-check
+/code-standards-checker   # Uses ddev composer code-sniff
+/coverage-analyzer       # Uses ddev cypress-run
 
 # 2. Check performance
-/audit-perf          # Suggests ddev theme-build
+/performance-audit          # Suggests ddev theme-build
                      # and ddev critical-run
 
 # 3. Security audit
-/audit-security      # Uses ddev composer audit
+/security-audit      # Uses ddev composer audit
 ```
 
 ---
@@ -226,78 +226,78 @@ git commit -m "[selected message]"
 ```bash
 /pr-create [ticket]             # Create PR with generated description
 /pr-review [pr-number|self] [focus] # Review PR or analyze your own changes
-/pr-commit-msg                     # Generate commit message
+/commit-message-generator                     # Generate commit message
 /pr-release [focus]                # Generate changelog and deployment docs
 ```
 
 ### ♿ Accessibility
 
 ```bash
-/audit-a11y                        # Comprehensive WCAG audit
-/audit-a11y --quick                # Fast critical issues check
-/audit-a11y --scope=current-pr     # Analyze only PR files
-/audit-a11y --format=summary       # Executive summary
-/audit-a11y contrast               # Focus on color contrast
+/accessibility-audit                        # Comprehensive WCAG audit
+/accessibility-audit --quick                # Fast critical issues check
+/accessibility-audit --scope=current-pr     # Analyze only PR files
+/accessibility-audit --format=summary       # Executive summary
+/accessibility-audit contrast               # Focus on color contrast
 ```
 
 ### ⚡ Performance
 
 ```bash
-/audit-perf                        # Full-stack performance analysis
-/audit-perf --quick                # Fast critical issues check
-/audit-perf --scope=current-pr     # Analyze only PR files
-/audit-perf --format=json          # Machine-readable output
-/audit-perf queries                # Focus on database queries
+/performance-audit                        # Full-stack performance analysis
+/performance-audit --quick                # Fast critical issues check
+/performance-audit --scope=current-pr     # Analyze only PR files
+/performance-audit --format=json          # Machine-readable output
+/performance-audit queries                # Focus on database queries
 ```
 
 ### 🔒 Security
 
 ```bash
-/audit-security                    # Comprehensive security audit
-/audit-security --quick            # Fast critical issues scan
-/audit-security --scope=current-pr # Scan only PR files
-/audit-security --format=sarif     # SARIF format for CI/CD
-/audit-security deps               # Focus on dependencies
+/security-audit                    # Comprehensive security audit
+/security-audit --quick            # Fast critical issues scan
+/security-audit --scope=current-pr # Scan only PR files
+/security-audit --format=sarif     # SARIF format for CI/CD
+/security-audit deps               # Focus on dependencies
 ```
 
 ### 🎨 Design Workflow
 
 ```bash
-/design-to-block              # Create WordPress block pattern from design
-/design-to-paragraph          # Create Drupal paragraph type from design
-/design-validate              # Validate design implementation in browser
+/design-to-wp-block              # Create WordPress block pattern from design
+/design-to-drupal-paragraph          # Create Drupal paragraph type from design
+/browser-validator              # Validate design implementation in browser
 ```
 
 ### 🔍 Live Site Auditing
 
 ```bash
-/audit-live-site              # Comprehensive live site audit
+/live-site-audit              # Comprehensive live site audit
                               # Runs performance, accessibility, security, and quality checks in parallel
 ```
 
 ### 📝 Documentation
 
 ```bash
-/docs-generate              # Analyze documentation status
-/docs-generate api          # Generate API documentation
-/docs-generate readme       # Update README
-/docs-generate changelog    # Generate changelog
-/docs-generate guide user   # Generate user guide
+/documentation-generator              # Analyze documentation status
+/documentation-generator api          # Generate API documentation
+/documentation-generator readme       # Update README
+/documentation-generator changelog    # Generate changelog
+/documentation-generator guide user   # Generate user guide
 ```
 
 ### 🧪 Testing
 
 ```bash
-/test-generate [type]       # Generate test scaffolding
-/test-coverage              # Analyze test coverage
-/test-plan                  # Generate QA test plan
+/test-scaffolding [type]       # Generate test scaffolding
+/coverage-analyzer              # Analyze test coverage
+/test-plan-generator                  # Generate QA test plan
 ```
 
 ### 📊 Code Quality
 
 ```bash
-/quality-analyze [focus]    # Code quality analysis
-/quality-standards          # Check coding standards
+/quality-audit [focus]    # Code quality analysis
+/code-standards-checker          # Check coding standards
 ```
 
 ---
@@ -332,13 +332,13 @@ Audit and quality commands support flexible argument modes for different use cas
 ### Example Combinations
 ```bash
 # Pre-commit check (fast)
-/audit-a11y --quick --scope=current-pr
+/accessibility-audit --quick --scope=current-pr
 
 # CI/CD integration
-/audit-security --standard --format=json > results.json
+/security-audit --standard --format=json > results.json
 
 # Executive report
-/audit-perf --comprehensive --format=summary
+/performance-audit --comprehensive --format=summary
 ```
 
 See [Using Argument Modes](guides/using-argument-modes.md) for complete guide.
@@ -364,34 +364,34 @@ Many commands also accept legacy focus parameters to analyze specific areas:
 
 ### Performance Focus
 ```bash
-/audit-perf queries        # Database queries only
-/audit-perf n+1            # N+1 detection only
-/audit-perf assets         # Asset optimization only
-/audit-perf bundles        # JavaScript bundles only
-/audit-perf caching        # Caching effectiveness only
+/performance-audit queries        # Database queries only
+/performance-audit n+1            # N+1 detection only
+/performance-audit assets         # Asset optimization only
+/performance-audit bundles        # JavaScript bundles only
+/performance-audit caching        # Caching effectiveness only
 ```
 
 ### Accessibility Focus
 ```bash
-/audit-a11y contrast       # Color contrast only
-/audit-a11y aria           # ARIA attributes only
-/audit-a11y headings       # Heading structure only
-/audit-a11y forms          # Form accessibility only
-/audit-a11y keyboard       # Keyboard navigation only
+/accessibility-audit contrast       # Color contrast only
+/accessibility-audit aria           # ARIA attributes only
+/accessibility-audit headings       # Heading structure only
+/accessibility-audit forms          # Form accessibility only
+/accessibility-audit keyboard       # Keyboard navigation only
 ```
 
 ### Security Focus
 ```bash
-/audit-security deps       # Dependency vulnerabilities only
-/audit-security secrets    # Exposed secrets only
-/audit-security permissions # Permission issues only
+/security-audit deps       # Dependency vulnerabilities only
+/security-audit secrets    # Exposed secrets only
+/security-audit permissions # Permission issues only
 ```
 
 ### Quality Focus
 ```bash
-/quality-analyze refactor  # Refactoring opportunities
-/quality-analyze complexity # Code complexity analysis
-/quality-analyze debt      # Technical debt assessment
+/quality-audit refactor  # Refactoring opportunities
+/quality-audit complexity # Code complexity analysis
+/quality-audit debt      # Technical debt assessment
 ```
 
 ---
@@ -432,9 +432,9 @@ Install official WordPress agent-skills for specialized WordPress development:
 ### 1. Run Checks Early and Often
 ```bash
 # Don't wait until the end of the sprint
-/audit-a11y              # Check accessibility during development
-/audit-perf queries      # Catch N+1 queries early
-/audit-security secrets  # Before committing code
+/accessibility-audit              # Check accessibility during development
+/performance-audit queries      # Catch N+1 queries early
+/security-audit secrets  # Before committing code
 ```
 
 ### 2. Self-Review Before Creating PRs
@@ -449,30 +449,30 @@ Install official WordPress agent-skills for specialized WordPress development:
 ```bash
 # When you know what you're looking for
 /pr-review 456 security  # Just security review
-/audit-perf queries      # Just check database queries
-/audit-a11y contrast     # Just check color contrast
+/performance-audit queries      # Just check database queries
+/accessibility-audit contrast     # Just check color contrast
 ```
 
 ### 4. Combine with Git Workflows
 ```bash
 # Pre-commit
-/pr-commit-msg
+/commit-message-generator
 
 # Pre-PR
 /pr-review self
-/quality-standards
-/audit-security secrets
+/code-standards-checker
+/security-audit secrets
 
 # Post-merge
-/docs-generate changelog
+/documentation-generator changelog
 ```
 
 ### 5. Generate Reports for Stakeholders
 ```bash
 # Before client demos
-/audit-perf report        # Performance metrics
-/audit-a11y report        # Accessibility compliance
-/audit-security report    # Security posture
+/performance-audit report        # Performance metrics
+/accessibility-audit report        # Accessibility compliance
+/security-audit report    # Security posture
 ```
 
 ---

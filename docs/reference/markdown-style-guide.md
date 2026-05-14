@@ -164,8 +164,8 @@ touch newfile.md
 ### Available Commands
 
 - `/pr-create` - Create pull request
-- `/audit-a11y` - Check accessibility
-- `/audit-perf` - Analyze performance
+- `/accessibility-audit` - Check accessibility
+- `/performance-audit` - Analyze performance
 ```
 
 ### Use Headings When
@@ -260,7 +260,7 @@ Edit your configuration file:
 
 **Explicit Commands:**
 - `/pr-create` - Create PR
-- `/audit-a11y` - Full audit
+- `/accessibility-audit` - Full audit
 ```
 
 **After (✅):**
@@ -275,7 +275,7 @@ Edit your configuration file:
 #### Explicit Commands
 
 - `/pr-create` - Create PR
-- `/audit-a11y` - Full audit
+- `/accessibility-audit` - Full audit
 ```
 
 ### Example 3: Step-by-Step Instructions
@@ -477,7 +477,7 @@ Keep tables simple:
 | Command | Description |
 |---------|-------------|
 | `/pr-create` | Create pull request |
-| `/audit-a11y` | Check accessibility |
+| `/accessibility-audit` | Check accessibility |
 ```
 
 For complex content, use headings and lists instead of tables.
@@ -523,5 +523,5 @@ The `--clean` flag catches:
 ## Related Documentation
 
 - [Contributing Guide](../contributing.md) - General contribution guidelines
-- [Documentation Generation](../commands/documentation.md) - Using `/docs-generate`
+- [Documentation Generation](../commands/documentation.md) - Using `/documentation-generator`
 - [Zensical Documentation](https://zensical.org/) - Official Zensical docs

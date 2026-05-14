@@ -3,11 +3,11 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing 46 Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, plan projects, and maintain documentation.
+**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, plan projects, and maintain documentation.
 
 ## ✨ Features
 
-### 46 Agent Skills
+### Agent Skills
 - **🔄 PR Workflow** - Streamline pull requests from commit to deployment
 - **♿ Accessibility** - Ensure WCAG 2.1 Level AA compliance
 - **⚡ Performance** - Optimize Core Web Vitals and page speed
@@ -55,10 +55,10 @@ Explicit invocation:
 ```bash
 /pr-create PROJ-123   # Create PR with generated description
 /pr-review self       # Review your changes before submitting
-/audit-a11y           # Run accessibility audit
-/audit-perf           # Analyze performance
-/audit-security       # Check security
-/quality-analyze      # Analyze code quality
+/accessibility-audit           # Run accessibility audit
+/performance-audit           # Analyze performance
+/security-audit       # Check security
+/quality-audit      # Analyze code quality
 ```
 
 ---
@@ -79,7 +79,7 @@ Explicit invocation:
 
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
-- **Full audits**: `/audit-perf`, `/audit-a11y`, `/audit-security` - Comprehensive analysis
+- **Full audits**: `/performance-audit`, `/accessibility-audit`, `/security-audit` - Comprehensive analysis
 
 ### For Tech Leads
 
@@ -92,16 +92,16 @@ Explicit invocation:
 #### Explicit Invocation
 
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
-- **Performance audits**: `/audit-perf` - Identify bottlenecks
-- **Quality analysis**: `/quality-analyze` - Technical debt assessment
+- **Performance audits**: `/performance-audit` - Identify bottlenecks
+- **Quality analysis**: `/quality-audit` - Technical debt assessment
 
 ### For Project Managers
 
 #### Explicit Invocation (Reports)
 
-- **Stakeholder reports**: `/audit-perf report` - Executive-friendly reports
-- **Compliance reports**: `/audit-a11y report` - Accessibility documentation
-- **Security reports**: `/audit-security report` - Security posture and compliance
+- **Stakeholder reports**: `/performance-audit report` - Executive-friendly reports
+- **Compliance reports**: `/accessibility-audit report` - Accessibility documentation
+- **Security reports**: `/security-audit report` - Security posture and compliance
 
 ---
 
@@ -159,5 +159,5 @@ MIT License - see LICENSE file for details.
 
 1. **[Install the plugin](installation.md)** - Get started in minutes
 2. **[Try Quick Start examples](quick-start.md)** - Learn common workflows
-3. **[Explore Skills](commands/overview.md)** - Discover all 46 available skills
+3. **[Explore Skills](commands/overview.md)** - Discover all available skills
 4. **[Integrate Kanopi Tools](kanopi-tools/overview.md)** - Use with DDEV add-ons

@@ -103,8 +103,8 @@ These steps require manual action after the automated setup completes:
 3. **Gulp Upgrade** — Upgrade Gulp 3 to 4 if flagged during setup
 4. **Theme Compilation** — Verify theme builds correctly on multidev
 
-## Related Commands
+## Related Skills
 
 - **[`/pr-create`](../commands/pr-workflow.md)** — Create pull requests for subsequent changes
-- **[`/quality-analyze`](../commands/code-quality.md)** — Analyze code quality after setup
-- **[`/audit-security`](../commands/security.md)** — Run security audit on the project
+- **[`/quality-audit`](../commands/code-quality.md)** — Analyze code quality after setup
+- **[`/security-audit`](../commands/security.md)** — Run security audit on the project

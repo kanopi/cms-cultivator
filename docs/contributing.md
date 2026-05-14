@@ -133,12 +133,12 @@ zensical build --clean
 
 ## Coding Standards
 
-### Command Files (`.md`)
+### Skill Files (`skills/<name>/SKILL.md`)
 
 - Use clear, descriptive headings
 - Include code examples with proper syntax highlighting
 - Provide both Drupal and WordPress examples where applicable
-- Document all arguments and focus options
+- Document trigger phrases and focus options
 - Include expected output examples
 
 ### Documentation
@@ -168,7 +168,7 @@ zensical build --clean
 
 ### Validating Frontmatter
 
-Before committing changes to commands, agents, or skills, validate that all frontmatter is properly formatted.
+Before committing changes to agents or skills, validate that all frontmatter is properly formatted.
 
 #### Run the validation script
 
@@ -237,7 +237,7 @@ git checkout -b feature/my-new-feature
 
 ```bash
 git add .
-git commit -m "feat: add new command for X"
+git commit -m "feat(skills): add new skill for X"
 ```
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):

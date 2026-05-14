@@ -4,7 +4,7 @@ Ensure WCAG 2.1 Level AA compliance with flexible argument modes for different u
 
 ## Skill
 
-`audit-a11y [options]` — Comprehensive accessibility audit with WCAG 2.1 Level AA compliance
+`accessibility-audit [options]` — Comprehensive accessibility audit with WCAG 2.1 Level AA compliance
 
 ## Flexible Argument Modes
 
@@ -12,8 +12,8 @@ CMS Cultivator now supports multiple operation modes for accessibility audits:
 
 ### Quick Checks During Development
 ```bash
-/audit-a11y --quick --scope=current-pr
-/audit-a11y --quick --scope=current-pr --format=checklist
+/accessibility-audit --quick --scope=current-pr
+/accessibility-audit --quick --scope=current-pr --format=checklist
 ```
 - ⚡ Fast execution (~5 min)
 - 🎯 Critical WCAG AA failures only
@@ -22,8 +22,8 @@ CMS Cultivator now supports multiple operation modes for accessibility audits:
 
 ### Standard Audits (Default)
 ```bash
-/audit-a11y
-/audit-a11y --scope=current-pr
+/accessibility-audit
+/accessibility-audit --scope=current-pr
 ```
 - 🔍 Comprehensive analysis (~15 min)
 - ✅ Full WCAG 2.1 Level AA compliance
@@ -31,8 +31,8 @@ CMS Cultivator now supports multiple operation modes for accessibility audits:
 
 ### Comprehensive Audits (Pre-Release)
 ```bash
-/audit-a11y --comprehensive
-/audit-a11y --comprehensive --format=summary
+/accessibility-audit --comprehensive
+/accessibility-audit --comprehensive --format=summary
 ```
 - 🔬 Deep analysis (~30 min)
 - 💎 WCAG AA + AAA + best practices
@@ -74,7 +74,7 @@ Export results as JSON for automated pipelines:
 ```yaml
 # GitHub Actions example
 - name: Run accessibility audit
-  run: /audit-a11y --standard --format=json > audit-results.json
+  run: /accessibility-audit --standard --format=json > audit-results.json
 
 - name: Check results
   run: |
@@ -87,17 +87,17 @@ Export results as JSON for automated pipelines:
 
 **Pre-Commit:**
 ```bash
-/audit-a11y --quick --scope=current-pr --format=checklist
+/accessibility-audit --quick --scope=current-pr --format=checklist
 ```
 
 **PR Review:**
 ```bash
-/audit-a11y --standard --scope=current-pr
+/accessibility-audit --standard --scope=current-pr
 ```
 
 **Pre-Release:**
 ```bash
-/audit-a11y --comprehensive --format=report
+/accessibility-audit --comprehensive --format=report
 ```
 
 See [Skills Overview](overview.md) for detailed usage.

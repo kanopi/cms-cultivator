@@ -59,7 +59,7 @@ Task(cms-cultivator:agent-name:agent-name, prompt="Task description")
 - `cms-cultivator:accessibility-specialist:accessibility-specialist`
 - `cms-cultivator:security-specialist:security-specialist`
 - `cms-cultivator:performance-specialist:performance-specialist`
-- `cms-cultivator:live-audit-specialist:live-audit-specialist`
+- `cms-cultivator:design-specialist:design-specialist`
 
 **Why fully qualified names?**
 - Avoids naming conflicts with other plugins
@@ -202,8 +202,8 @@ cms-cultivator/
 │   ├── accessibility-specialist/
 │   ├── security-specialist/
 │   ├── performance-specialist/
-│   └── ...                  # 14 total agents
-├── skills/                  # Agent Skill directories (46 total)
+│   └── ...                  # specialist agents
+├── skills/                  # Agent Skill directories
 │   ├── commit-message-generator/
 │   ├── code-standards-checker/
 │   ├── test-scaffolding/
@@ -433,4 +433,4 @@ Ideas for future development:
 
 ---
 
-Last updated: 2026-04-15
+Last updated: 2026-05-14

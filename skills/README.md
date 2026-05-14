@@ -1,6 +1,6 @@
 # CMS Cultivator Agent Skills
 
-This directory contains 46 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
+This directory contains Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
 
 ## What Are Agent Skills?
 
@@ -16,55 +16,55 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 
 **Triggers**: "commit", "staged", "ready to commit"
 **Purpose**: Generate conventional commit messages
-**Related Command**: `/pr-commit-msg`
+**Related Command**: `/commit-message-generator`
 
 ### 2. code-standards-checker
 
 **Triggers**: "standards", "code style", "PHPCS", "ESLint"
 **Purpose**: Check code against coding standards
-**Related Command**: `/quality-standards`
+**Related Command**: `/code-standards-checker`
 
 ### 3. test-scaffolding
 
 **Triggers**: "need tests", "how to test", "untested code"
 **Purpose**: Generate test scaffolding for classes/functions
-**Related Command**: `/test-generate`
+**Related Command**: `/test-scaffolding`
 
 ### 4. documentation-generator
 
 **Triggers**: "document", "API docs", "README", "docblock"
 **Purpose**: Generate documentation for code
-**Related Command**: `/docs-generate`
+**Related Command**: `/documentation-generator`
 
 ### 5. test-plan-generator
 
 **Triggers**: "test plan", "QA", "what to test"
 **Purpose**: Generate QA test plans
-**Related Command**: `/test-plan`
+**Related Command**: `/test-plan-generator`
 
 ### 6. accessibility-checker
 
 **Triggers**: "accessible?", "WCAG", "screen reader"
 **Purpose**: Quick accessibility checks on specific elements
-**Related Command**: `/audit-a11y`
+**Related Command**: `/accessibility-audit`
 
 ### 7. performance-analyzer
 
 **Triggers**: "slow", "optimize", "performance issue"
 **Purpose**: Analyze performance of specific code
-**Related Command**: `/audit-perf`
+**Related Command**: `/performance-audit`
 
 ### 8. security-scanner
 
 **Triggers**: "secure?", "SQL injection", "XSS"
 **Purpose**: Scan code for security vulnerabilities
-**Related Command**: `/audit-security`
+**Related Command**: `/security-audit`
 
 ### 9. coverage-analyzer
 
 **Triggers**: "coverage", "untested", "what's not tested"
 **Purpose**: Analyze test coverage gaps
-**Related Command**: `/test-coverage`
+**Related Command**: `/coverage-analyzer`
 
 ### 10. gtm-performance-audit
 
@@ -73,27 +73,27 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 
 ### 11. accessibility-audit
 
-**Triggers**: "/audit-a11y", "full accessibility audit", "WCAG compliance report", "comprehensive accessibility analysis"
+**Triggers**: "/accessibility-audit", "full accessibility audit", "WCAG compliance report", "comprehensive accessibility analysis"
 **Purpose**: Comprehensive WCAG 2.1 Level AA accessibility audit, spawns accessibility-specialist for full site analysis
 
 ### 12. performance-audit
 
-**Triggers**: "/audit-perf", "full performance audit", "Core Web Vitals analysis", "LCP, INP, CLS"
+**Triggers**: "/performance-audit", "full performance audit", "Core Web Vitals analysis", "LCP, INP, CLS"
 **Purpose**: Comprehensive performance analysis and Core Web Vitals optimization, spawns performance-specialist
 
 ### 13. security-audit
 
-**Triggers**: "/audit-security", "full security audit", "OWASP compliance review", "comprehensive vulnerability scanning"
+**Triggers**: "/security-audit", "full security audit", "OWASP compliance review", "comprehensive vulnerability scanning"
 **Purpose**: Comprehensive OWASP Top 10 security vulnerability scanning, spawns security-specialist
 
 ### 14. quality-audit
 
-**Triggers**: "/quality-analyze", "full code quality audit", "technical debt assessment", "comprehensive code quality analysis"
+**Triggers**: "/quality-audit", "full code quality audit", "technical debt assessment", "comprehensive code quality analysis"
 **Purpose**: Comprehensive code quality analysis and technical debt assessment, spawns code-quality-specialist
 
 ### 15. live-site-audit
 
-**Triggers**: "/audit-live-site", "comprehensive site health assessment", "full multi-dimensional audit", "unified audit report"
+**Triggers**: "/live-site-audit", "comprehensive site health assessment", "full multi-dimensional audit", "unified audit report"
 **Purpose**: Multi-dimensional site audit orchestrating performance, accessibility, security, and code quality specialists in parallel
 
 ### 16. pr-review

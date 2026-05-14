@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-Specialist agents and 46 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
+Specialist agents and auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)
 
@@ -47,7 +47,7 @@ See [Installation Guide](https://kanopi.github.io/cms-cultivator/installation/) 
 Generate commit messages, PR descriptions, changelogs, and review code.
 
 **Skills:**
-- `pr-commit-msg` - Generate conventional commit messages
+- `commit-message-generator` - Generate conventional commit messages
 - `pr-create` - Create PR with generated description
 - `pr-review` - AI-assisted code review
 - `pr-release` - Generate release PR with changelog
@@ -57,10 +57,10 @@ Code standards, test coverage, accessibility, security audits.
 
 **Skills:**
 - `quality-audit` - Technical debt and code quality
-- `quality-standards` - Coding standards compliance (PHPCS, ESLint)
-- `test-generate` - Generate test scaffolding
-- `test-coverage` - Analyze test coverage gaps
-- `test-plan` - Create comprehensive QA test plans
+- `code-standards-checker` - Coding standards compliance (PHPCS, ESLint)
+- `test-scaffolding` - Generate test scaffolding
+- `coverage-analyzer` - Analyze test coverage gaps
+- `test-plan-generator` - Create comprehensive QA test plans
 
 ### Auditing
 Comprehensive performance, accessibility, and security audits with flexible argument modes.
@@ -80,13 +80,13 @@ Figma → WordPress blocks, Drupal paragraphs with browser validation.
 **Skills:**
 - `design-to-wp-block` - Create WordPress block pattern
 - `design-to-drupal-paragraph` - Create Drupal paragraph type
-- `design-validate` - Validate implementation in Chrome
+- `browser-validator` - Validate implementation in Chrome
 
 ### Documentation
 API docs, user guides, developer documentation, changelogs.
 
 **Skill:**
-- `docs-generate` - Generate comprehensive documentation
+- `documentation-generator` - Generate comprehensive documentation
 
 ### Project Planning
 Generate Functional Requirements Documents, estimate work, and export task backlogs.
@@ -134,7 +134,7 @@ Skills spawn specialized agents for focused, parallel work:
 
 PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
 
-### Agent Skills (46 total)
+### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
 - accessibility-checker, security-scanner, performance-analyzer

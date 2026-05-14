@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
   "version": "1.2.0",
-  "description": "46 skills + 14 agents for Drupal and WordPress. Works in Claude Code, Claude Desktop, and OpenAI Codex.",
+  "description": "Agent Skills and specialist agents for Drupal and WordPress. Works in Claude Code, Claude Desktop, and OpenAI Codex.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",
