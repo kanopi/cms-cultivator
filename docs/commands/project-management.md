@@ -1,6 +1,9 @@
 # Project Management Skills
 
-Integrate with Teamwork for comprehensive project management, task tracking, and team coordination.
+Three skills integrate with Teamwork for project management, task tracking, and team coordination. All three run directly from the main session using the Teamwork MCP server — no orchestrator agent is involved.
+
+!!! info "Teamwork MCP required"
+    These skills depend on the Teamwork MCP server being configured in your Claude Code, Claude Desktop, or Codex client. The skills call `mcp__teamwork__twprojects-*` tools directly. Without the MCP, the skills can still produce formatted task content for manual entry, but cannot create or look up tasks.
 
 ---
 
@@ -107,4 +110,4 @@ Teamwork skills work seamlessly with:
 ## Next Steps
 
 - **[Teamwork Integration Guide](../project-management/teamwork-integration.md)** - Complete documentation
-- **[Agents & Skills](../agents-and-skills.md)** - How teamwork-specialist agent works
+- **[Agents & Skills](../agents-and-skills.md)** - How skills auto-activate (the three Teamwork skills run directly from the main session — no agent in between)

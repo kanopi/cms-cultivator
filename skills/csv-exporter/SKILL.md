@@ -18,9 +18,9 @@ This skill activates when:
 - Project needs backlog CSV for sprint planning
 
 **Do NOT activate for:**
-- Single task creation (use teamwork-task-creator instead)
-- Updating existing Teamwork tasks (escalate to teamwork-specialist)
-- Status checks or queries (use teamwork-integrator instead)
+- Single task creation (use `teamwork-task-creator` instead)
+- Updating existing Teamwork tasks (the main session has Teamwork MCP — handle directly)
+- Status checks or queries (use `teamwork-integrator` instead)
 
 ## Core Responsibilities
 

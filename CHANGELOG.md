@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-14
+
+### Removed
+- `agents/teamwork-specialist/AGENT.md` — the orchestrator agent that wrapped the three Teamwork skills. The main session now invokes `teamwork-task-creator`, `teamwork-integrator`, and `teamwork-exporter` directly. The Teamwork MCP server is available to the main session in Claude Code, Claude Desktop, and Codex — no agent in between.
+- `agents/teamwork-specialist/templates/` (4 files: `cms-notes.md`, `error-recovery.md`, `task-templates-overview.md`, `workflow-examples.md`)
+- `.codex/agents/teamwork-specialist.toml` — corresponding Codex agent translation.
+
+### Changed
+- `skills/teamwork-task-creator/SKILL.md`: removed the "escalate to teamwork-specialist" branches. Replaced the Integration with Teamwork Specialist section with a Companion Skills section that points to `teamwork-integrator`, `teamwork-exporter`, `csv-exporter`, and direct Teamwork MCP calls for complex multi-task scenarios.
+- `skills/teamwork-integrator/SKILL.md`: removed the escalation/spawn-agent pattern. Replaced with a "Companion Skills and Direct MCP Calls" section clarifying the read-only scope of this skill and pointing to the right alternative for updates, batch operations, and complex queries.
+- `skills/teamwork-exporter/SKILL.md`: removed the "escalate to teamwork-specialist" branch for manual updates; points to direct `mcp__teamwork__twprojects-update_task` calls from the main session instead.
+- `skills/csv-exporter/SKILL.md`: same — update path corrected to the Teamwork MCP directly.
+- `skills/README.md`: dropped "Related Agent: teamwork-specialist" from all three Teamwork skill entries.
+- `docs/agents-and-skills.md`: removed the teamwork-specialist row from the agent-to-skill mapping; added a note that Teamwork skills run directly from the main session alongside the PR skills.
+- `docs/commands/project-management.md`: reframed from agent-centric to skill-centric; added an `!!! info` admonition explaining the Teamwork MCP dependency.
+- `CLAUDE.md`: agent count 15 → 14.
+- Plugin manifests: `46 skills + 15 agents` → `46 skills + 14 agents`; description updated.
+- `tests/test-plugin.bats`: agent count 15 → 14; removed `teamwork-specialist` from `expected_agents`; added a deprecation test that the agent and its TOML don't exist, plus an assertion that Teamwork skills don't call `Task(cms-cultivator:teamwork-specialist:...)`.
+
+### Rationale
+Continues the pattern set in v1.0.2 (live-audit-specialist removed) and v1.1.0 (workflow-specialist removed): orchestrator agents that exist primarily to wrap a few skills add a `Task()` hop without value. The Teamwork MCP server is available to the main session in Claude Code, Claude Desktop, and Codex; the skills can call `mcp__teamwork__twprojects-*` tools directly. Removing the agent eliminates a Claude-Code-only execution path and makes behaviour identical across surfaces. The three skills retain all their domain knowledge — templates, priority mapping, CMS-specific framing, audit-finding-to-task translation patterns — they just no longer need an agent layer above them.
+
 ## [1.1.0] - 2026-05-14
 
 ### Added
