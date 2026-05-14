@@ -178,6 +178,57 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ---
 
+## Claude Desktop
+
+Claude Desktop has **three** surfaces, each with its own upload path:
+
+| Surface | Upload | Pre-built artifact |
+|---------|--------|---------------------|
+| **Claude Code** (embedded in Desktop) | Add plugin (one zip) | `cms-cultivator.zip` |
+| **Chat** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+| **CoWork** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+
+The marketplace install (Method 1 above) only covers Claude Code in the standalone CLI. For Claude Code **inside Desktop**, plus Chat and CoWork, you upload zips through Claude Desktop's UI. Every CMS Cultivator GitHub release attaches pre-built artifacts for all three surfaces so you don't have to build them yourself.
+
+### Recommended: Download from a release
+
+1. Go to [the latest release](https://github.com/kanopi/cms-cultivator/releases/latest)
+2. Under **Assets**, download what you need:
+   - **`cms-cultivator.zip`** — full plugin zip for Claude Code inside Desktop. Upload via **Settings → Plugins → Add plugin**.
+   - **`cms-cultivator-skills.zip`** — bundle of every skill for Chat/CoWork. Unzip locally to get the individual `.skill` files, then upload each via **Settings → Skills → Upload Skill**.
+   - Individual **`<skill-name>.skill`** files — if you only want specific skills for Chat or CoWork.
+
+### Alternative: Build from source
+
+If you've cloned the repo, package locally:
+
+```bash
+./scripts/package-plugin.sh   # → dist/cms-cultivator.zip
+./scripts/package-skills.sh   # → dist/skills/<name>.skill + dist/cms-cultivator-skills.zip
+```
+
+**`package-plugin.sh` options:**
+
+```bash
+./scripts/package-plugin.sh         # archive HEAD
+./scripts/package-plugin.sh v1.2.1  # archive a specific tag/ref/SHA
+```
+
+**`package-skills.sh` options:**
+
+```bash
+./scripts/package-skills.sh                  # all skills + bundle
+./scripts/package-skills.sh frd-generator    # one skill only
+./scripts/package-skills.sh --list           # print the skill names
+./scripts/package-skills.sh --no-bundle      # skip the all-in-one zip
+```
+
+### Why the manual step exists
+
+The uploads themselves aren't automatable — Anthropic doesn't expose a Desktop plugin/skill API or a marketplace for Chat/CoWork skills today. The scripts and release artifacts only handle the packaging side. Once Anthropic ships either a Desktop API or marketplace integration for those surfaces, this section will get shorter.
+
+---
+
 ## OpenAI Codex Installation
 
 CMS Cultivator includes a `.codex-plugin/plugin.json` manifest and Codex-compatible TOML agent files. Install it via the Codex plugin system.

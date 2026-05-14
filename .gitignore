@@ -15,6 +15,7 @@ composer.lock
 
 # Build artifacts
 *.log
+/dist/
 
 # Claude
 .claude/settings.local.json
