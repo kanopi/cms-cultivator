@@ -754,6 +754,10 @@ Don't try to "game" the system—just describe what you need:
 | frd-generator | "FRD", "functional requirements document", "structure requirements" | Project planning | — |
 | story-point-estimator | "story points", "estimate this", "how long will this take?" | Sprint estimation | — |
 | csv-exporter | "export to CSV", "Teamwork backlog", "import to Teamwork" | Backlog generation | — |
+| client-request-triage | "triage this", "help me respond to this client", Teamwork link | Client request research + reply drafting (Teamwork MCP, web search) | — |
+| pm-meeting-prep | "prep me for my meeting", "check-in tomorrow" | Cross-source client meeting prep (Teamwork, Slack, Gmail, Fathom MCPs) | — |
+| project-heartbeat | "draft the heartbeat", "send a status update" | Client-facing status update messages (Teamwork, Slack, Fathom MCPs) | — |
+| qa-review | "QA this", "validate this multidev", "test the dev link" | Multidev validation report from a Teamwork task (Teamwork MCP, CoWork) | — |
 
 ## Integration with Workflow
 

@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
   "version": "1.1.0",
-  "description": "41 skills + 16 agents for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution. Design-to-code workflows with browser validation. FRD generation, story point estimation, and CSV export for PM tools. Drupal.org contribution integration. Drupal/Pantheon DevOps automation.",
+  "description": "45 skills + 16 agents for Drupal/WordPress. Agents orchestrate comprehensive quality checks with parallel execution. Design-to-code workflows with browser validation. FRD generation, story point estimation, and CSV export for PM tools. PM workflows: client triage, meeting prep, project heartbeats, QA review. Drupal.org contribution integration. Drupal/Pantheon DevOps automation.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",

@@ -90,9 +90,9 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (41)" {
+@test "skill count matches expected (45)" {
   count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 41 ]
+  [ "$count" -eq 45 ]
 }
 
 @test "all skill directories have SKILL.md file" {
@@ -516,6 +516,37 @@ setup() {
 
 @test "structured-data-analyzer skill exists" {
   [ -f "skills/structured-data-analyzer/SKILL.md" ]
+}
+
+# ==============================================================================
+# PLANNING + PM SKILLS TESTS
+# ==============================================================================
+
+@test "planning skills exist" {
+  [ -f "skills/frd-generator/SKILL.md" ]
+  [ -f "skills/story-point-estimator/SKILL.md" ]
+  [ -f "skills/csv-exporter/SKILL.md" ]
+}
+
+@test "planning skill templates exist" {
+  [ -f "skills/frd-generator/templates/frd-structure.md" ]
+  [ -f "skills/frd-generator/templates/risk-framework.md" ]
+  [ -f "skills/story-point-estimator/templates/fibonacci-scale.md" ]
+  [ -f "skills/story-point-estimator/templates/hour-conversion-table.md" ]
+  [ -f "skills/csv-exporter/templates/teamwork-format.md" ]
+  [ -f "skills/csv-exporter/templates/hierarchy-examples.md" ]
+}
+
+@test "PM skills exist" {
+  [ -f "skills/client-request-triage/SKILL.md" ]
+  [ -f "skills/pm-meeting-prep/SKILL.md" ]
+  [ -f "skills/project-heartbeat/SKILL.md" ]
+  [ -f "skills/qa-review/SKILL.md" ]
+}
+
+@test "planning and PM doc pages exist" {
+  [ -f "docs/commands/planning.md" ]
+  [ -f "docs/commands/pm-workflows.md" ]
 }
 
 # ==============================================================================

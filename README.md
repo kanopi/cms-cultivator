@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-Specialist agents and 41 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
+Specialist agents and 45 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)
 
@@ -96,6 +96,15 @@ Generate Functional Requirements Documents, estimate work, and export task backl
 - `story-point-estimator` - Fibonacci-based story point estimation with hour conversions
 - `csv-exporter` - Convert FRD requirements into Teamwork-ready CSV backlogs
 
+### PM Workflows
+Aggregate context from Teamwork, Slack, Gmail, and Fathom for client communication and QA review. Requires connected MCP servers.
+
+**Skills:**
+- `client-request-triage` - Review a client task, research solutions, and draft a reply (Teamwork + web search)
+- `pm-meeting-prep` - Aggregate context for an upcoming check-in (Teamwork + Slack + Gmail + Fathom)
+- `project-heartbeat` - Draft a client-facing project status update (Teamwork + Slack + Fathom)
+- `qa-review` - Full QA validation of a multidev environment from a Teamwork task (Teamwork + CoWork browser automation)
+
 **See [docs site](https://kanopi.github.io/cms-cultivator/) for complete skill reference and usage examples.**
 
 ---
@@ -120,7 +129,7 @@ Skills spawn specialized agents that orchestrate complex workflows:
 **Browser Validation:**
 - browser-validator-specialist
 
-### Agent Skills (41 total)
+### Agent Skills (45 total)
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
 - accessibility-checker, security-scanner, performance-analyzer
@@ -132,6 +141,7 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 - design-to-wp-block, design-to-drupal-paragraph, pr-create, pr-release
 - devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
 - frd-generator, story-point-estimator, csv-exporter
+- client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
 
 ### How It Works
 
