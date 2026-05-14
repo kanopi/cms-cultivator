@@ -90,9 +90,9 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (45)" {
+@test "skill count matches expected (46)" {
   count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 45 ]
+  [ "$count" -eq 46 ]
 }
 
 @test "all skill directories have SKILL.md file" {
@@ -539,9 +539,47 @@ setup() {
   [ -f "skills/qa-review/SKILL.md" ]
 }
 
-@test "planning and PM doc pages exist" {
+@test "strategy skill exists" {
+  [ -f "skills/strategist-site-audit/SKILL.md" ]
+}
+
+@test "strategist-site-audit SKILL.md references all 21 UX Laws" {
+  skill_file="skills/strategist-site-audit/SKILL.md"
+  laws=(
+    "Jakob's Law"
+    "Fitts's Law"
+    "Hick's Law"
+    "Miller's Law"
+    "Peak-End Rule"
+    "Von Restorff Effect"
+    "Aesthetic-Usability Effect"
+    "Doherty Threshold"
+    "Law of Proximity"
+    "Law of Similarity"
+    "Law of Common Region"
+    "Law of Uniform Connectedness"
+    "Law of Prägnanz"
+    "Serial Position Effect"
+    "Zeigarnik Effect"
+    "Tesler's Law"
+    "Postel's Law"
+    "Goal-Gradient Effect"
+    "Occam's Razor"
+    "Pareto Principle"
+    "Parkinson's Law"
+  )
+  for law in "${laws[@]}"; do
+    if ! grep -q "$law" "$skill_file"; then
+      echo "strategist-site-audit SKILL.md missing UX Law: $law"
+      return 1
+    fi
+  done
+}
+
+@test "planning, PM, and strategy doc pages exist" {
   [ -f "docs/commands/planning.md" ]
   [ -f "docs/commands/pm-workflows.md" ]
+  [ -f "docs/commands/strategy.md" ]
 }
 
 # ==============================================================================

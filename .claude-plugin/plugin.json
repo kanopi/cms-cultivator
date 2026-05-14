@@ -1,7 +1,7 @@
 {
   "name": "cms-cultivator",
   "version": "1.1.0",
-  "description": "45 skills + 15 agents for Drupal/WordPress. Skills run directly from the main session; agents are spawned for focused parallel work (audits, design-to-code, browser validation). FRD generation, story point estimation, and CSV export for PM tools. PM workflows: client triage, meeting prep, project heartbeats, QA review. Drupal.org contribution integration. Drupal/Pantheon DevOps automation.",
+  "description": "46 skills + 15 agents for Drupal/WordPress. Skills run directly from the main session; agents are spawned for focused parallel work (audits, design-to-code, browser validation). FRD generation, story point estimation, CSV export, strategist UX audits, and Drupal.org contribution integration. PM workflows: client triage, meeting prep, project heartbeats, QA review. Drupal/Pantheon DevOps automation.",
   "author": {
     "name": "Kanopi Studios",
     "email": "code@kanopi.com",

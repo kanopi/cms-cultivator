@@ -1,6 +1,6 @@
 # CMS Cultivator Agent Skills
 
-This directory contains 45 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
+This directory contains 46 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
 
 ## What Are Agent Skills?
 
@@ -405,6 +405,13 @@ Detailed instructions for Claude on how to execute this skill...
 **Triggers**: "QA this", "validate this multidev", "test the dev link", "run QA on this task", Teamwork task with multidev URL
 **Purpose**: Full QA review of a Teamwork task: reads task and all comments, extracts the multidev URL, detects the platform (Drupal/WordPress), builds a dynamic validation plan (base checklist + task-specific steps), executes the plan via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary.
 **MCP dependencies**: Teamwork, CoWork browser automation
+
+### 46. strategist-site-audit
+
+**Triggers**: "audit this site for strategy", "strategist audit", "UX audit", "discovery audit", "pre-discovery review", "UX laws audit", "content hierarchy review", site URL provided with strategy/discovery context
+**Purpose**: Strategist-focused site audit for discovery and pre-discovery. Navigates the site via CoWork, audits against all 21 UX Laws from lawsofux.com (Jakob's Law, Fitts's Law, Hick's Law, Miller's Law, Peak-End Rule, Von Restorff Effect, Aesthetic-Usability, Doherty Threshold, Proximity, Similarity, Common Region, Uniform Connectedness, Prägnanz, Serial Position, Zeigarnik, Tesler's Law, Postel's Law, Goal-Gradient, Occam's Razor, Pareto Principle, Parkinson's Law), reviews content hierarchy, synthesises optional qualitative data (A/B tests, surveys, heatmaps), runs Lighthouse, and produces two deliverables: a Project Knowledge Summary (Markdown for Claude Desktop Projects) and a polished, iterable, client-facing HTML Artifact.
+**Audience**: strategists, UX leads, PMs — not developers.
+**Tool dependencies**: CoWork browser automation, web search (optional)
 
 ## Adding New Skills
 
