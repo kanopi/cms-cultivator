@@ -203,8 +203,8 @@ cms-cultivator/
 │   ├── security-specialist/
 │   ├── performance-specialist/
 │   ├── teamwork-specialist/
-│   └── ...                  # 17 total agents
-├── skills/                  # Agent Skill directories (38 total)
+│   └── ...                  # 16 total agents
+├── skills/                  # Agent Skill directories (41 total)
 │   ├── commit-message-generator/
 │   ├── code-standards-checker/
 │   ├── test-scaffolding/

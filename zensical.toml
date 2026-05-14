@@ -3,7 +3,7 @@
 
 [project]
 site_name = "CMS Cultivator"
-site_description = "Claude Code plugin for Drupal and WordPress development with 38 agent skills for Claude Code, Claude Desktop, and OpenAI Codex"
+site_description = "Claude Code plugin for Drupal and WordPress development with 41 agent skills for Claude Code, Claude Desktop, and OpenAI Codex"
 site_url = "https://kanopi.github.io/cms-cultivator/"
 site_author = "Kanopi Studios"
 copyright = "Copyright &copy; 2025 Kanopi Studios"
@@ -32,7 +32,8 @@ nav = [
     "commands/testing.md",
     "commands/code-quality.md",
     "commands/devops.md",
-    "commands/project-management.md"
+    "commands/project-management.md",
+    "commands/planning.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
   {"WordPress Skills" = "wordpress-skills.md"},

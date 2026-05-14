@@ -1,6 +1,6 @@
 # CMS Cultivator Agent Skills
 
-This directory contains 38 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
+This directory contains 41 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
 
 ## What Are Agent Skills?
 
@@ -366,6 +366,21 @@ Detailed instructions for Claude on how to execute this skill...
 **Triggers**: "create a Teamwork task", "add this to Teamwork", "log this as a task", "create task for this issue"
 **Purpose**: Create properly formatted Teamwork task objects from conversation context for project management integration.
 **Related Agent**: teamwork-specialist
+
+### 39. frd-generator
+
+**Triggers**: "FRD", "functional requirements document", "requirements doc", "structure requirements"
+**Purpose**: Generate comprehensive Functional Requirements Documents with standardized 10-section structure, requirement numbering conventions (FR-XXX, TR-XXX, US-XXX), and platform-specific additions for Drupal and WordPress projects.
+
+### 40. story-point-estimator
+
+**Triggers**: "story points", "estimate this", "how long will this take?", "complexity estimate", "velocity"
+**Purpose**: Provide Fibonacci-based story point estimates (1, 2, 3, 5, 8, 13, 21, 34+) with hour conversions, platform-specific adjustments, and velocity calculations for sprint planning.
+
+### 41. csv-exporter
+
+**Triggers**: "export to CSV", "Teamwork backlog", "project backlog file", "import to Teamwork"
+**Purpose**: Convert FRD requirements into Teamwork-ready CSV backlog with task hierarchy (epic/story/task prefixes), priority mapping, story-point-to-hours conversion, and consistent tagging.
 
 ## Adding New Skills
 

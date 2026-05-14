@@ -3,7 +3,7 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-Specialist agents and 38 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
+Specialist agents and 41 auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)
 
@@ -88,6 +88,14 @@ API docs, user guides, developer documentation, changelogs.
 **Skill:**
 - `docs-generate` - Generate comprehensive documentation
 
+### Project Planning
+Generate Functional Requirements Documents, estimate work, and export task backlogs.
+
+**Skills:**
+- `frd-generator` - Generate comprehensive Functional Requirements Documents
+- `story-point-estimator` - Fibonacci-based story point estimation with hour conversions
+- `csv-exporter` - Convert FRD requirements into Teamwork-ready CSV backlogs
+
 **See [docs site](https://kanopi.github.io/cms-cultivator/) for complete skill reference and usage examples.**
 
 ---
@@ -112,7 +120,7 @@ Skills spawn specialized agents that orchestrate complex workflows:
 **Browser Validation:**
 - browser-validator-specialist
 
-### Agent Skills (38 total)
+### Agent Skills (41 total)
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
 - accessibility-checker, security-scanner, performance-analyzer
@@ -123,6 +131,7 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 - live-site-audit, pr-review, audit-export, audit-report
 - design-to-wp-block, design-to-drupal-paragraph, pr-create, pr-release
 - devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
+- frd-generator, story-point-estimator, csv-exporter
 
 ### How It Works
 
