@@ -178,32 +178,43 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ---
 
-## Claude Desktop — Chat and CoWork
+## Claude Desktop
 
-Installing CMS Cultivator as a plugin in Claude Desktop only covers the embedded **Claude Code** surface. For **Chat** and **CoWork**, you need to upload skills individually as `.skill` files through Claude Desktop's Skills UI — there is no batch upload, marketplace integration, or public API for those surfaces today.
+Claude Desktop has **three** surfaces, each with its own upload path:
 
-To minimise the manual work, every CMS Cultivator GitHub release attaches pre-built `.skill` files (one per skill) and a bundled zip containing all of them.
+| Surface | Upload | Pre-built artifact |
+|---------|--------|---------------------|
+| **Claude Code** (embedded in Desktop) | Add plugin (one zip) | `cms-cultivator.zip` |
+| **Chat** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+| **CoWork** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+
+The marketplace install (Method 1 above) only covers Claude Code in the standalone CLI. For Claude Code **inside Desktop**, plus Chat and CoWork, you upload zips through Claude Desktop's UI. Every CMS Cultivator GitHub release attaches pre-built artifacts for all three surfaces so you don't have to build them yourself.
 
 ### Recommended: Download from a release
 
 1. Go to [the latest release](https://github.com/kanopi/cms-cultivator/releases/latest)
-2. Under **Assets**, download either:
-   - **`cms-cultivator-skills.zip`** — bundle of every skill (unzip locally to get the individual `.skill` files), or
-   - Individual **`<skill-name>.skill`** files for just the skills you want
-3. In Claude Desktop: **Settings → Skills → Upload Skill**
-4. Drag-and-drop each `.skill` file into the UI
+2. Under **Assets**, download what you need:
+   - **`cms-cultivator.zip`** — full plugin zip for Claude Code inside Desktop. Upload via **Settings → Plugins → Add plugin**.
+   - **`cms-cultivator-skills.zip`** — bundle of every skill for Chat/CoWork. Unzip locally to get the individual `.skill` files, then upload each via **Settings → Skills → Upload Skill**.
+   - Individual **`<skill-name>.skill`** files — if you only want specific skills for Chat or CoWork.
 
 ### Alternative: Build from source
 
-If you've cloned the repo, package the skills locally:
+If you've cloned the repo, package locally:
 
 ```bash
-./scripts/package-skills.sh
+./scripts/package-plugin.sh   # → dist/cms-cultivator.zip
+./scripts/package-skills.sh   # → dist/skills/<name>.skill + dist/cms-cultivator-skills.zip
 ```
 
-This produces `dist/skills/<skill-name>.skill` for every skill, plus a bundled `dist/cms-cultivator-skills.zip`. Each `.skill` file is a zip containing `<skill-name>/SKILL.md` and any associated templates.
+**`package-plugin.sh` options:**
 
-**Useful options:**
+```bash
+./scripts/package-plugin.sh         # archive HEAD
+./scripts/package-plugin.sh v1.2.1  # archive a specific tag/ref/SHA
+```
+
+**`package-skills.sh` options:**
 
 ```bash
 ./scripts/package-skills.sh                  # all skills + bundle
@@ -214,7 +225,7 @@ This produces `dist/skills/<skill-name>.skill` for every skill, plus a bundled `
 
 ### Why the manual step exists
 
-The upload itself isn't automatable — Anthropic doesn't expose a Desktop API or a marketplace for Chat/CoWork skills today. The script and release artifacts only handle the packaging side. Once Anthropic ships either a Desktop skill API or marketplace integration for those surfaces, this section will get shorter.
+The uploads themselves aren't automatable — Anthropic doesn't expose a Desktop plugin/skill API or a marketplace for Chat/CoWork skills today. The scripts and release artifacts only handle the packaging side. Once Anthropic ships either a Desktop API or marketplace integration for those surfaces, this section will get shorter.
 
 ---
 

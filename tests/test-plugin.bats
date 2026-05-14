@@ -613,6 +613,10 @@ setup() {
   [ -x "scripts/package-skills.sh" ]
 }
 
+@test "scripts/package-plugin.sh exists and is executable" {
+  [ -x "scripts/package-plugin.sh" ]
+}
+
 @test "scripts/package-skills.sh --list outputs every skill directory" {
   expected=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
   actual=$(bash scripts/package-skills.sh --list | wc -l | tr -d ' ')

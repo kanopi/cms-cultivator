@@ -58,9 +58,11 @@ if [ ! -d "skills" ]; then
   exit 1
 fi
 
-# Clean dist/ for full builds; preserve for single-skill builds
+# Clean our own output for full builds; preserve for single-skill builds.
+# Don't wipe sibling outputs (e.g. cms-cultivator.zip from package-plugin.sh).
 if [ -z "$TARGET" ]; then
-  rm -rf dist
+  rm -rf "$DIST_DIR"
+  rm -f "$BUNDLE_PATH"
 fi
 mkdir -p "$DIST_DIR"
 

@@ -20,16 +20,15 @@ permissions:
   contents: write
 
 jobs:
-  package-skills:
+  package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Full history so `git archive HEAD` resolves cleanly on the checked-out tag.
+          fetch-depth: 0
           ref: ${{ github.event.release.tag_name || github.event.inputs.tag }}
-
-      - name: Package skills
-        run: bash scripts/package-skills.sh
 
       - name: Determine target tag
         id: tag
@@ -40,21 +39,32 @@ jobs:
             echo "value=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Attach .skill files and bundle to the release
+      - name: Package the full plugin (cms-cultivator.zip)
+        run: bash scripts/package-plugin.sh
+
+      - name: Package individual skills (.skill files + bundle)
+        run: bash scripts/package-skills.sh
+
+      - name: Attach artifacts to the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.tag.outputs.value }}"
           echo "Attaching artifacts to release: $TAG"
 
-          # Upload each individual .skill file (with --clobber so re-runs replace)
+          # Full plugin zip (for Claude Desktop's "Add plugin" UI)
+          gh release upload "$TAG" dist/cms-cultivator.zip \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
+
+          # Individual .skill files (for Chat / CoWork skill upload)
           for f in dist/skills/*.skill; do
             gh release upload "$TAG" "$f" \
               --repo "$GITHUB_REPOSITORY" \
               --clobber
           done
 
-          # Upload the bundle
+          # All-skills bundle
           gh release upload "$TAG" dist/cms-cultivator-skills.zip \
             --repo "$GITHUB_REPOSITORY" \
             --clobber
