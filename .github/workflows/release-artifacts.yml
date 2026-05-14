@@ -1,11 +1,18 @@
 name: Release Artifacts
 
-# Attach pre-built .skill files to every GitHub release so users can
-# download individual skills directly without cloning the repo.
+# Attach pre-built .skill files and a full plugin zip to every GitHub
+# release so users can install without cloning the repo.
 #
 # Triggers on release publish (automatic for new releases) and
 # workflow_dispatch (manual, to retroactively attach artifacts to an
 # existing release).
+#
+# The job checks out the default branch (where the packaging scripts
+# live) rather than the target tag, then passes the tag to
+# package-plugin.sh so the plugin zip is faithful to that tagged
+# revision. The skills zip is packaged from the default branch's
+# working tree — when retroactively attaching to old tags this may
+# pick up newer skill content; for the current release it's identical.
 
 on:
   release:
@@ -13,7 +20,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to attach .skill artifacts to (e.g. v1.2.1)'
+        description: 'Release tag to attach artifacts to (e.g. v1.2.1)'
         required: true
 
 permissions:
@@ -23,12 +30,11 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          # Full history so `git archive HEAD` resolves cleanly on the checked-out tag.
+          # Full history so `git archive <tag>` resolves any past ref.
           fetch-depth: 0
-          ref: ${{ github.event.release.tag_name || github.event.inputs.tag }}
 
       - name: Determine target tag
         id: tag
@@ -40,7 +46,9 @@ jobs:
           fi
 
       - name: Package the full plugin (cms-cultivator.zip)
-        run: bash scripts/package-plugin.sh
+        # Archive the target tag's tree, not the workflow's working tree,
+        # so the plugin zip is exactly what shipped at that release.
+        run: bash scripts/package-plugin.sh "${{ steps.tag.outputs.value }}"
 
       - name: Package individual skills (.skill files + bundle)
         run: bash scripts/package-skills.sh
