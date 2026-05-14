@@ -26,26 +26,34 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 
 **Orchestrators** (coordinate complex workflows):
 
-- **workflow-specialist** - PR workflows (inline quality checks: testing, security, accessibility)
 - **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
 - **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
+
+PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
 
 ### How Agents Work
 
 ```
-/pr-create PROJ-123
+"I need to commit my changes"
     ↓
-Spawns workflow-specialist
+Main session runs commit-message-generator skill directly
+    ↓
+    ├─→ Analyzes staged changes (git status, git diff)
+    ├─→ Generates conventional commit message
+    ↓
+Presents for user approval → runs git commit
+
+"create a PR"
+    ↓
+Main session runs pr-create skill directly
     ↓
     ├─→ Analyzes git changes
-    ├─→ Generates commit message (uses commit-message-generator skill)
-    ├─→ Reviews test coverage inline (if tests changed)
-    ├─→ Checks security concerns inline (if security-critical code)
-    ├─→ Checks accessibility concerns inline (if UI changes)
+    ├─→ Reviews test coverage inline (Read/Glob)
+    ├─→ Checks security concerns inline (Grep patterns)
+    ├─→ Checks accessibility concerns inline (Grep on UI files)
+    ├─→ Detects Drupal/WordPress deployment requirements
     ↓
-Compiles all findings into PR description
-    ↓
-Creates PR via GitHub CLI
+Presents full PR description for user approval → runs gh pr create
 ```
 
 ### Agent Orchestration Patterns
@@ -71,9 +79,9 @@ Main session synthesizes unified report:
     - Prioritized remediation roadmap
 ```
 
-#### Inline Quality Checks
+#### Inline Quality Checks (Skill-Level)
 
-The **workflow-specialist** performs quality checks inline based on code changes:
+The **`pr-create`** and **`pr-review`** skills perform quality checks inline directly from the main session — no agent in between:
 
 ```
 PR with UI changes:
@@ -104,7 +112,6 @@ Spawns browser-validator-specialist (validation from test URL)
 
 | Agent | Spawned By Skills | Notes |
 |-------|-------------------|-------|
-| workflow-specialist | `pr-commit-msg`, `pr-create`, `pr-review`, `pr-release` | Inline quality checks |
 | accessibility-specialist | `accessibility-audit`, `live-site-audit` | Leaf |
 | performance-specialist | `performance-audit`, `live-site-audit` | Leaf |
 | gtm-specialist | `gtm-performance-audit` | Leaf |
@@ -118,13 +125,14 @@ Spawns browser-validator-specialist (validation from test URL)
 | responsive-styling-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Leaf |
 | browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `design-validate` | Leaf |
 
+PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — no agent is spawned.
+
 ### Agent-to-Skill Mapping
 
 Each agent uses specific skills for detailed "how-to" knowledge:
 
 | Agent | Uses Skills |
 |-------|-------------|
-| workflow-specialist | commit-message-generator |
 | accessibility-specialist | accessibility-checker |
 | performance-specialist | performance-analyzer |
 | gtm-specialist | gtm-performance-audit |
@@ -164,7 +172,7 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 | **Invocation** | Spawned by skills | Claude activates automatically, or user invokes explicitly |
 | **Use Case** | Multi-step orchestration | Conversational assistance |
 | **Execution** | Coordinates workflow with tools | Provides knowledge and guidance |
-| **Example** | workflow-specialist orchestrates PR creation | "I need to commit my changes" → commit-message-generator activates |
+| **Example** | live-site-audit skill spawns 4 specialists in parallel | "I need to commit my changes" → commit-message-generator activates |
 | **Explicit invoke** | — | `/pr-create PROJ-123` (Claude Code) or `@pr-create` (Codex) |
 
 ### Available Skills

@@ -1,22 +1,23 @@
 ---
 name: pr-release
-description: Generate changelog, deployment checklist, and update PR for release using the workflow-specialist agent. Invoke when user asks to prepare a release, generate a changelog, create a deployment checklist, or uses /pr-release. Requires user confirmation before updating the PR (irreversible GitHub action). Supports version numbers and focus areas (changelog/deploy/update).
+description: Generate changelog entries, a deployment checklist, and update a release PR description. Invoke when user asks to prepare a release, generate a changelog, create a deployment checklist, or uses /pr-release. Requires user confirmation before updating the PR (modifies publicly visible content). Supports version numbers and focus areas (changelog/deploy/update).
 disable-model-invocation: true
 ---
 
 # PR Release
 
-Generate changelog entries, deployment checklists, and update PR descriptions for releases using the workflow-specialist agent.
+Generate changelog entries, deployment checklists, and update the release PR description. The main session runs this skill directly — no orchestrator agent is involved.
 
 ## ⚠️ Side Effect Warning
 
 **This skill updates a GitHub PR description** — an action that modifies publicly visible content:
-- Updates the PR description via `gh pr create` / `gh pr edit`
+
+- Updates the PR description via `gh pr edit`
 - The changelog and deployment checklist are visible to all repository members
 
-**Confirmation required** before updating the PR. The skill will present all artifacts for review and wait for explicit approval.
+**Confirmation required** before updating the PR. Present all artifacts for review and wait for explicit approval before running `gh pr edit`.
 
-**Note**: This skill does NOT create git tags, merge PRs, or deploy to production. Those actions remain manual.
+This skill does **not** create git tags, merge the PR, or deploy. Those remain manual.
 
 ## Usage
 
@@ -25,80 +26,97 @@ Generate changelog entries, deployment checklists, and update PR descriptions fo
 - "Create a deployment checklist"
 - `/pr-release [version-or-focus]`
 
-**Focus options**: `changelog`, `deploy`, `update`, or a version number like `1.2.0`
+**Focus options:** `changelog`, `deploy`, `update`, or a version number like `1.2.0`.
 
 ## Prerequisites
 
-- On a release branch
-- Commits following conventional commit format (feat, fix, breaking, etc.)
-- GitHub CLI (`gh`) installed and authenticated
+- On a release branch (typically named `release/<version>` or similar)
+- Commits follow conventional commits (`feat`, `fix`, `breaking`, `chore`, etc.)
+- GitHub CLI (`gh`) installed and authenticated for the Tier 2 path
 
-## Environment Detection
+## Workflow
 
-### Tier 1 — Portable (Claude Desktop, Codex, any environment)
+### 1. Parse arguments
 
-When Task() or gh CLI are unavailable:
+- If the argument looks like a version (`1.2.0`, `v2.3.4`, `1.0.0-rc1`) — use it as the target version.
+- If the argument is `changelog` / `deploy` / `update` — focus the output on that section only.
+- If no argument — generate all three artifacts (changelog, deployment checklist, PR description update).
 
-1. **Parse arguments** — Determine version number or focus area
-2. **Gather git context** — Ask user to share: branch name, commits since last release, existing CHANGELOG.md
-3. **Categorize commits** — Sort by type (feat → Added, fix → Fixed, breaking → Breaking Changes, etc.)
-4. **Detect CMS changes** — Identify Drupal/WordPress-specific deployment requirements
-5. **Generate artifacts**:
-   - **Changelog** in Keep a Changelog format
-   - **Deployment checklist** with pre/post checks and rollback plan
-   - **PR description updates**
-6. **Present for approval** — Display all artifacts under `=== RELEASE ARTIFACTS READY FOR APPROVAL ===`
-7. **⛔ STOP: Wait for explicit user approval**
-8. **After approval**: Provide artifacts for manual use; give `gh pr edit` command for user to run
+### 2. Determine version (if not provided)
 
-### Tier 2 — Claude Code Enhanced
+- Read the project's version source of truth (e.g., `.claude-plugin/plugin.json` for this repo, `composer.json`, `style.css` for WP themes, `*.info.yml` for Drupal modules).
+- Read `CHANGELOG.md` to find the previous released version.
+- Inspect commits since the last release to suggest a bump:
+  - Any `feat:` → minor bump (1.X.0)
+  - Any `BREAKING CHANGE:` or `!:` → major bump (X.0.0)
+  - Only `fix`/`chore`/`docs` → patch bump (1.0.X)
+- Confirm the proposed version with the user before continuing.
 
-When running in Claude Code with Task() and git/gh CLI available:
+### 3. Analyze commits since the last release
 
-1. **Spawn workflow-specialist**:
-   ```
-   Task(cms-cultivator:workflow-specialist:workflow-specialist,
-        prompt="Prepare release artifacts for the current branch. User's focus: {argument or 'all'}. Follow the complete release workflow: (1) Analyze changes since last release, categorize commits by type, detect CMS-specific deployment requirements, (2) Generate changelog in Keep a Changelog format, (3) Create comprehensive deployment checklist, (4) CRITICAL OUTPUT FORMAT: Start IMMEDIATELY with '=== RELEASE ARTIFACTS READY FOR APPROVAL ===' — NO text before this header. Show changelog, deployment checklist, and PR update recommendations. End with approval request. (5) After approval, update PR description via gh CLI.")
-   ```
-2. **Present output directly** — Display workflow-specialist output verbatim when `=== RELEASE ARTIFACTS READY FOR APPROVAL ===` appears
-3. **⛔ STOP: Wait for user approval**
-4. **After approval** — Resume workflow-specialist to update PR
+Run in parallel:
 
-## Confirmation Protocol
+- Find the previous tag: `git describe --tags --abbrev=0` (or read `CHANGELOG.md`)
+- `git log --oneline <prev-tag>..HEAD`
+- `git log <prev-tag>..HEAD --pretty=format:"%s%n%b"`
+- `git diff --stat <prev-tag>..HEAD`
 
-```
-=== RELEASE ARTIFACTS READY FOR APPROVAL ===
+### 4. Categorize commits
 
-## Changelog Entry (Keep a Changelog format)
-[Generated changelog]
+Group by conventional commit type for the changelog:
 
-## Deployment Checklist
-[Complete deployment steps]
+| Commit type | Changelog section |
+|-------------|-------------------|
+| `feat:` | Added |
+| `fix:` | Fixed |
+| `refactor:` | Changed |
+| `perf:` | Changed |
+| `docs:` | Changed (or Documentation) |
+| `BREAKING CHANGE:` / `!:` | Breaking Changes |
+| `security:` (or fix related to vulns) | Security |
 
-## PR Description Updates
-[Updated sections]
+Within each section, write one human-readable line per commit. Don't just copy the commit subject — translate to user-facing language where appropriate.
 
-===================================
+### 5. Detect CMS-specific deployment requirements
 
-Reply "approve" to update the PR and save these artifacts, or provide your edits.
-```
+Scan the diff for:
 
-## Changelog Format (Keep a Changelog)
+**Drupal:**
+- `config/sync/` changes → `drush config:import`
+- `hook_update_N` → `drush updatedb`
+- New module dependencies → `composer install --no-dev` + `drush en <module>`
+- Service or render changes → `drush cache:rebuild`
+- New `*.routing.yml` entries → rebuild routes
+
+**WordPress:**
+- ACF JSON files in `acf-json/` → re-sync via ACF UI or WP-CLI
+- `register_post_type`, `register_taxonomy`, rewrite changes → flush permalinks
+- Theme changes → clear caching plugin (W3 Total Cache, WP Rocket, etc.)
+- New plugins added → activate after deploy
+- `block.json` / `src/blocks/` changes → run build, clear editor cache
+- Multisite changes → check network-wide impact
+
+### 6. Generate artifacts
+
+#### Changelog (Keep a Changelog format)
 
 ```markdown
-## [1.2.0] - 2026-04-15
+## [<version>] - <YYYY-MM-DD>
 
 ### Added
-- [New features]
+- <user-facing description of feature>
 
 ### Changed
-- [Modified behavior]
+- <user-facing description of change>
 
 ### Fixed
-- [Bug fixes]
+- <user-facing description of fix>
 
 ### Security
-- [Security patches]
+- <vulnerability fix>
+
+### Breaking Changes
+- <breaking change with migration note>
 
 ### Drupal-Specific Upgrade Notes
 - Run: `drush updatedb`
@@ -106,18 +124,103 @@ Reply "approve" to update the PR and save these artifacts, or provide your edits
 - Clear cache: `drush cache:rebuild`
 
 ### WordPress-Specific Upgrade Notes
-- Flush permalinks: Settings > Permalinks > Save
-- Re-sync ACF fields from acf-json/
+- Flush permalinks: Settings → Permalinks → Save
+- Re-sync ACF fields from `acf-json/`
 ```
 
-## Semantic Versioning Guidance
+Omit any section that has no entries.
 
-- **Major (X.0.0)**: Breaking changes, removed features, incompatible API changes
-- **Minor (1.X.0)**: New features (backwards-compatible), new API endpoints
-- **Patch (1.0.X)**: Bug fixes, security patches, documentation updates
+#### Deployment Checklist
+
+```markdown
+## Pre-Deployment
+- [ ] Code review complete
+- [ ] Tests passing in CI
+- [ ] Database backup taken
+- [ ] Multidev/staging validated
+- [ ] Client UAT complete (if applicable)
+
+## Deployment Steps
+1. [ ] Merge release PR to main
+2. [ ] Pull on production: `git pull origin main`
+3. [ ] Run: `composer install --no-dev` (if dependencies changed)
+4. [ ] <CMS-specific step from step 5>
+5. [ ] <CMS-specific step from step 5>
+
+## Post-Deployment
+- [ ] Smoke test critical user flows: <list>
+- [ ] Monitor error logs for 15 minutes
+- [ ] Notify stakeholders of completion
+
+## Rollback Plan
+- [ ] Database restore command ready
+- [ ] Revert git ref: `<previous-tag>`
+- [ ] Cache flush after rollback
+```
+
+#### PR Description Update
+
+Suggest specific edits to the existing PR description — usually:
+
+- Title prefixed with `Release: v<version>` or `chore(release): v<version>`
+- Body includes the changelog entry as the description
+- Deployment checklist appended
+
+### 7. Present for approval
+
+Your response **must start immediately** with the approval header. No preamble.
+
+```
+=== RELEASE ARTIFACTS READY FOR APPROVAL ===
+
+## Changelog Entry
+
+<changelog>
+
+## Deployment Checklist
+
+<checklist>
+
+## Proposed PR Description Update
+
+**New title:** <title>
+
+**Body:**
+
+<body>
+
+===================================
+
+Reply "approve" to update the PR and save these artifacts, or provide your edits.
+```
+
+### 8. Wait for explicit user approval
+
+⛔ **Do not run `gh pr edit` or write to `CHANGELOG.md` until the user replies "approve" or provides edits.**
+
+### 9. Apply the artifacts
+
+On approval:
+
+1. **Update `CHANGELOG.md`** — insert the new entry under `## [Unreleased]` (move existing Unreleased content into the new version block if appropriate).
+2. **Update the version source of truth** (e.g., `plugin.json`, `composer.json`, `style.css`).
+3. **Update the PR description** via `gh pr edit <pr-number> --title "<title>" --body "$(cat <<'EOF'\n<body>\nEOF\n)"`.
+4. Tell the user: "Release artifacts applied. Tag and deploy remain manual — run `git tag v<version> && git push --tags` when ready."
+
+## Environment fallback (no `gh` CLI)
+
+1. Run steps 1–7 normally.
+2. After approval, **provide the commands** for the user to run manually — heredoc-formatted so they can paste.
+3. Edit `CHANGELOG.md` and version files locally; the user pushes.
+
+## Semantic Versioning Quick Reference
+
+- **Major (X.0.0)** — Breaking changes, removed features
+- **Minor (1.X.0)** — New features (backwards-compatible)
+- **Patch (1.0.X)** — Bug fixes, security patches, doc-only changes
 
 ## Related Skills
 
-- **pr-create** — Create initial PR before release
-- **pr-review** — Review changes before release
-- **commit-message-generator** — Generate commit messages
+- **pr-create** — Create the initial release PR before this skill runs
+- **pr-review** — Review the release PR before approval
+- **commit-message-generator** — Source of the conventional commits this skill categorizes

@@ -99,7 +99,7 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 ### 16. pr-review
 
 **Triggers**: "review a PR", "code review", "review my changes", "pr-review self", PR number provided
-**Purpose**: Review a pull request or analyze local changes using the workflow-specialist agent
+**Purpose**: Review a pull request or analyze local changes inline (security, breaking changes, testing gaps, performance, accessibility) with CMS-specific checks for Drupal and WordPress
 
 ### 17. audit-export
 
@@ -124,7 +124,7 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 ### 21. pr-create
 
 **Triggers**: "create a PR", "submit a PR", "open a pull request", "/pr-create"
-**Purpose**: Generate PR description and create a GitHub pull request using the workflow-specialist agent (requires user confirmation)
+**Purpose**: Generate a PR description and create a GitHub pull request inline (no orchestrator agent); detects Drupal/WordPress deployment requirements and runs inline quality checks. Requires user confirmation before creating the PR.
 
 ### 22. pr-release
 

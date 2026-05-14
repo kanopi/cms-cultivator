@@ -115,19 +115,18 @@ Aggregate context from Teamwork, Slack, Gmail, and Fathom for client communicati
 
 ### Specialist Agents
 
-Skills spawn specialized agents that orchestrate complex workflows:
+Skills spawn specialized agents for focused, parallel work:
 
 **Review/Audit Agents:**
 - accessibility-specialist, code-quality-specialist, security-specialist, performance-specialist, structured-data-specialist
 
 **Generation Agents:**
-- documentation-specialist, testing-specialist, responsive-styling-specialist
-
-**Orchestrators:**
-- workflow-specialist, design-specialist
+- documentation-specialist, testing-specialist, responsive-styling-specialist, design-specialist
 
 **Browser Validation:**
 - browser-validator-specialist
+
+PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
 
 ### Agent Skills (45 total)
 
@@ -146,13 +145,13 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 ### How It Works
 
 ```
-pr-create skill → workflow-specialist
+pr-create skill (main session)
     ├─→ Analyzes git changes
     ├─→ Reviews test coverage inline
     ├─→ Checks security concerns inline
     ├─→ Checks accessibility concerns inline
     ↓
-Unified PR description → Create PR
+Unified PR description → user approval → gh pr create
 
 live-site-audit skill (main session)
     ├─→ Spawns performance-specialist (parallel)

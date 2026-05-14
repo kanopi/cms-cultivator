@@ -61,7 +61,7 @@ Example:
 ```
 2026-01-02T10:30:00 accessibility-specialist spawn PASS Agent spawned successfully
 2026-01-02T10:30:15 accessibility-specialist skill-access PASS Accessed accessibility-checker skill
-2026-01-02T10:31:00 workflow-specialist orchestration PASS Delegated to testing-specialist
+2026-01-02T10:31:00 live-site-audit-skill orchestration PASS Spawned 4 leaf specialists in parallel
 ```
 
 ---
