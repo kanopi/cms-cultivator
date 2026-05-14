@@ -1,6 +1,6 @@
 # CMS Cultivator Agent Skills
 
-This directory contains 41 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
+This directory contains 45 Agent Skills that Claude automatically invokes during conversation when contextually appropriate.
 
 ## What Are Agent Skills?
 
@@ -381,6 +381,30 @@ Detailed instructions for Claude on how to execute this skill...
 
 **Triggers**: "export to CSV", "Teamwork backlog", "project backlog file", "import to Teamwork"
 **Purpose**: Convert FRD requirements into Teamwork-ready CSV backlog with task hierarchy (epic/story/task prefixes), priority mapping, story-point-to-hours conversion, and consistent tagging.
+
+### 42. client-request-triage
+
+**Triggers**: "triage this", "look at this task", "help me respond to this client", Teamwork task or comment link provided
+**Purpose**: Fetch a client Teamwork task, detect the platform (Drupal/WordPress/general), research 1–3 solution options, and draft a warm client-facing reply. Pauses for PM confirmation before drafting. Flags bug reports for re-routing.
+**MCP dependencies**: Teamwork, web search
+
+### 43. pm-meeting-prep
+
+**Triggers**: "prep me for my meeting", "check-in with [client] tomorrow", "meeting prep for [project]"
+**Purpose**: Aggregate context from Teamwork (tasks + messages), Gmail, Slack, and Fathom recordings into a structured client check-in briefing with talking points, blockers, and suggested next steps. Optionally generates a formatted meeting agenda.
+**MCP dependencies**: Teamwork, Slack, Gmail, Fathom
+
+### 44. project-heartbeat
+
+**Triggers**: "time for a project update", "draft the heartbeat", "write up the update for [project]", "send a status update"
+**Purpose**: Generate a client-facing project status update message for posting to a Teamwork message thread. Pulls completed tasks, Teamwork messages, Fathom meeting summaries, and Slack channel activity since the last heartbeat reply. Drafted in a warm, progress-forward voice with budget and timeline placeholder sections.
+**MCP dependencies**: Teamwork, Slack, Fathom
+
+### 45. qa-review
+
+**Triggers**: "QA this", "validate this multidev", "test the dev link", "run QA on this task", Teamwork task with multidev URL
+**Purpose**: Full QA review of a Teamwork task: reads task and all comments, extracts the multidev URL, detects the platform (Drupal/WordPress), builds a dynamic validation plan (base checklist + task-specific steps), executes the plan via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary.
+**MCP dependencies**: Teamwork, CoWork browser automation
 
 ## Adding New Skills
 

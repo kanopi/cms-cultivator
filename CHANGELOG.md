@@ -10,21 +10,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2026-05-13
 
 ### Added
-- `frd-generator` skill: generate comprehensive Functional Requirements Documents with 10-section structure, requirement numbering (FR-XXX, TR-XXX, US-XXX, UI-XXX, DR-XXX, NFR-XXX, TS-XXX, RISK-XXX), and platform-specific subsections for Drupal recipes and WordPress block themes; ported from kanopi/cms-planner
-- `story-point-estimator` skill: Fibonacci-based story point estimation (1, 2, 3, 5, 8, 13, 21, 34+) with hour conversions, platform-specific adjustments, and velocity calculations; ported from kanopi/cms-planner
-- `csv-exporter` skill: convert FRD requirements into Teamwork-ready CSV backlog with three-level task hierarchy, story-point-to-hours conversion, and consistent tagging; ported from kanopi/cms-planner
+
+**Project planning skills (ported from kanopi/cms-planner):**
+
+- `frd-generator` skill: generate comprehensive Functional Requirements Documents with 10-section structure, requirement numbering (FR-XXX, TR-XXX, US-XXX, UI-XXX, DR-XXX, NFR-XXX, TS-XXX, RISK-XXX), and platform-specific subsections for Drupal recipes and WordPress block themes
+- `story-point-estimator` skill: Fibonacci-based story point estimation (1, 2, 3, 5, 8, 13, 21, 34+) with hour conversions, platform-specific adjustments, and velocity calculations
+- `csv-exporter` skill: convert FRD requirements into Teamwork-ready CSV backlog with three-level task hierarchy, story-point-to-hours conversion, and consistent tagging
 - `docs/commands/planning.md`: new documentation page covering the project planning workflow
 
+**PM workflow skills (authored by Andrew Nichols):**
+
+- `client-request-triage` skill: PM triage of a client Teamwork task — fetches the task, detects the platform, researches 1–3 solution options, and drafts a warm client-facing reply; pauses for PM confirmation before drafting. Flags bug reports for re-routing. (Teamwork MCP + web search)
+- `pm-meeting-prep` skill: prepare a PM for an upcoming client check-in by aggregating context from Teamwork (tasks + messages), Slack, Gmail, and Fathom into a structured briefing with talking points, blockers, and suggested next steps. Optionally generates a meeting agenda. (Teamwork + Slack + Gmail + Fathom MCPs)
+- `project-heartbeat` skill: draft a client-facing project status update message ready to post as a Teamwork reply. Finds the existing heartbeat message thread, reads the most recent reply to set the reporting window, then pulls completed tasks, project messages, Fathom summaries, and Slack channel activity. Written in a warm, progress-forward voice with budget/timeline placeholders for manual entry. (Teamwork + Slack + Fathom MCPs)
+- `qa-review` skill: full QA validation of a multidev environment from a Teamwork task. Reads the task and all comments, extracts the multidev URL, detects the platform, builds a validation plan (base checklist + dynamic steps), executes via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary. (Teamwork MCP + CoWork)
+- `docs/commands/pm-workflows.md`: new documentation page covering all four PM skills with MCP setup notes
+
 ### Changed
-- Plugin description and skill count updated from 38 to 41 across `plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`
+- Plugin description and skill count updated from 38 to 45 across `plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`
 - Codex plugin version bumped to track the main plugin manifest
-- `tests/test-plugin.bats`: updated expected skill count (38 → 41) and agent count (17 → 16, removing the deleted `live-audit-specialist` references that were missed in v1.0.2)
+- `tests/test-plugin.bats`: updated expected skill count (38 → 45) and agent count (17 → 16, removing the deleted `live-audit-specialist` references that were missed in v1.0.2)
 - `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0)
-- `zensical.toml` nav: added Planning page to the Skills section
+- `zensical.toml` nav: added Planning and PM Workflows pages to the Skills section
 
 ### Migration Notes
 - The companion repository `kanopi/cms-planner` is now deprecated. Its three skills are available natively in CMS Cultivator with the same names and YAML frontmatter; no slash command exists (the v1.0 refactor removed `commands/` — invoke `frd-generator` conversationally instead).
 - The `frd-specialist` agent from cms-planner was intentionally not migrated; the three skills handle FRD generation directly without an orchestrating agent.
+- All four PM skills depend on MCP servers. Without the relevant MCPs configured, the skills cannot fetch tasks, messages, recordings, or browser sessions. See `docs/commands/pm-workflows.md` for setup details.
+- `project-heartbeat` is written in Andrew Nichols's personal voice; other PMs are encouraged to adjust signature and tone after the draft is generated.
+- `qa-review` requires CoWork browser automation to execute validation steps; without it the skill produces only the plan, not the report.
 
 ## [1.0.2] - 2026-04-29
 
