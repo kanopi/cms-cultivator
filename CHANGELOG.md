@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-14
+
 ### Documentation
 - Comprehensive docs audit and refresh. Replaced pre-v1.0 slash-command names (`audit-a11y`, `pr-commit-msg`, `quality-analyze`, `docs-generate`, `test-generate`, `test-coverage`, `test-plan`, `audit-live-site`, `audit-gtm`, `audit-structured-data`, `design-validate`, `design-to-block`, `design-to-paragraph`, etc.) with current skill names throughout `docs/`, `README.md`, `CLAUDE.md`, and `skills/README.md`.
 - Removed hardcoded skill and agent counts across all docs and plugin manifests — counts drift fast, so the docs now refer to "Agent Skills" and "specialist agents" without numbers.
@@ -20,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refreshed `CLAUDE.md` and `docs/testing.md` "Last updated" dates; removed example references to removed agents (`live-audit-specialist`).
 - Renamed "Related Command" inline notes and "Related Commands" section headers to "Explicit invocation" / "Related Skills" — skills aren't commands.
 - Added a BATS test (`tests/test-plugin.bats`) that verifies every kebab-case identifier referenced in `docs/commands/*.md` matches an actual `skills/<name>/` directory, preventing future drift.
-
-## [1.2.0] - 2026-05-14
 
 ### Removed
 - `agents/teamwork-specialist/AGENT.md` — the orchestrator agent that wrapped the three Teamwork skills. The main session now invokes `teamwork-task-creator`, `teamwork-integrator`, and `teamwork-exporter` directly. The Teamwork MCP server is available to the main session in Claude Code, Claude Desktop, and Codex — no agent in between.
