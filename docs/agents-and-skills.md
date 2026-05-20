@@ -665,6 +665,42 @@ Confidence: High | Next step: Document editorial requirements first
 
 ---
 
+### 14. drupal-sdc-twig
+
+**Automatically triggers when you:**
+- Mention "SDC", "Single Directory Component", or "component.yml"
+- Work with `components/` folders in a Drupal theme or module
+- Write or review an SDC Twig template
+- Ask "props or slots?", "embed vs include?", or "how should I structure this Drupal component?"
+
+**What it does:**
+- Guides props vs slots decisions (the most common SDC refactor source)
+- Explains `.twig` extension (not `.html.twig`) and schema requirements
+- Shows correct `attributes` object usage on root elements
+- Demonstrates `include()` vs `embed` patterns for composition
+- Covers escaping rules (never pass raw HTML through props)
+- Provides accessibility checklist for component development
+- Explains `libraryOverrides`, component replacement, and variants (Drupal 11.2+)
+
+**Example:**
+```
+You: "Should this heading be a prop or a slot?"
+Claude: "Use the props vs slots decision tree:
+
+1. Will the template's HTML structure change based on this value?
+   → Yes (heading_level affects <h2> vs <h3>) → prop
+2. Will you render it 1:1 inside a container? → slot
+3. Could it be a render array or nested component someday? → slot
+
+For headings: expose heading_level as a prop (enum 2-6) and
+heading_text as a slot. This lets consumers control the
+document outline while passing any markup for the text."
+```
+
+**Explicit invocation:** None — this skill activates conversationally for Drupal SDC questions
+
+---
+
 ## How to Use Agent Skills
 
 ### Natural Conversation
@@ -768,6 +804,7 @@ Don't try to "game" the system—just describe what you need:
 | project-heartbeat | "draft the heartbeat", "send a status update" | Client-facing status update messages (Teamwork, Slack, Fathom MCPs) | — |
 | qa-review | "QA this", "validate this multidev", "test the dev link" | Multidev validation report from a Teamwork task (Teamwork MCP, CoWork) | — |
 | strategist-site-audit | "audit this site for strategy", "strategist audit", "UX audit", "discovery audit" | Strategist-focused discovery audit: 21 UX Laws, content hierarchy, Lighthouse, qualitative data synthesis, Markdown summary + HTML Artifact (CoWork) | — |
+| drupal-sdc-twig | "SDC", "Single Directory Component", "props or slots?", "embed vs include" | Drupal SDC + Twig best practices (props vs slots, attributes, escaping, schema, accessibility) | — |
 
 ## Integration with Workflow
 

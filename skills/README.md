@@ -276,7 +276,9 @@ skills/
 │   └── SKILL.md
 ├── teamwork-integrator/
 │   └── SKILL.md
-└── teamwork-task-creator/
+├── teamwork-task-creator/
+│   └── SKILL.md
+└── drupal-sdc-twig/
     └── SKILL.md
 ```
 
@@ -409,6 +411,12 @@ Detailed instructions for Claude on how to execute this skill...
 **Purpose**: Strategist-focused site audit for discovery and pre-discovery. Navigates the site via CoWork, audits against all 21 UX Laws from lawsofux.com (Jakob's Law, Fitts's Law, Hick's Law, Miller's Law, Peak-End Rule, Von Restorff Effect, Aesthetic-Usability, Doherty Threshold, Proximity, Similarity, Common Region, Uniform Connectedness, Prägnanz, Serial Position, Zeigarnik, Tesler's Law, Postel's Law, Goal-Gradient, Occam's Razor, Pareto Principle, Parkinson's Law), reviews content hierarchy, synthesises optional qualitative data (A/B tests, surveys, heatmaps), runs Lighthouse, and produces two deliverables: a Project Knowledge Summary (Markdown for Claude Desktop Projects) and a polished, iterable, client-facing HTML Artifact.
 **Audience**: strategists, UX leads, PMs — not developers.
 **Tool dependencies**: CoWork browser automation, web search (optional)
+
+### 47. drupal-sdc-twig
+
+**Triggers**: "SDC", "Single Directory Component", "component.yml", working with `components/` folders in a Drupal theme or module, writing or reviewing an SDC Twig template, "props or slots?", "embed vs include in SDC", "best practices for Drupal components"
+**Purpose**: Best practices for building Drupal Single Directory Components (SDC) with Twig. Covers props vs slots decision-making, the `attributes` object, `include()` vs `embed`, escaping rules, schema definition, accessibility patterns, and component overriding. Provides the "10 rules" for idiomatic SDC development.
+**Related Skills**: design-to-drupal-paragraph
 
 ## Adding New Skills
 
