@@ -1,0 +1,42 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+
+name: Card
+description: A flexible card with optional media, heading, body, and actions.
+status: stable
+group: Content
+
+props:
+  type: object
+  required:
+    - heading_level
+  properties:
+    variant:
+      title: Variant
+      type: string
+      enum: [default, feature, compact]
+      default: default
+      description: Visual variant of the card.
+    heading_level:
+      title: Heading level
+      type: integer
+      enum: [2, 3, 4, 5, 6]
+      default: 2
+      description: Heading level for the card title, set by the consumer to fit the document outline.
+
+slots:
+  media:
+    title: Media
+    description: Optional media element (image, video, icon).
+  heading:
+    title: Heading
+    description: Plain text or inline markup. Rendered inside the heading element determined by heading_level.
+  body:
+    title: Body
+    description: Main content area. Accepts any renderable.
+  actions:
+    title: Actions
+    description: Buttons or links shown beneath the body.
+
+libraryOverrides:
+  dependencies:
+    - core/drupal
