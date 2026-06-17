@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `skills/wp-plugin-to-private-package/` — new skill that converts a committed (or hand-installed) WordPress premium plugin into a Kanopi private Composer package and rewires the consuming site to install it via Composer. Implements Kanopi's WordPress Core and Plugins Installation Policy (§3 paid plugins, §4 Kanopi Private Packagist): Phase 0 discovery (rules out WPackagist/vendor endpoints and existing packages), Phase 1 private repo creation (composer.json, topics, team write access, version release tag), Phase 2 consuming-repo rewire (require + Satis repository entry, `.gitignore` exception removal, `git rm --cached`, docs), and Phase 3 Satis indexing + `composer update` + commit. `disable-model-invocation: true` with an `agents/openai.yaml` Codex policy (explicit confirmation required). Skill count 46 → 47; `tests/test-plugin.bats` and `skills/README.md` updated accordingly.
+
 ## [1.3.0] - 2026-05-22
 
 ### Added

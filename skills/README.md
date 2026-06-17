@@ -260,6 +260,9 @@ skills/
 ├── wp-add-skills/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
+├── wp-plugin-to-private-package/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
 ├── browser-validator/
 │   └── SKILL.md
 ├── design-analyzer/
@@ -409,6 +412,11 @@ Detailed instructions for Claude on how to execute this skill...
 **Purpose**: Strategist-focused site audit for discovery and pre-discovery. Navigates the site via CoWork, audits against all 21 UX Laws from lawsofux.com (Jakob's Law, Fitts's Law, Hick's Law, Miller's Law, Peak-End Rule, Von Restorff Effect, Aesthetic-Usability, Doherty Threshold, Proximity, Similarity, Common Region, Uniform Connectedness, Prägnanz, Serial Position, Zeigarnik, Tesler's Law, Postel's Law, Goal-Gradient, Occam's Razor, Pareto Principle, Parkinson's Law), reviews content hierarchy, synthesises optional qualitative data (A/B tests, surveys, heatmaps), runs Lighthouse, and produces two deliverables: a Project Knowledge Summary (Markdown for Claude Desktop Projects) and a polished, iterable, client-facing HTML Artifact.
 **Audience**: strategists, UX leads, PMs — not developers.
 **Tool dependencies**: CoWork browser automation, web search (optional)
+
+### 47. wp-plugin-to-private-package
+
+**Triggers**: "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist", "stop committing this plugin", "/wp-plugin-to-private-package"
+**Purpose**: Convert a committed/hand-installed WordPress premium plugin into a Kanopi private Composer package and rewire the consuming site to install it via Composer. Follows Kanopi's WordPress Core and Plugins Installation Policy (§3 paid plugins, §4 Kanopi Private Packagist): creates a private GitHub repo in the kanopi org, sets topics/teams, tags a version release, and edits the project's composer.json/.gitignore. Requires explicit user confirmation (irreversible side effects).
 
 ## Adding New Skills
 

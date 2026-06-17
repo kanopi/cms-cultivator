@@ -38,7 +38,8 @@ nav = [
     "commands/pm-workflows.md",
     "commands/strategy.md",
     "commands/drupal-contribution-skills.md",
-    "commands/wordpress-meta.md"
+    "commands/wordpress-meta.md",
+    "commands/wp-private-package.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
   {"WordPress Skills" = "wordpress-skills.md"},

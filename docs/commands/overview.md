@@ -206,6 +206,7 @@ Automate Kanopi's Drupal/Pantheon onboarding.
 | Skill | Description |
 |-------|-------------|
 | `wp-add-skills` | Install official `WordPress/agent-skills` (block development, REST API, WP-CLI, performance) from the WordPress org's repository |
+| `wp-plugin-to-private-package` | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) |
 
 ---
 
