@@ -151,7 +151,9 @@ For each premium/committed plugin found in Phase 2's inventory, choose a Compose
 - Add the theme build tooling per the starter (`.nvmrc`, gulp/Dart-Sass or the theme's
   existing build; compiled CSS gitignored). Pin CI Node to the theme `.nvmrc`.
 - Add `.circleci/config.yml` from the starter and fill the anchors:
-  `PANTHEON_UUID`, `TERMINUS_SITE`, `THEME_PATH`, `SLACK_HOOK`, PHP/Node image tags.
+  `PANTHEON_UUID`, `TERMINUS_SITE`, `THEME_PATH`, PHP/Node image tags. Leave the
+  `SLACK_HOOK` anchor as `"${SLACK_WEBHOOK}"` — the Slack webhook is a secret and must
+  not be hardcoded (see Manual Follow-Up); it resolves at runtime from the env var.
   - `compile-theme` builds assets and `persist_to_workspace`s the compiled CSS;
     `pantheon-deploy` `attach_workspace`s it and `rm .gitignore` so built assets ship.
   - `static-tests` runs `phpcs-ci`/`rector-ci`/`phpstan-ci` on PRs (non-`main`).
@@ -173,7 +175,11 @@ For each premium/committed plugin found in Phase 2's inventory, choose a Compose
 
 1. **CircleCI context** — set `kanopi-code` context vars: `TERMINUS_TOKEN`,
    `ACF_CLIENT_USER`, `ACF_CLIENT_PASSWORD` (if ACF), `GITHUB_TOKEN`.
-2. **Slack webhook** — replace the `SLACK_HOOK` anchor in `.circleci/config.yml`.
+2. **Slack webhook (project-level secret)** — set `SLACK_WEBHOOK` (the
+   `circleci/slack@3.4.2` orb's default webhook env var) in this project's CircleCI
+   **Project Settings → Environment Variables**, *not* the shared `kanopi-code` context
+   (which spans all projects). The `SLACK_HOOK` anchor stays `"${SLACK_WEBHOOK}"`; never
+   commit the literal webhook URL.
 3. **CircleCI SSH key** — add a deploy SSH key to Pantheon.
 4. **Scheduled pipelines** — create the "update dev" and "automatic updates" schedules in
    the CircleCI UI.

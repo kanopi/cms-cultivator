@@ -70,8 +70,9 @@ plugins; `wp-plugin-to-private-package` packages each one.
 ### Phase 6 — Theme Build & CircleCI Pipeline
 
 Add the theme build tooling (`.nvmrc`, compiled CSS gitignored) and `.circleci/config.yml`
-with the project anchors (`PANTHEON_UUID`, `TERMINUS_SITE`, `THEME_PATH`, `SLACK_HOOK`),
-deploy scripts, static-tests, PR gates, and scheduled pipelines.
+with the project anchors (`PANTHEON_UUID`, `TERMINUS_SITE`, `THEME_PATH`; the `SLACK_HOOK`
+anchor stays `"${SLACK_WEBHOOK}"` — never hardcode the webhook), deploy scripts,
+static-tests, PR gates, and scheduled pipelines.
 
 ### Phase 7 — Docs & PR
 
@@ -82,7 +83,9 @@ checklist.
 
 1. **CircleCI context (`kanopi-code`)** — `TERMINUS_TOKEN`, `ACF_CLIENT_USER` /
    `ACF_CLIENT_PASSWORD` (if ACF), `GITHUB_TOKEN`.
-2. **Slack webhook** — replace the `SLACK_HOOK` anchor in `.circleci/config.yml`.
+2. **Slack webhook (project-level secret)** — set `SLACK_WEBHOOK` (the slack orb's default
+   webhook env var) in this project's CircleCI **Project Settings → Environment Variables**,
+   not the shared `kanopi-code` context. Never commit the literal webhook URL.
 3. **CircleCI SSH key** — add a deploy key to Pantheon.
 4. **Scheduled pipelines** — create "update dev" and "automatic updates" in CircleCI.
 5. **First multidev** — open a test PR and confirm the build, theme compile, and PR comments.
