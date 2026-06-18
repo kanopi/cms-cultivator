@@ -26,7 +26,7 @@ destructive phase.
 - **CircleCI → Pantheon** via Kanopi orbs (`kanopi/ci-tools`, `kanopi/cms-updates`):
   `compile-theme` → `pantheon-deploy` (multidev on PRs, dev on `main`), `static-tests`
   (PHPCS/Rector/PHPStan), and Lighthouse/pa11y/BackstopJS gates, plus scheduled "update dev"
-  and "automatic updates" pipelines.
+  (nightly) and "automatic updates" (weekly) pipelines.
 - **`pantheon.yml`** with `web_docroot`, `enforce_https`, protected paths, and Quicksilver
   workflows (search-replace, WP-CFM config import, New Relic logging, post-deploy).
 - **Premium plugins** sourced via Composer — vendor endpoint, existing Kanopi package, or a
@@ -87,7 +87,9 @@ checklist.
    webhook env var) in this project's CircleCI **Project Settings → Environment Variables**,
    not the shared `kanopi-code` context. Never commit the literal webhook URL.
 3. **CircleCI SSH key** — add a deploy key to Pantheon.
-4. **Scheduled pipelines** — create "update dev" and "automatic updates" in CircleCI.
+4. **Scheduled pipelines** — create `update dev` (nightly) and `automatic updates` (weekly)
+   in CircleCI (Project Settings → Triggers / API); names must match the config's
+   `<< pipeline.schedule.name >>` guards.
 5. **First multidev** — open a test PR and confirm the build, theme compile, and PR comments.
 
 ## Prerequisites

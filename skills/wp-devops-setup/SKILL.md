@@ -158,8 +158,10 @@ For each premium/committed plugin found in Phase 2's inventory, choose a Compose
     `pantheon-deploy` `attach_workspace`s it and `rm .gitignore` so built assets ship.
   - `static-tests` runs `phpcs-ci`/`rector-ci`/`phpstan-ci` on PRs (non-`main`).
   - PR gates: Lighthouse, pa11y, BackstopJS (visual regression vs the dev baseline).
-  - Scheduled: "update dev" (clone live content → dev) and "automatic updates"
-    (`cms-updates/run-update cms: wordpress … update-method: composer`).
+  - Scheduled (created in CircleCI, see Manual Follow-Up — names must match the
+    config's `<< pipeline.schedule.name >>` guards): "update dev" (clone live content →
+    dev) **nightly**, and "automatic updates"
+    (`cms-updates/run-update cms: wordpress … update-method: composer`) **weekly**.
 - Add `.circleci/scripts/` helpers (`pantheon/dev-multidev`, `github/add-commit-comment`)
   from the starter.
 
@@ -181,8 +183,11 @@ For each premium/committed plugin found in Phase 2's inventory, choose a Compose
    (which spans all projects). The `SLACK_HOOK` anchor stays `"${SLACK_WEBHOOK}"`; never
    commit the literal webhook URL.
 3. **CircleCI SSH key** — add a deploy SSH key to Pantheon.
-4. **Scheduled pipelines** — create the "update dev" and "automatic updates" schedules in
-   the CircleCI UI.
+4. **Scheduled pipelines** — create two schedules in CircleCI (Project Settings →
+   Triggers, or the API). The names must match the config's
+   `<< pipeline.schedule.name >>` guards exactly:
+   - **`update dev`** — nightly (daily, e.g. 09:00 UTC) — clones live content → dev.
+   - **`automatic updates`** — weekly (e.g. Mondays 09:00 UTC) — Composer core/plugin updates.
 5. **First multidev** — open a test PR and confirm the multidev builds, the theme compiles,
    and the Lighthouse/pa11y/BackstopJS comments post.
 
