@@ -191,11 +191,12 @@ Contribute back to drupal.org — issues, merge requests, and full workflows.
 
 ### 🚀 [DevOps Setup](devops.md)
 
-Automate Kanopi's Drupal/Pantheon onboarding.
+Automate Kanopi's Pantheon onboarding.
 
 | Skill | Description |
 |-------|-------------|
-| `devops-setup` | Full Kanopi DevOps onboarding (GitHub repo, Pantheon, CircleCI, code quality, quicksilver) |
+| `devops-setup` | Full Kanopi **Drupal**/Pantheon onboarding (GitHub repo, Pantheon, CircleCI, code quality, quicksilver) |
+| [`wp-devops-setup`](wp-devops-setup.md) | Full Kanopi **WordPress**/Pantheon onboarding (`kanopi/wp-pantheon-starter` layout, DDEV, CircleCI, premium-plugin packaging) |
 
 **Requires:** GitHub CLI (`gh`), Terminus CLI.
 

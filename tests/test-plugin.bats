@@ -90,9 +90,9 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (47)" {
+@test "skill count matches expected (48)" {
   count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 47 ]
+  [ "$count" -eq 48 ]
 }
 
 @test "all skill directories have SKILL.md file" {
