@@ -1,6 +1,6 @@
 ---
 name: documentation-specialist
-description: Use this agent when you need to generate or update comprehensive documentation for Drupal or WordPress projects. This agent should be used proactively after completing new features, before major releases, or when onboarding new team members. It will generate API docs (PHPDoc, JSDoc), user guides, developer documentation, README files, and changelogs following CMS-specific standards.
+description: Use this agent when you need to generate or update comprehensive documentation for Drupal or WordPress projects. This agent should be used proactively after completing new features, before major releases, or when onboarding new team members. It will generate API docs (PHPDoc, JSDoc), user guides, developer documentation, README files, and changelogs following CMS-specific standards. Invoke when user mentions "documentation", "docs", "API docs", "README", "PHPDoc", "JSDoc", "changelog", or asks to document code, generate a developer guide, or write user-facing documentation.
 
 tools: Read, Glob, Grep, Bash, Write, Edit, chrome-devtools MCP, playwright MCP
 skills: documentation-generator

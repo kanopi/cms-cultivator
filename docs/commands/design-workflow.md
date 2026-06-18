@@ -1,25 +1,25 @@
-# Design Workflow Commands
+# Design Workflow Skills
 
 Accelerate design-to-code workflows with automated component generation, responsive styling, and browser validation.
 
 ---
 
-## Commands
+## Skills
 
-### `/design-to-block [design-source] [pattern-name] [theme-namespace]`
+### `design-to-wp-block [design-source] [pattern-name] [theme-namespace]`
 
 Create WordPress block patterns from design references (Figma URLs, screenshots, mockups).
 
 **Usage:**
 ```bash
 # From uploaded image
-/design-to-block design.png hero-cta
+/design-to-wp-block design.png hero-cta
 
 # From Figma URL
-/design-to-block https://figma.com/file/ABC123 feature-grid kanopi
+/design-to-wp-block https://figma.com/file/ABC123 feature-grid kanopi
 
 # With custom theme namespace
-/design-to-block mockup.jpg testimonial-section mytheme
+/design-to-wp-block mockup.jpg testimonial-section mytheme
 ```
 
 **What it does:**
@@ -55,20 +55,20 @@ Create WordPress block patterns from design references (Figma URLs, screenshots,
 
 ---
 
-### `/design-to-paragraph [design-source] [paragraph-name] [module-name]`
+### `design-to-drupal-paragraph [design-source] [paragraph-name] [module-name]`
 
 Create Drupal paragraph types from design references.
 
 **Usage:**
 ```bash
 # From uploaded image
-/design-to-paragraph design.png content_card
+/design-to-drupal-paragraph design.png content_card
 
 # From Figma URL
-/design-to-paragraph https://figma.com/file/XYZ789 hero_banner kanopi_paragraphs
+/design-to-drupal-paragraph https://figma.com/file/XYZ789 hero_banner kanopi_paragraphs
 
 # With custom module
-/design-to-paragraph mockup.jpg feature_grid my_custom_module
+/design-to-drupal-paragraph mockup.jpg feature_grid my_custom_module
 ```
 
 **What it does:**
@@ -107,23 +107,23 @@ Create Drupal paragraph types from design references.
 
 ---
 
-### `/design-validate [test-url] [design-reference]`
+### `browser-validator [test-url] [design-reference]`
 
 Validate design implementations in browser with comprehensive checks.
 
 **Usage:**
 ```bash
 # Validate without design reference
-/design-validate http://site.ddev.site/test-hero/
+/browser-validator http://site.ddev.site/test-hero/
 
 # Validate with design comparison
-/design-validate http://local.test/page mockups/original-design.png
+/browser-validator http://local.test/page mockups/original-design.png
 
 # Validate production page
-/design-validate https://example.com/new-feature
+/browser-validator https://example.com/new-feature
 
 # With Figma reference
-/design-validate http://site.test/test design-ref.png
+/browser-validator http://site.test/test design-ref.png
 ```
 
 **What it validates:**
@@ -180,7 +180,7 @@ Validate design implementations in browser with comprehensive checks.
 # [Uploads hero-design.png]
 
 # 2. Run command
-/design-to-block hero-design.png hero-banner
+/design-to-wp-block hero-design.png hero-banner
 
 # 3. Review generated files:
 # ✓ patterns/hero-banner.php
@@ -192,10 +192,10 @@ Validate design implementations in browser with comprehensive checks.
 # Edit files based on validation report
 
 # 5. Re-validate
-/design-validate http://site.ddev.site/test-hero-banner/
+/browser-validator http://site.ddev.site/test-hero-banner/
 
 # 6. Commit and create PR
-/pr-commit-msg
+/commit-message-generator
 /pr-create PROJ-123
 ```
 
@@ -207,7 +207,7 @@ Validate design implementations in browser with comprehensive checks.
 # [Uploads card-design.png]
 
 # 2. Run command
-/design-to-paragraph card-design.png content_card
+/design-to-drupal-paragraph card-design.png content_card
 
 # 3. Review generated YAML and Twig files
 # ✓ config/install/*.yml (7 configuration files)
@@ -219,11 +219,11 @@ Validate design implementations in browser with comprehensive checks.
 # Or with Drupal MCP: Automatic import
 
 # 5. Validate
-/design-validate http://site.ddev.site/node/123
+/browser-validator http://site.ddev.site/node/123
 
 # 6. Apply fixes and commit
 # Based on validation report
-/pr-commit-msg
+/commit-message-generator
 /pr-create PROJ-456
 ```
 
@@ -326,7 +326,7 @@ The **browser-validator** Agent Skill validates implementations using Chrome Dev
 Works seamlessly with Kanopi's DDEV setup:
 ```bash
 # Access local sites
-/design-validate http://site.ddev.site/test-page
+/browser-validator http://site.ddev.site/test-page
 
 # Combine with other audits
 ddev pa11y http://site.ddev.site/test-page
@@ -365,7 +365,7 @@ Browser validation requires Chrome DevTools MCP.
 1. Install: https://github.com/anthropics/claude-chrome-mcp
 2. Configure in Claude Code settings
 3. Restart Claude Code CLI
-4. Retry: `/design-validate {url}`
+4. Retry: `/browser-validator {url}`
 
 **Alternative:** Manual validation checklist provided
 
@@ -402,7 +402,7 @@ cat /etc/hosts | grep site.test
 ls -la mockups/design.png
 
 # Use absolute path
-/design-validate http://site.test/page /full/path/to/design.png
+/browser-validator http://site.test/page /full/path/to/design.png
 ```
 
 ---
@@ -429,13 +429,13 @@ Proper semantic structure improves accessibility and SEO.
 
 ---
 
-## Related Commands
+## Related Skills
 
 - [`/pr-create`](pr-workflow.md#pr-create-ticket-number) - Create PR after implementation
 - [`/pr-review self`](pr-workflow.md#pr-review-pr-numberself-focus) - Self-review before PR
-- [`/audit-a11y`](accessibility.md) - Comprehensive accessibility audit
-- [`/audit-perf`](performance.md) - Performance optimization
-- [`/audit-live-site`](live-site-auditing.md) - Full site audit
+- [`/accessibility-audit`](accessibility.md) - Comprehensive accessibility audit
+- [`/performance-audit`](performance.md) - Performance optimization
+- [`/live-site-audit`](live-site-auditing.md) - Full site audit
 
 ---
 

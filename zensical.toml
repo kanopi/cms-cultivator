@@ -3,7 +3,7 @@
 
 [project]
 site_name = "CMS Cultivator"
-site_description = "Claude Code plugin for Drupal and WordPress development with comprehensive workflow commands"
+site_description = "Claude Code plugin for Drupal and WordPress development with Agent Skills for Claude Code, Claude Desktop, and OpenAI Codex"
 site_url = "https://kanopi.github.io/cms-cultivator/"
 site_author = "Kanopi Studios"
 copyright = "Copyright &copy; 2025 Kanopi Studios"
@@ -19,7 +19,7 @@ nav = [
     "installation.md",
     "quick-start.md"
   ]},
-  {"Commands" = [
+  {"Skills" = [
     "commands/overview.md",
     "commands/pr-workflow.md",
     "commands/accessibility.md",
@@ -27,12 +27,19 @@ nav = [
     "commands/gtm-performance.md",
     "commands/security.md",
     "commands/live-site-auditing.md",
+    "commands/audit-export.md",
     "commands/design-workflow.md",
     "commands/documentation.md",
     "commands/testing.md",
     "commands/code-quality.md",
     "commands/devops.md",
-    "commands/project-management.md"
+    "commands/project-management.md",
+    "commands/planning.md",
+    "commands/pm-workflows.md",
+    "commands/strategy.md",
+    "commands/drupal-contribution-skills.md",
+    "commands/wordpress-meta.md",
+    "commands/wp-private-package.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
   {"WordPress Skills" = "wordpress-skills.md"},
@@ -49,7 +56,8 @@ nav = [
   ]},
   {"Reference" = [
     "reference/markdown-style-guide.md",
-    "reference/agent-skills-reference.md"
+    "reference/agent-skills-reference.md",
+    "reference/skill-naming-convention.md"
   ]},
   {"Testing" = "testing.md"},
   {"Contributing" = "contributing.md"}

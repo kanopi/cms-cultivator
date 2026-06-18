@@ -1,28 +1,37 @@
-# Project Management Commands
+# Project Management Skills
 
-Integrate with Teamwork for comprehensive project management, task tracking, and team coordination.
+Three skills integrate with Teamwork for project management, task tracking, and team coordination. All three run directly from the main session using the Teamwork MCP server — no orchestrator agent is involved.
+
+!!! info "Teamwork MCP required"
+    These skills depend on the Teamwork MCP server being configured in your Claude Code, Claude Desktop, or Codex client. The skills call `mcp__teamwork__twprojects-*` tools directly. Without the MCP, the skills can still produce formatted task content for manual entry, but cannot create or look up tasks.
 
 ---
 
-## Available Commands
+## Available Skills
 
-### /teamwork
+### teamwork-task-creator
 
-**Purpose:** Create, update, and manage Teamwork tasks with expert project management guidance for Drupal, WordPress, and NextJS projects.
+**Purpose:** Create Teamwork tasks from conversation context with automatic template selection.
 
-**Documentation:** See [`commands/teamwork.md`](../../commands/teamwork.md) for complete command reference.
+**Auto-invoked triggers:** "create a Teamwork task", "add this to Teamwork", "log this as a task"
 
 **Quick examples:**
-```bash
-# Create new task
-/teamwork create
-
-# Export audit findings
-/teamwork export security-audit.md --batch
-
-# Link PR to ticket
-/teamwork link PROJ-123
 ```
+"Create a Teamwork task for this security issue"
+"Log this performance bug in Teamwork"
+```
+
+### teamwork-integrator
+
+**Purpose:** Look up Teamwork tasks and cross-reference with code changes.
+
+**Auto-invoked triggers:** ticket number provided (e.g. PROJ-123), "find Teamwork task", "look up ticket"
+
+### teamwork-exporter
+
+**Purpose:** Export audit findings as Teamwork-compatible CSV for project management tools.
+
+**Auto-invoked triggers:** "export audit to Teamwork", "create Teamwork tasks from audit"
 
 ---
 
@@ -31,7 +40,7 @@ Integrate with Teamwork for comprehensive project management, task tracking, and
 For detailed information about Teamwork integration, including:
 - MCP server setup
 - Task template selection guide
-- Integration with audit commands
+- Integration with audit skills
 - Best practices
 - CMS-specific examples
 
@@ -51,7 +60,7 @@ Four task templates with automatic selection:
 
 ### Audit Export
 
-Convert findings from audit commands into tracked Teamwork tasks:
+Convert findings from audit skills into tracked Teamwork tasks:
 - Security vulnerabilities → Bug Report tasks
 - Performance issues → Optimization tasks
 - Accessibility violations → Compliance tasks
@@ -73,15 +82,15 @@ Tasks automatically include relevant context:
 
 ---
 
-## Integration with Other Commands
+## Integration with Other Skills
 
-Teamwork integration works seamlessly with:
+Teamwork skills work seamlessly with:
 
-- **[/pr-create](pr-workflow.md)** - Auto-links PRs to tickets
-- **[/audit-security](security.md)** - Export security findings
-- **[/audit-perf](performance.md)** - Export performance issues
-- **[/audit-a11y](accessibility.md)** - Export accessibility violations
-- **[/quality-analyze](code-quality.md)** - Export code quality tasks
+- **[pr-create](pr-workflow.md)** - Auto-links PRs to tickets
+- **[security-audit](security.md)** - Export security findings
+- **[performance-audit](performance.md)** - Export performance issues
+- **[accessibility-audit](accessibility.md)** - Export accessibility violations
+- **[quality-audit](code-quality.md)** - Export code quality tasks
 
 ---
 
@@ -98,23 +107,7 @@ Teamwork integration works seamlessly with:
 
 ---
 
-## Quick Start
-
-1. **Install and configure** (see [Integration Guide](../project-management/teamwork-integration.md#setup))
-2. **Create your first task:**
-   ```bash
-   /teamwork create
-   ```
-3. **Export audit findings:**
-   ```bash
-   /audit-security --comprehensive
-   /teamwork export --source=security --batch
-   ```
-
----
-
 ## Next Steps
 
 - **[Teamwork Integration Guide](../project-management/teamwork-integration.md)** - Complete documentation
-- **[/teamwork Command Reference](../../commands/teamwork.md)** - All operations and arguments
-- **[Agents & Skills](../agents-and-skills.md)** - How teamwork-specialist agent works
+- **[Agents & Skills](../agents-and-skills.md)** - How skills auto-activate (the three Teamwork skills run directly from the main session — no agent in between)

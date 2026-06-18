@@ -1,18 +1,19 @@
-# PR Workflow Commands
+# PR Workflow Skills
 
-Streamline pull request creation, review, and deployment with 4 specialized commands.
+Streamline pull request creation, review, and deployment with 4 specialized skills.
 
 ---
 
-## Commands
+## Skills
 
-### `/pr-create [ticket-number]`
+### `pr-create [ticket-number]`
 
 Create pull request directly on GitHub with generated description.
 
 **Usage:**
 ```bash
 /pr-create 123
+# or: "create a PR for PROJ-123"
 ```
 
 **What it does:**
@@ -35,7 +36,7 @@ Create pull request directly on GitHub with generated description.
 
 ---
 
-### `/pr-review [pr-number|self] [focus]`
+### `pr-review [pr-number|self] [focus]`
 
 Review a pull request or analyze your own changes before creating a PR.
 
@@ -81,7 +82,7 @@ Review a pull request or analyze your own changes before creating a PR.
 
 ---
 
-### `/pr-commit-msg`
+### `commit-message-generator`
 
 Generate conventional commit messages from staged changes.
 
@@ -91,7 +92,7 @@ Generate conventional commit messages from staged changes.
 git add .
 
 # Generate commit message options
-/pr-commit-msg
+/commit-message-generator
 ```
 
 **What it generates:**
@@ -106,7 +107,7 @@ git add .
 
 ---
 
-### `/pr-release [focus]`
+### `pr-release [focus]`
 
 Generate changelog, deployment checklist, and update PR for release.
 
@@ -131,19 +132,19 @@ Generate changelog, deployment checklist, and update PR for release.
 
 ---
 
-## Workflows
+## Workflow Examples
 
 ### Complete PR Workflow
 
 ```bash
 # 1. During development - commit frequently
 git add feature.php
-/pr-commit-msg            # Generate conventional commit
+/commit-message-generator            # Generate conventional commit
 
 # 2. Before creating PR - self-review
 /pr-review self           # Analyze your own changes
-/quality-standards        # Check code standards
-/audit-security secrets  # Check for exposed secrets
+/code-standards-checker        # Check code standards
+/security-audit secrets  # Check for exposed secrets
 
 # 3. Create PR
 /pr-create PROJ-123    # Generates description and creates PR
@@ -227,9 +228,9 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 
 ---
 
-## Command Comparison
+## Skill Comparison
 
-### When to use each command:
+### When to use each skill:
 
 **`/pr-create`**
 - You're ready to create a PR
@@ -247,7 +248,7 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 - Need size/complexity check
 - Want to catch issues early
 
-**`/pr-commit-msg`**
+**`/commit-message-generator`**
 - Making a commit
 - Want consistent commit message format
 - Following conventional commits
@@ -290,6 +291,6 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 ## Next Steps
 
 - **[Quick Start](../quick-start.md)** - Common workflow examples
-- **[Commands Overview](overview.md)** - All commands
+- **[Skills Overview](overview.md)** - All skills
 - **[Code Quality Commands](code-quality.md)** - Maintain code quality
 - **[Security Commands](security.md)** - Security scanning

@@ -53,211 +53,113 @@ setup() {
 }
 
 # ==============================================================================
-# COMMAND FILE STRUCTURE TESTS
+# CODEX MANIFEST TESTS
 # ==============================================================================
 
-@test "commands directory exists" {
-  [ -d "commands" ]
+@test "codex plugin manifest exists" {
+  [ -f ".codex-plugin/plugin.json" ]
 }
 
-@test "commands directory contains markdown files" {
-  count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -gt 0 ]
+@test "codex manifest is valid JSON" {
+  run jq empty .codex-plugin/plugin.json
+  [ "$status" -eq 0 ]
 }
 
-@test "all command files have .md extension" {
-  # Check that no non-markdown files exist in commands/
-  non_md_count=$(find commands -maxdepth 1 -type f ! -name "*.md" | wc -l)
-  [ "$non_md_count" -eq 0 ]
+@test "codex manifest has required fields" {
+  run jq -e '.name' .codex-plugin/plugin.json
+  [ "$status" -eq 0 ]
+
+  run jq -e '.version' .codex-plugin/plugin.json
+  [ "$status" -eq 0 ]
+
+  run jq -e '.skills' .codex-plugin/plugin.json
+  [ "$status" -eq 0 ]
 }
 
-@test "command count matches expected (27)" {
-  count=$(find commands -maxdepth 1 -name "*.md" | wc -l)
-  [ "$count" -eq 27 ]
-}
-
-# ==============================================================================
-# COMMAND FRONTMATTER TESTS
-# ==============================================================================
-
-@test "all commands have YAML frontmatter" {
-  for cmd in commands/*.md; do
-    # Check for opening ---
-    if ! grep -q "^---$" "$cmd"; then
-      echo "Missing frontmatter in $cmd"
-      return 1
-    fi
-  done
-}
-
-@test "all commands have description in frontmatter" {
-  for cmd in commands/*.md; do
-    if ! grep -q "^description:" "$cmd"; then
-      echo "Missing description in $cmd"
-      return 1
-    fi
-  done
-}
-
-@test "all commands have allowed-tools in frontmatter" {
-  for cmd in commands/*.md; do
-    if ! grep -q "^allowed-tools:" "$cmd"; then
-      echo "Missing allowed-tools in $cmd"
-      return 1
-    fi
-  done
-}
-
-@test "frontmatter descriptions are not empty" {
-  for cmd in commands/*.md; do
-    desc=$(sed -n '/^description:/p' "$cmd" | sed 's/description: *//')
-    if [ -z "$desc" ]; then
-      echo "Empty description in $cmd"
-      return 1
-    fi
-  done
-}
-
-@test "frontmatter has valid YAML syntax" {
-  for cmd in commands/*.md; do
-    # Extract frontmatter between first two --- markers only
-    # Use awk to track state and only extract content between first pair of ---
-    frontmatter=$(awk 'BEGIN {state=0} /^---$/ {state++; next} state==1 {print} state==2 {exit}' "$cmd")
-
-    # Validate YAML using python3 (if available)
-    if command -v python3 &> /dev/null; then
-      echo "$frontmatter" | python3 -c "import sys, yaml; yaml.safe_load(sys.stdin)" &> /dev/null || {
-        echo "Invalid YAML in $cmd"
-        return 1
-      }
-    else
-      skip "No YAML validator available"
-    fi
-  done
+@test "codex manifest version matches plugin manifest" {
+  codex_version=$(jq -r '.version' .codex-plugin/plugin.json)
+  plugin_version=$(jq -r '.version' .claude-plugin/plugin.json)
+  [ "$codex_version" = "$plugin_version" ]
 }
 
 # ==============================================================================
-# COMMAND NAMING CONVENTION TESTS
+# SKILL STRUCTURE TESTS
 # ==============================================================================
 
-@test "PR commands start with pr-" {
-  # Count PR command files
-  pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
-  [ "$pr_count" -eq 4 ]
+@test "skills directory exists" {
+  [ -d "skills" ]
 }
 
-@test "accessibility commands start with audit-a11y" {
-  a11y_count=$(find commands -maxdepth 1 -name "audit-a11y.md" | wc -l)
-  [ "$a11y_count" -eq 1 ]
+@test "skill count matches expected (47)" {
+  count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
+  [ "$count" -eq 47 ]
 }
 
-@test "performance commands start with audit-perf" {
-  perf_count=$(find commands -maxdepth 1 -name "audit-perf.md" | wc -l)
-  [ "$perf_count" -eq 1 ]
-}
-
-@test "security commands start with audit-security" {
-  sec_count=$(find commands -maxdepth 1 -name "audit-security.md" | wc -l)
-  [ "$sec_count" -eq 1 ]
-}
-
-@test "test commands start with test-" {
-  test_count=$(find commands -maxdepth 1 -name "test-*.md" | wc -l)
-  [ "$test_count" -eq 3 ]
-}
-
-@test "quality commands start with quality-" {
-  quality_count=$(find commands -maxdepth 1 -name "quality-*.md" | wc -l)
-  [ "$quality_count" -eq 2 ]
-}
-
-@test "documentation commands start with docs-" {
-  docs_count=$(find commands -maxdepth 1 -name "docs-*.md" | wc -l)
-  [ "$docs_count" -eq 1 ]
-}
-
-@test "design commands start with design-" {
-  design_count=$(find commands -maxdepth 1 -name "design-*.md" | wc -l)
-  [ "$design_count" -eq 3 ]
-}
-
-@test "wordpress skills command exists" {
-  [ -f "commands/wp-add-skills.md" ]
-}
-
-@test "wp-add-skills has required frontmatter" {
-  cmd="commands/wp-add-skills.md"
-  grep -q "^description:" "$cmd"
-  grep -q "^allowed-tools:" "$cmd"
-}
-
-@test "wp-add-skills allows git and node" {
-  tools=$(sed -n 's/^allowed-tools: *//p' commands/wp-add-skills.md)
-  echo "$tools" | grep -q "git:"
-  echo "$tools" | grep -q "node:"
-}
-
-# ==============================================================================
-# COMMAND CONTENT TESTS
-# ==============================================================================
-
-@test "all commands have markdown headers" {
-  for cmd in commands/*.md; do
-    if ! grep -q "^#" "$cmd"; then
-      echo "No markdown headers in $cmd"
-      return 1
-    fi
-  done
-}
-
-@test "no command contains TODO markers" {
-  # Check for uncommitted TODO/FIXME markers (excluding code blocks and examples)
-  # This checks for actual TODOs in documentation, not example TODOs shown to users
-  for cmd in commands/*.md; do
-    # Skip lines in code blocks (between ```) and example TODO references
-    if awk '
-      /^```/ { in_code = !in_code; next }
-      !in_code && /^[^`]*\bTODO\b.*:/ && !/example|Example|finding TODOs/ { print; found=1 }
-      END { exit !found }
-    ' "$cmd" 2>/dev/null; then
-      echo "Found uncommitted TODO marker in $cmd (not in examples)"
+@test "all skill directories have SKILL.md file" {
+  for skill_dir in skills/*/; do
+    if [ ! -f "${skill_dir}SKILL.md" ]; then
+      echo "Missing SKILL.md in $skill_dir"
       return 1
     fi
   done
 }
 
 # ==============================================================================
-# ALLOWED-TOOLS VALIDATION TESTS
+# SKILL FRONTMATTER TESTS
 # ==============================================================================
 
-@test "allowed-tools contains valid tool patterns" {
-  for cmd in commands/*.md; do
-    # Extract allowed-tools line
-    tools=$(sed -n 's/^allowed-tools: *//p' "$cmd")
+@test "all skill files have YAML frontmatter" {
+  for skill in skills/*/SKILL.md; do
+    if ! grep -q "^---$" "$skill"; then
+      echo "Missing frontmatter in $skill"
+      return 1
+    fi
+  done
+}
 
-    # Check for common valid patterns
-    if [ -n "$tools" ]; then
-      # Valid patterns: Read, Write, Edit, Glob, Grep, Bash(...), WebFetch, WebSearch, etc.
-      if ! echo "$tools" | grep -qE '(Read|Write|Edit|Glob|Grep|Bash|WebFetch|WebSearch|Task)'; then
-        echo "Suspicious allowed-tools in $cmd: $tools"
-        return 1
+@test "all skills have name in frontmatter" {
+  for skill in skills/*/SKILL.md; do
+    if ! grep -q "^name:" "$skill"; then
+      echo "Missing name in $skill"
+      return 1
+    fi
+  done
+}
+
+@test "all skills have description in frontmatter" {
+  for skill in skills/*/SKILL.md; do
+    if ! grep -q "^description:" "$skill"; then
+      echo "Missing description in $skill"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# OPENAI INVOCATION POLICY TESTS
+# ==============================================================================
+
+@test "skills with openai.yaml have valid YAML" {
+  for yaml_file in skills/*/agents/openai.yaml; do
+    if [ -f "$yaml_file" ]; then
+      if command -v python3 &> /dev/null; then
+        python3 -c "import yaml; yaml.safe_load(open('$yaml_file'))" 2>/dev/null || {
+          echo "Invalid YAML in $yaml_file"
+          return 1
+        }
+      else
+        skip "No YAML validator available"
       fi
     fi
   done
 }
 
-@test "allowed-tools includes both direct and DDEV variants for composer" {
-  # Quality and security commands should support both execution contexts
-  for cmd in commands/quality-*.md commands/security-*.md; do
-    if [ -f "$cmd" ]; then
-      tools=$(sed -n 's/^allowed-tools: *//p' "$cmd")
-
-      # Should have both composer and ddev composer patterns
-      if echo "$tools" | grep -q "composer"; then
-        if ! echo "$tools" | grep -q "ddev.*composer\|ddev exec.*composer"; then
-          echo "Missing DDEV composer variant in $cmd"
-          # Not failing this test as it's a recommendation, not requirement
-        fi
+@test "openai.yaml files have policy.allow_implicit_invocation field" {
+  for yaml_file in skills/*/agents/openai.yaml; do
+    if [ -f "$yaml_file" ]; then
+      if ! grep -q "allow_implicit_invocation:" "$yaml_file"; then
+        echo "Missing allow_implicit_invocation in $yaml_file"
+        return 1
       fi
     fi
   done
@@ -271,9 +173,9 @@ setup() {
   [ -d "agents" ]
 }
 
-@test "agents directory contains expected subdirectories" {
+@test "agents directory contains expected subdirectories (14)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 17 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "all agent directories have AGENT.md file" {
@@ -285,9 +187,9 @@ setup() {
   done
 }
 
-@test "agent count matches expected (17)" {
+@test "agent count matches expected (14)" {
   count=$(find agents -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 17 ]
+  [ "$count" -eq 14 ]
 }
 
 @test "expected agent directories exist" {
@@ -301,14 +203,11 @@ setup() {
     "drupal-pantheon-devops-specialist"
     "drupalorg-mr-specialist"
     "gtm-specialist"
-    "live-audit-specialist"
     "performance-specialist"
     "responsive-styling-specialist"
     "security-specialist"
-    "teamwork-specialist"
     "testing-specialist"
     "structured-data-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${expected_agents[@]}"; do
@@ -416,6 +315,7 @@ setup() {
     "accessibility-specialist"
     "browser-validator-specialist"
     "code-quality-specialist"
+    "design-specialist"
     "documentation-specialist"
     "drupal-pantheon-devops-specialist"
     "gtm-specialist"
@@ -438,10 +338,7 @@ setup() {
 
 @test "orchestrators have Task tool" {
   orchestrators=(
-    "design-specialist"
-    "live-audit-specialist"
     "testing-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -455,17 +352,6 @@ setup() {
   done
 }
 
-@test "live-audit-specialist has no skills" {
-  agent_file="agents/live-audit-specialist/AGENT.md"
-  skills=$(sed -n 's/^skills: *//p' "$agent_file")
-
-  # Should be empty array [] or empty
-  if [ -n "$skills" ] && [ "$skills" != "[]" ]; then
-    echo "live-audit-specialist should have no skills (pure orchestrator)"
-    return 1
-  fi
-}
-
 @test "accessibility-specialist has accessibility-checker skill" {
   agent_file="agents/accessibility-specialist/AGENT.md"
   if ! grep -q "accessibility-checker" "$agent_file"; then
@@ -474,10 +360,87 @@ setup() {
   fi
 }
 
-@test "workflow-specialist has commit-message-generator skill" {
-  agent_file="agents/workflow-specialist/AGENT.md"
-  if ! grep -q "commit-message-generator" "$agent_file"; then
-    echo "workflow-specialist missing commit-message-generator skill"
+@test "accessibility-specialist has accessibility-audit skill" {
+  agent_file="agents/accessibility-specialist/AGENT.md"
+  if ! grep -q "accessibility-audit" "$agent_file"; then
+    echo "accessibility-specialist missing accessibility-audit skill"
+    return 1
+  fi
+}
+
+@test "workflow-specialist agent does not exist (removed in v1.1.0)" {
+  [ ! -d "agents/workflow-specialist" ]
+  [ ! -f ".codex/agents/workflow-specialist.toml" ]
+}
+
+@test "PR skills reference no workflow-specialist Task spawn" {
+  for skill in pr-create pr-review pr-release commit-message-generator; do
+    if grep -qE "Task\(cms-cultivator:workflow-specialist" "skills/$skill/SKILL.md"; then
+      echo "skill $skill still spawns workflow-specialist via Task()"
+      return 1
+    fi
+  done
+}
+
+@test "teamwork-specialist agent does not exist (removed in v1.2.0)" {
+  [ ! -d "agents/teamwork-specialist" ]
+  [ ! -f ".codex/agents/teamwork-specialist.toml" ]
+}
+
+@test "Teamwork skills reference no teamwork-specialist Task spawn" {
+  for skill in teamwork-task-creator teamwork-integrator teamwork-exporter; do
+    if grep -qE "Task\(cms-cultivator:teamwork-specialist" "skills/$skill/SKILL.md"; then
+      echo "skill $skill still spawns teamwork-specialist via Task()"
+      return 1
+    fi
+  done
+}
+
+@test "design-specialist has design-analyzer skill" {
+  agent_file="agents/design-specialist/AGENT.md"
+  if ! grep -q "design-analyzer" "$agent_file"; then
+    echo "design-specialist missing design-analyzer skill"
+    return 1
+  fi
+}
+
+@test "design-specialist has design-to-wp-block skill" {
+  agent_file="agents/design-specialist/AGENT.md"
+  if ! grep -q "design-to-wp-block" "$agent_file"; then
+    echo "design-specialist missing design-to-wp-block skill"
+    return 1
+  fi
+}
+
+@test "browser-validator-specialist has browser-validator skill" {
+  agent_file="agents/browser-validator-specialist/AGENT.md"
+  if ! grep -q "browser-validator" "$agent_file"; then
+    echo "browser-validator-specialist missing browser-validator skill"
+    return 1
+  fi
+}
+
+@test "responsive-styling-specialist has responsive-styling skill" {
+  agent_file="agents/responsive-styling-specialist/AGENT.md"
+  if ! grep -q "responsive-styling" "$agent_file"; then
+    echo "responsive-styling-specialist missing responsive-styling skill"
+    return 1
+  fi
+}
+
+@test "gtm-specialist has gtm-performance-audit skill" {
+  agent_file="agents/gtm-specialist/AGENT.md"
+  if ! grep -q "gtm-performance-audit" "$agent_file"; then
+    echo "gtm-specialist missing gtm-performance-audit skill"
+    return 1
+  fi
+}
+
+@test "drupalorg-issue-specialist model is haiku" {
+  agent_file="agents/drupalorg-issue-specialist/AGENT.md"
+  model=$(sed -n 's/^model: *//p' "$agent_file")
+  if [ "$model" != "haiku" ]; then
+    echo "drupalorg-issue-specialist model should be haiku, got: $model"
     return 1
   fi
 }
@@ -515,10 +478,7 @@ setup() {
 
 @test "orchestrators document delegation patterns" {
   orchestrators=(
-    "design-specialist"
-    "live-audit-specialist"
     "testing-specialist"
-    "workflow-specialist"
   )
 
   for agent in "${orchestrators[@]}"; do
@@ -542,197 +502,8 @@ setup() {
 }
 
 # ==============================================================================
-# COMMAND-TO-AGENT INTEGRATION TESTS
-# ==============================================================================
-
-@test "commands use Task tool to spawn agents" {
-  # Commands should have Task in allowed-tools
-  task_count=$(grep -l "allowed-tools:.*Task" commands/*.md | wc -l)
-
-  # At least 10 commands should use Task (most commands should spawn agents)
-  [ "$task_count" -ge 10 ]
-}
-
-@test "commands reference agent specialists in content" {
-  # Commands should mention which specialist agent they use
-  specialist_mentions=0
-
-  for cmd in commands/*.md; do
-    if grep -qi "specialist" "$cmd"; then
-      specialist_mentions=$((specialist_mentions + 1))
-    fi
-  done
-
-  # At least 10 commands should reference specialists
-  [ "$specialist_mentions" -ge 10 ]
-}
-
-@test "PR commands reference workflow-specialist" {
-  pr_commands=(
-    "pr-commit-msg"
-    "pr-create"
-    "pr-review"
-    "pr-release"
-  )
-
-  for cmd in "${pr_commands[@]}"; do
-    cmd_file="commands/${cmd}.md"
-    if [ -f "$cmd_file" ]; then
-      if ! grep -qi "workflow-specialist\|workflow specialist" "$cmd_file"; then
-        echo "$cmd_file should reference workflow-specialist"
-        return 1
-      fi
-    fi
-  done
-}
-
-@test "audit-a11y references accessibility-specialist" {
-  if ! grep -qi "accessibility-specialist\|accessibility specialist" commands/audit-a11y.md; then
-    echo "audit-a11y should reference accessibility-specialist"
-    return 1
-  fi
-}
-
-@test "audit-perf references performance-specialist" {
-  if ! grep -qi "performance-specialist\|performance specialist" commands/audit-perf.md; then
-    echo "audit-perf should reference performance-specialist"
-    return 1
-  fi
-}
-
-@test "audit-security references security-specialist" {
-  if ! grep -qi "security-specialist\|security specialist" commands/audit-security.md; then
-    echo "audit-security should reference security-specialist"
-    return 1
-  fi
-}
-
-@test "audit-live-site references live-audit-specialist" {
-  if ! grep -qi "live-audit-specialist\|live audit specialist" commands/audit-live-site.md; then
-    echo "audit-live-site should reference live-audit-specialist"
-    return 1
-  fi
-}
-
-@test "test commands reference testing-specialist" {
-  test_commands=(
-    "test-generate"
-    "test-plan"
-    "test-coverage"
-  )
-
-  for cmd in "${test_commands[@]}"; do
-    cmd_file="commands/${cmd}.md"
-    if [ -f "$cmd_file" ]; then
-      if ! grep -qi "testing-specialist\|testing specialist" "$cmd_file"; then
-        echo "$cmd_file should reference testing-specialist"
-        return 1
-      fi
-    fi
-  done
-}
-
-@test "quality commands reference code-quality-specialist" {
-  quality_commands=(
-    "quality-analyze"
-    "quality-standards"
-  )
-
-  for cmd in "${quality_commands[@]}"; do
-    cmd_file="commands/${cmd}.md"
-    if [ -f "$cmd_file" ]; then
-      if ! grep -qi "code-quality-specialist\|quality specialist" "$cmd_file"; then
-        echo "$cmd_file should reference code-quality-specialist"
-        return 1
-      fi
-    fi
-  done
-}
-
-@test "docs-generate references documentation-specialist" {
-  if ! grep -qi "documentation-specialist\|documentation specialist" commands/docs-generate.md; then
-    echo "docs-generate should reference documentation-specialist"
-    return 1
-  fi
-}
-
-@test "design commands reference design-specialist" {
-  design_commands=(
-    "design-to-block"
-    "design-to-paragraph"
-  )
-
-  for cmd in "${design_commands[@]}"; do
-    cmd_file="commands/${cmd}.md"
-    if [ -f "$cmd_file" ]; then
-      if ! grep -qi "design-specialist\|design specialist" "$cmd_file"; then
-        echo "$cmd_file should reference design-specialist"
-        return 1
-      fi
-    fi
-  done
-}
-
-@test "design-validate references browser-validator-specialist" {
-  if ! grep -qi "browser-validator-specialist\|browser validator specialist" commands/design-validate.md; then
-    echo "design-validate should reference browser-validator-specialist"
-    return 1
-  fi
-}
-
-@test "design-specialist has design-analyzer skill" {
-  agent_file="agents/design-specialist/AGENT.md"
-  if ! grep -q "design-analyzer" "$agent_file"; then
-    echo "design-specialist missing design-analyzer skill"
-    return 1
-  fi
-}
-
-@test "browser-validator-specialist has browser-validator skill" {
-  agent_file="agents/browser-validator-specialist/AGENT.md"
-  if ! grep -q "browser-validator" "$agent_file"; then
-    echo "browser-validator-specialist missing browser-validator skill"
-    return 1
-  fi
-}
-
-@test "responsive-styling-specialist has responsive-styling skill" {
-  agent_file="agents/responsive-styling-specialist/AGENT.md"
-  if ! grep -q "responsive-styling" "$agent_file"; then
-    echo "responsive-styling-specialist missing responsive-styling skill"
-    return 1
-  fi
-}
-
-@test "audit-gtm references gtm-specialist" {
-  if ! grep -qi "gtm-specialist\|gtm specialist" commands/audit-gtm.md; then
-    echo "audit-gtm should reference gtm-specialist"
-    return 1
-  fi
-}
-
-@test "gtm-specialist has gtm-performance-audit skill" {
-  agent_file="agents/gtm-specialist/AGENT.md"
-  if ! grep -q "gtm-performance-audit" "$agent_file"; then
-    echo "gtm-specialist missing gtm-performance-audit skill"
-    return 1
-  fi
-}
-
-# ==============================================================================
 # STRUCTURED DATA SPECIALIST TESTS
 # ==============================================================================
-
-@test "structured data audit command exists" {
-  [ -f "commands/audit-structured-data.md" ]
-}
-
-@test "audit-structured-data references structured-data-specialist" {
-  if ! grep -qi "structured-data-specialist\|structured data specialist" commands/audit-structured-data.md; then
-    echo "audit-structured-data should reference structured-data-specialist"
-    return 1
-  fi
-}
 
 @test "structured-data-specialist has structured-data-analyzer skill" {
   agent_file="agents/structured-data-specialist/AGENT.md"
@@ -753,6 +524,155 @@ setup() {
 
 @test "structured-data-analyzer skill exists" {
   [ -f "skills/structured-data-analyzer/SKILL.md" ]
+}
+
+# ==============================================================================
+# PLANNING + PM SKILLS TESTS
+# ==============================================================================
+
+@test "planning skills exist" {
+  [ -f "skills/frd-generator/SKILL.md" ]
+  [ -f "skills/story-point-estimator/SKILL.md" ]
+  [ -f "skills/csv-exporter/SKILL.md" ]
+}
+
+@test "planning skill templates exist" {
+  [ -f "skills/frd-generator/templates/frd-structure.md" ]
+  [ -f "skills/frd-generator/templates/risk-framework.md" ]
+  [ -f "skills/story-point-estimator/templates/fibonacci-scale.md" ]
+  [ -f "skills/story-point-estimator/templates/hour-conversion-table.md" ]
+  [ -f "skills/csv-exporter/templates/teamwork-format.md" ]
+  [ -f "skills/csv-exporter/templates/hierarchy-examples.md" ]
+}
+
+@test "PM skills exist" {
+  [ -f "skills/client-request-triage/SKILL.md" ]
+  [ -f "skills/pm-meeting-prep/SKILL.md" ]
+  [ -f "skills/project-heartbeat/SKILL.md" ]
+  [ -f "skills/qa-review/SKILL.md" ]
+}
+
+@test "strategy skill exists" {
+  [ -f "skills/strategist-site-audit/SKILL.md" ]
+}
+
+@test "strategist-site-audit SKILL.md references all 21 UX Laws" {
+  skill_file="skills/strategist-site-audit/SKILL.md"
+  laws=(
+    "Jakob's Law"
+    "Fitts's Law"
+    "Hick's Law"
+    "Miller's Law"
+    "Peak-End Rule"
+    "Von Restorff Effect"
+    "Aesthetic-Usability Effect"
+    "Doherty Threshold"
+    "Law of Proximity"
+    "Law of Similarity"
+    "Law of Common Region"
+    "Law of Uniform Connectedness"
+    "Law of Prägnanz"
+    "Serial Position Effect"
+    "Zeigarnik Effect"
+    "Tesler's Law"
+    "Postel's Law"
+    "Goal-Gradient Effect"
+    "Occam's Razor"
+    "Pareto Principle"
+    "Parkinson's Law"
+  )
+  for law in "${laws[@]}"; do
+    if ! grep -q "$law" "$skill_file"; then
+      echo "strategist-site-audit SKILL.md missing UX Law: $law"
+      return 1
+    fi
+  done
+}
+
+@test "planning, PM, and strategy doc pages exist" {
+  [ -f "docs/commands/planning.md" ]
+  [ -f "docs/commands/pm-workflows.md" ]
+  [ -f "docs/commands/strategy.md" ]
+}
+
+@test "audit-export, drupal-contribution-skills, wordpress-meta doc pages exist" {
+  [ -f "docs/commands/audit-export.md" ]
+  [ -f "docs/commands/drupal-contribution-skills.md" ]
+  [ -f "docs/commands/wordpress-meta.md" ]
+}
+
+@test "skill naming convention reference exists" {
+  [ -f "docs/reference/skill-naming-convention.md" ]
+}
+
+# ==============================================================================
+# PACKAGING SCRIPT
+# ==============================================================================
+
+@test "scripts/package-skills.sh exists and is executable" {
+  [ -x "scripts/package-skills.sh" ]
+}
+
+@test "scripts/package-plugin.sh exists and is executable" {
+  [ -x "scripts/package-plugin.sh" ]
+}
+
+@test "scripts/package-skills.sh --list outputs every skill directory" {
+  expected=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+  actual=$(bash scripts/package-skills.sh --list | wc -l | tr -d ' ')
+  if [ "$actual" != "$expected" ]; then
+    echo "Expected $expected skills, --list returned $actual"
+    return 1
+  fi
+}
+
+@test "release-artifacts workflow exists" {
+  [ -f ".github/workflows/release-artifacts.yml" ]
+}
+
+# ==============================================================================
+# DOCS-VS-SKILLS CONSISTENCY
+# ==============================================================================
+
+@test "every skill referenced in docs/commands/*.md exists as a skill directory" {
+  # Extract all backtick-quoted skill names from category pages.
+  # Pattern: backtick + kebab-case word (3+ segments) + backtick.
+  # Only checks kebab-case identifiers with 2+ hyphens, which are very likely skill names.
+  # Skip pages that document non-skill items.
+  while IFS= read -r name; do
+    [ -z "$name" ] && continue
+    # Skip known non-skill names that appear in backticks in docs
+    case "$name" in
+      commit-message-generator|pr-create|pr-review|pr-release) ;;
+      accessibility-checker|accessibility-audit|security-scanner|security-audit) ;;
+      performance-analyzer|performance-audit|gtm-performance-audit) ;;
+      code-standards-checker|quality-audit|coverage-analyzer) ;;
+      test-scaffolding|test-plan-generator|documentation-generator) ;;
+      design-analyzer|design-to-wp-block|design-to-drupal-paragraph) ;;
+      responsive-styling|browser-validator|strategic-thinking) ;;
+      live-site-audit|structured-data-analyzer|audit-export|audit-report) ;;
+      frd-generator|story-point-estimator|csv-exporter) ;;
+      client-request-triage|pm-meeting-prep|project-heartbeat|qa-review) ;;
+      strategist-site-audit|devops-setup|wp-add-skills) ;;
+      drupal-contribute|drupal-issue|drupal-mr|drupal-cleanup) ;;
+      drupalorg-issue-helper|drupalorg-contribution-helper) ;;
+      teamwork-task-creator|teamwork-integrator|teamwork-exporter) ;;
+      # Known doc identifiers, file names, GitHub repos, library names — not skills
+      cms-cultivator|claude-toolbox|claude-dev-insights|cms-planner) ;;
+      agent-skills|design-system|block-themes|block-development|block-editor|block-patterns|block-api) ;;
+      kanopi-claude-plugins|claude-plugins-official|claude-chrome-mcp|codeql-action|bats-core) ;;
+      a-guide-to-flexbox|complete-guide-grid|coding-standards) ;;
+      twig-cs-fixer|phpstan-drupal|drupal-rector) ;;
+      # GitHub topic + policy placeholder referenced in wp-private-package.md
+      do-not-archive|name-of-plugin) ;;
+      *)
+        if [ ! -d "skills/$name" ]; then
+          echo "ERROR: docs/commands reference a non-existent skill: $name"
+          return 1
+        fi
+        ;;
+    esac
+  done < <(grep -rhoE '`[a-z][a-z0-9]+-[a-z0-9]+-[a-z0-9-]+`' docs/commands/ 2>/dev/null | tr -d '`' | sort -u)
 }
 
 # ==============================================================================
@@ -841,19 +761,6 @@ setup() {
   [ -f "docs/kanopi-tools/overview.md" ]
 }
 
-@test "commands reference Kanopi tools where appropriate" {
-  # Quality and test commands should reference Kanopi DDEV commands
-  for cmd in commands/quality-*.md commands/test-coverage.md commands/security-audit.md; do
-    if [ -f "$cmd" ]; then
-      # Check for ddev references
-      if ! grep -qi "ddev\|kanopi" "$cmd"; then
-        echo "Command $cmd might be missing Kanopi integration"
-        # Not failing - just informational
-      fi
-    fi
-  done
-}
-
 # ==============================================================================
 # LICENSE AND METADATA TESTS
 # ==============================================================================
@@ -874,161 +781,16 @@ setup() {
 # FILE HYGIENE TESTS
 # ==============================================================================
 
-@test "no trailing whitespace in command files" {
-  # Check for lines ending with whitespace (except in code blocks)
-  if grep -n '[[:space:]]$' commands/*.md | grep -v '```'; then
-    echo "Found trailing whitespace in commands"
-    # Not failing this test as it's cosmetic
-  fi
-}
-
 @test "no uncommitted merge conflict markers" {
-  if grep -r "^<<<<<<< \|^=======$\|^>>>>>>> " commands/ docs/ 2>/dev/null; then
+  if grep -r "^<<<<<<< \|^=======$\|^>>>>>>> " skills/ docs/ agents/ 2>/dev/null; then
     echo "Found merge conflict markers"
     return 1
-  fi
-}
-
-@test "no debug console.log in markdown" {
-  # Check for debug statements (excluding code blocks and examples)
-  for cmd in commands/*.md; do
-    # Skip lines in code blocks (between ```) and example code
-    if awk '
-      /^```/ { in_code = !in_code; next }
-      !in_code && /(console\.log|debugger;)/ && !/example|Example|demonstration/ { print; found=1 }
-      END { exit !found }
-    ' "$cmd" 2>/dev/null; then
-      echo "Found debug statements in $cmd (not in examples)"
-      return 1
-    fi
-  done
-}
-
-# ==============================================================================
-# SECURITY TESTS
-# ==============================================================================
-
-@test "no hardcoded secrets in command files" {
-  # Check for common secret patterns (excluding code blocks and examples)
-  for cmd in commands/*.md; do
-    # Skip lines in code blocks (between ```) and example secrets
-    if awk '
-      /^```/ { in_code = !in_code; next }
-      !in_code && /(password|api_key|secret|token)\s*=/ && !/example|placeholder|your_|EXAMPLE|Example|SuperSecret/ { print; found=1 }
-      END { exit !found }
-    ' "$cmd" 2>/dev/null; then
-      echo "Found potential hardcoded secrets in $cmd (not in examples)"
-      return 1
-    fi
-  done
-}
-
-@test "no private URLs in command files" {
-  # Check for localhost or private IP references that shouldn't be committed
-  if grep -ri "localhost:[0-9]\|127\.0\.0\.1\|192\.168\." commands/*.md | grep -v "example\|8000"; then
-    echo "Found private URLs in commands"
-    # Not failing - might be legitimate examples
-  fi
-}
-
-# ==============================================================================
-# CROSS-REFERENCE TESTS
-# ==============================================================================
-
-@test "all commands mentioned in README match actual files" {
-  # Extract command names from README (lines starting with /command-name)
-  readme_commands=$(grep -o '/[a-z-]*' README.md | sed 's|^/||' | sort -u)
-
-  for cmd_name in $readme_commands; do
-    # Check if corresponding .md file exists
-    if [ ! -f "commands/${cmd_name}.md" ]; then
-      echo "README mentions /$cmd_name but commands/${cmd_name}.md doesn't exist"
-      # Not failing - README might use different naming
-    fi
-  done
-}
-
-@test "command categories in README match actual structure" {
-  # Verify counts match
-  pr_count=$(find commands -maxdepth 1 -name "pr-*.md" | wc -l)
-
-  # Check if README mentions correct count
-  if grep -q "4 PR" README.md && [ "$pr_count" -eq 4 ]; then
-    return 0
-  else
-    echo "PR command count mismatch between README and actual files"
-    # Not failing - README might be formatted differently
-  fi
-}
-
-# ==============================================================================
-# PERFORMANCE TESTS
-# ==============================================================================
-
-@test "no command file exceeds reasonable size (100KB)" {
-  for cmd in commands/*.md; do
-    size=$(wc -c < "$cmd")
-    if [ "$size" -gt 102400 ]; then
-      echo "Command file $cmd is too large: ${size} bytes"
-      return 1
-    fi
-  done
-}
-
-@test "total commands directory size is reasonable" {
-  total_size=$(du -sk commands | cut -f1)
-  # Should be under 5MB (5120 KB)
-  [ "$total_size" -lt 5120 ]
-}
-
-# ==============================================================================
-# INTEGRATION TESTS (Optional - require external tools)
-# ==============================================================================
-
-@test "Zensical can build documentation" {
-  if command -v zensical &> /dev/null; then
-    run zensical build --clean
-    # Should build successfully
-    [ "$status" -eq 0 ]
-  else
-    skip "Zensical not installed"
-  fi
-}
-
-@test "markdown files pass linting" {
-  if command -v markdownlint &> /dev/null; then
-    run markdownlint commands/*.md
-    # Don't fail if linter has style preferences
-    [ "$status" -eq 0 ] || [ "$status" -eq 1 ]
-  else
-    skip "markdownlint not installed"
   fi
 }
 
 # ==============================================================================
 # DRUPAL.ORG INTEGRATION STRUCTURE TESTS
 # ==============================================================================
-
-@test "drupal commands exist (4 files)" {
-  drupal_count=$(find commands -maxdepth 1 -name "drupal-*.md" | wc -l)
-  [ "$drupal_count" -eq 4 ]
-}
-
-@test "drupal commands have correct names" {
-  expected_commands=(
-    "drupal-issue"
-    "drupal-mr"
-    "drupal-contribute"
-    "drupal-cleanup"
-  )
-
-  for cmd in "${expected_commands[@]}"; do
-    if [ ! -f "commands/${cmd}.md" ]; then
-      echo "Missing drupal command: commands/${cmd}.md"
-      return 1
-    fi
-  done
-}
 
 @test "drupalorg agents exist" {
   [ -f "agents/drupalorg-issue-specialist/AGENT.md" ]
@@ -1041,7 +803,7 @@ setup() {
 }
 
 @test "drupalorg agents do NOT have chrome-devtools MCP in tools (guided manual workflow)" {
-  # After v0.7.0, drupalorg agents use guided manual workflow (clipboard + browser launch)
+  # drupalorg agents use guided manual workflow (clipboard + browser launch)
   # instead of browser automation due to drupal.org CAPTCHA protection
   for agent in agents/drupalorg-*/AGENT.md; do
     tools=$(sed -n 's/^tools: *//p' "$agent")
@@ -1050,18 +812,6 @@ setup() {
       return 1
     fi
   done
-}
-
-@test "drupal-mr command has git and ssh in allowed-tools" {
-  tools=$(sed -n 's/^allowed-tools: *//p' commands/drupal-mr.md)
-  echo "$tools" | grep -q "git:" || return 1
-  echo "$tools" | grep -q "ssh:" || return 1
-}
-
-@test "drupal-cleanup command has valid structure" {
-  [ -f "commands/drupal-cleanup.md" ]
-  grep -q "^description:" commands/drupal-cleanup.md
-  grep -q "^allowed-tools:" commands/drupal-cleanup.md
 }
 
 @test "drupalorg agents reference correct skills" {
@@ -1078,18 +828,6 @@ setup() {
   fi
 }
 
-@test "drupal-contribute references both agents" {
-  cmd="commands/drupal-contribute.md"
-  grep -qi "drupalorg-issue-specialist\|drupalorg issue specialist" "$cmd" || {
-    echo "drupal-contribute should reference drupalorg-issue-specialist"
-    return 1
-  }
-  grep -qi "drupalorg-mr-specialist\|drupalorg mr specialist" "$cmd" || {
-    echo "drupal-contribute should reference drupalorg-mr-specialist"
-    return 1
-  }
-}
-
 @test "drupalorg agents are leaf specialists (no Task tool)" {
   for agent in agents/drupalorg-*/AGENT.md; do
     tools=$(sed -n 's/^tools: *//p' "$agent")
@@ -1102,4 +840,114 @@ setup() {
 
 @test "drupal documentation exists" {
   [ -f "docs/drupal-contribution.md" ]
+}
+
+# ==============================================================================
+# CLAUDE CODE INVOCATION POLICY TESTS
+# ==============================================================================
+
+@test "skills with openai.yaml also have disable-model-invocation in SKILL.md" {
+  for yaml_file in skills/*/agents/openai.yaml; do
+    [ -f "$yaml_file" ] || continue
+    skill_dir=$(basename "$(dirname "$(dirname "$yaml_file")")")
+    skill_file="skills/$skill_dir/SKILL.md"
+    if ! grep -q "^disable-model-invocation: true" "$skill_file"; then
+      echo "$skill_file has openai.yaml but missing disable-model-invocation: true"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# CODEX TOML AGENT TESTS
+# ==============================================================================
+
+@test "codex agents directory exists" {
+  [ -d ".codex/agents" ]
+}
+
+@test "codex agent TOML count matches AGENT.md count (14)" {
+  toml_count=$(find .codex/agents -name "*.toml" | wc -l)
+  [ "$toml_count" -eq 14 ]
+}
+
+@test "every AGENT.md directory has a corresponding TOML agent" {
+  for agent_dir in agents/*/; do
+    agent_name=$(basename "$agent_dir")
+    if [ ! -f ".codex/agents/${agent_name}.toml" ]; then
+      echo "Missing TOML for agent: $agent_name"
+      return 1
+    fi
+  done
+}
+
+@test "every TOML agent has a corresponding AGENT.md directory" {
+  for toml_file in .codex/agents/*.toml; do
+    agent_name=$(basename "$toml_file" .toml)
+    if [ ! -d "agents/$agent_name" ]; then
+      echo "TOML $toml_file has no matching agents/$agent_name/ directory"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have required name field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^name = " "$toml_file"; then
+      echo "Missing name field in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have required description field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^description = " "$toml_file"; then
+      echo "Missing description in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have developer_instructions field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^developer_instructions" "$toml_file"; then
+      echo "Missing developer_instructions in $toml_file"
+      return 1
+    fi
+  done
+}
+
+@test "TOML agent names match their filenames" {
+  for toml_file in .codex/agents/*.toml; do
+    file_name=$(basename "$toml_file" .toml)
+    toml_name=$(grep "^name = " "$toml_file" | head -1 | sed 's/^name = "\(.*\)"/\1/')
+    if [ "$file_name" != "$toml_name" ]; then
+      echo "Name mismatch in $toml_file: file=$file_name, toml=$toml_name"
+      return 1
+    fi
+  done
+}
+
+@test "all TOML agents have model field" {
+  for toml_file in .codex/agents/*.toml; do
+    if ! grep -q "^model = " "$toml_file"; then
+      echo "Missing model field in $toml_file"
+      return 1
+    fi
+  done
+}
+
+# ==============================================================================
+# INTEGRATION TESTS (Optional - require external tools)
+# ==============================================================================
+
+@test "Zensical can build documentation" {
+  if command -v zensical &> /dev/null; then
+    run zensical build --clean
+    # Should build successfully
+    [ "$status" -eq 0 ]
+  else
+    skip "Zensical not installed"
+  fi
 }

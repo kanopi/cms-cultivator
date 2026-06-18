@@ -4,6 +4,8 @@
 **Purpose:** Verify agents can access their assigned skills
 **Expected Behavior:** Skills load only when agent uses them, not globally
 
+> **History:** Skip Test 3.2.5 (`workflow-specialist → commit-message-generator`) and the workflow-specialist rows in the matrix. The `workflow-specialist` agent was removed in v1.1.0; `commit-message-generator` is now invoked directly by the main session.
+
 ---
 
 ## Test 3.1: Skill Loading Behavior

@@ -1,6 +1,6 @@
 ---
 name: gtm-specialist
-description: Use this agent to audit Google Tag Manager implementations for performance impact. Analyzes container configuration, measures tag execution timing, identifies blocking tags, audits custom HTML safety, evaluates trigger efficiency, and maps tag impact to Core Web Vitals. Requires Chrome DevTools MCP.
+description: Use this agent to audit Google Tag Manager implementations for performance impact. Analyzes container configuration, measures tag execution timing, identifies blocking tags, audits custom HTML safety, evaluates trigger efficiency, and maps tag impact to Core Web Vitals. Requires Chrome DevTools MCP. Invoke when user mentions "GTM", "Google Tag Manager", "tag performance", "analytics tags", "tag firing", "blocking tags", or asks why tags are slow, how to optimize a GTM container, or whether tags are impacting Core Web Vitals.
 tools: Read, Write
 skills: gtm-performance-audit
 model: sonnet

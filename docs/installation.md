@@ -1,6 +1,6 @@
 # Installation
 
-CMS Cultivator can be installed globally for all projects or per-project for team collaboration.
+CMS Cultivator can be installed in Claude Code, Claude Desktop, or OpenAI Codex — globally for all projects or per-project for team collaboration.
 
 ---
 
@@ -8,14 +8,14 @@ CMS Cultivator can be installed globally for all projects or per-project for tea
 
 Before installing CMS Cultivator, ensure you have:
 
-- **Claude Code CLI** installed and configured
+- **Claude Code CLI** or **OpenAI Codex** installed and configured
 - **Git** for version control
 - **GitHub CLI** (`gh`) for PR creation commands (optional)
 - **DDEV** (for Kanopi projects) - [Install DDEV](https://ddev.readthedocs.io/en/stable/)
 
 ---
 
-## Installation Methods
+## Claude Code Installation
 
 !!! info "Global vs Project Installation"
     - **Methods 1-3** (Marketplace, Direct, Manual) install plugins **globally** - available in all your projects
@@ -178,31 +178,241 @@ Team members can override project settings in `.claude/settings.local.json` (not
 
 ---
 
-## Verifying Installation
+## Claude Desktop
 
-### Test a Command
+Claude Desktop has **three** surfaces, each with its own upload path:
 
-Open Claude Code in any project and try a command:
+| Surface | Upload | Pre-built artifact |
+|---------|--------|---------------------|
+| **Claude Code** (embedded in Desktop) | Add plugin (one zip) | `cms-cultivator.zip` |
+| **Chat** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+| **CoWork** | Upload each skill individually | `<skill-name>.skill` files (one per skill) |
+
+The marketplace install (Method 1 above) only covers Claude Code in the standalone CLI. For Claude Code **inside Desktop**, plus Chat and CoWork, you upload zips through Claude Desktop's UI. Every CMS Cultivator GitHub release attaches pre-built artifacts for all three surfaces so you don't have to build them yourself.
+
+### Recommended: Download from a release
+
+1. Go to [the latest release](https://github.com/kanopi/cms-cultivator/releases/latest)
+2. Under **Assets**, download what you need:
+   - **`cms-cultivator.zip`** — full plugin zip for Claude Code inside Desktop. Upload via **Settings → Plugins → Add plugin**.
+   - **`cms-cultivator-skills.zip`** — bundle of every skill for Chat/CoWork. Unzip locally to get the individual `.skill` files, then upload each via **Settings → Skills → Upload Skill**.
+   - Individual **`<skill-name>.skill`** files — if you only want specific skills for Chat or CoWork.
+
+### Alternative: Build from source
+
+If you've cloned the repo, package locally:
 
 ```bash
-/quality-standards
+./scripts/package-plugin.sh   # → dist/cms-cultivator.zip
+./scripts/package-skills.sh   # → dist/skills/<name>.skill + dist/cms-cultivator-skills.zip
 ```
 
-All slash commands should now be available!
+**`package-plugin.sh` options:**
 
-### List Available Commands
+```bash
+./scripts/package-plugin.sh         # archive HEAD
+./scripts/package-plugin.sh v1.2.1  # archive a specific tag/ref/SHA
+```
 
-In Claude Code, type `/` to see all available commands. CMS Cultivator commands are organized by category:
+**`package-skills.sh` options:**
 
-- **PR Workflow**: `/pr-create`, `/pr-review`, `/pr-commit-msg`, `/pr-release`
-- **Accessibility**: `/audit-a11y` (with flexible modes)
-- **Performance**: `/audit-perf` (with flexible modes)
-- **Security**: `/audit-security` (with flexible modes)
-- **Live Site Auditing**: `/audit-live-site` (orchestrator)
-- **Design Workflow**: `/design-to-block`, `/design-to-paragraph`, `/design-validate`
-- **Testing**: `/test-generate`, `/test-coverage`, `/test-plan`
-- **Code Quality**: `/quality-analyze`, `/quality-standards`
-- **Documentation**: `/docs-generate`
+```bash
+./scripts/package-skills.sh                  # all skills + bundle
+./scripts/package-skills.sh frd-generator    # one skill only
+./scripts/package-skills.sh --list           # print the skill names
+./scripts/package-skills.sh --no-bundle      # skip the all-in-one zip
+```
+
+### Why the manual step exists
+
+The uploads themselves aren't automatable — Anthropic doesn't expose a Desktop plugin/skill API or a marketplace for Chat/CoWork skills today. The scripts and release artifacts only handle the packaging side. Once Anthropic ships either a Desktop API or marketplace integration for those surfaces, this section will get shorter.
+
+---
+
+## OpenAI Codex Installation
+
+CMS Cultivator includes a `.codex-plugin/plugin.json` manifest and Codex-compatible TOML agent files. Install it via the Codex plugin system.
+
+### Codex Method 1: Via Marketplace (Recommended)
+
+Add the Kanopi marketplace and install from the Codex plugin browser.
+
+#### Step 1: Add the Kanopi Marketplace
+
+```bash
+codex plugin marketplace add kanopi/claude-toolbox
+```
+
+#### Step 2: Open the Plugin Browser
+
+```bash
+codex/plugins
+```
+
+Browse to CMS Cultivator, open its details, and select **Install plugin**.
+
+#### Step 3: Start a New Thread
+
+After installation, start a new Codex thread. Skills activate automatically from context, or invoke explicitly with `@skill-name` (e.g. `@pr-create`).
+
+#### Updating Via Marketplace
+
+```bash
+codex plugin marketplace upgrade
+```
+
+---
+
+### Codex Method 2: Personal Installation (Manual)
+
+Install directly to your personal Codex plugins directory. **Installs globally for all your projects.**
+
+#### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/kanopi/cms-cultivator ~/.codex/plugins/cms-cultivator
+```
+
+#### Step 2: Create a Personal Marketplace File
+
+Create or update `~/.agents/plugins/marketplace.json`:
+
+```json
+{
+  "name": "kanopi-plugins",
+  "interface": {
+    "displayName": "Kanopi Plugins"
+  },
+  "plugins": [
+    {
+      "name": "cms-cultivator",
+      "source": {
+        "source": "local",
+        "path": "./cms-cultivator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}
+```
+
+#### Step 3: Restart Codex and Install
+
+Restart Codex, then open `codex/plugins`, find CMS Cultivator under the Kanopi Plugins marketplace, and install it.
+
+#### Updating Manual Installation
+
+```bash
+cd ~/.codex/plugins/cms-cultivator
+git pull origin main
+```
+
+Then restart Codex to pick up the changes.
+
+---
+
+### Codex Method 3: Repo-Scoped Installation
+
+Share the plugin with your team by configuring it in your project repository. **Installs per-project - only available in this specific project.**
+
+#### Step 1: Add the Plugin to Your Repo
+
+```bash
+git clone https://github.com/kanopi/cms-cultivator plugins/cms-cultivator
+```
+
+Or add it as a git submodule:
+
+```bash
+git submodule add https://github.com/kanopi/cms-cultivator plugins/cms-cultivator
+```
+
+#### Step 2: Create a Repo Marketplace File
+
+Create `$REPO_ROOT/.agents/plugins/marketplace.json`:
+
+```json
+{
+  "name": "project-plugins",
+  "plugins": [
+    {
+      "name": "cms-cultivator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cms-cultivator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}
+```
+
+#### Step 3: Commit to Repository
+
+```bash
+git add .agents/plugins/marketplace.json plugins/cms-cultivator
+git commit -m "Add CMS Cultivator plugin for Codex"
+git push
+```
+
+#### Team Member Setup
+
+When team members open the project in Codex, they run `codex/plugins`, find CMS Cultivator under the project marketplace, and install it.
+
+---
+
+### Disabling the Codex Plugin
+
+To keep the plugin installed but turn it off, edit `~/.codex/config.toml`:
+
+```toml
+[plugins."cms-cultivator@kanopi-plugins"]
+enabled = false
+```
+
+Then restart Codex.
+
+---
+
+## Verifying Installation
+
+### Test a Skill
+
+**Claude Code** — open in any project and try a skill by name or natural language:
+
+```bash
+/code-standards-checker
+```
+
+**Codex** — start a new thread and invoke explicitly or by natural language:
+
+```
+@code-standards-checker
+```
+
+Or just say: "Does this follow Drupal coding standards?" — skills activate automatically in conversation on both platforms.
+
+### List Available Skills
+
+In Claude Code, type `/` to see all available skills. In Codex, type `@` to see installed plugin skills. CMS Cultivator skills are organized by category:
+
+- **PR Workflow**: `/pr-create`, `/pr-review`, `/commit-message-generator`, `/pr-release`
+- **Accessibility**: `/accessibility-audit` (with flexible modes)
+- **Performance**: `/performance-audit` (with flexible modes)
+- **Security**: `/security-audit` (with flexible modes)
+- **Live Site Auditing**: `/live-site-audit` (parallel multi-specialist audit)
+- **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`
+- **Testing**: auto-invoked (say "I need tests for this class")
+- **Code Quality**: `/quality-audit`, `/code-standards-checker`
+- **Documentation**: auto-invoked (say "document this function")
 
 ---
 
@@ -240,7 +450,7 @@ To use `/pr-create` and other PR commands:
 
 ### Lighthouse (for Performance Analysis)
 
-For `/audit-perf lighthouse`:
+For `/performance-audit lighthouse`:
 
 ```bash
 npm install -g lighthouse
@@ -364,19 +574,25 @@ chmod -R 755 ~/.claude/plugins/cms-cultivator
 cat ~/.claude/plugins/cms-cultivator/.claude-plugin/plugin.json
 
 # Verify directory structure
-ls ~/.claude/plugins/cms-cultivator/commands/
+ls ~/.claude/plugins/cms-cultivator/skills/
 
 # Check plugin integrity
 cd ~/.claude/plugins/cms-cultivator
 git status
 ```
 
-### Project Settings Not Working
+### Project Settings Not Working (Claude Code)
 
 1. **Verify trust**: Ensure the project folder is trusted in Claude Code
 2. **Check JSON syntax**: Validate `.claude/settings.json` with a JSON linter
 3. **Restart Claude Code**: Close and reopen Claude Code after changing settings
 4. **Check marketplace availability**: Ensure `extraKnownMarketplaces` is configured correctly
+
+### Codex Plugin Not Appearing
+
+1. **Verify marketplace file**: Check that `marketplace.json` is valid JSON and `source.path` is correct
+2. **Restart Codex**: Codex reads marketplace files on startup
+3. **Check config**: Verify `~/.codex/config.toml` doesn't have the plugin set to `enabled = false`
 
 ---
 
@@ -390,10 +606,33 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 
 ---
 
+## Migrating from Pre-v1.0 Names
+
+Before v1.0, CMS Cultivator used a `commands/` directory with slash-command names. v1.0 moved entirely to skills and renamed everything. If you have muscle memory or stale docs referencing old names, here are the most common changes:
+
+- `/audit-a11y` → `/accessibility-audit`
+- `/audit-perf` → `/performance-audit`
+- `/audit-security` → `/security-audit`
+- `/quality-analyze` → `/quality-audit`
+- `/pr-commit-msg` → `/commit-message-generator`
+- `/docs-generate` → `/documentation-generator`
+- `/test-generate` → `/test-scaffolding`
+- `/test-plan` → `/test-plan-generator`
+- `/audit-live-site` → `/live-site-audit`
+- `/design-to-block` → `/design-to-wp-block`
+- `/design-to-paragraph` → `/design-to-drupal-paragraph`
+
+No aliases are registered for the old names — invoking a pre-v1.0 name produces no result. You can also just describe what you want in natural language; the right skill will activate automatically.
+
+For the complete mapping and the rationale behind the renaming, see the **[Skill Naming Convention](reference/skill-naming-convention.md)** reference page.
+
+---
+
 ## Next Steps
 
 - **[Quick Start Guide](quick-start.md)** - Learn common workflows
-- **[Commands Overview](commands/overview.md)** - Explore all 14 commands
+- **[Skills Overview](commands/overview.md)** - Explore all available skills
+- **[Skill Naming Convention](reference/skill-naming-convention.md)** - Why skills are named the way they are
 - **[Kanopi Tools](kanopi-tools/overview.md)** - Integrate with DDEV add-ons
 - **[Contributing](contributing.md)** - Contribute to the project
 

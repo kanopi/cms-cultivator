@@ -7,6 +7,182 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `skills/wp-plugin-to-private-package/` — new skill that converts a committed (or hand-installed) WordPress premium plugin into a Kanopi private Composer package and rewires the consuming site to install it via Composer. Implements Kanopi's WordPress Core and Plugins Installation Policy (§3 paid plugins, §4 Kanopi Private Packagist): Phase 0 discovery (rules out WPackagist/vendor endpoints and existing packages), Phase 1 private repo creation (composer.json, topics, team write access, version release tag), Phase 2 consuming-repo rewire (require + Satis repository entry, `.gitignore` exception removal, `git rm --cached`, docs), and Phase 3 Satis indexing + `composer update` + commit. `disable-model-invocation: true` with an `agents/openai.yaml` Codex policy (explicit confirmation required). Skill count 46 → 47; `tests/test-plugin.bats` and `skills/README.md` updated accordingly.
+
+## [1.3.0] - 2026-05-22
+
+### Added
+- `scripts/package-plugin.sh` — packages the full plugin as `dist/cms-cultivator.zip`, ready to upload via Claude Desktop's "Add plugin" UI (covers the Claude Code surface inside Desktop). Uses `git archive` with a pathspec so only runtime-relevant paths are included (`.claude-plugin/`, `.codex-plugin/`, `.codex/`, `agents/`, `skills/`, plus AGENTS.md / CHANGELOG.md / CLAUDE.md / LICENSE.md / README.md). Excludes internal tooling (`.beads/`, `scripts/`, `tests/`), docs site source, and CI config. Supports archiving a specific tag/ref/SHA.
+- `scripts/package-skills.sh` — packages each skill in `skills/` as a `.skill` zip in `dist/skills/`, plus a bundled `dist/cms-cultivator-skills.zip` containing all of them. Each `.skill` is ready to drag-and-drop into Claude Desktop's Skills UI (Chat and CoWork surfaces). Supports filtering by skill name, `--list`, and `--no-bundle`.
+- `.github/workflows/release-artifacts.yml` — attaches the full plugin zip, every `.skill` file, and the all-skills bundle to every GitHub release automatically. Triggers on `release: published` for new tags, and supports `workflow_dispatch` to retroactively attach artifacts to an existing release.
+- `docs/installation.md` "Claude Desktop" section explaining the three Desktop surfaces (Claude Code, Chat, CoWork), which artifact to use for each, and how to build them from source.
+- BATS tests for both packaging scripts (existence, executable, `--list` count matches actual skill count) and the release workflow file.
+
+### Changed
+- `skills/pr-review/SKILL.md` — added delegated mode for automated routines. When invoked from a subagent context (prompt names a specific PR and says "delegated" or "automated routine"), the skill runs non-interactively: skips posting to GitHub, skips user dialogue, and appends a machine-parseable `FINAL_RECOMMENDATION:` sentinel so the parent routine can act on the verdict. Review output title updated to `# 🤖 AI Code Review — PR #<number>`.
+
+### Fixed
+- `.github/workflows/release-artifacts.yml` — checkout default branch so the release workflow can find scripts when triggered via `workflow_dispatch`.
+
+### Notes
+The uploads themselves remain manual steps in Claude Desktop's UI — Anthropic doesn't expose a Desktop plugin/skill API or marketplace integration for Chat/CoWork surfaces today. This release automates everything we control on the plugin side (packaging + distribution).
+
+## [1.2.1] - 2026-05-14
+
+### Fixed
+- `.claude-plugin/plugin.json` description trimmed from 577 to 456 characters. Claude Desktop's plugin validator enforces a 500-character limit on the `description` field; uploads were rejected with `Plugin description must be at most 500 characters`. The trimmed version keeps all the key categories but drops the MCP-server enumeration into a shorter trailing sentence.
+
+## [1.2.0] - 2026-05-14
+
+### Documentation
+- Comprehensive docs audit and refresh. Replaced pre-v1.0 slash-command names (`audit-a11y`, `pr-commit-msg`, `quality-analyze`, `docs-generate`, `test-generate`, `test-coverage`, `test-plan`, `audit-live-site`, `audit-gtm`, `audit-structured-data`, `design-validate`, `design-to-block`, `design-to-paragraph`, etc.) with current skill names throughout `docs/`, `README.md`, `CLAUDE.md`, and `skills/README.md`.
+- Removed hardcoded skill and agent counts across all docs and plugin manifests — counts drift fast, so the docs now refer to "Agent Skills" and "specialist agents" without numbers.
+- Rewrote `docs/commands/overview.md` as a clean category index with all current skill names and categories (added Project Planning, PM Workflows, Strategy, Drupal.org Contribution, WordPress Meta).
+- Added `docs/reference/skill-naming-convention.md` documenting the naming convention and providing a complete pre-v1.0 → current mapping.
+- Added `docs/commands/audit-export.md` covering the cross-cutting `audit-export` and `audit-report` skills.
+- Added `docs/commands/drupal-contribution-skills.md` as a category page for the six Drupal.org contribution skills.
+- Added `docs/commands/wordpress-meta.md` for the `wp-add-skills` extension installer.
+- Added a "Migrating from Pre-v1.0 Names" section to `docs/installation.md`.
+- Updated `zensical.toml` nav with the new pages.
+- Refreshed `CLAUDE.md` and `docs/testing.md` "Last updated" dates; removed example references to removed agents (`live-audit-specialist`).
+- Renamed "Related Command" inline notes and "Related Commands" section headers to "Explicit invocation" / "Related Skills" — skills aren't commands.
+- Added a BATS test (`tests/test-plugin.bats`) that verifies every kebab-case identifier referenced in `docs/commands/*.md` matches an actual `skills/<name>/` directory, preventing future drift.
+
+### Removed
+- `agents/teamwork-specialist/AGENT.md` — the orchestrator agent that wrapped the three Teamwork skills. The main session now invokes `teamwork-task-creator`, `teamwork-integrator`, and `teamwork-exporter` directly. The Teamwork MCP server is available to the main session in Claude Code, Claude Desktop, and Codex — no agent in between.
+- `agents/teamwork-specialist/templates/` (4 files: `cms-notes.md`, `error-recovery.md`, `task-templates-overview.md`, `workflow-examples.md`)
+- `.codex/agents/teamwork-specialist.toml` — corresponding Codex agent translation.
+
+### Changed
+- `skills/teamwork-task-creator/SKILL.md`: removed the "escalate to teamwork-specialist" branches. Replaced the Integration with Teamwork Specialist section with a Companion Skills section that points to `teamwork-integrator`, `teamwork-exporter`, `csv-exporter`, and direct Teamwork MCP calls for complex multi-task scenarios.
+- `skills/teamwork-integrator/SKILL.md`: removed the escalation/spawn-agent pattern. Replaced with a "Companion Skills and Direct MCP Calls" section clarifying the read-only scope of this skill and pointing to the right alternative for updates, batch operations, and complex queries.
+- `skills/teamwork-exporter/SKILL.md`: removed the "escalate to teamwork-specialist" branch for manual updates; points to direct `mcp__teamwork__twprojects-update_task` calls from the main session instead.
+- `skills/csv-exporter/SKILL.md`: same — update path corrected to the Teamwork MCP directly.
+- `skills/README.md`: dropped "Related Agent: teamwork-specialist" from all three Teamwork skill entries.
+- `docs/agents-and-skills.md`: removed the teamwork-specialist row from the agent-to-skill mapping; added a note that Teamwork skills run directly from the main session alongside the PR skills.
+- `docs/commands/project-management.md`: reframed from agent-centric to skill-centric; added an `!!! info` admonition explaining the Teamwork MCP dependency.
+- `CLAUDE.md`: agent count 15 → 14.
+- Plugin manifests: `46 skills + 15 agents` → `46 skills + 14 agents`; description updated.
+- `tests/test-plugin.bats`: agent count 15 → 14; removed `teamwork-specialist` from `expected_agents`; added a deprecation test that the agent and its TOML don't exist, plus an assertion that Teamwork skills don't call `Task(cms-cultivator:teamwork-specialist:...)`.
+
+### Rationale
+Continues the pattern set in v1.0.2 (live-audit-specialist removed) and v1.1.0 (workflow-specialist removed): orchestrator agents that exist primarily to wrap a few skills add a `Task()` hop without value. The Teamwork MCP server is available to the main session in Claude Code, Claude Desktop, and Codex; the skills can call `mcp__teamwork__twprojects-*` tools directly. Removing the agent eliminates a Claude-Code-only execution path and makes behaviour identical across surfaces. The three skills retain all their domain knowledge — templates, priority mapping, CMS-specific framing, audit-finding-to-task translation patterns — they just no longer need an agent layer above them.
+
+## [1.1.0] - 2026-05-14
+
+### Added
+
+**Project planning skills (ported from kanopi/cms-planner):**
+
+- `frd-generator` skill: generate comprehensive Functional Requirements Documents with 10-section structure, requirement numbering (FR-XXX, TR-XXX, US-XXX, UI-XXX, DR-XXX, NFR-XXX, TS-XXX, RISK-XXX), and platform-specific subsections for Drupal recipes and WordPress block themes
+- `story-point-estimator` skill: Fibonacci-based story point estimation (1, 2, 3, 5, 8, 13, 21, 34+) with hour conversions, platform-specific adjustments, and velocity calculations
+- `csv-exporter` skill: convert FRD requirements into Teamwork-ready CSV backlog with three-level task hierarchy, story-point-to-hours conversion, and consistent tagging
+- `docs/commands/planning.md`: new documentation page covering the project planning workflow
+
+**PM workflow skills (authored by Andrew Nichols):**
+
+- `client-request-triage` skill: PM triage of a client Teamwork task — fetches the task, detects the platform, researches 1–3 solution options, and drafts a warm client-facing reply; pauses for PM confirmation before drafting. Flags bug reports for re-routing. (Teamwork MCP + web search)
+- `pm-meeting-prep` skill: prepare a PM for an upcoming client check-in by aggregating context from Teamwork (tasks + messages), Slack, Gmail, and Fathom into a structured briefing with talking points, blockers, and suggested next steps. Optionally generates a meeting agenda. (Teamwork + Slack + Gmail + Fathom MCPs)
+- `project-heartbeat` skill: draft a client-facing project status update message ready to post as a Teamwork reply. Finds the existing heartbeat message thread, reads the most recent reply to set the reporting window, then pulls completed tasks, project messages, Fathom summaries, and Slack channel activity. Written in a warm, progress-forward voice with budget/timeline placeholders for manual entry. (Teamwork + Slack + Fathom MCPs)
+- `qa-review` skill: full QA validation of a multidev environment from a Teamwork task. Reads the task and all comments, extracts the multidev URL, detects the platform, builds a validation plan (base checklist + dynamic steps), executes via CoWork browser automation, and produces a report with pass/fail per step, screenshots, internal notes, and a client-facing summary. (Teamwork MCP + CoWork)
+- `docs/commands/pm-workflows.md`: new documentation page covering all four PM skills with MCP setup notes
+
+**Strategy skill (discovery-phase, strategist-facing):**
+
+- `strategist-site-audit` skill: given a site URL and optional qualitative research data, navigates the site via CoWork, audits against all 21 UX Laws (Jakob's Law, Fitts's Law, Hick's Law, Miller's Law, Peak-End Rule, Von Restorff Effect, Aesthetic-Usability Effect, Doherty Threshold, Laws of Proximity / Similarity / Common Region / Uniform Connectedness / Prägnanz, Serial Position Effect, Zeigarnik Effect, Tesler's Law, Postel's Law, Goal-Gradient Effect, Occam's Razor, Pareto Principle, Parkinson's Law — all core principles from [lawsofux.com](https://lawsofux.com/)), reviews content hierarchy per page, synthesises optional qualitative data (A/B tests, surveys, heatmaps, analytics), runs Lighthouse, and produces two deliverables: a Project Knowledge Summary (Markdown) the strategist pastes into the client's Claude Desktop Project, and an iterable, print-safe HTML Artifact ready for client sharing. Audience: strategists, UX leads, PMs — not developers. (CoWork browser automation + optional web search)
+- `docs/commands/strategy.md`: new documentation page covering the strategist audit, deliverables, and tone conventions
+
+### Removed
+- `agents/workflow-specialist/AGENT.md` — the orchestrator agent that wrapped the PR skills. The main session now invokes `pr-create`, `pr-review`, `pr-release`, and `commit-message-generator` directly. No agent in between.
+- `.codex/agents/workflow-specialist.toml` — corresponding Codex agent translation.
+
+### Changed
+
+**PR workflows now run directly from the main session (no orchestrator agent):**
+
+- `skills/pr-create/SKILL.md` rewritten: removed the Tier 1/Tier 2 split that existed because the agent was Tier 2-only. The skill is now single-tier and runs the full PR creation workflow (analyze git changes, detect CMS context, inline quality checks, draft description, present for approval, run `gh pr create`) directly. Same approval header format (`=== PULL REQUEST READY FOR APPROVAL ===`) preserved.
+- `skills/pr-review/SKILL.md` rewritten: removed agent spawning. The skill performs all PR/self-review analysis inline (code, security, breaking changes, testing, size, performance) with the same CMS-specific checks.
+- `skills/pr-release/SKILL.md` rewritten: removed agent spawning. Inline changelog generation, deployment checklist creation, and PR description updates. Same approval header (`=== RELEASE ARTIFACTS READY FOR APPROVAL ===`) preserved.
+- `skills/commit-message-generator/SKILL.md`: removed the "when used via workflow-specialist agent" branch; clarified that the skill is invoked directly.
+- `skills/strategic-thinking/SKILL.md`: updated integration notes to point to skills (live-site-audit, pr-review) instead of removed agents.
+
+**Documentation and tests:**
+
+- Plugin description and counts updated to `46 skills + 15 agents` across `plugin.json`, `.codex-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `skills/README.md`, `docs/index.md`, `zensical.toml`.
+- Codex plugin version bumped to track the main plugin manifest.
+- `tests/test-plugin.bats`: skill count 38 → 46, agent count 17 → 15 (correcting both the `live-audit-specialist` removal from v1.0.2 that was missed in tests, and the new `workflow-specialist` removal). Replaced "workflow-specialist has X skill" tests with assertions that the agent is gone and PR skills no longer spawn it via `Task(...)`. Added existence tests for the new planning, PM, and strategy skills, plus a test that `strategist-site-audit` covers all 21 UX Laws.
+- `tests/test-agents/*.md`: added v1.1.0 deprecation notes pointing to the new skill-level workflow.
+- `README.md`, `CLAUDE.md`, `docs/agents-and-skills.md`: removed workflow-specialist from agent lists, tables, and orchestration diagrams; documented the direct-invocation pattern.
+- `frd-generator` SKILL.md: removed reference to `frd-specialist` agent (not migrated); added Companion Skills section linking to `story-point-estimator` and `csv-exporter`; expanded WordPress block theme subsection (was placeholder for v0.3.0).
+- `zensical.toml` nav: added Planning, PM Workflows, and Strategy pages to the Skills section.
+
+### Migration Notes
+- The companion repository `kanopi/cms-planner` is now deprecated. Its three skills are available natively in CMS Cultivator with the same names and YAML frontmatter; no slash command exists (the v1.0 refactor removed `commands/` — invoke `frd-generator` conversationally instead).
+- The `frd-specialist` agent from cms-planner was intentionally not migrated; the three skills handle FRD generation directly without an orchestrating agent.
+- All four PM skills depend on MCP servers. Without the relevant MCPs configured, the skills cannot fetch tasks, messages, recordings, or browser sessions. See `docs/commands/pm-workflows.md` for setup details.
+- `project-heartbeat` is written in Andrew Nichols's personal voice; other PMs are encouraged to adjust signature and tone after the draft is generated.
+- `qa-review` requires CoWork browser automation to execute validation steps; without it the skill produces only the plan, not the report.
+- `strategist-site-audit` is strategist-facing (discovery-phase) and intentionally separate from the developer-facing `accessibility-audit`, `performance-audit`, `security-audit`, and `live-site-audit` skills. It requires CoWork for screenshots and Lighthouse; without CoWork, falls back to a manual mode where the strategist supplies screenshots and runs Lighthouse via PageSpeed Insights themselves.
+
+### Rationale for workflow-specialist Removal
+The workflow-specialist was the last remaining orchestrator that existed primarily to wrap a handful of skills. The PR skills already contained the full workflow; the agent added an extra `Task()` hop without meaningful value and produced inconsistent output framing across Tier 1 (portable) and Tier 2 (Claude Code enhanced) invocations. Removing it makes invocation identical across Claude Code, Claude Desktop, and Codex, and matches the pattern established in v1.0.2 when `live-audit-specialist` was removed in favor of skill-level spawning.
+
+## [1.0.2] - 2026-04-29
+
+### Changed
+- `live-site-audit` skill: spawns 4 leaf specialists in parallel directly from
+  the main session, replacing delegation through `live-audit-specialist`
+- `design-specialist` agent: scoped to code generation only; removed Task-based
+  subagent spawning
+- `design-to-wp-block`, `design-to-drupal-paragraph` skills: orchestration
+  rewritten as 3-step sequential Agent calls (design-specialist →
+  responsive-styling → browser-validator)
+- `workflow-specialist` agent: replaces Task delegation with inline quality
+  checks using Read/Grep/Bash tools
+- `testing-specialist` agent: replaces Task delegation with inline security and
+  accessibility test scenario generation
+- `tests/02-orchestrators.md`, `tests/04-orchestration.md`: rewritten to verify
+  inline checks and skill-level spawning
+- README, `docs/agents-and-skills.md`, `docs/quick-start.md`,
+  `docs/installation.md`: updated to reflect new orchestration model
+
+### Removed
+- `agents/live-audit-specialist/AGENT.md`: agent deleted; orchestration
+  responsibility moved to the `live-site-audit` skill
+
+## [1.0.1] - 2026-04-28
+
+### Added
+- OpenAI Codex installation documentation: marketplace CLI, personal, and repo-scoped methods
+- Platform compatibility note in quick-start guide (`@skill-name` for Codex, `/skill-name` for Claude Code)
+- Codex section to `docs/reference/agent-skills-reference.md`
+
+### Fixed
+- `docs/agents-and-skills.md`: updated stale three-tier architecture description to two-tier (Specialist Agents + Agent Skills); removed slash commands as a separate tier
+- `docs/contributing.md`: replaced stale `commands/` workflow with skills-based workflow for adding new features; removed stale `commands/*.md` frontmatter field references
+- `docs/agents-and-skills.md`: Agent-to-Command Mapping table updated to Agent-to-Skill Mapping
+
+### Changed
+- `docs/index.md`, `README.md`: updated plugin description to reflect multi-platform support (Claude Code, Claude Desktop, OpenAI Codex)
+- `docs/installation.md`: restructured prerequisites and verification sections to cover both Claude Code and Codex
+
+## [1.0.0] - 2026-04-15
+
+### Added
+- 18 new skills: `accessibility-audit`, `performance-audit`, `security-audit`, `quality-audit`, `live-site-audit`, `pr-review`, `audit-export`, `audit-report`, `design-to-wp-block`, `design-to-drupal-paragraph`, `pr-create`, `pr-release`, `devops-setup`, `drupal-contribute`, `drupal-issue`, `drupal-mr`, `drupal-cleanup`, `wp-add-skills`
+- OpenAI Codex compatibility layer: `.codex-plugin/plugin.json` manifest and `skills/*/agents/openai.yaml` invocation policies for 14 skills that require explicit user confirmation
+- `.codex/agents/` directory with 17 `.toml` agent translation files for Codex compatibility
+- Two-tier environment detection pattern in all new skills (Tier 1: portable, Tier 2: Claude Code enhanced)
+
+### Changed
+- Removed `commands/` directory entirely — skills are now the universal invocation format across Claude Code, Claude Desktop, and OpenAI Codex
+- All 17 AGENT.md files updated with expanded `skills` arrays and improved trigger descriptions
+- `drupalorg-issue-specialist` model changed from `sonnet` to `haiku` for cost optimization
+- `.claude-plugin/plugin.json` version bumped to `1.0.0`
+- `validate-frontmatter.sh` updated: removed commands validation, added `openai.yaml` policy validation
+- BATS tests rewritten: 75 tests covering new skill/Codex structure (was 54 tests)
+
 ## [0.9.1] - 2026-04-13
 
 ### Added

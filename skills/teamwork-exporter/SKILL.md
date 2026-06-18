@@ -18,9 +18,9 @@ This skill activates when:
 - Technical debt needs to be prioritized and scheduled
 
 **Do NOT activate for:**
-- Single task creation (use teamwork-task-creator instead)
-- Quick status checks (use teamwork-integrator instead)
-- Manual task updates (escalate to teamwork-specialist)
+- Single task creation (use `teamwork-task-creator` instead)
+- Quick status checks (use `teamwork-integrator` instead)
+- Manual task updates (the main session has Teamwork MCP — call `mcp__teamwork__twprojects-update_task` directly)
 
 ## Core Responsibilities
 

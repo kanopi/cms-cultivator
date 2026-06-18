@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Drupal Cleanup"
+  short_description: "List and clean up cloned drupal.org repositories in ~/.cache/drupal-contrib/ with safety checks before deletion."

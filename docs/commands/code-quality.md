@@ -1,13 +1,13 @@
-# Code Quality Commands
+# Code Quality Skills
 
 Maintain standards and reduce technical debt with flexible argument modes for different use cases.
 
-## Commands
+## Skills
 
-- `/quality-analyze [options]` - Comprehensive code quality analysis and technical debt assessment
-- `/quality-standards [standard]` - Check coding standards compliance (PHPCS, ESLint)
+- `quality-audit [options]` — Comprehensive code quality analysis and technical debt assessment
+- `code-standards-checker [standard]` — Check coding standards compliance (PHPCS, ESLint)
 
-## quality-analyze Command
+## quality-audit Skill
 
 ### Flexible Argument Modes
 
@@ -15,9 +15,9 @@ CMS Cultivator now supports multiple operation modes for quality analysis:
 
 #### Quick Checks During Development
 ```bash
-/quality-analyze --quick --scope=current-pr
-/quality-analyze --quick --max-complexity=10
-/quality-analyze --quick --min-grade=B
+/quality-audit --quick --scope=current-pr
+/quality-audit --quick --max-complexity=10
+/quality-audit --quick --min-grade=B
 ```
 - ⚡ Fast execution (~5 min)
 - 🎯 Complexity + critical code smells only
@@ -26,9 +26,9 @@ CMS Cultivator now supports multiple operation modes for quality analysis:
 
 #### Standard Analysis (Default)
 ```bash
-/quality-analyze
-/quality-analyze --scope=current-pr
-/quality-analyze --standard --scope=module=src/services
+/quality-audit
+/quality-audit --scope=current-pr
+/quality-audit --standard --scope=module=src/services
 ```
 - 🔍 Comprehensive analysis (~15 min)
 - ✅ Full complexity, standards, debt, maintainability
@@ -36,9 +36,9 @@ CMS Cultivator now supports multiple operation modes for quality analysis:
 
 #### Comprehensive Analysis (Pre-Release)
 ```bash
-/quality-analyze --comprehensive
-/quality-analyze --comprehensive --format=refactoring-plan
-/quality-analyze --comprehensive --scope=recent-changes
+/quality-audit --comprehensive
+/quality-audit --comprehensive --format=refactoring-plan
+/quality-audit --comprehensive --scope=recent-changes
 ```
 - 🔬 Deep analysis (~30 min)
 - 💎 Design patterns + SOLID principles review
@@ -84,7 +84,7 @@ Export results as JSON for quality gates:
 ```yaml
 # GitHub Actions example
 - name: Run quality analysis
-  run: /quality-analyze --standard --format=json > quality.json
+  run: /quality-audit --standard --format=json > quality.json
 
 - name: Check complexity threshold
   run: |
@@ -107,37 +107,37 @@ Export results as JSON for quality gates:
 
 **Pre-Commit:**
 ```bash
-/quality-analyze --quick --scope=current-pr --max-complexity=10
+/quality-audit --quick --scope=current-pr --max-complexity=10
 ```
 
 **PR Review:**
 ```bash
-/quality-analyze --standard --scope=current-pr
+/quality-audit --standard --scope=current-pr
 ```
 
 **Pre-Release:**
 ```bash
-/quality-analyze --comprehensive --format=refactoring-plan
+/quality-audit --comprehensive --format=refactoring-plan
 ```
 
 **Specific Module:**
 ```bash
-/quality-analyze --standard --scope=module=src/services
+/quality-audit --standard --scope=module=src/services
 ```
 
 **Recent Changes:**
 ```bash
-/quality-analyze --standard --scope=recent-changes
+/quality-audit --standard --scope=recent-changes
 ```
 
-## quality-standards Command
+## code-standards-checker Skill
 
 Check coding standards compliance with PHPCS/ESLint for Drupal and WordPress projects.
 
 ```bash
-/quality-standards          # Auto-detect standards
-/quality-standards drupal   # Drupal coding standards
-/quality-standards wordpress # WordPress coding standards
+/code-standards-checker          # Auto-detect standards
+/code-standards-checker drupal   # Drupal coding standards
+/code-standards-checker wordpress # WordPress coding standards
 ```
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

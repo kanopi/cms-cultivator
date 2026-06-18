@@ -30,10 +30,10 @@ Tests all 5 leaf specialist agents (agents that work independently):
 ---
 
 ### 02-orchestrators.md
-Tests all 3 orchestrator agents (agents that delegate to others):
-- workflow-specialist (conditional delegation)
+Tests orchestrator agents (agents that delegate to others):
 - testing-specialist (conditional delegation)
-- live-audit-specialist (always delegates)
+
+> **Note:** `workflow-specialist` was removed in v1.1.0; PR skills run directly from the main session. `live-audit-specialist` was removed in v1.0.2; the `live-site-audit` skill spawns leaf specialists in parallel from the main session. See the skill-level orchestration tests in `04-orchestration.md`.
 
 **Focus:** Delegation logic, parallel execution, synthesis
 
@@ -52,9 +52,8 @@ Tests agent-skill integration:
 
 ### 04-orchestration.md
 Tests delegation patterns:
-- Conditional delegation (workflow, testing)
-- Always-delegate pattern (live-audit)
-- Parallel execution verification
+- Conditional delegation (testing-specialist)
+- Skill-level parallel spawning (`live-site-audit` skill)
 - Delegation failure handling
 
 **Focus:** Task tool usage, orchestration logic
@@ -104,7 +103,7 @@ Tests agent output quality:
 ```
 2026-01-02T10:30:00 accessibility-specialist spawn PASS Agent spawned successfully
 2026-01-02T10:30:15 accessibility-specialist skill-access PASS Accessed accessibility-checker
-2026-01-02T10:31:00 workflow-specialist orchestration PASS Delegated to testing-specialist
+2026-01-02T10:31:00 live-site-audit-skill orchestration PASS Spawned 4 leaf specialists in parallel
 2026-01-02T10:31:30 live-audit-specialist parallel PASS All 4 agents spawned in parallel
 ```
 
@@ -255,8 +254,8 @@ grep "^skills:" agents/accessibility-specialist/AGENT.md
 
 **Debug:**
 ```bash
-# Verify Task tool
-grep "^tools:" agents/workflow-specialist/AGENT.md | grep Task
+# Verify Task tool on the remaining orchestrator
+grep "^tools:" agents/testing-specialist/AGENT.md | grep Task
 
 # Check target agents exist
 ls agents/accessibility-specialist agents/security-specialist agents/testing-specialist

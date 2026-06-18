@@ -1,10 +1,9 @@
 # Agents and Skills
 
-CMS Cultivator features a three-tier architecture:
+CMS Cultivator features a two-tier architecture:
 
-1. **Specialist Agents** - Orchestrate complex workflows (spawned by commands)
-2. **Slash Commands** - User-facing interfaces (you invoke explicitly)
-3. **Agent Skills** - Knowledge base (Claude invokes automatically during conversation)
+1. **Specialist Agents** - Orchestrate complex workflows (spawned by skills)
+2. **Agent Skills** - Knowledge base (auto-invoked by context, or explicitly invoked)
 
 ---
 
@@ -25,43 +24,48 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **gtm-specialist** - Google Tag Manager performance auditing (requires Chrome DevTools MCP)
 - **drupal-pantheon-devops-specialist** - Kanopi DevOps onboarding for Drupal/Pantheon projects
 
-**Orchestrators** (delegate to other agents):
+**Orchestrators** (coordinate complex workflows):
 
-- **workflow-specialist** - PR workflows (delegates to testing, security, accessibility)
-- **live-audit-specialist** - Comprehensive site audits (delegates to performance, accessibility, security, code-quality)
-- **testing-specialist** - Test generation and coverage (delegates to security, accessibility)
+- **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
+- **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
+
+PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
 
 ### How Agents Work
 
 ```
-/pr-create PROJ-123
+"I need to commit my changes"
     ↓
-Spawns workflow-specialist
+Main session runs commit-message-generator skill directly
+    ↓
+    ├─→ Analyzes staged changes (git status, git diff)
+    ├─→ Generates conventional commit message
+    ↓
+Presents for user approval → runs git commit
+
+"create a PR"
+    ↓
+Main session runs pr-create skill directly
     ↓
     ├─→ Analyzes git changes
-    ├─→ Generates commit message (uses commit-message-generator skill)
-    ├─→ Spawns testing-specialist (if tests changed)
-    │   └─→ May spawn security-specialist (for security tests)
-    ├─→ Spawns security-specialist (if security-critical code)
-    ├─→ Spawns accessibility-specialist (if UI changes)
+    ├─→ Reviews test coverage inline (Read/Glob)
+    ├─→ Checks security concerns inline (Grep patterns)
+    ├─→ Checks accessibility concerns inline (Grep on UI files)
+    ├─→ Detects Drupal/WordPress deployment requirements
     ↓
-Compiles all findings into PR description
-    ↓
-Creates PR via GitHub CLI
+Presents full PR description for user approval → runs gh pr create
 ```
 
 ### Agent Orchestration Patterns
 
-#### Parallel Execution
+#### Skill-Level Parallel Spawning
 
-The **live-audit-specialist** spawns all 4 leaf specialists simultaneously:
+The **live-site-audit skill** spawns all 4 leaf specialists simultaneously from the main session:
 
 ```
-/audit-live-site https://example.com
+/live-site-audit https://example.com
     ↓
-Spawns live-audit-specialist
-    ↓
-Spawns ALL in parallel:
+Main session spawns ALL in parallel:
     ├─→ performance-specialist (Core Web Vitals)
     ├─→ accessibility-specialist (WCAG compliance)
     ├─→ security-specialist (vulnerability scan)
@@ -69,44 +73,59 @@ Spawns ALL in parallel:
     ↓
 Waits for all results
     ↓
-Synthesizes unified report:
+Main session synthesizes unified report:
     - Executive summary
     - Critical issues
     - Prioritized remediation roadmap
 ```
 
-#### Conditional Delegation
+#### Inline Quality Checks (Skill-Level)
 
-The **workflow-specialist** intelligently delegates based on code changes:
+The **`pr-create`** and **`pr-review`** skills perform quality checks inline directly from the main session — no agent in between:
 
 ```
 PR with UI changes:
-  → Spawns accessibility-specialist
+  → Reviews accessibility concerns inline using Read/Grep
 
 PR with authentication code:
-  → Spawns security-specialist
+  → Reviews security concerns inline using Read/Grep
 
 PR with new features:
-  → Spawns testing-specialist
-      → May spawn security-specialist (if security tests needed)
-      → May spawn accessibility-specialist (if UI tests needed)
+  → Reviews test coverage inline using Read/Glob
 ```
 
-### Agent-to-Command Mapping
+#### Sequential Skill-Level Spawning
 
-| Agent | Used By Commands | Can Delegate To |
-|-------|------------------|-----------------|
-| workflow-specialist | `/pr-commit-msg`, `/pr-create`, `/pr-review`, `/pr-release` | testing, security, accessibility |
-| accessibility-specialist | `/audit-a11y` | (none - leaf) |
-| performance-specialist | `/audit-perf` | (none - leaf) |
-| gtm-specialist | `/audit-gtm` | (none - leaf) |
-| security-specialist | `/audit-security` | (none - leaf) |
-| testing-specialist | `/test-generate`, `/test-plan`, `/test-coverage` | security, accessibility |
-| documentation-specialist | `/docs-generate` | (none - leaf) |
-| live-audit-specialist | `/audit-live-site` | performance, accessibility, security, code-quality |
-| code-quality-specialist | `/quality-analyze`, `/quality-standards` | (none - leaf) |
-| structured-data-specialist | `/audit-structured-data` | (none - leaf) |
-| drupal-pantheon-devops-specialist | `/devops-setup` | (none - leaf) |
+The **design-to-wp-block** and **design-to-drupal-paragraph** skills orchestrate sequential agent calls:
+
+```
+/design-to-wp-block [figma-url]
+    ↓
+Spawns design-specialist (code generation)
+    ↓
+Spawns responsive-styling-specialist (SCSS from design-specialist output)
+    ↓
+Spawns browser-validator-specialist (validation from test URL)
+```
+
+### Agent-to-Skill Mapping (Spawned By)
+
+| Agent | Spawned By Skills | Notes |
+|-------|-------------------|-------|
+| accessibility-specialist | `accessibility-audit`, `live-site-audit` | Leaf |
+| performance-specialist | `performance-audit`, `live-site-audit` | Leaf |
+| gtm-specialist | `gtm-performance-audit` | Leaf |
+| security-specialist | `security-audit`, `live-site-audit` | Leaf |
+| testing-specialist | `test-scaffolding`, `test-plan-generator`, `coverage-analyzer` | Inline security/a11y test scenarios |
+| documentation-specialist | `documentation-generator` | Leaf |
+| code-quality-specialist | `quality-audit`, `code-standards-checker`, `live-site-audit` | Leaf |
+| structured-data-specialist | `structured-data-analyzer` | Leaf |
+| drupal-pantheon-devops-specialist | `devops-setup` | Leaf |
+| design-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Code generation only |
+| responsive-styling-specialist | `design-to-wp-block`, `design-to-drupal-paragraph` | Leaf |
+| browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `browser-validator` | Leaf |
+
+PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — no agent is spawned.
 
 ### Agent-to-Skill Mapping
 
@@ -114,7 +133,6 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 
 | Agent | Uses Skills |
 |-------|-------------|
-| workflow-specialist | commit-message-generator |
 | accessibility-specialist | accessibility-checker |
 | performance-specialist | performance-analyzer |
 | gtm-specialist | gtm-performance-audit |
@@ -124,10 +142,9 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | code-quality-specialist | code-standards-checker |
 | structured-data-specialist | structured-data-analyzer |
 | drupal-pantheon-devops-specialist | (none) |
-| live-audit-specialist | (none - pure orchestrator) |
-| teamwork-specialist | teamwork-task-creator, teamwork-integrator, teamwork-exporter |
-| live-audit-specialist | strategic-thinking |
 | design-specialist | design-analyzer, responsive-styling, strategic-thinking |
+
+Teamwork skills (`teamwork-task-creator`, `teamwork-integrator`, `teamwork-exporter`) and PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — they use the relevant MCP server (Teamwork MCP, GitHub CLI) without an orchestrator agent.
 
 ### Why Agents?
 
@@ -149,14 +166,15 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 
 Agent Skills are **model-invoked** capabilities—Claude decides when to use them based on your conversation context, without you needing to remember specific command names.
 
-### Three-Tier System Explained
+### Two-Tier System Explained
 
-| Feature | Slash Commands | Specialist Agents | Agent Skills |
-|---------|----------------|-------------------|--------------|
-| **Invocation** | User types `/command` | Commands spawn agents | Claude activates automatically |
-| **Use Case** | User-facing interface | Multi-step orchestration | Conversational assistance |
-| **Execution** | Spawns an agent | Coordinates workflow | Provides knowledge |
-| **Example** | `/pr-create PROJ-123` | workflow-specialist orchestrates PR creation | "I need to commit my changes" |
+| Feature | Specialist Agents | Agent Skills |
+|---------|-------------------|--------------|
+| **Invocation** | Spawned by skills | Claude activates automatically, or user invokes explicitly |
+| **Use Case** | Multi-step orchestration | Conversational assistance |
+| **Execution** | Coordinates workflow with tools | Provides knowledge and guidance |
+| **Example** | live-site-audit skill spawns 4 specialists in parallel | "I need to commit my changes" → commit-message-generator activates |
+| **Explicit invoke** | — | `/pr-create PROJ-123` (Claude Code) or `@pr-create` (Codex) |
 
 ### Available Skills
 
@@ -187,7 +205,7 @@ fix(auth): resolve session timeout on remember-me login
 Would you like me to commit with this message?
 ```
 
-**Related Command:** `/pr-commit-msg` - For explicit commit message generation
+**Explicit invocation:** `/commit-message-generator` - For explicit commit message generation
 
 ---
 
@@ -217,7 +235,7 @@ Claude: "Let me check against WordPress Coding Standards...
 Overall good! Just add a docblock above the function."
 ```
 
-**Related Command:** `/quality-standards` - For comprehensive project-wide standards checks
+**Explicit invocation:** `/code-standards-checker` - For comprehensive project-wide standards checks
 
 ---
 
@@ -249,7 +267,7 @@ I'll create tests for:
 [Generates test file with complete structure]"
 ```
 
-**Related Command:** `/test-generate` - For batch test generation across modules
+**Explicit invocation:** `/test-scaffolding` - For batch test generation across modules
 
 ---
 
@@ -280,7 +298,7 @@ Claude: "I'll generate API documentation for your endpoint.
 - Usage example]"
 ```
 
-**Related Command:** `/docs-generate` - For comprehensive documentation projects
+**Explicit invocation:** `/documentation-generator` - For comprehensive documentation projects
 
 ---
 
@@ -313,7 +331,7 @@ Test Scenarios:
 [Generates complete test plan with steps and expected results]"
 ```
 
-**Related Command:** `/test-plan` - For comprehensive QA documentation
+**Explicit invocation:** `/test-plan-generator` - For comprehensive QA documentation
 
 ---
 
@@ -346,7 +364,7 @@ button:focus { outline: 2px solid #0066cc; }
 color: #333; /* Improves contrast to 4.8:1 */"
 ```
 
-**Related Command:** `/audit-a11y` - For comprehensive site-wide accessibility audits
+**Explicit invocation:** `/accessibility-audit` - For comprehensive site-wide accessibility audits
 
 ---
 
@@ -378,7 +396,7 @@ Fix: Use eager loading
 Impact: 101 queries → 2 queries (98% reduction)"
 ```
 
-**Related Command:** `/audit-perf` - For comprehensive performance audits with Core Web Vitals
+**Explicit invocation:** `/performance-audit` - For comprehensive performance audits with Core Web Vitals
 
 ---
 
@@ -412,7 +430,7 @@ $query = db_select('users')->condition('id', $id, '=');
 This prevents SQL injection attacks."
 ```
 
-**Related Command:** `/audit-security` - For comprehensive OWASP Top 10 security audits
+**Explicit invocation:** `/security-audit` - For comprehensive OWASP Top 10 security audits
 
 ---
 
@@ -449,7 +467,7 @@ Overall: 72%
 Recommendation: Add tests for payment/auth first."
 ```
 
-**Related Command:** `/test-coverage` - For comprehensive coverage analysis with trends
+**Explicit invocation:** `/coverage-analyzer` - For comprehensive coverage analysis with trends
 
 ---
 
@@ -489,7 +507,7 @@ Here's JSON-LD for your template:
 Use @id: '/blog/slug/#article' for entity linking."
 ```
 
-**Related Command:** `/audit-structured-data` - For comprehensive site-wide structured data audits with scoring
+**Explicit invocation:** `/structured-data-analyzer` - For comprehensive site-wide structured data audits with scoring
 ### 10. teamwork-task-creator
 
 **Automatically triggers when you:**
@@ -518,7 +536,7 @@ I need a few more details:
 Once you provide these, I'll create a complete bug report."
 ```
 
-**Related Command:** `/teamwork create` - For explicit Teamwork task creation
+**Explicit invocation:** `/teamwork-task-creator` in Claude Code, `@teamwork-task-creator` in Codex.
 
 ---
 
@@ -554,7 +572,7 @@ Claude: "Let me check that for you...
 Jane updated this 2 hours ago: 'Google OAuth working on staging'"
 ```
 
-**Related Command:** `/teamwork status` - For explicit status checks
+**Explicit invocation:** `/teamwork-integrator` in Claude Code, `@teamwork-integrator` in Codex.
 
 ---
 
@@ -596,7 +614,7 @@ Creating tasks now...
 - SEC-105-108: CSRF (P2)"
 ```
 
-**Related Command:** `/teamwork export` - For explicit audit export
+**Explicit invocation:** `/teamwork-exporter` in Claude Code, `@teamwork-exporter` in Codex.
 
 ---
 
@@ -643,7 +661,7 @@ Defer until editorial workflow requirements are defined.
 Confidence: High | Next step: Document editorial requirements first
 ```
 
-**Related Command:** None — this skill activates conversationally for any significant decision
+**Explicit invocation:** None — this skill activates conversationally for any significant decision
 
 ---
 
@@ -663,23 +681,27 @@ Simply talk to Claude naturally—the skills activate automatically:
 
 No need to remember command names or syntax!
 
-### When to Use Slash Commands Instead
+### When to Invoke Skills Explicitly
 
-Use explicit slash commands when you want:
+Use explicit skill invocation when you want:
 
 **Full comprehensive analysis:**
-- `/audit-a11y` - Complete WCAG audit (not just one element)
-- `/audit-perf` - Full performance analysis with Lighthouse
-- `/audit-security` - Complete OWASP Top 10 scan
+- `accessibility-audit` / `@accessibility-audit` - Complete WCAG audit (not just one element)
+- `performance-audit` / `@performance-audit` - Full performance analysis with Lighthouse
+- `security-audit` / `@security-audit` - Complete OWASP Top 10 scan
 
 **Structured workflows:**
-- `/pr-create` - Create PR with full description
-- `/pr-review 123` - Review specific PR
-- `/pr-release` - Generate changelog and deployment notes
+- `pr-create` / `@pr-create` - Create PR with full description
+- `pr-review 123` / `@pr-review 123` - Review specific PR
+- `pr-release` / `@pr-release` - Generate changelog and deployment notes
 
 **Batch operations:**
-- `/test-generate` - Generate tests for entire module
-- `/docs-generate api` - Generate all API documentation
+- `test-scaffolding` / `@test-scaffolding` - Generate tests for entire module
+- `documentation-generator api` / `@documentation-generator api` - Generate all API documentation
+
+!!! tip "Syntax by platform"
+    Claude Code: prefix with `/` (e.g. `/pr-create PROJ-123`)
+    OpenAI Codex: prefix with `@` (e.g. `@pr-create PROJ-123`)
 
 ## Skill Activation Tips
 
@@ -721,23 +743,32 @@ Don't try to "game" the system—just describe what you need:
 
 ## Skills Reference Table
 
-| Skill | Triggers On | Best For | Related Command |
-|-------|-------------|----------|-----------------|
-| commit-message-generator | "commit", "staged" | Quick commits | `/pr-commit-msg` |
-| code-standards-checker | "standards", "style" | Code review | `/quality-standards` |
-| test-scaffolding | "need tests", "how to test" | Single class tests | `/test-generate` |
-| documentation-generator | "document", "API docs" | Quick docblocks | `/docs-generate` |
-| test-plan-generator | "test plan", "QA" | Test scenarios | `/test-plan` |
-| accessibility-checker | "accessible?", "WCAG" | Element checks | `/audit-a11y` |
-| performance-analyzer | "slow", "optimize" | Query optimization | `/audit-perf` |
-| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `/audit-gtm` |
-| security-scanner | "secure?", "exploit" | Code security | `/audit-security` |
-| coverage-analyzer | "coverage", "untested" | Test gaps | `/test-coverage` |
-| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `/audit-structured-data` |
-| teamwork-task-creator | "create task", "make ticket" | Single task creation | `/teamwork create` |
-| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `/teamwork status` |
-| teamwork-exporter | "export to Teamwork" | Audit export | `/teamwork export` |
-| strategic-thinking | "should we do this?", "help me decide" | Decision making | None |
+| Skill | Triggers On | Best For | Explicit Invocation |
+|-------|-------------|----------|---------------------|
+| commit-message-generator | "commit", "staged" | Quick commits | `commit-message-generator` |
+| code-standards-checker | "standards", "style" | Code review | `code-standards-checker` |
+| test-scaffolding | "need tests", "how to test" | Single class tests | `test-scaffolding` |
+| documentation-generator | "document", "API docs" | Quick docblocks | `documentation-generator` |
+| test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan-generator` |
+| accessibility-checker | "accessible?", "WCAG" | Element checks | `accessibility-audit` |
+| performance-analyzer | "slow", "optimize" | Query optimization | `performance-audit` |
+| gtm-performance-audit | "GTM", "tag manager", "marketing tags" | GTM tag analysis | `gtm-performance-audit` |
+| security-scanner | "secure?", "exploit" | Code security | `security-audit` |
+| coverage-analyzer | "coverage", "untested" | Test gaps | `coverage-analyzer` |
+| structured-data-analyzer | "JSON-LD", "Schema.org", "structured data" | Schema.org checks | `structured-data-analyzer` |
+| teamwork-task-creator | "create task", "make ticket" | Single task creation | `teamwork create` |
+| teamwork-integrator | "PROJ-123", "status of" | Quick lookups | `teamwork status` |
+| teamwork-exporter | "export to Teamwork" | Audit export | `teamwork export` |
+| strategic-thinking | "should we do this?", "help me decide" | Decision making | — |
+| frd-generator | "FRD", "functional requirements document", "structure requirements" | Project planning | — |
+| story-point-estimator | "story points", "estimate this", "how long will this take?" | Sprint estimation | — |
+| csv-exporter | "export to CSV", "Teamwork backlog", "import to Teamwork" | Backlog generation | — |
+| client-request-triage | "triage this", "help me respond to this client", Teamwork link | Client request research + reply drafting (Teamwork MCP, web search) | — |
+| pm-meeting-prep | "prep me for my meeting", "check-in tomorrow" | Cross-source client meeting prep (Teamwork, Slack, Gmail, Fathom MCPs) | — |
+| project-heartbeat | "draft the heartbeat", "send a status update" | Client-facing status update messages (Teamwork, Slack, Fathom MCPs) | — |
+| qa-review | "QA this", "validate this multidev", "test the dev link" | Multidev validation report from a Teamwork task (Teamwork MCP, CoWork) | — |
+| strategist-site-audit | "audit this site for strategy", "strategist audit", "UX audit", "discovery audit" | Strategist-focused discovery audit: 21 UX Laws, content hierarchy, Lighthouse, qualitative data synthesis, Markdown summary + HTML Artifact (CoWork) | — |
+| wp-plugin-to-private-package | "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist" | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) | `wp-plugin-to-private-package` |
 
 ## Integration with Workflow
 
@@ -771,14 +802,15 @@ Agent Skills are project-level by default. To disable:
 ```
 
 **To prevent auto-activation:**
-Simply use explicit slash commands instead—Claude will respect your explicit command choice.
+Simply invoke the skill explicitly—Claude will respect your explicit choice.
 
 ## Learning More
 
 - **General Skills Documentation**: [Claude Code Skills](https://code.claude.com/docs/en/skills)
+- **Codex Plugin Documentation**: [OpenAI Codex Plugins](https://developers.openai.com/codex/plugins)
 - **Creating Custom Skills**: See [Contributing](contributing.md) guide
-- **Slash Commands Reference**: See [Commands Overview](commands/overview.md)
+- **Skills Reference**: See [Skills Overview](commands/overview.md)
 
 ---
 
-**Key Takeaway**: Agent Skills make CMS Cultivator proactive—Claude helps automatically when it sees you need assistance, while Slash Commands give you explicit control over comprehensive workflows.
+**Key Takeaway**: Agent Skills make CMS Cultivator proactive—Claude helps automatically when it sees you need assistance, while explicit invocation gives you direct control over comprehensive workflows.

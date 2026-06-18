@@ -684,10 +684,10 @@ Rate each agent output on these criteria (1-5 scale):
 | performance-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
 | security-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
 | testing-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
-| workflow-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
 | documentation-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
 | code-quality-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
-| live-audit-specialist | ☐ | ☐ | ☐ | ☐ | ☐ |
+
+> Removed in earlier versions: `live-audit-specialist` (v1.0.2 — replaced by skill-level spawning in `live-site-audit`), `workflow-specialist` (v1.1.0 — PR skills run directly from the main session).
 
 **Pass Criteria:** All checkboxes must be ✅
 

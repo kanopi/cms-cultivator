@@ -1,9 +1,9 @@
 ---
 name: code-quality-specialist
-description: Use this agent when you need to analyze code quality, coding standards compliance, or technical debt for Drupal or WordPress projects. This agent should be used proactively after writing significant code changes, especially before committing changes or creating pull requests. It will check PHPCS/ESLint compliance, cyclomatic complexity, design patterns, SOLID principles, and identify code smells.
+description: Use this agent when you need to analyze code quality, coding standards compliance, or technical debt for Drupal or WordPress projects. This agent should be used proactively after writing significant code changes, especially before committing changes or creating pull requests. It will check PHPCS/ESLint compliance, cyclomatic complexity, design patterns, SOLID principles, and identify code smells. Invoke when user mentions "code quality", "technical debt", "refactor", "PHPCS", "coding standards", "complexity", or asks "is this good code?", "does this meet standards?", or requests a code quality analysis.
 
 tools: Read, Glob, Grep, Bash, Write, Edit
-skills: code-standards-checker
+skills: code-standards-checker, quality-audit
 model: sonnet
 color: green
 ---

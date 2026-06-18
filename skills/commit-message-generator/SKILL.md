@@ -141,16 +141,11 @@ feat(auth): add two-factor authentication support
 
 ### 5. Present to User for Approval
 
-**When used via workflow-specialist agent:**
-The agent will use `AskUserQuestion` to present the commit message for review:
-- Show the generated message
-- Ask: "Would you like to proceed with this commit message, or would you like to edit it?"
-- Options: "Approve and commit" or "Edit message"
-- If user selects "Other", they can provide their edited version
+Show the generated commit message in a clear code block and ask:
 
-**When used conversationally:**
-Show the generated commit message and ask:
-"Here's a commit message based on your changes. Would you like me to commit with this message, or would you like to modify it?"
+> "Here's a commit message based on your staged changes. Would you like me to commit with this message, or would you like to modify it?"
+
+Wait for explicit user approval (e.g., "approve", "yes, commit", or an edited version) before running `git commit`. Never add `Co-Authored-By: Claude…` to commit messages.
 
 ### 6. Execute Commit (only after approval)
 
@@ -172,17 +167,9 @@ EOF
 
 ## Integration with CMS Cultivator
 
-This skill complements the `/pr-commit-msg` slash command:
+This skill is invoked directly by the main session when the user mentions committing — there is no orchestrator agent in between. The skill works the same way whether triggered conversationally ("I'm ready to commit") or explicitly ("generate a commit message").
 
-- **This Skill**: Automatically triggered during natural conversation
-  - "I'm ready to commit"
-  - "What should my commit message say?"
-
-- **`/pr-commit-msg` Command**: Explicitly invoked for staged changes
-  - User deliberately wants commit message generation
-  - Batch generation workflow
-
-Both use the same analysis approach but different invocation methods.
+The companion **`pr-create`** skill picks up where this one ends — once you've committed, ask to "create a PR" and `pr-create` will generate the PR description from your commits.
 
 ## Best Practices
 

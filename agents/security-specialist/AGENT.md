@@ -1,9 +1,9 @@
 ---
 name: security-specialist
-description: Use this agent when you need to check security vulnerabilities for Drupal or WordPress code. This agent should be used proactively after handling user input, database operations, authentication logic, or file operations, especially before committing changes or creating pull requests. It will scan for OWASP Top 10 vulnerabilities including SQL injection, XSS, CSRF, and authentication issues.
+description: Use this agent when you need to check security vulnerabilities for Drupal or WordPress code. This agent should be used proactively after handling user input, database operations, authentication logic, or file operations, especially before committing changes or creating pull requests. It will scan for OWASP Top 10 vulnerabilities including SQL injection, XSS, CSRF, and authentication issues. Invoke when user mentions "security", "vulnerability", "SQL injection", "XSS", "CSRF", "sanitization", "authentication", or asks "is this secure?", "are there security issues?", or requests a security audit.
 
 tools: Read, Glob, Grep, Bash, Write, Edit
-skills: security-scanner
+skills: security-scanner, security-audit
 model: sonnet
 color: green
 ---

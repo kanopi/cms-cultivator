@@ -2,13 +2,13 @@ name: Deploy Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ 1.x ]
     paths:
       - 'docs/**'
       - 'zensical.toml'
       - '.github/workflows/docs.yml'
   pull_request:
-    branches: [ main ]
+    branches: [ 1.x ]
     paths:
       - 'docs/**'
       - 'zensical.toml'
@@ -58,7 +58,7 @@ jobs:
 
   # Deploy job
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/1.x'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

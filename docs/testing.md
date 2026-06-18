@@ -109,14 +109,14 @@ The test suite includes **54 tests** across multiple categories:
 ### Command Naming Convention Tests
 
 - ✅ PR commands: `pr-*`
-- ✅ Accessibility: `audit-a11y`
-- ✅ Performance: `audit-perf`
-- ✅ Security: `audit-security`
+- ✅ Accessibility: `accessibility-audit`
+- ✅ Performance: `performance-audit`
+- ✅ Security: `security-audit`
 - ✅ Testing: `test-*`
 - ✅ Quality: `quality-*`
 - ✅ Documentation: `docs-*`
 - ✅ Design: `design-*`
-- ✅ Live auditing: `audit-live-site`
+- ✅ Live auditing: `live-site-audit`
 
 ### Command Content Tests (3 tests)
 
@@ -318,4 +318,4 @@ pip install zensical
 
 ---
 
-**Last updated:** 2025-10-13
+**Last updated:** 2026-05-14

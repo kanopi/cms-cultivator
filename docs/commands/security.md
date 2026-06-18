@@ -1,10 +1,10 @@
-# Security Commands
+# Security Skills
 
 Scan for OWASP Top 10 vulnerabilities, CVEs, and security misconfigurations with flexible argument modes.
 
-## Command
+## Skill
 
-`/audit-security [options]` - Comprehensive security audit with vulnerability scanning and compliance reporting
+`security-audit [options]` — Comprehensive security audit with vulnerability scanning and compliance reporting
 
 ## Flexible Argument Modes
 
@@ -12,9 +12,9 @@ CMS Cultivator now supports multiple operation modes for security audits:
 
 ### Quick Checks During Development
 ```bash
-/audit-security --quick --scope=current-pr
-/audit-security --quick --scope=user-input
-/audit-security --quick --min-severity=high
+/security-audit --quick --scope=current-pr
+/security-audit --quick --scope=user-input
+/security-audit --quick --min-severity=high
 ```
 - ⚡ Fast execution (~5 min)
 - 🎯 OWASP Top 3 only (SQL injection, XSS, auth)
@@ -23,9 +23,9 @@ CMS Cultivator now supports multiple operation modes for security audits:
 
 ### Standard Audits (Default)
 ```bash
-/audit-security
-/audit-security --scope=current-pr
-/audit-security --standard --scope=auth
+/security-audit
+/security-audit --scope=current-pr
+/security-audit --standard --scope=auth
 ```
 - 🔍 Comprehensive analysis (~15 min)
 - ✅ Full OWASP Top 10 + dependency CVEs
@@ -33,9 +33,9 @@ CMS Cultivator now supports multiple operation modes for security audits:
 
 ### Comprehensive Audits (Pre-Release)
 ```bash
-/audit-security --comprehensive
-/audit-security --comprehensive --format=summary
-/audit-security --comprehensive --format=sarif
+/security-audit --comprehensive
+/security-audit --comprehensive --format=summary
+/security-audit --comprehensive --format=sarif
 ```
 - 🔬 Deep analysis (~30 min)
 - 💎 OWASP Top 10 + CVE scanning + config review
@@ -85,7 +85,7 @@ Export results as SARIF or JSON for security tools:
 ```yaml
 # GitHub Actions example with SARIF
 - name: Run security audit
-  run: /audit-security --standard --format=sarif > results.sarif
+  run: /security-audit --standard --format=sarif > results.sarif
 
 - name: Upload to GitHub Security
   uses: github/codeql-action/upload-sarif@v2
@@ -94,7 +94,7 @@ Export results as SARIF or JSON for security tools:
 
 # Or use JSON for custom checks
 - name: Run security audit
-  run: /audit-security --standard --format=json > security.json
+  run: /security-audit --standard --format=json > security.json
 
 - name: Check for critical issues
   run: |
@@ -109,27 +109,27 @@ Export results as SARIF or JSON for security tools:
 
 **Pre-Commit:**
 ```bash
-/audit-security --quick --scope=current-pr --min-severity=high
+/security-audit --quick --scope=current-pr --min-severity=high
 ```
 
 **PR Review:**
 ```bash
-/audit-security --standard --scope=current-pr
+/security-audit --standard --scope=current-pr
 ```
 
 **Pre-Release:**
 ```bash
-/audit-security --comprehensive --format=summary
+/security-audit --comprehensive --format=summary
 ```
 
 **Focus on User Input:**
 ```bash
-/audit-security --standard --scope=user-input
+/security-audit --standard --scope=user-input
 ```
 
 **Focus on Authentication:**
 ```bash
-/audit-security --standard --scope=auth
+/security-audit --standard --scope=auth
 ```
 
 ## What It Checks
@@ -157,4 +157,4 @@ Export results as SARIF or JSON for security tools:
 - Remediation roadmap
 - Compliance status (OWASP, CWE)
 
-See [Commands Overview](overview.md) for detailed usage.
+See [Skills Overview](overview.md) for detailed usage.

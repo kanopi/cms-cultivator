@@ -1,10 +1,10 @@
-# GTM Performance Commands
+# GTM Performance Skills
 
 Audit Google Tag Manager implementations for performance impact with flexible argument modes.
 
-## Command
+## Skill
 
-`/audit-gtm [options]` - Comprehensive GTM performance audit analyzing container size, tag execution, trigger efficiency, and Core Web Vitals impact
+`gtm-performance-audit [options]` — Comprehensive GTM performance audit analyzing container size, tag execution, trigger efficiency, and Core Web Vitals impact
 
 ## Requirements
 
@@ -16,9 +16,9 @@ This command requires an active Chrome DevTools MCP connection to perform live p
 
 ### Quick Checks During Development
 ```bash
-/audit-gtm --quick --url=https://example.com
-/audit-gtm --quick --scope=current-pr
-/audit-gtm --quick --container-id=GTM-ABC123
+/gtm-performance-audit --quick --url=https://example.com
+/gtm-performance-audit --quick --scope=current-pr
+/gtm-performance-audit --quick --container-id=GTM-ABC123
 ```
 - Fast container health check (~5 min)
 - Tag count and container size
@@ -26,9 +26,9 @@ This command requires an active Chrome DevTools MCP connection to perform live p
 
 ### Standard Audits (Default)
 ```bash
-/audit-gtm --url=https://example.com
-/audit-gtm --url=https://example.com --with-container-json=./export.json
-/audit-gtm --standard --format=json --url=https://example.com
+/gtm-performance-audit --url=https://example.com
+/gtm-performance-audit --url=https://example.com --with-container-json=./export.json
+/gtm-performance-audit --standard --format=json --url=https://example.com
 ```
 - Full analysis (~15 min)
 - All 14 issue detection checks
@@ -37,9 +37,9 @@ This command requires an active Chrome DevTools MCP connection to perform live p
 
 ### Comprehensive Audits (Pre-Launch)
 ```bash
-/audit-gtm --comprehensive --url=https://example.com
-/audit-gtm --comprehensive --format=summary
-/audit-gtm --comprehensive --with-container-json=./container.json
+/gtm-performance-audit --comprehensive --url=https://example.com
+/gtm-performance-audit --comprehensive --format=summary
+/gtm-performance-audit --comprehensive --with-container-json=./container.json
 ```
 - Deep profiling (~30 min)
 - Custom HTML code review
@@ -118,7 +118,7 @@ Export results as JSON for automated pipelines:
 ```yaml
 # GitHub Actions example
 - name: Run GTM audit
-  run: /audit-gtm --standard --format=json --url=${{ env.SITE_URL }} > gtm-results.json
+  run: /gtm-performance-audit --standard --format=json --url=${{ env.SITE_URL }} > gtm-results.json
 
 - name: Check container size
   run: |
@@ -133,28 +133,28 @@ Export results as JSON for automated pipelines:
 
 **Pre-Commit (GTM config changes):**
 ```bash
-/audit-gtm --quick --scope=current-pr
+/gtm-performance-audit --quick --scope=current-pr
 ```
 
 **PR Review:**
 ```bash
-/audit-gtm --standard --url=https://staging.example.com
+/gtm-performance-audit --standard --url=https://staging.example.com
 ```
 
 **Pre-Launch:**
 ```bash
-/audit-gtm --comprehensive --url=https://example.com --with-container-json=./export.json
+/gtm-performance-audit --comprehensive --url=https://example.com --with-container-json=./export.json
 ```
 
 **Tag Cleanup Sprint:**
 ```bash
-/audit-gtm --comprehensive --format=summary
+/gtm-performance-audit --comprehensive --format=summary
 ```
 
-## Related Commands
+## Related Skills
 
 - **[Performance Audit](performance.md)** - General performance audit (Core Web Vitals, assets, queries)
 - **[Live Site Audit](live-site-auditing.md)** - Comprehensive audit (perf + a11y + security + quality)
 - **[Security Audit](security.md)** - Security audit (includes third-party script risks)
 
-See [Commands Overview](overview.md) for all available commands.
+See [Skills Overview](overview.md) for all available skills.

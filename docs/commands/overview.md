@@ -1,21 +1,29 @@
-# Commands Overview
+# Skills Overview
 
-CMS Cultivator provides specialized commands organized into categories. Each command integrates seamlessly with Drupal and WordPress projects.
+CMS Cultivator provides Agent Skills organized into categories. Each skill integrates with Drupal and WordPress projects and works across Claude Code, Claude Desktop, and OpenAI Codex.
+
+Skills activate in two ways:
+
+- **Automatically** — Claude recognizes context and invokes the right skill without you asking. Say "I need to commit my changes" and `commit-message-generator` activates.
+- **Explicitly** — Invoke any skill by name. In Claude Code: `/pr-create`. In Codex: `@pr-create`. In Claude Desktop: type the skill name and Claude will load it.
+
+!!! tip "Naming convention"
+    Skills are named after what they do, not after a verb-noun command pattern. The accessibility skill is `accessibility-audit`, not `accessibility-audit`. The commit message helper is `commit-message-generator`, not `commit-message-generator`. If you remember an old pre-v1.0 name, see the [Skill Naming Convention reference](../reference/skill-naming-convention.md) for the migration mapping.
 
 ---
 
-## Command Categories
+## Skill Categories
 
 ### 🔄 [PR Workflow](pr-workflow.md)
 
-Streamline pull request creation, review, and deployment.
+Streamline pull request creation, review, and deployment. PR skills run directly from the main session — no orchestrator agent.
 
-| Command | Description |
-|---------|-------------|
-| `/pr-create [ticket]` | Create pull request with generated description |
-| `/pr-review [pr-number\|self] [focus]` | Review PR or analyze your own changes (size, breaking changes, test plan) |
-| `/pr-commit-msg` | Generate conventional commit messages from staged changes |
-| `/pr-release [focus]` | Generate changelog, deployment checklist, and update PR |
+| Skill | Description |
+|-------|-------------|
+| `commit-message-generator` | Generate conventional commit messages from staged changes |
+| `pr-create` | Create a pull request with a generated description (presents for approval before running `gh pr create`) |
+| `pr-review` | Review a PR (`/pr-review 123`) or self-review your branch (`/pr-review self`) with focus areas: code, security, breaking, testing, size, performance |
+| `pr-release` | Generate changelog (Keep a Changelog format), deployment checklist, and PR description update |
 
 ---
 
@@ -23,16 +31,10 @@ Streamline pull request creation, review, and deployment.
 
 Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
-| Command | Description |
-|---------|-------------|
-| `/audit-a11y [focus]` | Comprehensive accessibility audit with WCAG 2.1 Level AA compliance |
-
-**Usage modes**:
-- `/audit-a11y` - Full audit with detailed findings
-- `/audit-a11y [focus]` - Focused checks (contrast, aria, headings, forms, alt-text, keyboard)
-- `/audit-a11y checklist` - Generate WCAG 2.1 AA compliance checklist
-- `/audit-a11y report` - Generate stakeholder-friendly compliance report
-- `/audit-a11y fix` - Generate specific code fixes for identified issues
+| Skill | Description |
+|-------|-------------|
+| `accessibility-checker` | Quick accessibility check on a specific element, component, or page |
+| `accessibility-audit` | Comprehensive WCAG 2.1 Level AA audit; spawns the accessibility specialist agent |
 
 ---
 
@@ -40,37 +42,45 @@ Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.
 
 Optimize site speed and improve Core Web Vitals.
 
-| Command | Description |
-|---------|-------------|
-| `/audit-perf [options]` | Comprehensive performance analysis and Core Web Vitals optimization |
-| `/audit-gtm [options]` | Google Tag Manager performance audit (container size, tag execution, CWV impact) |
-
-**Usage modes**:
-- `/audit-perf` - Full performance audit across all areas
-- `/audit-perf [focus]` - Focused analysis (queries, n+1, assets, bundles, caching)
-- `/audit-perf vitals` - Check all Core Web Vitals (LCP, INP/FID, CLS)
-- `/audit-perf [metric]` - Optimize specific vital (lcp, inp, fid, cls)
-- `/audit-perf lighthouse` - Generate Lighthouse performance report
-- `/audit-perf report` - Generate stakeholder-friendly performance report
-- `/audit-gtm` - Full GTM performance audit with tag profiling
-- `/audit-gtm [focus]` - Focused GTM analysis (container, tags, triggers, consent)
-
-**Requirements**: `/audit-gtm` requires Chrome DevTools MCP Server
+| Skill | Description |
+|-------|-------------|
+| `performance-analyzer` | Quick performance analysis on specific code, queries, or assets |
+| `performance-audit` | Comprehensive performance audit; spawns the performance specialist agent |
+| `gtm-performance-audit` | Google Tag Manager performance audit (container size, tag execution, Core Web Vitals impact) — requires Chrome DevTools MCP |
 
 ---
 
 ### 🔒 [Security](security.md)
 
-Scan for vulnerabilities, exposed secrets, and security misconfigurations.
+Scan for vulnerabilities, OWASP Top 10 issues, and security misconfigurations.
 
-| Command | Description |
-|---------|-------------|
-| `/audit-security [focus]` | Comprehensive security audit with vulnerability scanning and compliance reporting |
+| Skill | Description |
+|-------|-------------|
+| `security-scanner` | Quick security check on specific code or patterns |
+| `security-audit` | Comprehensive OWASP Top 10 audit; spawns the security specialist agent |
 
-**Usage modes**:
-- `/audit-security` - Complete security audit with detailed findings
-- `/audit-security [focus]` - Focused scans (deps, secrets, permissions)
-- `/audit-security report` - Generate stakeholder-friendly compliance report
+---
+
+### 📊 [Code Quality](code-quality.md)
+
+Maintain code quality, coding standards, and test coverage.
+
+| Skill | Description |
+|-------|-------------|
+| `code-standards-checker` | Check code against project standards (PHPCS, ESLint, Drupal/WordPress) |
+| `quality-audit` | Technical debt and code quality analysis; spawns the code quality specialist |
+| `coverage-analyzer` | Test coverage gap analysis |
+
+---
+
+### 🧪 [Testing](testing.md)
+
+Generate tests and QA test plans.
+
+| Skill | Description |
+|-------|-------------|
+| `test-scaffolding` | Generate test scaffolding (unit, integration, e2e) for a class or function |
+| `test-plan-generator` | Generate a comprehensive QA test plan from code changes |
 
 ---
 
@@ -78,113 +88,141 @@ Scan for vulnerabilities, exposed secrets, and security misconfigurations.
 
 Generate and maintain project documentation.
 
-| Command | Description |
-|---------|-------------|
-| `/docs-generate [type]` | Generate documentation (API, README, guides, changelog) |
-
-**Type options**: `api`, `readme`, `changelog`, `guide user`, `guide developer`, `guide deployment`, `guide admin`
+| Skill | Description |
+|-------|-------------|
+| `documentation-generator` | Generate documentation (API docs/PHPDoc/JSDoc, README, user guides, changelogs) |
 
 ---
 
-### 🧪 [Testing](testing.md)
+### 🎨 [Design Workflow](design-workflow.md)
 
-Generate tests and analyze test coverage.
+Convert Figma designs into WordPress blocks and Drupal paragraph types.
 
-| Command | Description |
-|---------|-------------|
-| `/test-generate [type]` | Generate test scaffolding (unit, integration, e2e, data) |
-| `/test-coverage` | Analyze test coverage and identify untested code paths |
-| `/test-plan` | Generate comprehensive QA test plan from code changes |
-
-**Type options**: `unit`, `integration`, `e2e`, `data`
-
----
-
-### 🔧 [DevOps Setup](devops.md)
-
-Automate Kanopi's Drupal/Pantheon DevOps onboarding for new projects.
-
-| Command | Description |
-|---------|-------------|
-| `/devops-setup [git-url]` | Full Kanopi DevOps onboarding (GitHub, Pantheon, CircleCI, code quality) |
-
-**What it automates**:
-- GitHub repo creation + branch protection + team access
-- Pantheon Redis + New Relic via Terminus
-- DDEV, CircleCI, Cypress, code quality tools, quicksilver scripts
-
-**Requirements**: GitHub CLI (`gh`), Terminus CLI
-
----
-
-### 📊 [Code Quality](code-quality.md)
-
-Maintain code quality and reduce technical debt.
-
-| Command | Description |
-|---------|-------------|
-| `/quality-analyze [focus]` | Analyze code quality (refactoring, complexity, technical debt) |
-| `/quality-standards` | Check code against standards (PHPCS, ESLint, Drupal/WordPress) |
-
-**Focus options**: `refactor`, `complexity`, `debt`
+| Skill | Description |
+|-------|-------------|
+| `design-analyzer` | Extract technical requirements from a Figma URL or screenshot |
+| `design-to-wp-block` | Create a WordPress block pattern from a design reference |
+| `design-to-drupal-paragraph` | Create a Drupal paragraph type from a design reference |
+| `responsive-styling` | Generate mobile-first responsive CSS/SCSS with WCAG AA contrast |
+| `browser-validator` | Validate implementation in Chrome at 320px/768px/1024px breakpoints |
 
 ---
 
 ### 🔍 [Live Site Auditing](live-site-auditing.md)
 
-Comprehensive audits of live websites using Chrome DevTools.
+Comprehensive site audits and reporting.
 
-| Command | Description |
-|---------|-------------|
-| `/audit-live-site [url]` | Full site audit for performance, accessibility, SEO, and security |
-| `/audit-structured-data <url> [options]` | Audit JSON-LD/Schema.org for SEO and AI discoverability |
-| `/export-audit-csv [report-file]` | Export audit report to CSV for project management tools (Teamwork, Jira, Monday, etc.) |
-
-**Requirements**: Chrome DevTools MCP Server
-
-**What it audits**:
-- Performance (Core Web Vitals: LCP, INP, CLS, FCP, TBT)
-- Accessibility (WCAG 2.2 AA compliance)
-- SEO (meta tags, structured data, sitemaps)
-- Security (HTTPS, headers, mixed content)
-- Structured data (JSON-LD, Schema.org, Rich Results eligibility)
-- Best practices (console errors, optimization)
-
-**Output**: Markdown report + CSV task list
+| Skill | Description |
+|-------|-------------|
+| `live-site-audit` | Multi-dimensional audit — spawns performance, accessibility, security, and code quality specialists in parallel |
+| `structured-data-analyzer` | Audit JSON-LD / Schema.org markup for SEO and AI discoverability |
+| `audit-export` | Convert audit findings (Markdown) into a Teamwork-compatible CSV |
+| `audit-report` | Generate a client-facing executive summary from an existing audit report |
 
 ---
 
-### 📋 [Project Management](project-management.md)
+### 📋 [Project Planning](planning.md)
 
-Integrate with Teamwork for task tracking and project coordination.
+Generate FRDs, estimate work, and produce importable backlogs.
 
-| Command | Description |
-|---------|-------------|
-| `/teamwork [operation] [args]` | Create, update, and manage Teamwork tasks with expert guidance |
+| Skill | Description |
+|-------|-------------|
+| `frd-generator` | Generate a Functional Requirements Document with 10-section structure and platform-specific subsections |
+| `story-point-estimator` | Fibonacci-based estimation with hour conversion and velocity calculations |
+| `csv-exporter` | Convert FRD requirements into a Teamwork-ready CSV backlog |
 
-**Operations**:
-- `/teamwork create [options]` - Create task with automatic template selection
-- `/teamwork update <ticket> [options]` - Update existing task
-- `/teamwork export <report> [options]` - Export audit findings as tasks
-- `/teamwork link <ticket> [options]` - Link git changes to ticket
-- `/teamwork status <ticket>` - Quick status check
+---
 
-**Use cases**:
-- Converting user stories to tracked tasks
-- Exporting audit findings for project planning
-- Linking PRs to Teamwork tickets
-- Checking task status without leaving CLI
+### 📂 [Project Management — Teamwork](project-management.md)
 
-**Task Templates**: Big Task/Epic, Little Task, QA Handoff, Bug Report
+Direct Teamwork integration. Skills call the Teamwork MCP from the main session.
 
-**Requirements**: Teamwork MCP Server
+| Skill | Description |
+|-------|-------------|
+| `teamwork-task-creator` | Create a Teamwork task with template selection (Big Task/Epic, Little Task, QA Handoff, Bug Report) |
+| `teamwork-integrator` | Look up Teamwork tasks (read-only) and surface project context |
+| `teamwork-exporter` | Batch-export audit findings as Teamwork tasks with priority mapping |
+
+**Requires:** Teamwork MCP server.
+
+---
+
+### 🗂 [PM Workflows](pm-workflows.md)
+
+Client communication, meeting prep, status updates, and full QA review.
+
+| Skill | Description |
+|-------|-------------|
+| `client-request-triage` | Triage a client Teamwork task — research options, draft a reply |
+| `pm-meeting-prep` | Aggregate context from Teamwork, Slack, Gmail, and Fathom into a meeting briefing |
+| `project-heartbeat` | Draft a client-facing project status update ready to post to Teamwork |
+| `qa-review` | Full QA validation of a multidev environment from a Teamwork task |
+
+**Requires:** Teamwork MCP plus Slack / Gmail / Fathom / CoWork depending on the skill.
+
+---
+
+### 🧭 [Strategy](strategy.md)
+
+Strategist-focused discovery audits. Distinct from developer audits — output is client-safe and presentation-ready.
+
+| Skill | Description |
+|-------|-------------|
+| `strategist-site-audit` | Audit a site against the 21 Laws of UX, review content hierarchy, run Lighthouse, produce a Markdown summary plus an iterable HTML Artifact |
+
+**Requires:** CoWork browser automation.
+
+---
+
+### 🌐 [Drupal.org Contribution](../drupal-contribution.md)
+
+Contribute back to drupal.org — issues, merge requests, and full workflows.
+
+| Skill | Description |
+|-------|-------------|
+| `drupal-contribute` | Full drupal.org contribution workflow: open an issue and set up a merge request |
+| `drupal-issue` | Create, update, or manage an issue on drupal.org (guided clipboard + browser) |
+| `drupal-mr` | Create and manage a merge request via `git.drupalcode.org` |
+| `drupal-cleanup` | List and clean up cloned drupal.org repositories in the local cache |
+| `drupalorg-issue-helper` | Quick help formatting drupal.org issue templates |
+| `drupalorg-contribution-helper` | Quick help with drupal.org git workflows |
+
+---
+
+### 🚀 [DevOps Setup](devops.md)
+
+Automate Kanopi's Drupal/Pantheon onboarding.
+
+| Skill | Description |
+|-------|-------------|
+| `devops-setup` | Full Kanopi DevOps onboarding (GitHub repo, Pantheon, CircleCI, code quality, quicksilver) |
+
+**Requires:** GitHub CLI (`gh`), Terminus CLI.
+
+---
+
+### 🧩 Setup & Configuration
+
+| Skill | Description |
+|-------|-------------|
+| `wp-add-skills` | Install official `WordPress/agent-skills` (block development, REST API, WP-CLI, performance) from the WordPress org's repository |
+| `wp-plugin-to-private-package` | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) |
+
+---
+
+### 🧠 Strategic Thinking (cross-cutting)
+
+| Skill | Description |
+|-------|-------------|
+| `strategic-thinking` | Guide significant decisions using Brené Brown's 5 Cs (Context, Color, Connective Tissue, Cost, Consequence). Activates conversationally — no dedicated category page. |
 
 ---
 
 ## Platform-Specific Features
 
 ### Drupal Support
-- Configuration change detection
+
+- Configuration change detection (`config/sync/`)
 - Custom module analysis
 - Hook implementation detection
 - Entity and field change tracking
@@ -194,12 +232,13 @@ Integrate with Teamwork for task tracking and project coordination.
 - Drush command generation
 
 ### WordPress Support
-- Theme and functions.php analysis
+
+- Theme and `functions.php` analysis
 - Gutenberg block accessibility and performance
 - ACF field group detection
 - Custom post type and taxonomy analysis
 - Shortcode implementation
-- WP_Query optimization
+- `WP_Query` optimization
 - Object cache analysis
 - WP-CLI command generation
 
@@ -207,37 +246,23 @@ Integrate with Teamwork for task tracking and project coordination.
 
 ## Integration with Kanopi Tools
 
-Commands automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/overview.md):
+Skills automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/overview.md):
 
-- **Quality Commands** use `ddev composer code-check`, `phpstan`, `rector-check`
-- **Performance Commands** suggest `ddev theme-build` and `ddev critical-run`
-- **Security Commands** use `ddev composer audit` and `npm audit`
-- **Testing Commands** leverage `ddev cypress-run` for E2E tests
-
----
-
-## ⚙️ Setup & Configuration
-
-Extend CMS Cultivator with additional skills.
-
-| Command | Description |
-|---------|-------------|
-| `/wp-add-skills [options]` | Install official WordPress agent-skills globally |
-
-**Options:**
-- `--list` - Show installed WordPress skills
-- `--update` - Update skills to latest version
-
-**What it installs:** 13 WordPress-specific skills for block development, REST API, WP-CLI, performance, and more.
-
-**Learn more:** [WordPress Skills Guide](../wordpress-skills.md)
+- **Quality skills** use `ddev composer code-check`, `phpstan`, `rector-check`
+- **Performance skills** suggest `ddev theme-build` and `ddev critical-run`
+- **Security skills** use `ddev composer audit` and `npm audit`
+- **Testing skills** leverage `ddev cypress-run` for E2E tests
 
 ---
 
 ## Next Steps
 
-- **[PR Workflow Commands](pr-workflow.md)** - Detailed PR workflow guide
-- **[Accessibility Commands](accessibility.md)** - WCAG compliance guide
-- **[Performance Commands](performance.md)** - Optimization strategies
-- **[DevOps Setup](devops.md)** - Drupal/Pantheon onboarding automation
-- **[Quick Start](../quick-start.md)** - Common workflow examples
+- **[PR Workflow Skills](pr-workflow.md)** — Detailed PR workflow guide
+- **[Accessibility Skills](accessibility.md)** — WCAG compliance guide
+- **[Performance Skills](performance.md)** — Optimization strategies
+- **[Strategy](strategy.md)** — Discovery-phase audits
+- **[Project Planning](planning.md)** — FRDs and backlogs
+- **[PM Workflows](pm-workflows.md)** — Client communication and QA review
+- **[DevOps Setup](devops.md)** — Drupal/Pantheon onboarding automation
+- **[Quick Start](../quick-start.md)** — Common workflow examples
+- **[Skill Naming Convention](../reference/skill-naming-convention.md)** — Why skills are named the way they are

@@ -21,9 +21,9 @@ This skill activates when users:
 
 **Do NOT activate for:**
 - Creating new tasks (use teamwork-task-creator instead)
-- Updating existing tasks (escalate to teamwork-specialist)
+- Updating existing tasks (use the Teamwork MCP directly from the main session, or invoke `teamwork-task-creator` for new tasks)
 - Exporting audit findings (use teamwork-exporter instead)
-- Complex multi-task operations (escalate to teamwork-specialist)
+- Complex multi-task operations (use the Teamwork MCP directly from the main session)
 
 ## Ticket Number Pattern Recognition
 
@@ -105,7 +105,7 @@ Check that the Teamwork MCP server is configured in your Claude Code settings.
 I need a bit more context. Are you asking about:
 - **Status check:** "What's the status of PROJ-123?"
 - **Task details:** "Show me PROJ-123"
-- **Update task:** "Update PROJ-123 status to in-progress" (requires teamwork-specialist)
+- **Update task:** "Update PROJ-123 status to in-progress" (the main session handles this directly via the Teamwork MCP)
 
 Which would you like?
 ```
@@ -164,34 +164,28 @@ When displaying task details, highlight platform-specific information (Drupal mu
 
 For complete CMS context examples, see **[CMS Context](templates/cms-context.md)**.
 
-## When to Escalate to Teamwork Specialist
+## Companion Skills and Direct MCP Calls
 
-Escalate to the full teamwork-specialist agent when:
+This skill is **read-only by design** — it looks up tasks and surfaces project context without modifying anything. For other Teamwork operations, the main session has direct access to the Teamwork MCP (`mcp__teamwork__*` tools); use it directly or hand off to a companion skill.
 
-1. **User wants to modify tasks**
-   - "Update PROJ-123 status"
-   - "Assign SITE-456 to John"
-   - "Add comment to BLOG-789"
+### Use `teamwork-task-creator` skill when:
 
-2. **Multiple operations needed**
-   - "Show me all tasks for this project and update their priorities"
-   - "List overdue tasks and create follow-ups"
+- The user wants to create a new task with template selection
+- A bug report, feature request, or QA handoff needs to be filed
+- Conversation context provides task requirements that should be tracked
 
-3. **Complex queries**
-   - "Show me all tasks assigned to me that are blocked"
-   - "Find all QA tasks for the last sprint"
+### Use `teamwork-exporter` skill when:
 
-4. **Task creation/export**
-   - "Create a new task for this bug"
-   - "Export these audit findings to Teamwork"
+- An audit (security, performance, accessibility, code quality) needs to be turned into a batch of Teamwork tasks
+- Multiple findings need template selection, priority mapping, and dependency linking applied consistently
 
-**Escalation message:**
-```markdown
-For [operation], I'll hand this over to the teamwork-specialist agent which has full
-read/write capabilities.
+### Call the Teamwork MCP directly from the main session when:
 
-[Spawn teamwork-specialist with context]
-```
+- **Updating tasks** — status changes, assignments, adding comments
+- **Multiple read+write operations** — "show me overdue tasks, then create follow-ups"
+- **Complex queries** — filtering across projects, assignees, tags
+
+The MCP tools (`mcp__teamwork__twprojects-*`) are available to the main session in Claude Code, Claude Desktop, and Codex. No agent spawning required.
 
 ## Best Practices
 

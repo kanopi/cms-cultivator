@@ -2,7 +2,7 @@
 
 > **The core shift:** Slash commands required explicit invocation by the user. Skills are loaded automatically — Claude scans available skills and pulls in the right one based on task context. No `/command` syntax needed.
 
-Agent Skills launched October 2025 and replaced custom slash commands as the primary extensibility model for Claude Code plugins.
+Agent Skills launched October 2025 and replaced custom slash commands as the primary extensibility model for Claude Code plugins and OpenAI Codex plugins.
 
 ---
 
@@ -33,7 +33,9 @@ Claude can already do each individual step; the skill sequences them according t
 
 ---
 
-## Installing skills in Claude Code
+## Installing skills
+
+### Claude Code
 
 Skills in Claude Code are installed in one of two ways:
 
@@ -41,6 +43,12 @@ Skills in Claude Code are installed in one of two ways:
 - Manually by placing skill folders in `~/.claude/skills`
 
 Claude loads them automatically when relevant. Skills can be shared across a team through version control — just commit the skill folder.
+
+### OpenAI Codex
+
+Skills in Codex are distributed as part of plugins. Install a plugin via the Codex plugin browser (`codex/plugins`) or CLI (`codex plugin marketplace add owner/repo`), and its bundled skills become available automatically. Codex loads skills from the `skills/` directory specified in `.codex-plugin/plugin.json`.
+
+Skills activate by natural language context, or invoke them explicitly with `@skill-name` in the prompt.
 
 ---
 
@@ -65,7 +73,7 @@ One important implication: skills distributed inside a plugin use the same descr
 
 ## Testing and maintaining skills with skill-creator
 
-Skill-creator (available as a Claude Code plugin) adds software-development rigor to skill authoring — no code required.
+Skill-creator (available as a Claude Code plugin and for OpenAI Codex) adds software-development rigor to skill authoring — no code required.
 
 ### Evals
 

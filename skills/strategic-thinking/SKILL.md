@@ -214,71 +214,17 @@ After gathering information through the 5 Cs, present a structured analysis:
 
 ## Integration with CMS Cultivator
 
-This skill is embedded in three specialist agents at their key decision points:
+This skill is referenced from several other skills and agents at their key decision points:
 
-- **live-audit-specialist** — Applies the 5 Cs when prioritizing remediation roadmaps and making launch recommendations. Consequence and Connective Tissue drive issue severity; Cost validates what's achievable in each sprint.
+- **live-site-audit** skill — Applies the 5 Cs when prioritizing remediation roadmaps and making launch recommendations. Consequence and Connective Tissue drive issue severity; Cost validates what's achievable in each sprint.
 
-- **workflow-specialist** — Applies Color and Consequence when deciding whether to block a PR or proceed conditionally. Color distinguishes exploratory PRs from production releases. Consequence surfaces what ships broken if the gate is bypassed.
+- **pr-review** skill — Applies Color and Consequence when deciding whether to recommend "approve" vs. "request changes". Color distinguishes exploratory PRs from production releases; Consequence surfaces what ships broken if the issues are ignored.
 
-- **design-specialist** — Applies Context and Cost when choosing between implementation approaches (e.g., MCP-based vs. YAML fallback, block pattern vs. paragraph type variant). Context surfaces project constraints; Cost surfaces the long-term maintenance reality.
+- **design-specialist** agent — Applies Context and Cost when choosing between implementation approaches (e.g., MCP-based vs. YAML fallback, block pattern vs. paragraph type variant). Context surfaces project constraints; Cost surfaces the long-term maintenance reality.
 
 ## Example Interactions
 
-**Example 1: Architecture decision**
-
-```
-User: "Should we go headless for this project?"
-
-[Skill activates]
-
-"Before we weigh in — let's think through this with the 5 Cs.
-
-Context first: Is there history here? Has the team explored headless before, or is there a reason the current architecture was chosen?"
-
-User: "We tried it 2 years ago and it was abandoned due to editorial complexity."
-
-"Good to know — that history matters a lot.
-
-Color: What does headless success look like for this project specifically? And is this a committed direction or still being explored?"
-
-[... continues through Cost, Connective Tissue, Consequence ...]
-
-## Strategic Analysis: Headless Architecture Decision
-
-### Context
-- Previous headless attempt abandoned due to editorial complexity — root cause not yet resolved
-- ...
-
-## Recommendation
-Defer the headless evaluation until the editorial workflow requirements are defined.
-**Confidence**: High
-**Key risk**: Repeating the previous failure without addressing the root cause
-**Next step**: Document editorial workflow requirements before revisiting the architecture decision
-```
-
-**Example 2: Quick prioritization**
-
-```
-User: "We have 3 critical issues from the audit — security vuln, accessibility failure, and a performance regression. Which do we fix first?"
-
-[Skill activates — recognizes prioritization decision]
-
-"Classic triage question. Let me ask about Consequence and Connective Tissue quickly.
-
-Consequence: Does the security vuln have an active threat or disclosure deadline? Is the a11y failure blocking any users from core functionality? Is the performance regression above an SLA threshold?"
-
-User: "Security is a known CVE, no deadline yet. A11y blocks screen reader users from checkout. Performance is bad but no SLA."
-
-"That's clear. Connective Tissue: does the performance fix involve any of the same code as the security patch?"
-
-User: "No, completely different."
-
-## Recommendation
-Fix order: (1) Accessibility — blocks real users from checkout right now. (2) Security — known CVE with escalating risk. (3) Performance — real but no immediate threshold breach.
-**Confidence**: High
-**Key risk**: Security CVE timeline could accelerate — revisit if a disclosure date emerges
-**Next step**: Open tickets for all three; start a11y fix today
-```
+For worked examples of the 5 Cs framework applied to architecture decisions, audit triage, and CMS selection, see [5cs-examples.md](5cs-examples.md).
 
 ## Best Practices
 

@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Audit Report"
+  short_description: "Generate client-facing executive summaries from CMS Cultivator audit report files."

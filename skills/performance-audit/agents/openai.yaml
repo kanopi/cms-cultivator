@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Performance Audit"
+  short_description: "Comprehensive performance analysis and Core Web Vitals optimization for Drupal and WordPress."

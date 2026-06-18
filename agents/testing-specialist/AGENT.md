@@ -99,11 +99,9 @@ Analyzes existing test coverage to identify untested code paths, edge cases, and
 2. Generate Standard Tests
    └─→ Use test-scaffolding skill
 
-3. Spawn Specialists in Parallel
-   ├─→ If auth/input handling → Task(cms-cultivator:security-specialist:security-specialist)
-   │   └─→ Request: Security test scenarios
-   └─→ If UI component → Task(cms-cultivator:accessibility-specialist:accessibility-specialist)
-       └─→ Request: Accessibility test scenarios
+3. Generate Specialist Test Scenarios Inline
+   ├─→ If auth/input handling → generate security test scenarios directly using knowledge of OWASP patterns
+   └─→ If UI component → generate accessibility test scenarios directly (keyboard nav, ARIA, contrast)
 
 4. Integrate Specialist Scenarios
    └─→ Add security tests to test file
@@ -112,60 +110,30 @@ Analyzes existing test coverage to identify untested code paths, edge cases, and
 5. Return Comprehensive Test Suite
 ```
 
-## Agent Orchestration
+## Inline Security and Accessibility Test Patterns
 
-### When to Delegate
+### Security Test Scenarios
 
-**security-specialist:**
-- Authentication/authorization code
-- User input handling
-- Database queries
-- File operations
-- API endpoints with auth
-- Payment processing
-- Session management
+Generate these directly when code touches auth, input handling, database queries, file ops, or API endpoints:
 
-**Request format:**
-```markdown
-I need security test scenarios for [file/function]. Please provide:
-1. Test cases for common vulnerabilities (SQL injection, XSS, etc.)
-2. Edge cases for auth/permission checks
-3. Input validation test cases
-4. Expected outcomes for each test
+- SQL injection, XSS, CSRF test cases
+- Auth/permission boundary checks
+- Input validation (valid, invalid, boundary, malicious)
+- Expected outcomes for each case
 
-Focus on: [specific security concerns]
-```
+### Accessibility Test Scenarios
 
-**accessibility-specialist:**
-- UI components (buttons, forms, modals)
-- Navigation elements
-- Dynamic content
-- Forms and form validation
-- Custom interactive widgets
+Generate these directly when code includes UI components, forms, navigation, or dynamic content:
 
-**Request format:**
-```markdown
-I need accessibility test scenarios for [component]. Please provide:
-1. Keyboard navigation tests
-2. Screen reader tests (ARIA)
-3. Focus management tests
-4. Color contrast verification
-5. Expected outcomes for each test
+- Keyboard navigation flows
+- Screen reader / ARIA attribute checks
+- Focus management (trap, restore, sequence)
+- Color contrast verification
+- Expected outcomes for each case
 
-Focus on: [specific UI elements]
-```
+### Handling Both Security and Accessibility Concerns
 
-### Parallel Execution
-
-When code has both security and accessibility concerns:
-
-```markdown
-I'm spawning two specialists in parallel to generate comprehensive test scenarios:
-```
-
-Then make 2 Task calls in one message:
-- Task(cms-cultivator:security-specialist:security-specialist) - for security tests
-- Task(cms-cultivator:accessibility-specialist:accessibility-specialist) - for a11y tests
+When code has both security and accessibility concerns, generate both sets of test scenarios inline in a single pass — security scenarios first, then accessibility scenarios.
 
 ## CMS-Specific Testing
 

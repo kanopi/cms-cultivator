@@ -33,44 +33,18 @@ jobs:
         run: bats tests/test-plugin.bats
 
   frontmatter-validation:
-    name: Validate Command Frontmatter
+    name: Validate SKILL.md and AGENT.md Frontmatter
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate frontmatter structure
-        run: |
-          errors=0
-          for file in commands/*.md; do
-            echo "Checking $file..."
+      - name: Install PyYAML
+        run: pip install pyyaml
 
-            # Check for frontmatter markers
-            if ! grep -q "^---$" "$file"; then
-              echo "❌ Missing frontmatter in $file"
-              errors=$((errors + 1))
-            fi
-
-            # Check for required fields
-            if ! grep -q "^description:" "$file"; then
-              echo "❌ Missing description in $file"
-              errors=$((errors + 1))
-            fi
-
-            if ! grep -q "^allowed-tools:" "$file"; then
-              echo "❌ Missing allowed-tools in $file"
-              errors=$((errors + 1))
-            fi
-          done
-
-          if [ $errors -gt 0 ]; then
-            echo ""
-            echo "Found $errors frontmatter errors"
-            exit 1
-          else
-            echo "✅ All command files have valid frontmatter"
-          fi
+      - name: Run frontmatter validation
+        run: chmod +x scripts/validate-frontmatter.sh && ./scripts/validate-frontmatter.sh
 
   documentation-build:
     name: Build Documentation
@@ -130,7 +104,7 @@ jobs:
         run: |
           # Check for potential hardcoded secrets
           # Exclude audit-security.md and audit-live-site.md which contain example security code
-          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" commands/*.md docs/*.md | grep -v "example\|placeholder\|TODO\|audit-security.md\|audit-live-site.md"; then
+          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" skills/ agents/ docs/ | grep -v "example\|placeholder\|TODO\|audit-security.md\|audit-live-site.md"; then
             echo "❌ Potential hardcoded secrets found"
             exit 1
           else
@@ -139,7 +113,7 @@ jobs:
 
       - name: Check for merge conflict markers
         run: |
-          if grep -r "^<<<<<<< \|^=======$\|^>>>>>>> " commands/ docs/ 2>/dev/null; then
+          if grep -r "^<<<<<<< \|^=======$\|^>>>>>>> " skills/ agents/ docs/ 2>/dev/null; then
             echo "❌ Found merge conflict markers"
             exit 1
           else

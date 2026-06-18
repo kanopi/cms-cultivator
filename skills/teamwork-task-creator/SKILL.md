@@ -18,10 +18,10 @@ This skill activates when users:
 - Ask "how do I create a task?"
 
 **Do NOT activate for:**
-- Quick status checks (use teamwork-integrator instead)
-- Exporting audit findings (use teamwork-exporter instead)
-- Updating existing tasks
-- Complex multi-task workflows (escalate to teamwork-specialist agent)
+- Quick status checks (use `teamwork-integrator` instead)
+- Exporting audit findings in batch (use `teamwork-exporter` instead)
+- Updating existing tasks (the main session has Teamwork MCP — handle directly)
+- Complex multi-task workflows with dependencies (handle directly via the Teamwork MCP from the main session, optionally invoking this skill repeatedly for each task)
 
 ## Template Selection Algorithm
 
@@ -98,32 +98,30 @@ When users don't provide complete information:
    - "(fill in browser testing matrix when picking up ticket)"
    - "(performance considerations to be determined during implementation)"
 
-3. **For Ambiguous Scope**: Escalate to teamwork-specialist
+3. **For Ambiguous Scope**: Ask the user clarifying questions before creating
    - If user says "improve the search feature" without specifics
    - If multiple interpretations possible
    - If epic vs. task classification unclear
 
+## Companion Skills
 
-## Integration with Teamwork Specialist
+This skill creates one task at a time. For other Teamwork operations:
 
-This skill handles simple, single-task creation. For complex scenarios, escalate to the teamwork-specialist agent:
+- **`teamwork-integrator`** — Read-only lookups of existing tasks ("what's the status of PROJ-123?")
+- **`teamwork-exporter`** — Batch-export audit findings (security/performance/accessibility scans) into a coordinated set of Teamwork tasks with priority mapping and dependency linking
+- **`csv-exporter`** — Convert FRD requirements into a Teamwork-importable CSV backlog with epic/story/task hierarchy
 
-**Escalate when:**
-- User wants to create multiple related tasks
-- Epic with sub-tasks needed
-- Batch export of audit findings
-- Complex dependencies to manage
-- Unclear scope requiring investigation
+For complex multi-task scenarios — epics with sub-tasks, batch creation across projects, status updates on existing tasks — the main session has the Teamwork MCP available directly (`mcp__teamwork__twprojects-*`). Use it directly, optionally invoking this skill repeatedly for each new task to keep template selection consistent.
 
-**Example escalation:**
+**Example: epic + sub-tasks**
+
 ```
 User: "Create tasks for implementing the entire checkout redesign"
 
-Response: "This sounds like a big task that would benefit from the teamwork-specialist
-agent. It can help break this down into an epic with multiple sub-tasks and manage
-dependencies. Let me spawn that agent for you."
-
-[Spawn teamwork-specialist agent with full context]
+Approach: invoke this skill to create the parent epic with the BIG TASK template,
+then call mcp__teamwork__twprojects-create_task directly for each sub-task with
+parent_task_id set to the epic's ID. Use the LITTLE TASK template's required
+sections for each sub-task description.
 ```
 
 ## Best Practices
