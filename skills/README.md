@@ -410,6 +410,11 @@ Detailed instructions for Claude on how to execute this skill...
 **Audience**: strategists, UX leads, PMs — not developers.
 **Tool dependencies**: CoWork browser automation, web search (optional)
 
+### 47. worktree-manager
+
+**Triggers**: "create a worktree", "new worktree for tw1234", "spin up a parallel branch", "work on two tickets at once", "/worktree-manager", "I need to work on another ticket without losing my current one"
+**Purpose**: Create, list, and tear down git worktrees following Kanopi's branch naming conventions so developers and AI sessions can work multiple tickets in parallel from a single clone. Handles DDEV isolation automatically (folder-derived project name, no pinned ports) for Drupal and WordPress, plain port-separated setup for Next.js, and gates destructive removals behind explicit confirmation.
+
 ## Adding New Skills
 
 To add a new Agent Skill:

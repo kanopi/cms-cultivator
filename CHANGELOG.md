@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `skills/worktree-manager/SKILL.md` — new skill to create, list, and tear down git worktrees following Kanopi's branch naming conventions, so developers and AI sessions can work multiple tickets in parallel from a single clone. Handles automatic DDEV isolation (folder-derived project name, no pinned ports) for Drupal and WordPress, port-separated `npm run dev` for Next.js, and gates destructive removals behind explicit confirmation. Documented in `docs/commands/pr-workflow.md` and `docs/commands/overview.md`.
+
 ## [1.3.0] - 2026-05-22
 
 ### Added
