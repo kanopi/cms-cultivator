@@ -29,7 +29,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
 - **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
 
-PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
+PR and development-workflow skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
 
 ### How Agents Work
 

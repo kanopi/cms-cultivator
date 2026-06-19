@@ -1,10 +1,38 @@
 # PR Workflow Skills
 
-Streamline pull request creation, review, and deployment with 4 specialized skills.
+Streamline the development lifecycle — from isolating a ticket in its own worktree through pull request creation, review, and deployment.
 
 ---
 
 ## Skills
+
+### `worktree-manager [create|list|remove]`
+
+Create, list, and tear down git worktrees so multiple tickets — and multiple AI sessions — run side by side from a single clone.
+
+**Usage:**
+```bash
+/worktree-manager create 1234 hero-block       # new worktree + feature/tw1234-hero-block
+/worktree-manager create 1235 menu-fix --type bug
+/worktree-manager list                          # show active worktrees + DDEV status
+/worktree-manager remove 1234                   # tear down (asks for confirmation first)
+```
+
+**What it does:**
+1. Creates a sibling worktree directory mirroring the branch (`../<repo>-tw1234`)
+2. Branches off the up-to-date remote base using Kanopi naming (`<type>/tw<id>-<short-desc>`)
+3. Runs platform setup — DDEV (`start`, `composer install`, theme build, `db-refresh`) for Drupal/WordPress, or port-separated `npm run dev` for Next.js
+4. Reports the directory, branch, and local URL, plus how to attach a CLI or Desktop session
+5. On removal, gates the destructive teardown (worktree, branch, DDEV project + database) behind explicit confirmation
+
+**Why worktrees:**
+- Run two Claude Code sessions (or a CLI session and a Claude Desktop "code" session) on different tickets at once — no `git checkout` thrash
+- Maps one-to-one onto Kanopi's "one branch per ticket" rule
+- DDEV isolation is automatic when the project name is folder-derived (no committed `name:`, no pinned ports)
+
+**Requires:** Git with worktree support; DDEV for Drupal/WordPress setup steps
+
+---
 
 ### `pr-create [ticket-number]`
 
@@ -137,6 +165,9 @@ Generate changelog, deployment checklist, and update PR for release.
 ### Complete PR Workflow
 
 ```bash
+# 0. Starting a ticket - isolate it in its own worktree (optional)
+/worktree-manager create 123 feature-name   # fresh worktree + branch, DDEV isolated
+
 # 1. During development - commit frequently
 git add feature.php
 /commit-message-generator            # Generate conventional commit
@@ -231,6 +262,11 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 ## Skill Comparison
 
 ### When to use each skill:
+
+**`/worktree-manager`**
+- Starting a ticket without disturbing your current working tree
+- Running two tickets — or two AI sessions — in parallel from one clone
+- Cleaning up a finished ticket's worktree, branch, and DDEV project
 
 **`/pr-create`**
 - You're ready to create a PR
