@@ -664,6 +664,8 @@ setup() {
       kanopi-claude-plugins|claude-plugins-official|claude-chrome-mcp|codeql-action|bats-core) ;;
       a-guide-to-flexbox|complete-guide-grid|coding-standards) ;;
       twig-cs-fixer|phpstan-drupal|drupal-rector) ;;
+      # GitHub topic + policy placeholder referenced in wp-private-package.md
+      do-not-archive|name-of-plugin) ;;
       *)
         if [ ! -d "skills/$name" ]; then
           echo "ERROR: docs/commands reference a non-existent skill: $name"
