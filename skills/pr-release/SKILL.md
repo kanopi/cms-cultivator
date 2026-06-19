@@ -1,7 +1,6 @@
 ---
 name: pr-release
 description: Generate changelog entries, a deployment checklist, and update a release PR description. Invoke when user asks to prepare a release, generate a changelog, create a deployment checklist, or uses /pr-release. Requires user confirmation before updating the PR (modifies publicly visible content). Supports version numbers and focus areas (changelog/deploy/update).
-disable-model-invocation: true
 ---
 
 # PR Release
