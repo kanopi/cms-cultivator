@@ -26,6 +26,7 @@ Review a pull request or analyze your local changes before submitting. The main 
 - **PR number provided** (e.g., `PR #123`, `pr-review 456`) → review that PR.
 - **"self" / "my changes" / "before submitting"** → review local changes against the default branch.
 - **No clear target** → ask the user which one they want.
+- If invoked from a subagent context (the prompt names a specific PR number and says "delegated" or "automated routine"), do not ask clarifying questions — proceed with that PR.
 
 ### 2. Gather context
 
@@ -137,7 +138,7 @@ Use Read, Grep, and Bash directly. Spawn no agents — the skill performs the an
 ### 6. Produce the review
 
 ```markdown
-# PR Review — <title or "Local Changes">
+# 🤖 AI Code Review — PR #<number>
 
 **Size:** <XS/S/M/L/XL> (<N> files, +<X>/-<Y> lines)
 **Complexity:** <Low/Medium/High>
@@ -185,6 +186,24 @@ If reviewing a PR (not self-review) and the user wants the review posted:
 3. On approval, use `gh pr review <number> --<action> --body "$(cat <<'EOF'\n<review>\nEOF\n)"`.
 
 Self-reviews stay local — they're not posted anywhere.
+
+## Delegated mode (for automated routines)
+
+When invoked via a subagent prompt (e.g. from the code-review routine), behave
+non-interactively:
+
+- Skip step 7 entirely — do NOT post to GitHub. The parent routine handles posting.
+- Skip user dialogue ("ask the user", "present to the user first") — no user is present.
+- Skip the strategic-thinking 5 Cs prose; just apply the framework silently to land on a verdict.
+- Output ONLY the review report (step 6 template), with NO preamble.
+- End the output with this exact sentinel on its own line:
+    FINAL_RECOMMENDATION: Approve
+    FINAL_RECOMMENDATION: Request Changes
+    FINAL_RECOMMENDATION: Comment
+  (one of the three, verbatim — the parent parses this line.)
+
+The parent is responsible for posting to Teamwork/GitHub/Slack and for any
+notification rules.
 
 ## Strategic Decision Framework
 

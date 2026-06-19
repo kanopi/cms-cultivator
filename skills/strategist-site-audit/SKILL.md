@@ -1,7 +1,6 @@
 ---
 name: strategist-site-audit
 description: Strategist-focused site audit for discovery and pre-discovery. Given a site URL and optional qualitative research data, navigates the site via CoWork, audits against all 21 UX Laws from lawsofux.com, reviews content hierarchy, synthesises qualitative data, runs Lighthouse, and produces two deliverables — a Project Knowledge Summary (Markdown for Claude Desktop Projects) and a polished, iterable HTML Artifact for client sharing. Use when a strategist, UX lead, or PM asks for a discovery audit, UX laws audit, content hierarchy review, pre-discovery site review, "audit this site for strategy", "strategist audit", "UX audit", or pastes a site URL with discovery context. Not for developer audits — use accessibility-audit, performance-audit, or live-site-audit for those.
-disable-model-invocation: true
 ---
 
 # Strategist Site Audit

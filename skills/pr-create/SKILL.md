@@ -1,7 +1,6 @@
 ---
 name: pr-create
-description: Generate a PR description and create a GitHub pull request. Invoke when user explicitly asks to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
-disable-model-invocation: true
+description: Generate a PR description and create a GitHub pull request. Invoke when user wants to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
 ---
 
 # PR Create

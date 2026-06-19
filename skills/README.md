@@ -412,7 +412,12 @@ Detailed instructions for Claude on how to execute this skill...
 **Audience**: strategists, UX leads, PMs — not developers.
 **Tool dependencies**: CoWork browser automation, web search (optional)
 
-### 47. drupal-sdc-twig
+### 47. worktree-manager
+
+**Triggers**: "create a worktree", "new worktree for tw1234", "spin up a parallel branch", "work on two tickets at once", "/worktree-manager", "I need to work on another ticket without losing my current one"
+**Purpose**: Create, list, and tear down git worktrees following Kanopi's branch naming conventions so developers and AI sessions can work multiple tickets in parallel from a single clone. Handles DDEV isolation automatically (folder-derived project name, no pinned ports) for Drupal and WordPress, plain port-separated setup for Next.js, and gates destructive removals behind explicit confirmation.
+
+### 48. drupal-sdc-twig
 
 **Triggers**: "SDC", "Single Directory Component", "component.yml", working with `components/` folders in a Drupal theme or module, writing or reviewing an SDC Twig template, "props or slots?", "embed vs include in SDC", "best practices for Drupal components"
 **Purpose**: Best practices for building Drupal Single Directory Components (SDC) with Twig. Covers props vs slots decision-making, the `attributes` object, `include()` vs `embed`, escaping rules, schema definition, accessibility patterns, and component overriding. Provides the "10 rules" for idiomatic SDC development.

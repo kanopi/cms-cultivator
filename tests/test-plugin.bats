@@ -90,9 +90,10 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (46)" {
-  count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 46 ]
+@test "skill directory count matches documented skills in README" {
+  dir_count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+  readme_count=$(grep -cE '^### [0-9]+\. ' skills/README.md)
+  [ "$dir_count" -eq "$readme_count" ]
 }
 
 @test "all skill directories have SKILL.md file" {
@@ -838,22 +839,6 @@ setup() {
 
 @test "drupal documentation exists" {
   [ -f "docs/drupal-contribution.md" ]
-}
-
-# ==============================================================================
-# CLAUDE CODE INVOCATION POLICY TESTS
-# ==============================================================================
-
-@test "skills with openai.yaml also have disable-model-invocation in SKILL.md" {
-  for yaml_file in skills/*/agents/openai.yaml; do
-    [ -f "$yaml_file" ] || continue
-    skill_dir=$(basename "$(dirname "$(dirname "$yaml_file")")")
-    skill_file="skills/$skill_dir/SKILL.md"
-    if ! grep -q "^disable-model-invocation: true" "$skill_file"; then
-      echo "$skill_file has openai.yaml but missing disable-model-invocation: true"
-      return 1
-    fi
-  done
 }
 
 # ==============================================================================
