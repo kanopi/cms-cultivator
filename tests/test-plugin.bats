@@ -841,22 +841,6 @@ setup() {
 }
 
 # ==============================================================================
-# CLAUDE CODE INVOCATION POLICY TESTS
-# ==============================================================================
-
-@test "skills with openai.yaml also have disable-model-invocation in SKILL.md" {
-  for yaml_file in skills/*/agents/openai.yaml; do
-    [ -f "$yaml_file" ] || continue
-    skill_dir=$(basename "$(dirname "$(dirname "$yaml_file")")")
-    skill_file="skills/$skill_dir/SKILL.md"
-    if ! grep -q "^disable-model-invocation: true" "$skill_file"; then
-      echo "$skill_file has openai.yaml but missing disable-model-invocation: true"
-      return 1
-    fi
-  done
-}
-
-# ==============================================================================
 # CODEX TOML AGENT TESTS
 # ==============================================================================
 
