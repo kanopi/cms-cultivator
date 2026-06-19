@@ -344,7 +344,7 @@ Create `.env` file:
 
 \`\`\`env
 DATABASE_URL=mysql://user:pass@localhost/dbname
-API_KEY=your_api_key_here
+API_KEY=example_api_key_here  # placeholder — replace with your real key
 DEBUG_MODE=false
 \`\`\`
 

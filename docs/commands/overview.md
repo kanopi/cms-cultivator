@@ -192,11 +192,12 @@ Contribute back to drupal.org — issues, merge requests, and full workflows.
 
 ### 🚀 [DevOps Setup](devops.md)
 
-Automate Kanopi's Drupal/Pantheon onboarding.
+Automate Kanopi's Pantheon onboarding.
 
 | Skill | Description |
 |-------|-------------|
-| `devops-setup` | Full Kanopi DevOps onboarding (GitHub repo, Pantheon, CircleCI, code quality, quicksilver) |
+| `devops-setup` | Full Kanopi **Drupal**/Pantheon onboarding (GitHub repo, Pantheon, CircleCI, code quality, quicksilver) |
+| [`wp-devops-setup`](wp-devops-setup.md) | Full Kanopi **WordPress**/Pantheon onboarding (`kanopi/wp-pantheon-starter` layout, DDEV, CircleCI, premium-plugin packaging) |
 
 **Requires:** GitHub CLI (`gh`), Terminus CLI.
 
@@ -207,6 +208,7 @@ Automate Kanopi's Drupal/Pantheon onboarding.
 | Skill | Description |
 |-------|-------------|
 | `wp-add-skills` | Install official `WordPress/agent-skills` (block development, REST API, WP-CLI, performance) from the WordPress org's repository |
+| `wp-plugin-to-private-package` | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) |
 
 ---
 

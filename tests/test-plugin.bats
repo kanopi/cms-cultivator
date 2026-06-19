@@ -90,9 +90,10 @@ setup() {
   [ -d "skills" ]
 }
 
-@test "skill count matches expected (47)" {
-  count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l)
-  [ "$count" -eq 47 ]
+@test "skill directory count matches documented skills in README" {
+  dir_count=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+  readme_count=$(grep -cE '^### [0-9]+\. ' skills/README.md)
+  [ "$dir_count" -eq "$readme_count" ]
 }
 
 @test "all skill directories have SKILL.md file" {
@@ -663,6 +664,8 @@ setup() {
       kanopi-claude-plugins|claude-plugins-official|claude-chrome-mcp|codeql-action|bats-core) ;;
       a-guide-to-flexbox|complete-guide-grid|coding-standards) ;;
       twig-cs-fixer|phpstan-drupal|drupal-rector) ;;
+      # GitHub topic + policy placeholder referenced in wp-private-package.md
+      do-not-archive|name-of-plugin) ;;
       *)
         if [ ! -d "skills/$name" ]; then
           echo "ERROR: docs/commands reference a non-existent skill: $name"

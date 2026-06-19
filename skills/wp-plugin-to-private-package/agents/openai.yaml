@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: WP Plugin → Kanopi Package"
+  short_description: "Convert a committed WordPress premium plugin into a Kanopi private Composer package — irreversible (creates a GitHub repo, release, and edits the consuming repo) and requires explicit confirmation."

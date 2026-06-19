@@ -260,6 +260,12 @@ skills/
 ├── wp-add-skills/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
+├── wp-plugin-to-private-package/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
+├── wp-devops-setup/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
 ├── browser-validator/
 │   └── SKILL.md
 ├── design-analyzer/
@@ -414,6 +420,16 @@ Detailed instructions for Claude on how to execute this skill...
 
 **Triggers**: "create a worktree", "new worktree for tw1234", "spin up a parallel branch", "work on two tickets at once", "/worktree-manager", "I need to work on another ticket without losing my current one"
 **Purpose**: Create, list, and tear down git worktrees following Kanopi's branch naming conventions so developers and AI sessions can work multiple tickets in parallel from a single clone. Handles DDEV isolation automatically (folder-derived project name, no pinned ports) for Drupal and WordPress, plain port-separated setup for Next.js, and gates destructive removals behind explicit confirmation.
+
+### 48. wp-plugin-to-private-package
+
+**Triggers**: "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist", "stop committing this plugin", "/wp-plugin-to-private-package"
+**Purpose**: Convert a committed/hand-installed WordPress premium plugin into a Kanopi private Composer package and rewire the consuming site to install it via Composer. Follows Kanopi's WordPress Core and Plugins Installation Policy (§3 paid plugins, §4 Kanopi Private Packagist): creates a private GitHub repo in the kanopi org, sets topics/teams, tags a version release, and edits the project's composer.json/.gitignore. Requires explicit user confirmation (irreversible side effects).
+
+### 49. wp-devops-setup
+
+**Triggers**: "set up Kanopi DevOps for this Pantheon WordPress site", "onboard a Pantheon WordPress site", "convert this WP site to wp-pantheon-starter", "add CircleCI/DDEV to this WordPress Pantheon site", "/wp-devops-setup"
+**Purpose**: Onboard an existing Pantheon WordPress site to Kanopi's DevOps system — the Composer-managed `kanopi/wp-pantheon-starter` layout with DDEV, CircleCI → Pantheon deploys (multidev on PRs, dev on `main`), PHPCS/Rector/PHPStan gates, Lighthouse/pa11y/BackstopJS, Quicksilver hooks, and scheduled content/update pipelines. The WordPress counterpart to `devops-setup` (Drupal). Delegates premium-plugin packaging to `wp-plugin-to-private-package`. Requires explicit user confirmation at each phase (irreversible side effects).
 
 ## Adding New Skills
 
