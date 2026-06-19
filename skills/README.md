@@ -282,7 +282,9 @@ skills/
 │   └── SKILL.md
 ├── teamwork-integrator/
 │   └── SKILL.md
-└── teamwork-task-creator/
+├── teamwork-task-creator/
+│   └── SKILL.md
+└── drupal-sdc-twig/
     └── SKILL.md
 ```
 
@@ -430,6 +432,12 @@ Detailed instructions for Claude on how to execute this skill...
 
 **Triggers**: "set up Kanopi DevOps for this Pantheon WordPress site", "onboard a Pantheon WordPress site", "convert this WP site to wp-pantheon-starter", "add CircleCI/DDEV to this WordPress Pantheon site", "/wp-devops-setup"
 **Purpose**: Onboard an existing Pantheon WordPress site to Kanopi's DevOps system — the Composer-managed `kanopi/wp-pantheon-starter` layout with DDEV, CircleCI → Pantheon deploys (multidev on PRs, dev on `main`), PHPCS/Rector/PHPStan gates, Lighthouse/pa11y/BackstopJS, Quicksilver hooks, and scheduled content/update pipelines. The WordPress counterpart to `devops-setup` (Drupal). Delegates premium-plugin packaging to `wp-plugin-to-private-package`. Requires explicit user confirmation at each phase (irreversible side effects).
+
+### 50. drupal-sdc-twig
+
+**Triggers**: "SDC", "Single Directory Component", "component.yml", working with `components/` folders in a Drupal theme or module, writing or reviewing an SDC Twig template, "props or slots?", "embed vs include in SDC", "best practices for Drupal components"
+**Purpose**: Best practices for building Drupal Single Directory Components (SDC) with Twig. Covers props vs slots decision-making, the `attributes` object, `include()` vs `embed`, escaping rules, schema definition, accessibility patterns, and component overriding. Provides the "10 rules" for idiomatic SDC development.
+**Related Skills**: design-to-drupal-paragraph
 
 ## Adding New Skills
 
