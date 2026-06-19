@@ -263,6 +263,9 @@ skills/
 ├── wp-plugin-to-private-package/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
+├── wp-devops-setup/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
 ├── browser-validator/
 │   └── SKILL.md
 ├── design-analyzer/
@@ -279,7 +282,9 @@ skills/
 │   └── SKILL.md
 ├── teamwork-integrator/
 │   └── SKILL.md
-└── teamwork-task-creator/
+├── teamwork-task-creator/
+│   └── SKILL.md
+└── drupal-sdc-twig/
     └── SKILL.md
 ```
 
@@ -413,10 +418,26 @@ Detailed instructions for Claude on how to execute this skill...
 **Audience**: strategists, UX leads, PMs — not developers.
 **Tool dependencies**: CoWork browser automation, web search (optional)
 
-### 47. wp-plugin-to-private-package
+### 47. worktree-manager
+
+**Triggers**: "create a worktree", "new worktree for tw1234", "spin up a parallel branch", "work on two tickets at once", "/worktree-manager", "I need to work on another ticket without losing my current one"
+**Purpose**: Create, list, and tear down git worktrees following Kanopi's branch naming conventions so developers and AI sessions can work multiple tickets in parallel from a single clone. Handles DDEV isolation automatically (folder-derived project name, no pinned ports) for Drupal and WordPress, plain port-separated setup for Next.js, and gates destructive removals behind explicit confirmation.
+
+### 48. wp-plugin-to-private-package
 
 **Triggers**: "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist", "stop committing this plugin", "/wp-plugin-to-private-package"
 **Purpose**: Convert a committed/hand-installed WordPress premium plugin into a Kanopi private Composer package and rewire the consuming site to install it via Composer. Follows Kanopi's WordPress Core and Plugins Installation Policy (§3 paid plugins, §4 Kanopi Private Packagist): creates a private GitHub repo in the kanopi org, sets topics/teams, tags a version release, and edits the project's composer.json/.gitignore. Requires explicit user confirmation (irreversible side effects).
+
+### 49. wp-devops-setup
+
+**Triggers**: "set up Kanopi DevOps for this Pantheon WordPress site", "onboard a Pantheon WordPress site", "convert this WP site to wp-pantheon-starter", "add CircleCI/DDEV to this WordPress Pantheon site", "/wp-devops-setup"
+**Purpose**: Onboard an existing Pantheon WordPress site to Kanopi's DevOps system — the Composer-managed `kanopi/wp-pantheon-starter` layout with DDEV, CircleCI → Pantheon deploys (multidev on PRs, dev on `main`), PHPCS/Rector/PHPStan gates, Lighthouse/pa11y/BackstopJS, Quicksilver hooks, and scheduled content/update pipelines. The WordPress counterpart to `devops-setup` (Drupal). Delegates premium-plugin packaging to `wp-plugin-to-private-package`. Requires explicit user confirmation at each phase (irreversible side effects).
+
+### 50. drupal-sdc-twig
+
+**Triggers**: "SDC", "Single Directory Component", "component.yml", working with `components/` folders in a Drupal theme or module, writing or reviewing an SDC Twig template, "props or slots?", "embed vs include in SDC", "best practices for Drupal components"
+**Purpose**: Best practices for building Drupal Single Directory Components (SDC) with Twig. Covers props vs slots decision-making, the `attributes` object, `include()` vs `embed`, escaping rules, schema definition, accessibility patterns, and component overriding. Provides the "10 rules" for idiomatic SDC development.
+**Related Skills**: design-to-drupal-paragraph
 
 ## Adding New Skills
 

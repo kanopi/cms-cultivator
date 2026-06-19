@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: WP DevOps Setup"
+  short_description: "Onboard an existing Pantheon WordPress site to Kanopi's DevOps system (kanopi/wp-pantheon-starter layout, DDEV, CircleCI → Pantheon) — irreversible multi-system setup requiring explicit confirmation."

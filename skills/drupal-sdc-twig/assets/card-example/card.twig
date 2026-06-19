@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Card component.
+ *
+ * Props:
+ * - variant: 'default' | 'feature' | 'compact'
+ * - heading_level: 2..6 (required)
+ *
+ * Slots:
+ * - media
+ * - heading
+ * - body
+ * - actions
+ *
+ * Auto-provided:
+ * - attributes
+ */
+#}
+<article{{ attributes
+  .addClass('card')
+  .addClass('card--' ~ variant|default('default'))
+}}>
+  {% if media is not empty %}
+    <div class="card__media">{{ media }}</div>
+  {% endif %}
+
+  <div class="card__content">
+    {% if heading is not empty %}
+      <h{{ heading_level }} class="card__heading">{{ heading }}</h{{ heading_level }}>
+    {% endif %}
+
+    {% if body is not empty %}
+      <div class="card__body">{{ body }}</div>
+    {% endif %}
+
+    {% if actions is not empty %}
+      <div class="card__actions">{{ actions }}</div>
+    {% endif %}
+  </div>
+</article>

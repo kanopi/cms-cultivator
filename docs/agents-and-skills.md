@@ -29,7 +29,7 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
 - **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
 
-PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
+PR and development-workflow skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
 
 ### How Agents Work
 
@@ -665,6 +665,42 @@ Confidence: High | Next step: Document editorial requirements first
 
 ---
 
+### 14. drupal-sdc-twig
+
+**Automatically triggers when you:**
+- Mention "SDC", "Single Directory Component", or "component.yml"
+- Work with `components/` folders in a Drupal theme or module
+- Write or review an SDC Twig template
+- Ask "props or slots?", "embed vs include?", or "how should I structure this Drupal component?"
+
+**What it does:**
+- Guides props vs slots decisions (the most common SDC refactor source)
+- Explains `.twig` extension (not `.html.twig`) and schema requirements
+- Shows correct `attributes` object usage on root elements
+- Demonstrates `include()` vs `embed` patterns for composition
+- Covers escaping rules (never pass raw HTML through props)
+- Provides accessibility checklist for component development
+- Explains `libraryOverrides`, component replacement, and variants (Drupal 11.2+)
+
+**Example:**
+```
+You: "Should this heading be a prop or a slot?"
+Claude: "Use the props vs slots decision tree:
+
+1. Will the template's HTML structure change based on this value?
+   → Yes (heading_level affects <h2> vs <h3>) → prop
+2. Will you render it 1:1 inside a container? → slot
+3. Could it be a render array or nested component someday? → slot
+
+For headings: expose heading_level as a prop (enum 2-6) and
+heading_text as a slot. This lets consumers control the
+document outline while passing any markup for the text."
+```
+
+**Explicit invocation:** None — this skill activates conversationally for Drupal SDC questions
+
+---
+
 ## How to Use Agent Skills
 
 ### Natural Conversation
@@ -769,6 +805,8 @@ Don't try to "game" the system—just describe what you need:
 | qa-review | "QA this", "validate this multidev", "test the dev link" | Multidev validation report from a Teamwork task (Teamwork MCP, CoWork) | — |
 | strategist-site-audit | "audit this site for strategy", "strategist audit", "UX audit", "discovery audit" | Strategist-focused discovery audit: 21 UX Laws, content hierarchy, Lighthouse, qualitative data synthesis, Markdown summary + HTML Artifact (CoWork) | — |
 | wp-plugin-to-private-package | "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist" | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) | `wp-plugin-to-private-package` |
+| wp-devops-setup | "set up Kanopi DevOps for this Pantheon WordPress site", "onboard a Pantheon WordPress site", "convert this WP site to wp-pantheon-starter" | Onboard a Pantheon WordPress site to Kanopi's DevOps system (wp-pantheon-starter layout, DDEV, CircleCI → Pantheon, quality gates, Quicksilver); delegates premium-plugin packaging to wp-plugin-to-private-package. WordPress counterpart to devops-setup | `wp-devops-setup` |
+| drupal-sdc-twig | "SDC", "Single Directory Component", "props or slots?", "embed vs include" | Drupal SDC + Twig best practices (props vs slots, attributes, escaping, schema, accessibility) | — |
 
 ## Integration with Workflow
 
