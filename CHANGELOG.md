@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `spec/delivery-record/v1/` — the canonical, machine-readable **Delivery Record** schema: a self-contained JSON Schema 2020-12 (`schema.json`) for the record front-matter with per-`activity_type` `if/then` branches, seven standalone `checks/<activity_type>.json` sub-schemas (the single source of truth for each activity's required check keys), seven fully filled-in `examples/*.md` that double as validation fixtures, and a human-readable `README.md`. `predicate_type` is a resolvable URL (`https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1`) that resolves to a docs-site schema page. `spec/delivery-record/VERSIONING.md` documents the additive-within-version / new-directory-for-breaking-changes policy.
+- `skills/delivery-record/` — new skill that drafts a Delivery Record for a significant AI-assisted output (code, FRD, audit, discovery, design-handoff, strategy, client-comm), **refuses to write without a named human reviewer and both checkpoint notes** (the curl rule), writes to `docs/delivery-records/` (code) or Drive (non-code), and indexes the record in the project's Teamwork "Delivery Records" notebook. Ships per-activity body templates (`templates/*.md`) and an `agents/openai.yaml` Codex policy (`allow_implicit_invocation: false`).
+- `skills/delivery-record-verify/` — new read-only skill that validates a Delivery Record against the schema (resolving the version from `predicate_type`), enforces the per-`activity_type` required-keys policy, and applies the threshold rule (a `fail` needs a `## Waiver`; an `n/a` needs a one-line justification) as soft warnings or, with `--strict`, hard failures. Includes an `agents/openai.yaml` Codex policy.
+- `scripts/delivery_record_verify.py` + `scripts/delivery-record-verify.sh` — the shared Python validator (stdlib + `pyyaml` + `jsonschema`) and a CI wrapper. The wrapper is a drop-in CI lint for other projects (`scripts/delivery-record-verify.sh --strict`); it is **not** enabled in cms-cultivator's own CI by default.
+- `docs/spec/delivery-record/v1.md` (the predicate-URL target), `docs/commands/delivery-record.md`, and `docs/commands/delivery-record-verify.md` doc pages, with new `Specification` and Skills nav entries in `zensical.toml`.
+- `tests/test-delivery-record.bats` and `tests/test-delivery-record-verify.bats` — spec-validates-against-itself, bad-records-fail, per-activity required-key, schema/sub-schema sync, `--strict`, and auto-detect coverage.
+- `README.md`, `skills/README.md`, and `docs/agents-and-skills.md` updated for the two new skills.
+
 ## [1.4.0] - 2026-06-19
 
 ### Added

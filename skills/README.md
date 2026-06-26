@@ -284,8 +284,15 @@ skills/
 │   └── SKILL.md
 ├── teamwork-task-creator/
 │   └── SKILL.md
-└── drupal-sdc-twig/
-    └── SKILL.md
+├── drupal-sdc-twig/
+│   └── SKILL.md
+├── delivery-record/
+│   ├── SKILL.md
+│   ├── agents/openai.yaml
+│   └── templates/
+└── delivery-record-verify/
+    ├── SKILL.md
+    └── agents/openai.yaml
 ```
 
 ## SKILL.md Format
@@ -438,6 +445,20 @@ Detailed instructions for Claude on how to execute this skill...
 **Triggers**: "SDC", "Single Directory Component", "component.yml", working with `components/` folders in a Drupal theme or module, writing or reviewing an SDC Twig template, "props or slots?", "embed vs include in SDC", "best practices for Drupal components"
 **Purpose**: Best practices for building Drupal Single Directory Components (SDC) with Twig. Covers props vs slots decision-making, the `attributes` object, `include()` vs `embed`, escaping rules, schema definition, accessibility patterns, and component overriding. Provides the "10 rules" for idiomatic SDC development.
 **Related Skills**: design-to-drupal-paragraph
+
+### 51. delivery-record
+
+**Triggers**: "create a delivery record", "generate a delivery record for this PR/FRD/audit", end of a unit of work, "/delivery-record"
+**Purpose**: Draft a schema-typed, human-signed Delivery Record for a significant AI-assisted output (code, FRD, audit, discovery, design-handoff, strategy, client-comm). Refuses to write without a named reviewer and both checkpoint notes, writes to `docs/delivery-records/` (code) or Drive (non-code), and indexes the record in the project's Teamwork "Delivery Records" notebook.
+**Spec**: [spec/delivery-record/v1/](../spec/delivery-record/v1/README.md)
+**Related Skills**: pr-create, commit-message-generator, teamwork-integrator, delivery-record-verify
+
+### 52. delivery-record-verify
+
+**Triggers**: "verify this delivery record", "validate the delivery records", "/delivery-record-verify"
+**Purpose**: Validate a Delivery Record file against the `kanopi/delivery-record` schema and the threshold rule (read-only). Resolves the schema version from `predicate_type`, enforces required fields and per-`activity_type` required `checks` keys, and surfaces waiver/justification warnings (hard failures under `--strict`). CI-friendly via `scripts/delivery-record-verify.sh`.
+**Spec**: [spec/delivery-record/v1/](../spec/delivery-record/v1/README.md)
+**Related Skills**: delivery-record
 
 ## Adding New Skills
 

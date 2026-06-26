@@ -33,6 +33,8 @@ nav = [
     "commands/testing.md",
     "commands/code-quality.md",
     "commands/devops.md",
+    "commands/delivery-record.md",
+    "commands/delivery-record-verify.md",
     "commands/project-management.md",
     "commands/planning.md",
     "commands/pm-workflows.md",
@@ -54,6 +56,9 @@ nav = [
     "kanopi-tools/overview.md",
     "kanopi-tools/composer-scripts.md",
     "kanopi-tools/ddev-commands.md"
+  ]},
+  {"Specification" = [
+    "spec/delivery-record/v1.md"
   ]},
   {"Reference" = [
     "reference/markdown-style-guide.md",
