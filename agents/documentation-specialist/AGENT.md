@@ -343,6 +343,8 @@ wp plugin activate my-plugin
 Create `.env` file:
 
 \`\`\`env
+# Example placeholders only — set real secrets via your environment / a secrets
+# manager and never commit them to version control.
 DATABASE_URL=mysql://user:pass@localhost/dbname
 API_KEY=example_api_key_here  # placeholder — replace with your real key
 DEBUG_MODE=false

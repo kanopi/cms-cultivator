@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/checks/discovery.json",
+  "title": "Delivery Record checks — discovery",
+  "description": "Constrains the `checks` block for activity_type: discovery. Subject kind: document. Sign-off roles: Strategist, PM.",
+  "type": "object",
+  "required": ["sources_cited", "sample_size", "bias_check", "stakeholder_review"],
+  "additionalProperties": { "$ref": "#/$defs/checkGroup" },
+  "properties": {
+    "sources_cited": { "$ref": "#/$defs/checkGroup" },
+    "sample_size": { "$ref": "#/$defs/checkGroup" },
+    "bias_check": { "$ref": "#/$defs/checkGroup" },
+    "stakeholder_review": { "$ref": "#/$defs/checkGroup" }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    }
+  }
+}

@@ -28,6 +28,17 @@ Streamline pull request creation, review, and deployment. PR skills run directly
 
 ---
 
+### 🧾 [Delivery Records](delivery-record.md)
+
+Per-output attestation: one schema-typed, human-signed markdown file per significant AI-assisted output. The [schema](../spec/delivery-record/v1.md) is canonical in this repo.
+
+| Skill | Description |
+|-------|-------------|
+| `delivery-record` | Draft a Delivery Record (code, FRD, audit, discovery, design-handoff, strategy, client-comm); refuses to write without a named reviewer + checkpoint notes; writes the file and indexes it in Teamwork |
+| `delivery-record-verify` | Validate a record against the schema and the threshold rule (read-only, CI-friendly; supports `--strict`) |
+
+---
+
 ### ♿ [Accessibility](accessibility.md)
 
 Ensure WCAG 2.1 Level AA compliance and create inclusive experiences.

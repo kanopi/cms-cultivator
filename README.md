@@ -52,6 +52,13 @@ Generate commit messages, PR descriptions, changelogs, and review code.
 - `pr-review` - AI-assisted code review
 - `pr-release` - Generate release PR with changelog
 
+### Delivery Records
+Per-output attestation: one schema-typed, human-signed markdown file per significant AI-assisted output (code, FRD, audit, discovery, design handoff, strategy, client comms). [Schema reference](https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/).
+
+**Skills:**
+- `delivery-record` - Draft a Delivery Record, require a named reviewer + checkpoint notes, write the file, and index it in Teamwork
+- `delivery-record-verify` - Validate a record against the schema and the threshold rule (read-only; CI-friendly)
+
 ### Quality Analysis
 Code standards, test coverage, accessibility, security audits.
 
@@ -144,6 +151,7 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 - accessibility-audit, performance-audit, security-audit, quality-audit
 - live-site-audit, pr-review, audit-export, audit-report
 - design-to-wp-block, design-to-drupal-paragraph, pr-create, pr-release
+- delivery-record, delivery-record-verify
 - devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
 - frd-generator, story-point-estimator, csv-exporter
 - client-request-triage, pm-meeting-prep, project-heartbeat, qa-review

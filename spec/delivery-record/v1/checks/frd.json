@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/checks/frd.json",
+  "title": "Delivery Record checks — frd",
+  "description": "Constrains the `checks` block for activity_type: frd. Subject kind: document. Sign-off roles: Tech Lead, PM.",
+  "type": "object",
+  "required": ["sow_alignment", "hour_total_vs_cap", "completeness", "stakeholder_review"],
+  "additionalProperties": { "$ref": "#/$defs/checkGroup" },
+  "properties": {
+    "sow_alignment": { "$ref": "#/$defs/checkGroup" },
+    "hour_total_vs_cap": { "$ref": "#/$defs/checkGroup" },
+    "completeness": { "$ref": "#/$defs/checkGroup" },
+    "stakeholder_review": { "$ref": "#/$defs/checkGroup" }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    }
+  }
+}

@@ -807,6 +807,8 @@ Don't try to "game" the system—just describe what you need:
 | wp-plugin-to-private-package | "make this plugin a Kanopi package", "move this committed plugin to Composer", "publish this premium plugin to Kanopi Packagist" | Convert a committed WordPress premium plugin into a Kanopi private Composer package and rewire the site to install it via Composer (Installation Policy §3–§4) | `wp-plugin-to-private-package` |
 | wp-devops-setup | "set up Kanopi DevOps for this Pantheon WordPress site", "onboard a Pantheon WordPress site", "convert this WP site to wp-pantheon-starter" | Onboard a Pantheon WordPress site to Kanopi's DevOps system (wp-pantheon-starter layout, DDEV, CircleCI → Pantheon, quality gates, Quicksilver); delegates premium-plugin packaging to wp-plugin-to-private-package. WordPress counterpart to devops-setup | `wp-devops-setup` |
 | drupal-sdc-twig | "SDC", "Single Directory Component", "props or slots?", "embed vs include" | Drupal SDC + Twig best practices (props vs slots, attributes, escaping, schema, accessibility) | — |
+| delivery-record | "create a delivery record", "delivery record for this PR/FRD/audit", end of a unit of work | Per-output attestation: draft a schema-typed, human-signed Delivery Record; refuses to write without a named reviewer + checkpoint notes; indexes in Teamwork (runs from the main session) | `delivery-record` |
+| delivery-record-verify | "verify this delivery record", "validate the delivery records" | Validate a record against the `kanopi/delivery-record` schema + threshold rule (read-only, CI-friendly) | `delivery-record-verify` |
 
 ## Integration with Workflow
 
