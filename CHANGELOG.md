@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-07-07
+
+### Added
+- **Delivery Record** — seven additional `activity_type` values covering the rest of the AI-workflow lifecycle: `design`, `qa`, `launch`, `deployment`, `devops`, `project-setup`, and `ongoing-improvement`. Each ships a schema `if/then` branch, a `checks/<activity_type>.json` sub-schema, a validated `examples/*.md` fixture, and a skill body template. The existing seven values are unchanged (additive, backward-compatible within v1). Enum now totals 14.
+
+### Changed
+- `skills/delivery-record` now **indexes records by posting a comment** on the project's Teamwork "Delivery Records" notebook instead of appending to the notebook body — notebooks have no append operation, so commenting avoids clobbering existing content and keeps a per-record audit trail.
+- `tests/test-delivery-record.bats` derives the activity-type list from the schema enum (parity checks against `checks/`, examples, and templates) rather than hardcoding the count, so the suite grows with the spec.
+- Fixed repository links in the Delivery Record docs/spec (and `docs/testing.md`) to point at the `1.x` branch (were `main`), and removed links to the private `kanopi/ai-workflows` repo.
+- `.gitignore` now excludes `.claude/worktrees/`.
+
 ## [1.5.0] - 2026-06-30
 
 ### Added

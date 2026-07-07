@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/checks/launch.json",
+  "title": "Delivery Record checks — launch",
+  "description": "Constrains the `checks` block for activity_type: launch. Subject kind: document. Sign-off roles: Tech Lead, PM, Account.",
+  "type": "object",
+  "required": ["prelaunch_audits", "rollback_plan", "dns_ssl_verified", "stakeholder_signoff"],
+  "additionalProperties": { "$ref": "#/$defs/checkGroup" },
+  "properties": {
+    "prelaunch_audits": { "$ref": "#/$defs/checkGroup" },
+    "rollback_plan": { "$ref": "#/$defs/checkGroup" },
+    "dns_ssl_verified": { "$ref": "#/$defs/checkGroup" },
+    "stakeholder_signoff": { "$ref": "#/$defs/checkGroup" }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/checks/design.json",
+  "title": "Delivery Record checks — design",
+  "description": "Constrains the `checks` block for activity_type: design. Subject kind: figma. Sign-off roles: Designer, Creative Director.",
+  "type": "object",
+  "required": ["brand_alignment", "design_system", "accessibility_review", "stakeholder_review"],
+  "additionalProperties": { "$ref": "#/$defs/checkGroup" },
+  "properties": {
+    "brand_alignment": { "$ref": "#/$defs/checkGroup" },
+    "design_system": { "$ref": "#/$defs/checkGroup" },
+    "accessibility_review": { "$ref": "#/$defs/checkGroup" },
+    "stakeholder_review": { "$ref": "#/$defs/checkGroup" }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    }
+  }
+}

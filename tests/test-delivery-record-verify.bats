@@ -44,7 +44,10 @@ have_validator() {
   run python3 "$VALIDATOR" "$VSPEC"/examples/*.md
   echo "$output"
   [ "$status" -eq 0 ]
-  echo "$output" | grep -q "7 passing"
+  # Derive the expected count from the number of example files, so the assertion
+  # grows with the spec instead of hardcoding a number.
+  count=$(ls "$VSPEC"/examples/*.md | wc -l | tr -d ' ')
+  echo "$output" | grep -q "$count passing"
 }
 
 @test "verify fails for a hand-crafted broken record" {

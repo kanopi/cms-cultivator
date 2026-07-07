@@ -19,6 +19,7 @@ composer.lock
 
 # Claude
 .claude/settings.local.json
+.claude/worktrees/
 
 # mkdocs
 /site*

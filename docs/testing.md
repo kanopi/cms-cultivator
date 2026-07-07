@@ -181,7 +181,7 @@ Tests run automatically via GitHub Actions on:
 - Pull requests
 - Manual workflow dispatch
 
-See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob/main/.github/workflows/test.yml) for the complete CI/CD configuration.
+See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob/1.x/.github/workflows/test.yml) for the complete CI/CD configuration.
 
 ### GitHub Actions Jobs
 
@@ -314,7 +314,7 @@ pip install zensical
 - [BATS Documentation](https://bats-core.readthedocs.io/)
 - [BATS GitHub Repository](https://github.com/bats-core/bats-core)
 - [Test Anything Protocol (TAP)](https://testanything.org/)
-- [GitHub Actions Workflows](https://github.com/kanopi/cms-cultivator/tree/main/.github/workflows)
+- [GitHub Actions Workflows](https://github.com/kanopi/cms-cultivator/tree/1.x/.github/workflows)
 
 ---
 

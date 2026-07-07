@@ -34,7 +34,7 @@ Per-output attestation: one schema-typed, human-signed markdown file per signifi
 
 | Skill | Description |
 |-------|-------------|
-| `delivery-record` | Draft a Delivery Record (code, FRD, audit, discovery, design-handoff, strategy, client-comm); refuses to write without a named reviewer + checkpoint notes; writes the file and indexes it in Teamwork |
+| `delivery-record` | Draft a Delivery Record (code, FRD, audit, discovery, design-handoff, strategy, client-comm, design, qa, launch, deployment, devops, project-setup, ongoing-improvement); refuses to write without a named reviewer + checkpoint notes; writes the file and indexes it in Teamwork |
 | `delivery-record-verify` | Validate a record against the schema and the threshold rule (read-only, CI-friendly; supports `--strict`) |
 
 ---

@@ -28,7 +28,14 @@
         "discovery",
         "design-handoff",
         "strategy",
-        "client-comm"
+        "client-comm",
+        "design",
+        "qa",
+        "launch",
+        "deployment",
+        "devops",
+        "project-setup",
+        "ongoing-improvement"
       ]
     },
     "subject": {
@@ -188,6 +195,111 @@
               "facts_verified",
               "tone_reviewed",
               "no_unauthorized_commitments"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "design" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "brand_alignment",
+              "design_system",
+              "accessibility_review",
+              "stakeholder_review"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "qa" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "acceptance_criteria",
+              "test_coverage",
+              "regressions_checked",
+              "evidence_captured"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "launch" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "prelaunch_audits",
+              "rollback_plan",
+              "dns_ssl_verified",
+              "stakeholder_signoff"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "deployment" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "release_notes",
+              "backup_taken",
+              "migrations_verified",
+              "smoke_test"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "devops" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "change_documented",
+              "tested_lower_env",
+              "secrets_handled",
+              "rollback_plan"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "project-setup" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "context_accurate",
+              "sources_verified",
+              "access_confirmed",
+              "stakeholder_review"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "activity_type": { "const": "ongoing-improvement" } } },
+      "then": {
+        "properties": {
+          "checks": {
+            "required": [
+              "metrics_reviewed",
+              "findings_verified",
+              "recommendations_prioritized",
+              "stakeholder_review"
             ]
           }
         }

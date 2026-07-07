@@ -5,9 +5,7 @@ markdown file per significant AI-assisted output. A record proves the work was
 reviewed by a *named human* and ran through Kanopi's workflow.
 
 The schema is canonical in the repository at
-[`spec/delivery-record/v1/`](../spec/delivery-record/v1.md); the narrative
-rationale lives in
-[`kanopi/ai-workflows`](https://github.com/kanopi/ai-workflows/blob/main/src/content/delivery-record.md).
+[`spec/delivery-record/v1/`](../spec/delivery-record/v1.md).
 
 ---
 
@@ -29,9 +27,9 @@ Draft a Delivery Record, require a named reviewer and checkpoint notes, write th
 file, and index it in Teamwork.
 
 !!! warning "Side effects"
-    Writes a markdown file (repo or Drive), appends to the project's Teamwork
-    "Delivery Records" notebook, and links the record from the PR. **Refuses to
-    write without a named reviewer and both checkpoint notes.**
+    Writes a markdown file (repo or Drive), posts an index comment on the
+    project's Teamwork "Delivery Records" notebook, and links the record from the
+    PR. **Refuses to write without a named reviewer and both checkpoint notes.**
 
 ### Usage
 
@@ -59,8 +57,8 @@ file, and index it in Teamwork.
    and Checkpoint 2 (final) notes. A bare "LGTM" fails.
 5. Writes the file: `docs/delivery-records/PR-<n>-<slug>.md` (code) or Drive
    `/Delivery Records/YYYY-MM-DD-<slug>.md` (non-code).
-6. Indexes the record in the Teamwork "Delivery Records" notebook (asks before
-   creating the notebook).
+6. Indexes the record by posting a comment on the Teamwork "Delivery Records"
+   notebook (asks before creating the notebook).
 7. For code, links the record from the PR description.
 
 ---
@@ -83,4 +81,5 @@ Read-only. See the [verify command page](delivery-record-verify.md).
   per-PR artifact that follows.
 - **`commit-message-generator`** — appends the per-commit `Assisted-by:` trailer
   that complements the per-PR record.
-- **`teamwork-integrator`** — locates and updates the Delivery Records notebook.
+- **`teamwork-integrator`** — locates the Delivery Records notebook and posts the
+  index comment.

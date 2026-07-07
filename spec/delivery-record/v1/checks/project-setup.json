@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/checks/project-setup.json",
+  "title": "Delivery Record checks — project-setup",
+  "description": "Constrains the `checks` block for activity_type: project-setup. Subject kind: document. Sign-off roles: PM, Tech Lead.",
+  "type": "object",
+  "required": ["context_accurate", "sources_verified", "access_confirmed", "stakeholder_review"],
+  "additionalProperties": { "$ref": "#/$defs/checkGroup" },
+  "properties": {
+    "context_accurate": { "$ref": "#/$defs/checkGroup" },
+    "sources_verified": { "$ref": "#/$defs/checkGroup" },
+    "access_confirmed": { "$ref": "#/$defs/checkGroup" },
+    "stakeholder_review": { "$ref": "#/$defs/checkGroup" }
+  },
+  "$defs": {
+    "checkGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" },
+          { "type": "boolean" }
+        ]
+      }
+    }
+  }
+}
