@@ -4,8 +4,7 @@ The canonical, machine-readable schema for a **Delivery Record**: one
 schema-typed, human-signed markdown file per significant AI-assisted output.
 This directory is the authoritative source. The human-readable face of the spec
 lives on the docs site at
-<https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/>, and the
-narrative rationale lives in [`kanopi/ai-workflows` → `/delivery-record`](https://github.com/kanopi/ai-workflows/blob/main/src/content/delivery-record.md).
+<https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1/>.
 
 > **AI drafts the record. A named human reviews, edits, and signs.** A passive
 > "AI was used" disclosure is not enough — the record names the reviewer.
@@ -25,7 +24,7 @@ Only the **front-matter** is validated. The prose body is unstructured by design
 | Field | Required | Notes |
 | --- | --- | --- |
 | `predicate_type` | yes | Must match `https://kanopi.github.io/cms-cultivator/spec/delivery-record/v<n>`. |
-| `activity_type` | yes | One of `code`, `frd`, `audit`, `discovery`, `design-handoff`, `strategy`, `client-comm`. |
+| `activity_type` | yes | One of `code`, `frd`, `audit`, `discovery`, `design-handoff`, `strategy`, `client-comm`, `design`, `qa`, `launch`, `deployment`, `devops`, `project-setup`, `ongoing-improvement`. |
 | `subject` | yes | Object with `kind` (`pr`/`document`/`report`/`figma`/`message`) and `title`; optional `ref`, `sha`. |
 | `ticket` | no | Project ticket reference. |
 | `scope` | no | One of `feature`, `fix`, `chore`, `milestone`, `launch`, `deliverable`. |
@@ -47,6 +46,13 @@ evidence. Each `checks/<activity_type>.json` requires exactly these keys:
 | `design-handoff` | document | `goals_kpis`, `audiences`, `journeys`, `figma_urls`, `cd_review` | Strategist, Designer, Tech Lead |
 | `strategy` | document | `sources_grounded`, `recommendations_defensible`, `alternatives_considered` | Strategist, Account |
 | `client-comm` | message | `facts_verified`, `tone_reviewed`, `no_unauthorized_commitments` | PM, Account |
+| `design` | figma | `brand_alignment`, `design_system`, `accessibility_review`, `stakeholder_review` | Designer, Creative Director |
+| `qa` | report | `acceptance_criteria`, `test_coverage`, `regressions_checked`, `evidence_captured` | QA, Tech Lead |
+| `launch` | document | `prelaunch_audits`, `rollback_plan`, `dns_ssl_verified`, `stakeholder_signoff` | Tech Lead, PM, Account |
+| `deployment` | report | `release_notes`, `backup_taken`, `migrations_verified`, `smoke_test` | Developer, Tech Lead |
+| `devops` | pr | `change_documented`, `tested_lower_env`, `secrets_handled`, `rollback_plan` | DevOps, Tech Lead |
+| `project-setup` | document | `context_accurate`, `sources_verified`, `access_confirmed`, `stakeholder_review` | PM, Tech Lead |
+| `ongoing-improvement` | report | `metrics_reviewed`, `findings_verified`, `recommendations_prioritized`, `stakeholder_review` | Tech Lead, PM |
 
 Each check group is an object. Leaf values are a status (`pass` / `fail` / `n/a`)
 or an evidence string such as a CI run URL or a reviewer note

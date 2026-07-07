@@ -15,7 +15,19 @@ have_validator() {
   command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml, jsonschema' >/dev/null 2>&1
 }
 
-ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
+# The activity-type list is derived from the schema enum so tests grow with the
+# spec instead of hardcoding a count. Call inside a test (after setup cd's to root).
+activity_types() {
+  jq -r '.properties.activity_type.enum[]' "$VSPEC/schema.json"
+}
+
+# The example filename for an activity type (code is the one that differs).
+example_file() {
+  case "$1" in
+    code) echo "$VSPEC/examples/code-pr.md" ;;
+    *)    echo "$VSPEC/examples/$1.md" ;;
+  esac
+}
 
 # ==============================================================================
 # SPEC STRUCTURE
@@ -36,8 +48,8 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
   [ "$status" -eq 0 ]
 }
 
-@test "all seven checks/<activity_type>.json files exist and are valid JSON" {
-  for t in "${ACTIVITY_TYPES[@]}"; do
+@test "a checks/<activity_type>.json file exists and is valid JSON for every activity type" {
+  for t in $(activity_types); do
     [ -f "$VSPEC/checks/$t.json" ] || { echo "missing checks/$t.json"; return 1; }
     run jq empty "$VSPEC/checks/$t.json"
     [ "$status" -eq 0 ] || { echo "invalid JSON in checks/$t.json"; return 1; }
@@ -50,9 +62,13 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
   echo "$output" | grep -q 'kanopi\\\.github\\\.io/cms-cultivator/spec/delivery-record'
 }
 
-@test "activity_type enum lists exactly the seven activity types" {
-  run jq -c '.properties.activity_type.enum | sort' "$VSPEC/schema.json"
-  [ "$output" = '["audit","client-comm","code","design-handoff","discovery","frd","strategy"]' ]
+@test "activity_type enum matches the checks/ files exactly (parity, no drift)" {
+  enum=$(jq -r '.properties.activity_type.enum[]' "$VSPEC/schema.json" | sort | tr '\n' ' ')
+  files=$(for f in "$VSPEC"/checks/*.json; do basename "$f" .json; done | sort | tr '\n' ' ')
+  if [ "$enum" != "$files" ]; then
+    echo "enum ($enum) != checks files ($files)"
+    return 1
+  fi
 }
 
 # ==============================================================================
@@ -63,17 +79,25 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
   # Uses a case statement (not associative arrays) for macOS bash 3.2 support.
   expected_keys() {
     case "$1" in
-      code)           echo '["audits","review","standards","tests"]' ;;
-      frd)            echo '["completeness","hour_total_vs_cap","sow_alignment","stakeholder_review"]' ;;
-      audit)          echo '["findings_verified","methodology","sample_size","severity_rubric"]' ;;
-      discovery)      echo '["bias_check","sample_size","sources_cited","stakeholder_review"]' ;;
-      design-handoff) echo '["audiences","cd_review","figma_urls","goals_kpis","journeys"]' ;;
-      strategy)       echo '["alternatives_considered","recommendations_defensible","sources_grounded"]' ;;
-      client-comm)    echo '["facts_verified","no_unauthorized_commitments","tone_reviewed"]' ;;
+      code)                echo '["audits","review","standards","tests"]' ;;
+      frd)                 echo '["completeness","hour_total_vs_cap","sow_alignment","stakeholder_review"]' ;;
+      audit)               echo '["findings_verified","methodology","sample_size","severity_rubric"]' ;;
+      discovery)           echo '["bias_check","sample_size","sources_cited","stakeholder_review"]' ;;
+      design-handoff)      echo '["audiences","cd_review","figma_urls","goals_kpis","journeys"]' ;;
+      strategy)            echo '["alternatives_considered","recommendations_defensible","sources_grounded"]' ;;
+      client-comm)         echo '["facts_verified","no_unauthorized_commitments","tone_reviewed"]' ;;
+      design)              echo '["accessibility_review","brand_alignment","design_system","stakeholder_review"]' ;;
+      qa)                  echo '["acceptance_criteria","evidence_captured","regressions_checked","test_coverage"]' ;;
+      launch)              echo '["dns_ssl_verified","prelaunch_audits","rollback_plan","stakeholder_signoff"]' ;;
+      deployment)          echo '["backup_taken","migrations_verified","release_notes","smoke_test"]' ;;
+      devops)              echo '["change_documented","rollback_plan","secrets_handled","tested_lower_env"]' ;;
+      project-setup)       echo '["access_confirmed","context_accurate","sources_verified","stakeholder_review"]' ;;
+      ongoing-improvement) echo '["findings_verified","metrics_reviewed","recommendations_prioritized","stakeholder_review"]' ;;
+      *)                   echo "UNMAPPED:$1" ;;
     esac
   }
 
-  for t in "${ACTIVITY_TYPES[@]}"; do
+  for t in $(activity_types); do
     got=$(jq -c '.required | sort' "$VSPEC/checks/$t.json")
     want=$(expected_keys "$t")
     if [ "$got" != "$want" ]; then
@@ -84,7 +108,7 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
 }
 
 @test "schema.json if/then branches stay in sync with checks/<activity_type>.json" {
-  for t in "${ACTIVITY_TYPES[@]}"; do
+  for t in $(activity_types); do
     from_schema=$(jq -c --arg t "$t" \
       '.allOf[] | select(.if.properties.activity_type.const==$t) | .then.properties.checks.required | sort' \
       "$VSPEC/schema.json")
@@ -101,13 +125,10 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
 # ==============================================================================
 
 @test "an example record exists for every activity type" {
-  [ -f "$VSPEC/examples/code-pr.md" ]
-  [ -f "$VSPEC/examples/frd.md" ]
-  [ -f "$VSPEC/examples/audit.md" ]
-  [ -f "$VSPEC/examples/discovery.md" ]
-  [ -f "$VSPEC/examples/design-handoff.md" ]
-  [ -f "$VSPEC/examples/strategy.md" ]
-  [ -f "$VSPEC/examples/client-comm.md" ]
+  for t in $(activity_types); do
+    f=$(example_file "$t")
+    [ -f "$f" ] || { echo "missing example for $t ($f)"; return 1; }
+  done
 }
 
 @test "spec validates against itself — every example passes (strict)" {
@@ -155,7 +176,7 @@ ACTIVITY_TYPES=(code frd audit discovery design-handoff strategy client-comm)
 }
 
 @test "delivery-record ships a body template for every activity type" {
-  for t in "${ACTIVITY_TYPES[@]}"; do
+  for t in $(activity_types); do
     [ -f "skills/delivery-record/templates/$t.md" ] || { echo "missing template $t.md"; return 1; }
   done
 }

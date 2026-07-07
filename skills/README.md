@@ -449,7 +449,7 @@ Detailed instructions for Claude on how to execute this skill...
 ### 51. delivery-record
 
 **Triggers**: "create a delivery record", "generate a delivery record for this PR/FRD/audit", end of a unit of work, "/delivery-record"
-**Purpose**: Draft a schema-typed, human-signed Delivery Record for a significant AI-assisted output (code, FRD, audit, discovery, design-handoff, strategy, client-comm). Refuses to write without a named reviewer and both checkpoint notes, writes to `docs/delivery-records/` (code) or Drive (non-code), and indexes the record in the project's Teamwork "Delivery Records" notebook.
+**Purpose**: Draft a schema-typed, human-signed Delivery Record for a significant AI-assisted output (code, FRD, audit, discovery, design-handoff, strategy, client-comm, design, qa, launch, deployment, devops, project-setup, ongoing-improvement). Refuses to write without a named reviewer and both checkpoint notes, writes to `docs/delivery-records/` (code) or Drive (non-code), and indexes the record by commenting on the project's Teamwork "Delivery Records" notebook.
 **Spec**: [spec/delivery-record/v1/](../spec/delivery-record/v1/README.md)
 **Related Skills**: pr-create, commit-message-generator, teamwork-integrator, delivery-record-verify
 

@@ -1,9 +1,10 @@
 ---
 name: delivery-record
 description: |
-  Generate a Delivery Record for a significant AI-assisted output (PR, FRD,
-  audit, discovery deliverable, design handoff, strategy doc, or client
-  communication). Refuses to write without a named human reviewer and the two
+  Generate a Delivery Record for a significant AI-assisted output — code (PR),
+  FRD, audit, discovery, design-handoff, strategy, client-comm, design, QA,
+  launch, deployment, devops, project-setup, or ongoing-improvement. Refuses to
+  write without a named human reviewer and the two
   checkpoint notes. Writes to docs/delivery-records/ in a repo or to Drive in
   Claude Desktop, and indexes the result in the project's Teamwork "Delivery
   Records" notebook. Invoke at the end of a unit of work, after /pr-create for
@@ -18,8 +19,7 @@ main session runs this skill directly; no orchestrator agent is involved.
 
 The record proves a piece of AI-assisted work was reviewed by a **named human**
 and ran through Kanopi's workflow. The schema is canonical in this repo at
-[`spec/delivery-record/v1/`](../../spec/delivery-record/v1/README.md); the
-narrative rationale lives in [`kanopi/ai-workflows`](https://github.com/kanopi/ai-workflows/blob/main/src/content/delivery-record.md).
+[`spec/delivery-record/v1/`](../../spec/delivery-record/v1/README.md).
 
 ## ⚠️ Side Effect Warning
 
@@ -27,7 +27,7 @@ narrative rationale lives in [`kanopi/ai-workflows`](https://github.com/kanopi/a
 
 - Writes a markdown file to `docs/delivery-records/` in the repo (code) or to the
   client's Drive (non-code).
-- Appends an index line to the project's "Delivery Records" Teamwork notebook
+- Posts an index comment on the project's "Delivery Records" Teamwork notebook
   (and, with your confirmation, creates that notebook if it is missing).
 - For code records, amends the open PR description with a link to the record.
 
@@ -83,6 +83,20 @@ Pull what the chosen activity needs:
   Teamwork comments tagged to the same epic.
 - **client-comm**: ask for the Teamwork message URL; pull the thread; pull the
   matching Fathom transcript if a call is referenced.
+- **design**: ask for the Figma file URL and the design brief; note which
+  components are reused vs new.
+- **qa**: ask for the QA task and multidev URL; pull the acceptance criteria and
+  the captured screenshots (pairs with `qa-validation-checklist` / `browser-validator`).
+- **launch**: ask for the launch notebook/checklist; gather the pre-launch audit
+  report paths and the DNS/SSL cutover and rollback plans.
+- **deployment**: the release tag, the generated release notes, and confirmation
+  that a backup was taken and migrations ran clean.
+- **devops**: the PR for the infra/environment change and the lower-environment
+  test results; confirm no secrets landed in the repo.
+- **project-setup**: the `CLAUDE.md` / onboarding brief and the SOW; confirm which
+  documented commands were verified against a fresh checkout.
+- **ongoing-improvement**: the metrics source (CWV, uptime, error logs) and the
+  report file; note the sample size.
 
 ### 3. Draft the record
 
@@ -140,7 +154,10 @@ After writing, re-run the validator on the final file and report the result.
 - If it does not exist, **confirm with the user before creating it** (do not create
   silently). If the user declines, skip indexing and tell them the record was
   written but not indexed.
-- Append a one-line entry:
+- **Post the index entry as a comment on the notebook** (Teamwork's
+  `create_comment` against the notebook). Do **not** rewrite the notebook body —
+  notebooks have no append operation, so commenting avoids clobbering existing
+  content and keeps a clean, per-record audit trail. Use this one-line format:
 
   ```
   YYYY-MM-DD · <activity_type> · <title> · <link>
@@ -167,8 +184,8 @@ waiver/justification (threshold) rule are all defined in
 - **No `gh` CLI** → ask the user for the PR number, SHA, and CI status, then
   proceed; print the `gh pr edit` command for the PR link in step 7 instead of
   running it.
-- **No Teamwork MCP** → write the file, then tell the user to add the index line
-  to the Delivery Records notebook manually (provide the exact line).
+- **No Teamwork MCP** → write the file, then tell the user to post the index
+  comment on the Delivery Records notebook manually (provide the exact line).
 - **No Drive MCP (non-code)** → abort the write per step 5 and print the draft.
 
 ## Related skills
@@ -179,4 +196,5 @@ waiver/justification (threshold) rule are all defined in
   complements the per-PR record.
 - **delivery-record-verify** — validate a record against the schema and the
   threshold rule.
-- **teamwork-integrator** — locate and update the Delivery Records notebook.
+- **teamwork-integrator** — locate the Delivery Records notebook and post the
+  index comment.
