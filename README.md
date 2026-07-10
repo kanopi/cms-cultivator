@@ -77,6 +77,8 @@ Comprehensive performance, accessibility, and security audits with flexible argu
 - `security-audit` - OWASP Top 10 vulnerability scanning
 - `performance-audit` - Core Web Vitals and optimization
 - `quality-audit` - Code quality and technical debt
+- `gtm-performance-audit` - Google Tag Manager performance impact (Chrome DevTools MCP)
+- `structured-data-analyzer` - JSON-LD / Schema.org structured data for SEO
 - `live-site-audit` - Comprehensive parallel audit (all specialists)
 - `audit-export` - Export audit findings to CSV for project management tools
 - `audit-report` - Generate client-facing executive summaries
@@ -88,6 +90,32 @@ Figma → WordPress blocks, Drupal paragraphs with browser validation.
 - `design-to-wp-block` - Create WordPress block pattern
 - `design-to-drupal-paragraph` - Create Drupal paragraph type
 - `browser-validator` - Validate implementation in Chrome
+- `drupal-sdc-twig` - Best practices for Drupal Single Directory Components (Twig)
+
+### Development Workflow
+Parallel work with git worktrees and safe changes to Composer-managed dependencies.
+
+**Skills:**
+- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation)
+- `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
+
+### Drupal.org Contribution
+Create issues and merge requests on drupal.org from your local environment.
+
+**Skills:**
+- `drupal-contribute` - Full contribution workflow (issue + merge request)
+- `drupal-issue` - Create, update, and comment on drupal.org issues
+- `drupal-mr` - Create merge requests via git.drupalcode.org
+- `drupal-cleanup` - List and clean up cloned drupal.org repositories
+
+### DevOps & Onboarding
+Automate Kanopi's Pantheon DevOps setup for Drupal and WordPress.
+
+**Skills:**
+- `devops-setup` - Drupal/Pantheon DevOps onboarding (DDEV, CircleCI, code quality)
+- `wp-devops-setup` - WordPress/Pantheon DevOps onboarding (wp-pantheon-starter)
+- `wp-plugin-to-private-package` - Convert a premium WordPress plugin into a private Composer package
+- `wp-add-skills` - Install official WordPress agent-skills
 
 ### Documentation
 API docs, user guides, developer documentation, changelogs.
@@ -117,6 +145,7 @@ Strategist-focused discovery audits — not developer audits. Requires CoWork.
 
 **Skills:**
 - `strategist-site-audit` - Audit a site against the 21 UX Laws (lawsofux.com), review content hierarchy, synthesise qualitative data, run Lighthouse, and produce a Project Knowledge Summary (Markdown) plus an iterable client-facing HTML Artifact (CoWork)
+- `strategic-thinking` - Guide decisions through Brené Brown's 5 Cs of Strategic Thinking
 
 **See [docs site](https://kanopi.github.io/cms-cultivator/) for complete skill reference and usage examples.**
 
@@ -144,18 +173,16 @@ PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`
 ### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
-- accessibility-checker, security-scanner, performance-analyzer
-- commit-message-generator, test-scaffolding, coverage-analyzer
-- documentation-generator, test-plan-generator, code-standards-checker
-- structured-data-analyzer, design-analyzer, responsive-styling, browser-validator
-- accessibility-audit, performance-audit, security-audit, quality-audit
-- live-site-audit, pr-review, audit-export, audit-report
-- design-to-wp-block, design-to-drupal-paragraph, pr-create, pr-release
-- delivery-record, delivery-record-verify
-- devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
-- frd-generator, story-point-estimator, csv-exporter
-- client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
-- strategist-site-audit
+- **PR & development workflow:** commit-message-generator, pr-create, pr-review, pr-release, worktree-manager, composer-patch-generator
+- **Delivery records:** delivery-record, delivery-record-verify
+- **Code quality & testing:** code-standards-checker, quality-audit, test-scaffolding, test-plan-generator, coverage-analyzer, documentation-generator
+- **Auditing:** accessibility-checker, accessibility-audit, performance-analyzer, performance-audit, security-scanner, security-audit, structured-data-analyzer, gtm-performance-audit, live-site-audit, audit-export, audit-report
+- **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
+- **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper
+- **DevOps & onboarding:** devops-setup, wp-devops-setup, wp-plugin-to-private-package, wp-add-skills
+- **Project planning:** frd-generator, story-point-estimator, csv-exporter
+- **PM workflows:** teamwork-task-creator, teamwork-integrator, teamwork-exporter, client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
+- **Strategy:** strategic-thinking, strategist-site-audit
 
 ### How It Works
 
