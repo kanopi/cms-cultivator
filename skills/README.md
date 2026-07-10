@@ -245,6 +245,8 @@ skills/
 ├── devops-setup/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
+├── playwright-setup/
+│   └── SKILL.md
 ├── drupal-contribute/
 │   ├── SKILL.md
 │   └── agents/openai.yaml
@@ -464,6 +466,12 @@ Detailed instructions for Claude on how to execute this skill...
 
 **Triggers**: "composer patch", "patch a contrib module", "cweagans", "diff -ruN", "extra.patches", "applies locally but fails in CI"
 **Purpose**: Generate and maintain CI-safe patches for Composer-installed packages (Drupal contrib modules, WordPress plugins/packages, PHP libraries) using `cweagans/composer-patches`. Covers correct `diff -ruN` format (vs `git diff`), basing the diff on the dist archive, wiring `extra.patches` in `composer.json`, handling new files, and verifying with `patch -p1 --dry-run` plus `composer install`.
+
+### 54. playwright-setup
+
+**Triggers**: "add Playwright", "set up Playwright", "Playwright e2e", "browser tests for this Drupal site", "/playwright-setup"
+**Purpose**: Scaffold a Playwright e2e suite on a Kanopi Drupal + Pantheon project in DDEV — root runner, `tests/e2e` tree with Drupal login/global-setup and starter specs, a CircleCI job that runs against the PR multidev, and the `playwright-*` DDEV commands from the `kanopi/ddev-kanopi-drupal` add-on. Captures the Pantheon deterrence-gate and default-role gotchas.
+**Related Skills**: devops-setup, test-scaffolding
 
 ## Adding New Skills
 
