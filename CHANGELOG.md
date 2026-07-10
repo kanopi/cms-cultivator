@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `README.md` — refreshed the Agent Skills roster to list all current skills (grouped by capability) and added curated Key Features sections for Development Workflow, Drupal.org Contribution, and DevOps & Onboarding, plus previously unlisted skills (`gtm-performance-audit`, `structured-data-analyzer`, `drupal-sdc-twig`, `strategic-thinking`).
+- `CLAUDE.md` — the "Adding a New Feature" checklist now requires updating all registry files on every new skill: `CHANGELOG.md` (`[Unreleased]`), `skills/README.md` (append the next number so the count matches the skill-directory count enforced by `tests/test-plugin.bats`), the `docs/agents-and-skills.md` reference table, and the top-level `README.md` roster.
 
 ## [1.6.0] - 2026-07-07
 

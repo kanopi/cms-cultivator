@@ -109,10 +109,11 @@ Skills automatically reference Kanopi-specific tools when available:
    - Include all code examples, patterns, best practices
    - Add Drupal and WordPress examples
 
-2. **Update documentation**:
-   - Add to `docs/agents-and-skills.md`
-   - Update `skills/README.md`
-   - Update README if needed
+2. **Register the skill** (required — update ALL of these on every new skill so the docs, changelog, and tests stay in sync):
+   - Add an `### Added` entry under `[Unreleased]` in `CHANGELOG.md`
+   - Add a numbered entry in `skills/README.md` (the number of `### N.` entries must equal the number of skill directories — `tests/test-plugin.bats` asserts this, so append the next number rather than inserting mid-list)
+   - Add a row to the Skills Reference Table in `docs/agents-and-skills.md`
+   - Add the skill to the Agent Skills roster (and the relevant Key Features section) in the top-level `README.md`
 
 ### Updating Existing Features
 
