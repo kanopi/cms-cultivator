@@ -113,6 +113,7 @@ Automate Kanopi's Pantheon DevOps setup for Drupal and WordPress.
 
 **Skills:**
 - `devops-setup` - Drupal/Pantheon DevOps onboarding (DDEV, CircleCI, code quality)
+- `playwright-setup` - Scaffold Playwright e2e testing on a Drupal/Pantheon project (DDEV + CircleCI multidev)
 - `wp-devops-setup` - WordPress/Pantheon DevOps onboarding (wp-pantheon-starter)
 - `wp-plugin-to-private-package` - Convert a premium WordPress plugin into a private Composer package
 - `wp-add-skills` - Install official WordPress agent-skills
@@ -179,7 +180,7 @@ Model-invoked skills that activate during conversation, across Claude Code, Clau
 - **Auditing:** accessibility-checker, accessibility-audit, performance-analyzer, performance-audit, security-scanner, security-audit, structured-data-analyzer, gtm-performance-audit, live-site-audit, audit-export, audit-report
 - **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
 - **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper
-- **DevOps & onboarding:** devops-setup, wp-devops-setup, wp-plugin-to-private-package, wp-add-skills
+- **DevOps & onboarding:** devops-setup, playwright-setup, wp-devops-setup, wp-plugin-to-private-package, wp-add-skills
 - **Project planning:** frd-generator, story-point-estimator, csv-exporter
 - **PM workflows:** teamwork-task-creator, teamwork-integrator, teamwork-exporter, client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
 - **Strategy:** strategic-thinking, strategist-site-audit
