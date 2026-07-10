@@ -460,6 +460,11 @@ Detailed instructions for Claude on how to execute this skill...
 **Spec**: [spec/delivery-record/v1/](../spec/delivery-record/v1/README.md)
 **Related Skills**: delivery-record
 
+### 53. composer-patch-generator
+
+**Triggers**: "composer patch", "patch a contrib module", "cweagans", "diff -ruN", "extra.patches", "applies locally but fails in CI"
+**Purpose**: Generate and maintain CI-safe patches for Composer-installed packages (Drupal contrib modules, WordPress plugins/packages, PHP libraries) using `cweagans/composer-patches`. Covers correct `diff -ruN` format (vs `git diff`), basing the diff on the dist archive, wiring `extra.patches` in `composer.json`, handling new files, and verifying with `patch -p1 --dry-run` plus `composer install`.
+
 ## Adding New Skills
 
 To add a new Agent Skill:

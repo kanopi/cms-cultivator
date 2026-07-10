@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `skills/composer-patch-generator/SKILL.md` — new skill for generating and maintaining CI-safe patches for Composer-installed packages (Drupal contrib modules, WordPress plugins/packages, PHP libraries) via `cweagans/composer-patches`. Codifies the failure modes that cause "applies locally, fails in CI": use `diff -ruN` (not `git diff`) because CI installs from dist archives with no `.git` so composer-patches falls back to the `patch` command; base the diff on the dist archive (not a git clone) to avoid spurious `LICENSE.txt`/packaging-metadata hunks; never pass `--exclude` to `diff` (it leaks into headers); and exclude the composer-patches-generated `PATCHES.txt` artifact. Covers snapshotting a pristine base, path normalization, wiring `extra.patches` in `composer.json` (ordering, `patchLevel`), handling new files, and verifying via `patch -p1 --dry-run` plus `composer install`. Model-invoked (no command). Registered in `skills/README.md` and the `docs/agents-and-skills.md` reference table.
+
+### Changed
+- `README.md` — refreshed the Agent Skills roster to list all current skills (grouped by capability) and added curated Key Features sections for Development Workflow, Drupal.org Contribution, and DevOps & Onboarding, plus previously unlisted skills (`gtm-performance-audit`, `structured-data-analyzer`, `drupal-sdc-twig`, `strategic-thinking`).
+- `CLAUDE.md` — the "Adding a New Feature" checklist now requires updating all registry files on every new skill: `CHANGELOG.md` (`[Unreleased]`), `skills/README.md` (append the next number so the count matches the skill-directory count enforced by `tests/test-plugin.bats`), the `docs/agents-and-skills.md` reference table, and the top-level `README.md` roster.
+
 ## [1.6.0] - 2026-07-07
 
 ### Added
