@@ -217,8 +217,8 @@ If you've cloned the repo, package locally:
 **`package-skills.sh` options:**
 
 ```bash
-./scripts/package-skills.sh                  # all skills + bundle
-./scripts/package-skills.sh frd-generator    # one skill only
+./scripts/package-skills.sh                        # all skills + bundle
+./scripts/package-skills.sh commit-message-generator  # one skill only
 ./scripts/package-skills.sh --list           # print the skill names
 ./scripts/package-skills.sh --no-bundle      # skip the all-in-one zip
 ```
@@ -404,15 +404,13 @@ Or just say: "Does this follow Drupal coding standards?" — skills activate aut
 
 In Claude Code, type `/` to see all available skills. In Codex, type `@` to see installed plugin skills. CMS Cultivator skills are organized by category:
 
-- **PR Workflow**: `/pr-create`, `/pr-review`, `/commit-message-generator`, `/pr-release`
-- **Accessibility**: `/accessibility-audit` (with flexible modes)
-- **Performance**: `/performance-audit` (with flexible modes)
-- **Security**: `/security-audit` (with flexible modes)
-- **Live Site Auditing**: `/live-site-audit` (parallel multi-specialist audit)
-- **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`
+- **PR Workflow**: `/pr-create`, `/pr-review`, `/commit-message-generator`, `/pr-release`, `/worktree-manager`
+- **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`, `/browser-validator`
 - **Testing**: auto-invoked (say "I need tests for this class")
-- **Code Quality**: `/quality-audit`, `/code-standards-checker`
+- **Code Quality**: `/code-standards-checker`, `/composer-patch-generator`
 - **Documentation**: auto-invoked (say "document this function")
+- **Drupal.org Contribution**: `/drupal-contribute`, `/drupal-issue`, `/drupal-mr`
+- **WordPress Meta**: `/wp-add-skills`
 
 ---
 
@@ -448,13 +446,9 @@ To use `/pr-create` and other PR commands:
     gh auth login
     ```
 
-### Lighthouse (for Performance Analysis)
+### Chrome DevTools MCP (for Browser Validation)
 
-For `/performance-audit lighthouse`:
-
-```bash
-npm install -g lighthouse
-```
+To use `/browser-validator` and the browser-validation steps of the design workflow skills, install and configure the Chrome DevTools MCP server in your client settings.
 
 ---
 
@@ -610,19 +604,17 @@ If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools gu
 
 Before v1.0, CMS Cultivator used a `commands/` directory with slash-command names. v1.0 moved entirely to skills and renamed everything. If you have muscle memory or stale docs referencing old names, here are the most common changes:
 
-- `/audit-a11y` → `/accessibility-audit`
-- `/audit-perf` → `/performance-audit`
-- `/audit-security` → `/security-audit`
-- `/quality-analyze` → `/quality-audit`
 - `/pr-commit-msg` → `/commit-message-generator`
 - `/docs-generate` → `/documentation-generator`
 - `/test-generate` → `/test-scaffolding`
 - `/test-plan` → `/test-plan-generator`
-- `/audit-live-site` → `/live-site-audit`
 - `/design-to-block` → `/design-to-wp-block`
 - `/design-to-paragraph` → `/design-to-drupal-paragraph`
 
 No aliases are registered for the old names — invoking a pre-v1.0 name produces no result. You can also just describe what you want in natural language; the right skill will activate automatically.
+
+!!! note "What changed in 2.0"
+    As of 2.0, CMS Cultivator focuses on CMS development workflows. Delivery Record moved to its own public library: [kanopi/delivery-record](https://github.com/kanopi/delivery-record). Audit, DevOps, and PM capabilities moved to separate internal Kanopi libraries.
 
 For the complete mapping and the rationale behind the renaming, see the **[Skill Naming Convention](reference/skill-naming-convention.md)** reference page.
 

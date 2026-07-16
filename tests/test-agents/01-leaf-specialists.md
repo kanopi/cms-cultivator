@@ -1,136 +1,16 @@
 # Test 01: Leaf Specialist Agents
 
 **Category:** Agent Spawn & Skills Access
-**Agents Tested:** 5 leaf specialists
+**Agents Tested:** All specialist agents (as of 2.0, every agent is a leaf agent)
 **Expected Behavior:** Agents spawn, access skills, produce output, do NOT delegate
 
----
-
-## Test 1.1: Accessibility Specialist
-
-### Setup
-- Project with HTML/PHP files
-- At least one accessibility issue (missing alt text, contrast issue, etc.)
-
-### Test Procedure
-```
-User: Run /audit-a11y on the homepage template
-```
-
-### Expected Behavior
-1. ✅ Command spawns `accessibility-specialist` agent
-2. ✅ Agent accesses `accessibility-checker` skill
-3. ✅ Agent does NOT spawn other agents (no Task tool usage)
-4. ✅ Agent produces WCAG 2.1 AA report
-
-### Verification Checklist
-- [ ] Agent spawned successfully
-- [ ] Skill loaded: accessibility-checker
-- [ ] No delegation occurred
-- [ ] Output includes:
-  - [ ] WCAG success criteria references (e.g., "1.1.1")
-  - [ ] File paths and line numbers
-  - [ ] Priority levels (Critical, High, Medium, Low)
-  - [ ] Specific fix recommendations
-
-### Output Format Validation
-```markdown
-## Accessibility Findings
-
-**Status:** ✅ Pass | ⚠️ Issues Found | ❌ Critical Issues
-
-**Issues:**
-1. [CRITICAL] Missing alt text on 3 images (WCAG 1.1.1)
-   - File: path/to/file.php line 42
-   - Fix: Add meaningful alt text
-```
+> **Note:** The audit specialists (accessibility, performance, security, code
+> quality, structured data, GTM, DevOps) moved to separate internal Kanopi
+> libraries in 2.0 and are no longer tested here.
 
 ---
 
-## Test 1.2: Performance Specialist
-
-### Setup
-- Project with performance issues (large images, N+1 queries, etc.)
-
-### Test Procedure
-```
-User: Run /audit-perf and analyze database query performance
-```
-
-### Expected Behavior
-1. ✅ Command spawns `performance-specialist` agent
-2. ✅ Agent accesses `performance-analyzer` skill
-3. ✅ Agent does NOT spawn other agents
-4. ✅ Agent produces Core Web Vitals analysis
-
-### Verification Checklist
-- [ ] Agent spawned successfully
-- [ ] Skill loaded: performance-analyzer
-- [ ] No delegation occurred
-- [ ] Output includes:
-  - [ ] Core Web Vitals metrics (LCP, INP, CLS)
-  - [ ] Database query analysis
-  - [ ] Caching recommendations
-  - [ ] Asset optimization suggestions
-
-### Output Format Validation
-```markdown
-## Performance Analysis
-
-**Core Web Vitals:**
-- LCP: 2.5s (Good)
-- INP: 100ms (Good)
-- CLS: 0.05 (Good)
-
-**Issues Found:**
-1. [HIGH] N+1 query detected in post loop
-   - File: path/to/file.php line 156
-```
-
----
-
-## Test 1.3: Security Specialist
-
-### Setup
-- Project with security vulnerabilities (SQL injection risk, XSS, etc.)
-
-### Test Procedure
-```
-User: Run /audit-security and check for OWASP Top 10 vulnerabilities
-```
-
-### Expected Behavior
-1. ✅ Command spawns `security-specialist` agent
-2. ✅ Agent accesses `security-scanner` skill
-3. ✅ Agent does NOT spawn other agents
-4. ✅ Agent produces security vulnerability report
-
-### Verification Checklist
-- [ ] Agent spawned successfully
-- [ ] Skill loaded: security-scanner
-- [ ] No delegation occurred
-- [ ] Output includes:
-  - [ ] OWASP Top 10 vulnerability references
-  - [ ] CVE identifiers (if dependency issues)
-  - [ ] Input validation issues
-  - [ ] Output encoding problems
-
-### Output Format Validation
-```markdown
-## Security Audit Results
-
-**Status:** ❌ Critical Vulnerabilities Found
-
-**Critical Issues:**
-1. [CRITICAL] SQL Injection vulnerability
-   - File: path/to/file.php line 89
-   - Risk: OWASP A03:2021 - Injection
-   - Fix: Use prepared statements
-```
-
----
-
-## Test 1.4: Documentation Specialist
+## Test 1.1: Documentation Specialist
 
 ### Setup
 - Project with undocumented functions/classes
@@ -143,7 +23,7 @@ User: Run /docs-generate and create API documentation for the User module
 ### Expected Behavior
 1. ✅ Command spawns `documentation-specialist` agent
 2. ✅ Agent accesses `documentation-generator` skill
-3. ✅ Agent does NOT spawn other agents
+3. ✅ Agent does NOT spawn other agents (no Task tool usage)
 4. ✅ Agent generates documentation
 
 ### Verification Checklist
@@ -171,48 +51,202 @@ User: Run /docs-generate and create API documentation for the User module
 
 ---
 
-## Test 1.5: Code Quality Specialist
+## Test 1.2: Testing Specialist (Inline Scenario Generation)
 
 ### Setup
-- Project with code quality issues (complexity, standards violations)
+- New feature code without tests
+- Code includes UI component and security-sensitive logic
 
 ### Test Procedure
 ```
-User: Run /quality-analyze and check coding standards compliance
+User: Run /test-generate for the UserAuthentication class
 ```
 
 ### Expected Behavior
-1. ✅ Command spawns `code-quality-specialist` agent
-2. ✅ Agent accesses `code-standards-checker` skill
-3. ✅ Agent does NOT spawn other agents
-4. ✅ Agent produces code quality report
+1. ✅ Command spawns `testing-specialist` agent
+2. ✅ Agent accesses test-scaffolding, test-plan-generator, coverage-analyzer skills
+3. ✅ Agent does NOT spawn other agents (no Task tool)
+4. ✅ Agent generates security-focused and accessibility-focused test scenarios INLINE:
+   - If security-critical → generates security test cases directly (SQL injection, XSS, CSRF patterns)
+   - If UI component → generates accessibility test cases directly (keyboard nav, ARIA, contrast)
+5. ✅ Agent generates comprehensive test suite with all scenarios integrated
 
 ### Verification Checklist
 - [ ] Agent spawned successfully
-- [ ] Skill loaded: code-standards-checker
+- [ ] Skills loaded: test-scaffolding, test-plan-generator, coverage-analyzer
 - [ ] No delegation occurred
+- [ ] Security test scenarios generated inline (NOT via spawning a specialist)
+- [ ] Accessibility test scenarios generated inline (NOT via spawning a specialist)
 - [ ] Output includes:
-  - [ ] Coding standards violations (PHPCS, ESLint)
-  - [ ] Cyclomatic complexity scores
-  - [ ] Technical debt assessment
-  - [ ] Refactoring recommendations
+  - [ ] Unit tests
+  - [ ] Integration tests
+  - [ ] Inline security scenarios (if security code)
+  - [ ] Inline accessibility scenarios (if UI code)
+  - [ ] Test coverage analysis
 
 ### Output Format Validation
-```markdown
-## Code Quality Analysis
+```php
+// Unit Tests
+class UserAuthenticationTest extends TestCase {
+  // [Generated unit tests]
+}
 
-**Standards Compliance:** 85%
+// Security Tests (generated inline)
+class UserAuthenticationSecurityTest extends TestCase {
+  public function testSqlInjectionPrevention() {
+    // [Security test — generated inline by testing-specialist]
+  }
+}
 
-**Violations:**
-1. [ERROR] Line exceeds 80 characters
-   - File: path/to/file.php line 45
-   - Standard: Drupal.Files.LineLength.TooLong
-
-**Complexity Issues:**
-1. [WARNING] Function has cyclomatic complexity of 15
-   - File: path/to/file.php line 100
-   - Recommendation: Refactor into smaller functions
+// Accessibility Tests (generated inline)
+class LoginFormAccessibilityTest extends TestCase {
+  public function testKeyboardNavigation() {
+    // [A11y test — generated inline by testing-specialist]
+  }
+}
 ```
+
+---
+
+## Test 1.3: Design Specialist
+
+### Setup
+- Figma URL or design screenshot
+- WordPress or Drupal project
+
+### Test Procedure
+```
+User: Run /design-to-wp-block [figma-url]
+```
+
+### Expected Behavior
+1. ✅ Skill spawns `design-specialist` agent (Step 1 of the design pipeline)
+2. ✅ Agent accesses design skills (design-analyzer, responsive-styling, design-to-wp-block, design-to-drupal-paragraph)
+3. ✅ Agent does NOT spawn other agents — the invoking skill spawns the follow-up agents
+4. ✅ Agent generates CMS code and returns structured output (file paths, SCSS paths, design specs, test URL)
+
+### Verification Checklist
+- [ ] Agent spawned successfully
+- [ ] Design skills loaded
+- [ ] No delegation occurred (code generation only)
+- [ ] Output includes:
+  - [ ] Generated file paths
+  - [ ] SCSS paths for the styling step
+  - [ ] Design specs (colors, typography, spacing)
+  - [ ] Test URL for browser validation
+
+---
+
+## Test 1.4: Responsive Styling Specialist
+
+### Setup
+- Component markup generated by design-specialist (or any component needing styles)
+
+### Test Procedure
+```
+User: Generate mobile-first responsive SCSS for the hero component
+```
+
+### Expected Behavior
+1. ✅ `responsive-styling-specialist` agent spawns
+2. ✅ Agent accesses `responsive-styling` skill
+3. ✅ Agent does NOT spawn other agents
+4. ✅ Agent produces mobile-first SCSS with standard breakpoints
+
+### Verification Checklist
+- [ ] Agent spawned successfully
+- [ ] Skill loaded: responsive-styling
+- [ ] No delegation occurred
+- [ ] Output includes:
+  - [ ] Mobile-first base styles
+  - [ ] Breakpoints at 768px and 1024px
+  - [ ] WCAG AA color contrast (4.5:1 normal text, 3:1 large text)
+  - [ ] Touch targets ≥44px and visible focus indicators
+  - [ ] Reduced motion support
+
+---
+
+## Test 1.5: Browser Validator Specialist
+
+### Setup
+- Implemented component reachable at a local or preview URL
+- Chrome DevTools MCP available
+
+### Test Procedure
+```
+User: Test this component in the browser
+```
+
+### Expected Behavior
+1. ✅ `browser-validator-specialist` agent spawns
+2. ✅ Agent accesses `browser-validator` skill
+3. ✅ Agent does NOT spawn other agents
+4. ✅ Agent tests responsive breakpoints (320px, 768px, 1024px) and accessibility
+
+### Verification Checklist
+- [ ] Agent spawned successfully
+- [ ] Skill loaded: browser-validator
+- [ ] No delegation occurred
+- [ ] Output includes:
+  - [ ] Results per breakpoint (320px, 768px, 1024px)
+  - [ ] WCAG AA checks (contrast, keyboard navigation, ARIA)
+  - [ ] Console error check
+  - [ ] Specific remediation steps with file paths
+
+---
+
+## Test 1.6: Drupal.org Issue Specialist
+
+### Setup
+- Contributed Drupal module project
+
+### Test Procedure
+```
+User: Help me create a drupal.org issue for this bug
+```
+
+### Expected Behavior
+1. ✅ `drupalorg-issue-specialist` agent spawns
+2. ✅ Agent accesses `drupalorg-issue-helper` and `drupal-issue` skills
+3. ✅ Agent does NOT spawn other agents
+4. ✅ Agent produces a properly structured drupal.org issue (guided manual workflow)
+
+### Verification Checklist
+- [ ] Agent spawned successfully
+- [ ] Skills loaded: drupalorg-issue-helper, drupal-issue
+- [ ] No delegation occurred
+- [ ] Output includes:
+  - [ ] Issue title and summary following drupal.org conventions
+  - [ ] Steps to reproduce / proposed resolution sections
+  - [ ] Correct issue metadata guidance (project, version, category, priority)
+
+---
+
+## Test 1.7: Drupal.org MR Specialist
+
+### Setup
+- Local fix for a contributed Drupal project
+- Git configured for git.drupalcode.org
+
+### Test Procedure
+```
+User: Create a merge request for this fix on drupal.org
+```
+
+### Expected Behavior
+1. ✅ `drupalorg-mr-specialist` agent spawns
+2. ✅ Agent accesses `drupalorg-contribution-helper` and `drupal-mr` skills
+3. ✅ Agent does NOT spawn other agents
+4. ✅ Agent handles git operations (clone, branch, push) and flags the manual issue-fork step
+
+### Verification Checklist
+- [ ] Agent spawned successfully
+- [ ] Skills loaded: drupalorg-contribution-helper, drupal-mr
+- [ ] No delegation occurred
+- [ ] Output includes:
+  - [ ] Correct branch naming for the issue
+  - [ ] git.drupalcode.org remote/push commands
+  - [ ] Clear callout of the manual issue-fork creation step
 
 ---
 
@@ -220,11 +254,13 @@ User: Run /quality-analyze and check coding standards compliance
 
 | Agent | Spawn | Skill Access | No Delegation | Output Valid |
 |-------|-------|--------------|---------------|--------------|
-| accessibility-specialist | ☐ | ☐ | ☐ | ☐ |
-| performance-specialist | ☐ | ☐ | ☐ | ☐ |
-| security-specialist | ☐ | ☐ | ☐ | ☐ |
 | documentation-specialist | ☐ | ☐ | ☐ | ☐ |
-| code-quality-specialist | ☐ | ☐ | ☐ | ☐ |
+| testing-specialist | ☐ | ☐ | ☐ | ☐ |
+| design-specialist | ☐ | ☐ | ☐ | ☐ |
+| responsive-styling-specialist | ☐ | ☐ | ☐ | ☐ |
+| browser-validator-specialist | ☐ | ☐ | ☐ | ☐ |
+| drupalorg-issue-specialist | ☐ | ☐ | ☐ | ☐ |
+| drupalorg-mr-specialist | ☐ | ☐ | ☐ | ☐ |
 
 **Pass Criteria:** All checkboxes must be ✅
 

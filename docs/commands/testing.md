@@ -1,6 +1,6 @@
 # Testing Skills
 
-Generate tests and analyze coverage with 3 specialized skills.
+Generate tests and analyze coverage with specialized skills.
 
 ## Skills
 

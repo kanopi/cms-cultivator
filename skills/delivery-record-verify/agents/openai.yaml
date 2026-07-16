@@ -1,5 +1,0 @@
-policy:
-  allow_implicit_invocation: false
-interface:
-  display_name: "CMS Cultivator: Delivery Record Verify"
-  short_description: "Validate a Delivery Record against the kanopi/delivery-record schema and the threshold rule (read-only). Supports --strict and batch validation."

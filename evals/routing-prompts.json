@@ -1,0 +1,101 @@
+{
+  "$comment": "Routing eval cases for scripts/run-evals.js. Routing hazards in this repo: the drupal-* guided skills vs the drupalorg-*-helper quick-help skills (doing vs explaining), the design trio (analyzer extracts specs, design-to-* generate code), and the pr-* trio. CI enforces a rank-1 floor (see .github/workflows/test.yml).",
+  "prompts": [
+    {
+      "prompt": "I've staged my changes — write the commit message",
+      "expect": "commit-message-generator"
+    },
+    {
+      "prompt": "does this code follow Drupal coding standards? run phpcs on it",
+      "expect": "code-standards-checker"
+    },
+    {
+      "prompt": "I wrote this service class but it has no tests yet — scaffold some",
+      "expect": "test-scaffolding"
+    },
+    {
+      "prompt": "generate API documentation and a README for this module",
+      "expect": "documentation-generator"
+    },
+    {
+      "prompt": "what should QA test for this new checkout feature? build a test plan",
+      "expect": "test-plan-generator"
+    },
+    {
+      "prompt": "which parts of the codebase are untested? find the coverage gaps",
+      "expect": "coverage-analyzer"
+    },
+    {
+      "prompt": "open a pull request for this branch",
+      "expect": "pr-create"
+    },
+    {
+      "prompt": "review my local changes before I submit the PR",
+      "expect": "pr-review"
+    },
+    {
+      "prompt": "prepare the release: changelog entries and the deployment checklist",
+      "expect": "pr-release"
+    },
+    {
+      "prompt": "I need to work on another ticket without losing my current work — set up a worktree",
+      "expect": "worktree-manager"
+    },
+    {
+      "prompt": "extract the colors, typography, and spacing specs from this Figma link",
+      "expect": "design-analyzer"
+    },
+    {
+      "prompt": "turn this Figma design into a WordPress block pattern",
+      "expect": "design-to-wp-block"
+    },
+    {
+      "prompt": "convert this mockup into a Drupal paragraph type",
+      "expect": "design-to-drupal-paragraph"
+    },
+    {
+      "prompt": "write the mobile-first SCSS for this component with proper breakpoints",
+      "expect": "responsive-styling"
+    },
+    {
+      "prompt": "test what you just built in a real browser at all three breakpoints",
+      "expect": "browser-validator"
+    },
+    {
+      "prompt": "I fixed a bug in a contrib module — walk me through contributing it back to drupal.org",
+      "expect": "drupal-contribute"
+    },
+    {
+      "prompt": "create a drupal.org issue for this bug in the webform module",
+      "expect": "drupal-issue"
+    },
+    {
+      "prompt": "push my fix as a merge request on git.drupalcode.org",
+      "expect": "drupal-mr"
+    },
+    {
+      "prompt": "clean up this Drupal codebase — unused modules and leftover config",
+      "expect": "drupal-cleanup"
+    },
+    {
+      "prompt": "how does the drupal.org issue fork and branch naming workflow go?",
+      "expect": "drupalorg-contribution-helper"
+    },
+    {
+      "prompt": "what's the right template and formatting for a drupal.org bug report?",
+      "expect": "drupalorg-issue-helper"
+    },
+    {
+      "prompt": "props or slots for this single directory component? review my component.yml",
+      "expect": "drupal-sdc-twig"
+    },
+    {
+      "prompt": "install the WordPress development skills into this project",
+      "expect": "wp-add-skills"
+    },
+    {
+      "prompt": "generate a composer patch for this contrib module fix and wire it into composer.json",
+      "expect": "composer-patch-generator"
+    }
+  ]
+}

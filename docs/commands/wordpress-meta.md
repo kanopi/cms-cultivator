@@ -48,7 +48,7 @@ The exact list updates as the WordPress team adds skills upstream.
 
 ## Why This Skill Exists
 
-CMS Cultivator's own skills are CMS-platform-neutral where possible (PR workflows, design-to-code, FRD planning, PM workflows, etc.) — they work on Drupal and WordPress alike.
+CMS Cultivator's own skills are CMS-platform-neutral where possible (PR workflows, design-to-code, testing, documentation) — they work on Drupal and WordPress alike.
 
 For deep WordPress-specific tooling — Gutenberg block internals, theme.json semantics, REST API patterns — the WordPress core team maintains its own `agent-skills` repository. Rather than duplicate that work, `wp-add-skills` makes those skills available alongside CMS Cultivator's skills with one command.
 

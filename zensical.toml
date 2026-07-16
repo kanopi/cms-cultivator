@@ -22,43 +22,24 @@ nav = [
   {"Skills" = [
     "commands/overview.md",
     "commands/pr-workflow.md",
-    "commands/accessibility.md",
-    "commands/performance.md",
-    "commands/gtm-performance.md",
-    "commands/security.md",
-    "commands/live-site-auditing.md",
-    "commands/audit-export.md",
     "commands/design-workflow.md",
     "commands/documentation.md",
     "commands/testing.md",
     "commands/code-quality.md",
-    "commands/devops.md",
-    "commands/delivery-record.md",
-    "commands/delivery-record-verify.md",
-    "commands/project-management.md",
-    "commands/planning.md",
-    "commands/pm-workflows.md",
-    "commands/strategy.md",
     "commands/drupal-contribution-skills.md",
-    "commands/wordpress-meta.md",
-    "commands/wp-private-package.md",
-    "commands/wp-devops-setup.md"
+    "commands/wordpress-meta.md"
   ]},
   {"Agents & Skills" = "agents-and-skills.md"},
   {"WordPress Skills" = "wordpress-skills.md"},
   {"Guides" = [
     "guides/pr-workflow.md",
     "guides/design-workflow.md",
-    "guides/using-argument-modes.md",
     "drupal-contribution.md"
   ]},
   {"Kanopi Tools" = [
     "kanopi-tools/overview.md",
     "kanopi-tools/composer-scripts.md",
     "kanopi-tools/ddev-commands.md"
-  ]},
-  {"Specification" = [
-    "spec/delivery-record/v1.md"
   ]},
   {"Reference" = [
     "reference/markdown-style-guide.md",

@@ -1,6 +1,13 @@
 # Agent Integration Test Suite
 
-Comprehensive runtime tests for CMS Cultivator's 8 specialist agents.
+Comprehensive runtime tests for CMS Cultivator's specialist agents.
+
+> **2.0 Note:** As of 2.0 there are no orchestrating agents — every agent is a
+> leaf agent. The audit specialists (accessibility, performance, security, code
+> quality, structured data, GTM, DevOps) moved to separate internal Kanopi
+> libraries, along with their audit skills. `testing-specialist` generates
+> security-focused and accessibility-focused test scenarios inline instead of
+> spawning specialists.
 
 ---
 
@@ -9,8 +16,8 @@ Comprehensive runtime tests for CMS Cultivator's 8 specialist agents.
 These tests verify:
 - ✅ Agents spawn correctly
 - ✅ Agents can access their skills
-- ✅ Orchestrators delegate to other agents
-- ✅ Task tool works correctly
+- ✅ Skill-level orchestration (design pipeline) works correctly
+- ✅ No agent spawns other agents
 - ✅ Agent output formats are valid
 
 ---
@@ -18,24 +25,22 @@ These tests verify:
 ## Test Files
 
 ### 01-leaf-specialists.md
-Tests all 5 leaf specialist agents (agents that work independently):
-- accessibility-specialist
-- performance-specialist
-- security-specialist
+Tests all specialist agents (every agent is a leaf agent in 2.0):
 - documentation-specialist
-- code-quality-specialist
+- testing-specialist
+- design-specialist
+- responsive-styling-specialist
+- browser-validator-specialist
+- drupalorg-issue-specialist
+- drupalorg-mr-specialist
 
 **Focus:** Spawn verification, skill access, no delegation
 
 ---
 
 ### 02-orchestrators.md
-Tests orchestrator agents (agents that delegate to others):
-- testing-specialist (conditional delegation)
-
-> **Note:** `workflow-specialist` was removed in v1.1.0; PR skills run directly from the main session. `live-audit-specialist` was removed in v1.0.2; the `live-site-audit` skill spawns leaf specialists in parallel from the main session. See the skill-level orchestration tests in `04-orchestration.md`.
-
-**Focus:** Delegation logic, parallel execution, synthesis
+Retired stub — 2.0 has no orchestrating agents. Kept only so historical links
+resolve; it points to the current tests in 01 and 04.
 
 ---
 
@@ -44,19 +49,21 @@ Tests agent-skill integration:
 - Skills load only in agent context
 - Correct skill mapping per agent
 - Skill isolation between agents
-- Pure orchestrators have no skills
 
 **Focus:** Skill accessibility, scoping, isolation
 
 ---
 
 ### 04-orchestration.md
-Tests delegation patterns:
-- Conditional delegation (testing-specialist)
-- Skill-level parallel spawning (`live-site-audit` skill)
-- Delegation failure handling
+Tests skill-level orchestration patterns:
+- No agent has the Task tool
+- Inline scenario generation (testing-specialist)
+- Design pipeline sequential spawning (design skills spawn design-specialist,
+  then responsive-styling-specialist and browser-validator-specialist from the
+  main session)
+- Spawn failure handling
 
-**Focus:** Task tool usage, orchestration logic
+**Focus:** Skill-level spawning, inline analysis, no recursive spawning
 
 ---
 
@@ -86,7 +93,7 @@ Tests agent output quality:
 - Claude Code installed
 - CMS Cultivator plugin enabled
 - Test project (Drupal or WordPress with git)
-- Staged git changes (for workflow tests)
+- Figma URL or design screenshot (for design pipeline tests)
 
 ---
 
@@ -101,10 +108,10 @@ Tests agent output quality:
 ### Example Log Entry
 
 ```
-2026-01-02T10:30:00 accessibility-specialist spawn PASS Agent spawned successfully
-2026-01-02T10:30:15 accessibility-specialist skill-access PASS Accessed accessibility-checker
-2026-01-02T10:31:00 live-site-audit-skill orchestration PASS Spawned 4 leaf specialists in parallel
-2026-01-02T10:31:30 live-audit-specialist parallel PASS All 4 agents spawned in parallel
+2026-07-16T10:30:00 documentation-specialist spawn PASS Agent spawned successfully
+2026-07-16T10:30:15 documentation-specialist skill-access PASS Accessed documentation-generator
+2026-07-16T10:31:00 testing-specialist inline-scenarios PASS Security + a11y scenarios generated inline
+2026-07-16T10:32:00 design-to-wp-block-skill orchestration PASS Spawned pipeline agents sequentially
 ```
 
 ### Create Log File
@@ -129,17 +136,12 @@ Recommended order for systematic testing:
    - Confirm skill isolation
    - Check skill loading behavior
 
-3. **Orchestrators** (02-orchestrators.md)
-   - Test delegation logic
-   - Verify conditional vs. always-delegate
-   - Check parallel execution
+3. **Orchestration Patterns** (04-orchestration.md)
+   - Verify no agent spawns agents
+   - Test inline scenario generation
+   - Test design pipeline sequential spawning
 
-4. **Orchestration Patterns** (04-orchestration.md)
-   - Deep dive into delegation
-   - Test edge cases
-   - Verify failure handling
-
-5. **Output Formats** (05-output-formats.md)
+4. **Output Formats** (05-output-formats.md)
    - Validate report quality
    - Check CMS-specificity
    - Score output formats
@@ -150,16 +152,16 @@ Recommended order for systematic testing:
 
 ### Per-Agent Checklist
 
-For each of 8 agents, verify:
+For each agent, verify:
 - [ ] Agent spawns without errors
 - [ ] Agent accesses assigned skills
 - [ ] Agent produces expected output format
-- [ ] Orchestrators delegate correctly (if applicable)
+- [ ] Agent does NOT spawn other agents
 - [ ] No unexpected behavior
 
 ### Overall Success
 
-- **Minimum Pass Rate:** 95% (76/80 checks)
+- **Minimum Pass Rate:** 95%
 - **Critical Tests:** 100% (all agent spawn tests must pass)
 - **Output Quality:** ≥32/40 per agent (80% quality score)
 
@@ -180,12 +182,11 @@ git commit -m "Initial commit"
 # Enable plugin
 claude plugins enable cms-cultivator
 
-# Add test files with issues
-# - Missing alt text (a11y)
-# - N+1 queries (perf)
-# - SQL injection (security)
+# Add test material
 # - Undocumented code (docs)
-# - Standards violations (quality)
+# - New feature code without tests (testing)
+# - Design mockup or Figma URL (design pipeline)
+# - Contributed module checkout (drupal.org workflows)
 ```
 
 ### WordPress Test Project
@@ -201,7 +202,7 @@ git commit -m "Initial commit"
 # Enable plugin
 claude plugins enable cms-cultivator
 
-# Add test files with issues
+# Add test material (undocumented code, untested code, design mockup)
 ```
 
 ---
@@ -219,10 +220,10 @@ claude plugins enable cms-cultivator
 **Debug:**
 ```bash
 # Verify agent exists
-ls agents/accessibility-specialist/AGENT.md
+ls agents/documentation-specialist/AGENT.md
 
 # Check agent frontmatter
-head -20 agents/accessibility-specialist/AGENT.md
+head -20 agents/documentation-specialist/AGENT.md
 ```
 
 ---
@@ -240,25 +241,21 @@ head -20 agents/accessibility-specialist/AGENT.md
 ls -1 skills/*/SKILL.md
 
 # Check agent skill reference
-grep "^skills:" agents/accessibility-specialist/AGENT.md
+grep "^skills:" agents/documentation-specialist/AGENT.md
 ```
 
 ---
 
-### Delegation Not Working
+### Agent Attempts to Spawn Another Agent
 
 **Check:**
-1. Agent has Task tool in frontmatter?
-2. Agent is an orchestrator (not leaf specialist)?
-3. Target agent exists and is valid?
+1. Agent frontmatter should NOT list Task in tools
+2. AGENT.md prose should describe inline analysis, not delegation
 
 **Debug:**
 ```bash
-# Verify Task tool on the remaining orchestrator
-grep "^tools:" agents/testing-specialist/AGENT.md | grep Task
-
-# Check target agents exist
-ls agents/accessibility-specialist agents/security-specialist agents/testing-specialist
+# Must return no matches
+grep -l "^tools:.*Task" agents/*/AGENT.md
 ```
 
 ---
@@ -281,10 +278,10 @@ Track these metrics across all tests:
 
 | Metric | Target | Actual |
 |--------|--------|--------|
-| **Agents Tested** | 8/8 | __/8 |
+| **Agents Tested** | All | __ |
 | **Spawn Success Rate** | 100% | __% |
 | **Skill Access Rate** | 100% | __% |
-| **Delegation Success** | 100% | __% |
+| **No-Delegation Rate** | 100% | __% |
 | **Output Quality Score** | ≥32/40 | __/40 |
 | **Overall Pass Rate** | ≥95% | __% |
 
@@ -306,7 +303,7 @@ Future enhancements could include:
 
 3. **Performance Benchmarks**
    - Agent spawn time
-   - Parallel execution timing
+   - Pipeline execution timing
    - Memory usage tracking
 
 4. **Regression Test Suite**
@@ -320,7 +317,7 @@ Future enhancements could include:
 
 To add new test cases:
 
-1. Choose appropriate test file (01-05)
+1. Choose appropriate test file (01, 03, 04, or 05)
 2. Follow existing format
 3. Include:
    - Setup instructions
@@ -345,7 +342,7 @@ To add new test cases:
 
 ### How to Update
 
-1. Update relevant test file (01-05)
+1. Update relevant test file (01, 03, 04, or 05)
 2. Update verification checklists
 3. Update expected output examples
 4. Re-run affected tests
@@ -359,10 +356,9 @@ To add new test cases:
 - **BATS Unit Tests:** `tests/test-plugin.bats`
 - **Agent Documentation:** `agents/*/AGENT.md`
 - **Skill Documentation:** `skills/*/SKILL.md`
-- **Implementation Plan:** `AGENT_IMPLEMENTATION_PLAN.md`
 
 ---
 
 **Happy Testing!**
 
-For questions or issues, see the troubleshooting section or review the implementation plan.
+For questions or issues, see the troubleshooting section.

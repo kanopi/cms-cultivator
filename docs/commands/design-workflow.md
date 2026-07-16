@@ -433,9 +433,7 @@ Proper semantic structure improves accessibility and SEO.
 
 - [`/pr-create`](pr-workflow.md#pr-create-ticket-number) - Create PR after implementation
 - [`/pr-review self`](pr-workflow.md#pr-review-pr-numberself-focus) - Self-review before PR
-- [`/accessibility-audit`](accessibility.md) - Comprehensive accessibility audit
-- [`/performance-audit`](performance.md) - Performance optimization
-- [`/live-site-audit`](live-site-auditing.md) - Full site audit
+- [`/browser-validator`](#browser-validator-test-url-design-reference) - Validate accessibility and responsive behavior in a real browser
 
 ---
 

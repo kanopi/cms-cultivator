@@ -46,6 +46,41 @@ jobs:
       - name: Run frontmatter validation
         run: chmod +x scripts/validate-frontmatter.sh && ./scripts/validate-frontmatter.sh
 
+  routing-evals:
+    name: TF-IDF Routing + Collision Evals
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run routing evals
+        # --min-rank1 is the CI floor: at least this % of eval prompts must
+        # rank their expected skill #1. Raise it as descriptions improve;
+        # never lower it to make a failing description "pass".
+        run: node scripts/run-evals.js --min-rank1 75 --collision-threshold 0.75
+
+  codex-parity:
+    name: Codex Artifact Parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Check Codex TOML / openai.yaml parity
+        run: |
+          chmod +x scripts/check-codex-parity.sh
+          ./scripts/check-codex-parity.sh
+
   documentation-build:
     name: Build Documentation
     runs-on: ubuntu-latest
