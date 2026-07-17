@@ -19,17 +19,17 @@ Just describe what you need in plain English:
 "I need to commit my changes"
 → Automatically generates commit message
 
-"Is this button accessible?"
-→ Checks accessibility instantly
-
-"This database query is slow"
-→ Analyzes for N+1 issues and suggests fixes
+"Create a hero block from this design"
+→ Builds a WordPress block pattern from the Figma reference
 
 "Does this follow Drupal coding standards?"
 → Runs PHPCS and reports violations
 
 "I need tests for this UserManager class"
 → Generates PHPUnit test scaffolding
+
+"Should this heading be a prop or a slot?"
+→ Drupal SDC guidance activates
 ```
 
 **No need to remember command names!** Claude automatically helps based on context.
@@ -75,51 +75,34 @@ Before creating a PR, check your work:
 - Security concerns
 - Generates test plan
 
-### 3. Run an Accessibility Audit
+### 3. Start a Ticket in a Fresh Worktree
 
-Check your code for WCAG compliance:
-
-```bash
-/accessibility-audit
-```
-
-**What it checks:**
-- Color contrast ratios
-- ARIA attributes
-- Semantic HTML
-- Keyboard navigation
-- Form labels and validation
-- Alt text for images
-
-### 4. Analyze Performance
-
-Find performance bottlenecks:
+Work on multiple tickets — or run multiple AI sessions — in parallel:
 
 ```bash
-/performance-audit
+/worktree-manager create 1234 hero-block
 ```
 
-**What it analyzes:**
-- Database queries and N+1 problems
-- Asset sizes and optimization
-- JavaScript bundle analysis
-- Caching effectiveness
+**What it does:**
+- Creates a sibling worktree with a Kanopi-style branch (`feature/tw1234-hero-block`)
+- Runs DDEV setup with automatic project isolation
+- Reports the directory, branch, and local URL
 
-### 5. Check Security
+### 4. Convert a Design to a Component
 
-Scan for vulnerabilities:
+Turn a Figma design or screenshot into a working component:
 
 ```bash
-/security-audit
+/design-to-wp-block design.png hero-cta          # WordPress block pattern
+/design-to-drupal-paragraph design.png hero_cta  # Drupal paragraph type
 ```
 
-**What it scans:**
-- Dependency vulnerabilities
-- Exposed secrets
-- OWASP Top 10 issues
-- Permission problems
+**What it does:**
+- Extracts colors, typography, spacing, and layout
+- Generates the pattern or paragraph configuration plus mobile-first SCSS
+- Validates the result in a real browser at 320px/768px/1024px
 
-### 6. Verify Code Quality
+### 5. Verify Code Quality
 
 Check coding standards:
 
@@ -131,6 +114,19 @@ Check coding standards:
 - PHPCS violations
 - ESLint issues
 - Drupal/WordPress standards
+
+### 6. Contribute Back to Drupal.org
+
+Upstream a fix to a contrib module:
+
+```bash
+/drupal-contribute
+```
+
+**What it does:**
+- Drafts the drupal.org issue for you to paste in
+- Sets up the issue fork and branch on `git.drupalcode.org`
+- Opens the merge request with a pre-drafted description
 
 ---
 
@@ -145,10 +141,7 @@ Check coding standards:
 # 2. Run quality checks
 /code-standards-checker
 
-# 3. Check for security issues
-/security-audit secrets
-
-# 4. Create the PR (auto-generates description)
+# 3. Create the PR (auto-generates description)
 /pr-create PROJ-123
 ```
 
@@ -175,46 +168,32 @@ git commit -m "[selected message]"
 /pr-review 456 security      # Security review
 /pr-review 456 breaking      # Breaking changes check
 /pr-review 456 performance   # Performance review
-
-# 3. Check specific concerns
-/accessibility-audit contrast
-/performance-audit queries
-/security-audit deps
 ```
 
-### Workflow 4: Before Deployment
+### Workflow 4: Design to Deployed Component
 
 ```bash
-# 1. Run comprehensive audits
-/performance-audit
-/accessibility-audit
-/security-audit
+# 1. Generate the component from a design reference
+/design-to-wp-block hero-design.png hero-banner
 
-# 2. Generate release artifacts
-/pr-release changelog
-/pr-release deploy
+# 2. Validate in the browser
+/browser-validator http://site.ddev.site/test-hero-banner/
 
-# 3. Create compliance reports
-/performance-audit report
-/accessibility-audit report
-/security-audit report
+# 3. Commit and create the PR
+/commit-message-generator
+/pr-create PROJ-123
 ```
 
 ### Workflow 5: Working on Kanopi Projects
 
 ```bash
 # 1. Run Kanopi quality checks
-# (commands automatically use ddev composer scripts)
-/quality-audit     # Uses ddev composer code-check
+# (skills automatically use ddev composer scripts)
 /code-standards-checker   # Uses ddev composer code-sniff
-/coverage-analyzer       # Uses ddev cypress-run
+/coverage-analyzer        # Uses ddev cypress-run
 
-# 2. Check performance
-/performance-audit          # Suggests ddev theme-build
-                     # and ddev critical-run
-
-# 3. Security audit
-/security-audit      # Uses ddev composer audit
+# 2. Patch a contrib dependency safely
+/composer-patch-generator # CI-safe patches with extra.patches wiring
 ```
 
 ---
@@ -224,55 +203,34 @@ git commit -m "[selected message]"
 ### 🔄 PR Workflow
 
 ```bash
-/pr-create [ticket]             # Create PR with generated description
+/pr-create [ticket]                 # Create PR with generated description
 /pr-review [pr-number|self] [focus] # Review PR or analyze your own changes
-/commit-message-generator                     # Generate commit message
-/pr-release [focus]                # Generate changelog and deployment docs
-```
-
-### ♿ Accessibility
-
-```bash
-/accessibility-audit                        # Comprehensive WCAG audit
-/accessibility-audit --quick                # Fast critical issues check
-/accessibility-audit --scope=current-pr     # Analyze only PR files
-/accessibility-audit --format=summary       # Executive summary
-/accessibility-audit contrast               # Focus on color contrast
-```
-
-### ⚡ Performance
-
-```bash
-/performance-audit                        # Full-stack performance analysis
-/performance-audit --quick                # Fast critical issues check
-/performance-audit --scope=current-pr     # Analyze only PR files
-/performance-audit --format=json          # Machine-readable output
-/performance-audit queries                # Focus on database queries
-```
-
-### 🔒 Security
-
-```bash
-/security-audit                    # Comprehensive security audit
-/security-audit --quick            # Fast critical issues scan
-/security-audit --scope=current-pr # Scan only PR files
-/security-audit --format=sarif     # SARIF format for CI/CD
-/security-audit deps               # Focus on dependencies
+/commit-message-generator           # Generate commit message
+/pr-release [focus]                 # Generate changelog and deployment docs
+/worktree-manager [create|list|remove] # Parallel tickets via git worktrees
 ```
 
 ### 🎨 Design Workflow
 
 ```bash
-/design-to-wp-block              # Create WordPress block pattern from design
+/design-to-wp-block                  # Create WordPress block pattern from design
 /design-to-drupal-paragraph          # Create Drupal paragraph type from design
-/browser-validator              # Validate design implementation in browser
+/browser-validator                   # Validate design implementation in browser
 ```
 
-### 🔍 Live Site Auditing
+### 🧪 Testing
 
 ```bash
-/live-site-audit              # Comprehensive live site audit
-                              # Runs performance, accessibility, security, and quality checks in parallel
+/test-scaffolding [type]       # Generate test scaffolding
+/coverage-analyzer             # Analyze test coverage
+/test-plan-generator           # Generate QA test plan
+```
+
+### 📊 Code Quality
+
+```bash
+/code-standards-checker        # Check coding standards
+/composer-patch-generator      # CI-safe Composer package patches
 ```
 
 ### 📝 Documentation
@@ -285,69 +243,20 @@ git commit -m "[selected message]"
 /documentation-generator guide user   # Generate user guide
 ```
 
-### 🧪 Testing
+### 🌐 Drupal.org Contribution
 
 ```bash
-/test-scaffolding [type]       # Generate test scaffolding
-/coverage-analyzer              # Analyze test coverage
-/test-plan-generator                  # Generate QA test plan
+/drupal-contribute             # Full issue + MR workflow
+/drupal-issue                  # Issue creation and updates
+/drupal-mr                     # Merge request setup
+/drupal-cleanup                # Clean up the local clone cache
 ```
-
-### 📊 Code Quality
-
-```bash
-/quality-audit [focus]    # Code quality analysis
-/code-standards-checker          # Check coding standards
-```
-
----
-
-## Argument Modes (Advanced)
-
-Audit and quality commands support flexible argument modes for different use cases:
-
-### Depth Modes
-```bash
---quick                    # Fast critical issues only (~5 min)
---standard                 # Full analysis (default, ~15 min)
---comprehensive            # Deep dive with best practices (~30 min)
-```
-
-### Scope Control
-```bash
---scope=current-pr         # Only files in current PR
---scope=module=<name>      # Specific module/directory
---scope=file=<path>        # Single file
---scope=entire             # Full codebase (default)
-```
-
-### Output Formats
-```bash
---format=report            # Detailed markdown (default)
---format=json              # Machine-readable for CI/CD
---format=summary           # Executive summary
---format=checklist         # Simple pass/fail list
-```
-
-### Example Combinations
-```bash
-# Pre-commit check (fast)
-/accessibility-audit --quick --scope=current-pr
-
-# CI/CD integration
-/security-audit --standard --format=json > results.json
-
-# Executive report
-/performance-audit --comprehensive --format=summary
-```
-
-See [Using Argument Modes](guides/using-argument-modes.md) for complete guide.
 
 ---
 
 ## Focus Parameters
 
-Many commands also accept legacy focus parameters to analyze specific areas:
+Some skills accept focus parameters to analyze specific areas:
 
 ### PR Review Focus
 ```bash
@@ -362,36 +271,11 @@ Many commands also accept legacy focus parameters to analyze specific areas:
 /pr-review 456 performance   # Performance focus
 ```
 
-### Performance Focus
+### Release Focus
 ```bash
-/performance-audit queries        # Database queries only
-/performance-audit n+1            # N+1 detection only
-/performance-audit assets         # Asset optimization only
-/performance-audit bundles        # JavaScript bundles only
-/performance-audit caching        # Caching effectiveness only
-```
-
-### Accessibility Focus
-```bash
-/accessibility-audit contrast       # Color contrast only
-/accessibility-audit aria           # ARIA attributes only
-/accessibility-audit headings       # Heading structure only
-/accessibility-audit forms          # Form accessibility only
-/accessibility-audit keyboard       # Keyboard navigation only
-```
-
-### Security Focus
-```bash
-/security-audit deps       # Dependency vulnerabilities only
-/security-audit secrets    # Exposed secrets only
-/security-audit permissions # Permission issues only
-```
-
-### Quality Focus
-```bash
-/quality-audit refactor  # Refactoring opportunities
-/quality-audit complexity # Code complexity analysis
-/quality-audit debt      # Technical debt assessment
+/pr-release changelog        # Changelog only
+/pr-release deploy           # Deployment checklist only
+/pr-release update           # Update PR description
 ```
 
 ---
@@ -405,15 +289,13 @@ Install official WordPress agent-skills for specialized WordPress development:
 ```
 
 **What you get:**
-- 13 WordPress-specific skills
+- WordPress-specific skills from the core WordPress team
 - Gutenberg block development
 - REST API expertise
 - WP-CLI automation
 - Performance optimization
 - Theme.json and block themes
 - Plugin architecture guidance
-
-**Installation time:** ~70 seconds
 
 **Learn more:** [WordPress Skills Guide](wordpress-skills.md)
 
@@ -429,15 +311,7 @@ Install official WordPress agent-skills for specialized WordPress development:
 
 ## Tips & Best Practices
 
-### 1. Run Checks Early and Often
-```bash
-# Don't wait until the end of the sprint
-/accessibility-audit              # Check accessibility during development
-/performance-audit queries      # Catch N+1 queries early
-/security-audit secrets  # Before committing code
-```
-
-### 2. Self-Review Before Creating PRs
+### 1. Self-Review Before Creating PRs
 ```bash
 # Catch issues before code review
 /pr-review self          # Full self-assessment
@@ -445,12 +319,17 @@ Install official WordPress agent-skills for specialized WordPress development:
 /pr-create PROJ-123   # Create PR when ready
 ```
 
-### 3. Use Focus Parameters for Speed
+### 2. Use Focus Parameters for Speed
 ```bash
 # When you know what you're looking for
 /pr-review 456 security  # Just security review
-/performance-audit queries      # Just check database queries
-/accessibility-audit contrast     # Just check color contrast
+/pr-review self size     # Just size and complexity
+```
+
+### 3. Validate in a Real Browser
+```bash
+# After implementing UI work
+/browser-validator http://site.ddev.site/test-page
 ```
 
 ### 4. Combine with Git Workflows
@@ -461,18 +340,9 @@ Install official WordPress agent-skills for specialized WordPress development:
 # Pre-PR
 /pr-review self
 /code-standards-checker
-/security-audit secrets
 
 # Post-merge
 /documentation-generator changelog
-```
-
-### 5. Generate Reports for Stakeholders
-```bash
-# Before client demos
-/performance-audit report        # Performance metrics
-/accessibility-audit report        # Accessibility compliance
-/security-audit report    # Security posture
 ```
 
 ---

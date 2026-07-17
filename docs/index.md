@@ -3,23 +3,22 @@
 ![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
 [![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
 
-**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing Agent Skills for Drupal and WordPress development. Streamline PR workflows, ensure accessibility compliance, optimize performance, enhance security, plan projects, and maintain documentation.
+**CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing Agent Skills for Drupal and WordPress development. Streamline PR workflows, convert designs into components, generate tests, contribute back to drupal.org, and maintain documentation.
+
+!!! note "What changed in 2.0"
+    As of 2.0, CMS Cultivator focuses on CMS development workflows. Delivery Record moved to its own public library: [kanopi/delivery-record](https://github.com/kanopi/delivery-record). Audit, DevOps, and PM capabilities moved to separate internal Kanopi libraries.
 
 ## ✨ Features
 
 ### Agent Skills
-- **🔄 PR Workflow** - Streamline pull requests from commit to deployment
-- **♿ Accessibility** - Ensure WCAG 2.1 Level AA compliance
-- **⚡ Performance** - Optimize Core Web Vitals and page speed
-- **🔒 Security** - Scan for vulnerabilities and security issues
-- **🎨 Design Workflow** - Figma to WordPress blocks and Drupal paragraphs
-- **🔍 Live Site Auditing** - Comprehensive audits using Chrome DevTools
+- **🔄 PR Workflow** - Streamline pull requests from commit to deployment, with worktree management for parallel tickets
+- **🎨 Design Workflow** - Figma to WordPress blocks and Drupal paragraphs, with responsive styling and in-browser validation
+- **🧪 Testing** - Create tests, generate QA test plans, and analyze coverage
+- **📊 Code Quality** - Check coding standards and generate CI-safe Composer patches
 - **📝 Documentation** - Generate comprehensive project documentation
-- **🧪 Testing** - Create tests and analyze coverage
-- **📊 Code Quality** - Maintain standards and reduce technical debt
-- **📋 Project Planning** - Generate FRDs, estimate story points, and export Teamwork backlogs
-- **🗂 PM Workflows** - Client request triage, meeting prep, project heartbeats, and full QA review (requires MCP servers)
-- **🧭 Strategy** - Strategist-focused discovery audits with 21 UX Laws, content hierarchy, and presentation-ready reports (requires CoWork)
+- **🧱 Drupal Development** - Single Directory Component (SDC) and Twig best practices
+- **🌐 Drupal.org Contribution** - Guided issue and merge request workflows for contributing back
+- **🧩 WordPress Meta** - Install the official WordPress/agent-skills catalog alongside CMS Cultivator
 - **🤖 Auto-Invoked** - Claude activates skills automatically during conversation
 - **💬 Natural Language** - No need to remember command names
 - **🎯 Context-Aware** - Activates when you need help
@@ -45,20 +44,20 @@
 
 Natural language (skills auto-activate):
 ```
-"I need to commit my changes"       → generates commit message
-"Is this button accessible?"        → checks accessibility
-"This query is slow"                → analyzes performance
+"I need to commit my changes"        → generates commit message
+"Create a block from this design"    → builds a WordPress block pattern
+"I need tests for this class"        → generates test scaffolding
 "Does this follow Drupal standards?" → checks code standards
 ```
 
 Explicit invocation:
 ```bash
-/pr-create PROJ-123   # Create PR with generated description
-/pr-review self       # Review your changes before submitting
-/accessibility-audit           # Run accessibility audit
-/performance-audit           # Analyze performance
-/security-audit       # Check security
-/quality-audit      # Analyze code quality
+/pr-create PROJ-123        # Create PR with generated description
+/pr-review self            # Review your changes before submitting
+/worktree-manager create 123 hero-block   # Start a ticket in a fresh worktree
+/design-to-wp-block design.png hero-cta   # Design to WordPress block pattern
+/browser-validator http://site.ddev.site/test-page   # Validate in a real browser
+/drupal-contribute         # Contribute a fix back to drupal.org
 ```
 
 ---
@@ -70,38 +69,30 @@ Explicit invocation:
 #### Natural Language (Skills auto-activate)
 
 - "I need to commit my changes" → Generates commit message
-- "Is this button accessible?" → Checks accessibility
-- "This query is slow" → Analyzes performance
 - "Does this follow WordPress standards?" → Checks code standards
 - "I need tests for this class" → Generates test scaffolding
+- "Props or slots for this SDC?" → Drupal component guidance
+- "Implement this design" → Extracts specs from the Figma reference
 
 #### Explicit Invocation
 
 - **Before PR**: `/pr-review self` - Self-review your changes
 - **Creating PR**: `/pr-create` - Generate and create PR automatically
-- **Full audits**: `/performance-audit`, `/accessibility-audit`, `/security-audit` - Comprehensive analysis
+- **Design-to-code**: `/design-to-wp-block`, `/design-to-drupal-paragraph` - Components from Figma
 
 ### For Tech Leads
 
 #### Natural Language
 
 - "What code isn't tested?" → Coverage analysis
-- "Is this secure?" → Security check
 - "What should QA test?" → Test plan generation
+- "Patch this contrib module" → CI-safe Composer patch
 
 #### Explicit Invocation
 
 - **Code review**: `/pr-review 123` - Get AI-assisted code review
-- **Performance audits**: `/performance-audit` - Identify bottlenecks
-- **Quality analysis**: `/quality-audit` - Technical debt assessment
-
-### For Project Managers
-
-#### Explicit Invocation (Reports)
-
-- **Stakeholder reports**: `/performance-audit report` - Executive-friendly reports
-- **Compliance reports**: `/accessibility-audit report` - Accessibility documentation
-- **Security reports**: `/security-audit report` - Security posture and compliance
+- **Release prep**: `/pr-release` - Changelog and deployment checklist
+- **Contribution**: `/drupal-contribute` - Upstream fixes to drupal.org
 
 ---
 

@@ -4,7 +4,9 @@
 **Purpose:** Verify agents can access their assigned skills
 **Expected Behavior:** Skills load only when agent uses them, not globally
 
-> **History:** Skip Test 3.2.5 (`workflow-specialist → commit-message-generator`) and the workflow-specialist rows in the matrix. The `workflow-specialist` agent was removed in v1.1.0; `commit-message-generator` is now invoked directly by the main session.
+> **Note:** As of 2.0, every agent is a leaf agent with directly assigned
+> skills — there are no pure orchestrators without skills. The audit
+> specialists and their skills moved to separate internal Kanopi libraries.
 
 ---
 
@@ -16,13 +18,13 @@
 
 **Test Procedure:**
 ```
-1. User: Ask Claude about accessibility in normal conversation
-2. User: Run /audit-a11y command
+1. User: Ask Claude about documentation practices in normal conversation
+2. User: Run /docs-generate command
 ```
 
 **Expected Behavior:**
-- [ ] In normal conversation: accessibility-checker skill does NOT auto-activate
-- [ ] When /audit-a11y runs: accessibility-specialist spawns and skill loads
+- [ ] In normal conversation: documentation-generator skill does NOT auto-activate
+- [ ] When /docs-generate runs: documentation-specialist spawns and skill loads
 - [ ] Skill is scoped to agent, not main conversation
 
 **Verification:**
@@ -33,142 +35,7 @@
 
 ## Test 3.2: Agent-Skill Mapping Verification
 
-### Test 3.2.1: accessibility-specialist → accessibility-checker
-
-**Setup:** HTML file with missing alt text
-
-**Test Procedure:**
-```
-User: Run /audit-a11y on homepage.php
-```
-
-**Expected Behavior:**
-- [ ] accessibility-specialist spawns
-- [ ] Skill loaded: accessibility-checker
-- [ ] Agent uses skill knowledge to:
-  - [ ] Identify WCAG violations
-  - [ ] Check specific accessibility patterns
-  - [ ] Provide CMS-specific guidance
-
-**Verification Log:**
-```
-✓ Agent spawned: accessibility-specialist
-✓ Skills referenced: accessibility-checker
-✓ Skill knowledge applied: WCAG 2.1 success criteria mentioned
-✓ Output format matches skill specification
-```
-
----
-
-### Test 3.2.2: performance-specialist → performance-analyzer
-
-**Setup:** Page with slow database queries
-
-**Test Procedure:**
-```
-User: Run /audit-perf and analyze query performance
-```
-
-**Expected Behavior:**
-- [ ] performance-specialist spawns
-- [ ] Skill loaded: performance-analyzer
-- [ ] Agent uses skill knowledge to:
-  - [ ] Measure Core Web Vitals
-  - [ ] Identify N+1 queries
-  - [ ] Suggest caching strategies
-
-**Verification Log:**
-```
-✓ Agent spawned: performance-specialist
-✓ Skills referenced: performance-analyzer
-✓ Skill knowledge applied: Core Web Vitals metrics mentioned
-✓ Output format matches skill specification
-```
-
----
-
-### Test 3.2.3: security-specialist → security-scanner
-
-**Setup:** PHP file with SQL injection vulnerability
-
-**Test Procedure:**
-```
-User: Run /audit-security on database.php
-```
-
-**Expected Behavior:**
-- [ ] security-specialist spawns
-- [ ] Skill loaded: security-scanner
-- [ ] Agent uses skill knowledge to:
-  - [ ] Identify OWASP Top 10 issues
-  - [ ] Detect SQL injection patterns
-  - [ ] Recommend prepared statements
-
-**Verification Log:**
-```
-✓ Agent spawned: security-specialist
-✓ Skills referenced: security-scanner
-✓ Skill knowledge applied: OWASP A03:2021 referenced
-✓ Output format matches skill specification
-```
-
----
-
-### Test 3.2.4: testing-specialist → Multiple Skills
-
-**Setup:** New feature code without tests
-
-**Test Procedure:**
-```
-User: Run /test-generate for UserController.php
-```
-
-**Expected Behavior:**
-- [ ] testing-specialist spawns
-- [ ] Multiple skills loaded:
-  - [ ] test-scaffolding
-  - [ ] test-plan-generator
-  - [ ] coverage-analyzer
-- [ ] Agent uses ALL skills as needed
-
-**Verification Log:**
-```
-✓ Agent spawned: testing-specialist
-✓ Skills referenced: test-scaffolding, test-plan-generator, coverage-analyzer
-✓ All skills accessible and used
-✓ Output includes: test scaffolding + test plan + coverage report
-```
-
----
-
-### Test 3.2.5: workflow-specialist → commit-message-generator
-
-**Setup:** Git repo with staged changes
-
-**Test Procedure:**
-```
-User: Run /pr-commit-msg
-```
-
-**Expected Behavior:**
-- [ ] workflow-specialist spawns
-- [ ] Skill loaded: commit-message-generator
-- [ ] Agent uses skill knowledge to:
-  - [ ] Analyze git diff
-  - [ ] Generate conventional commit message
-  - [ ] Follow commit specification
-
-**Verification Log:**
-```
-✓ Agent spawned: workflow-specialist
-✓ Skills referenced: commit-message-generator
-✓ Skill knowledge applied: Conventional commits format used
-✓ Output format: feat|fix|refactor|etc: message
-```
-
----
-
-### Test 3.2.6: documentation-specialist → documentation-generator
+### Test 3.2.1: documentation-specialist → documentation-generator
 
 **Setup:** PHP class without docblocks
 
@@ -195,54 +62,164 @@ User: Run /docs-generate for the Payment class
 
 ---
 
-### Test 3.2.7: code-quality-specialist → code-standards-checker
+### Test 3.2.2: testing-specialist → Multiple Skills
 
-**Setup:** PHP file with coding standards violations
+**Setup:** New feature code without tests
 
 **Test Procedure:**
 ```
-User: Run /quality-standards on UserService.php
+User: Run /test-generate for UserController.php
 ```
 
 **Expected Behavior:**
-- [ ] code-quality-specialist spawns
-- [ ] Skill loaded: code-standards-checker
-- [ ] Agent uses skill knowledge to:
-  - [ ] Check PHPCS/ESLint rules
-  - [ ] Identify standards violations
-  - [ ] Suggest fixes
+- [ ] testing-specialist spawns
+- [ ] Multiple skills loaded:
+  - [ ] test-scaffolding
+  - [ ] test-plan-generator
+  - [ ] coverage-analyzer
+- [ ] Agent uses ALL skills as needed
+- [ ] Security-focused and accessibility-focused scenarios generated inline (no other agent spawned)
 
 **Verification Log:**
 ```
-✓ Agent spawned: code-quality-specialist
-✓ Skills referenced: code-standards-checker
-✓ Skill knowledge applied: PHPCS standards referenced
-✓ Output includes: Violation type, line numbers, fixes
+✓ Agent spawned: testing-specialist
+✓ Skills referenced: test-scaffolding, test-plan-generator, coverage-analyzer
+✓ All skills accessible and used
+✓ Output includes: test scaffolding + test plan + coverage report
 ```
 
 ---
 
-### Test 3.2.8: live-audit-specialist → No Skills
+### Test 3.2.3: design-specialist → Design Skills
 
-**Setup:** Any live site
+**Setup:** Figma URL or design mockup
 
 **Test Procedure:**
 ```
-User: Run /audit-live-site https://example.com
+User: Run /design-to-wp-block [figma-url]
 ```
 
 **Expected Behavior:**
-- [ ] live-audit-specialist spawns
-- [ ] NO skills loaded (pure orchestrator)
-- [ ] Agent delegates all analysis to other agents
-- [ ] Skills accessed via delegated agents only
+- [ ] design-specialist spawns
+- [ ] Design skills loaded (design-analyzer, responsive-styling, design-to-wp-block, design-to-drupal-paragraph)
+- [ ] Agent uses skill knowledge to:
+  - [ ] Extract design specs (colors, typography, spacing)
+  - [ ] Generate CMS-specific code (block pattern or paragraph type)
+  - [ ] Return structured output for the follow-up pipeline steps
 
 **Verification Log:**
 ```
-✓ Agent spawned: live-audit-specialist
-✓ Skills referenced: [] (empty, pure orchestrator)
-✓ No skill knowledge in agent (only orchestration)
-✓ All analysis done by delegated specialists
+✓ Agent spawned: design-specialist
+✓ Skills referenced: design-analyzer, design-to-wp-block / design-to-drupal-paragraph
+✓ Skill knowledge applied: exact design values extracted
+✓ Output format matches skill specification (structured file paths + specs)
+```
+
+---
+
+### Test 3.2.4: responsive-styling-specialist → responsive-styling
+
+**Setup:** Component markup needing styles
+
+**Test Procedure:**
+```
+User: Generate mobile-first responsive SCSS for the card component
+```
+
+**Expected Behavior:**
+- [ ] responsive-styling-specialist spawns
+- [ ] Skill loaded: responsive-styling
+- [ ] Agent uses skill knowledge to:
+  - [ ] Apply mobile-first breakpoints (768px, 1024px)
+  - [ ] Enforce WCAG AA contrast and 44px touch targets
+  - [ ] Add focus indicators and reduced motion support
+
+**Verification Log:**
+```
+✓ Agent spawned: responsive-styling-specialist
+✓ Skills referenced: responsive-styling
+✓ Skill knowledge applied: mobile-first breakpoints used
+✓ Output format matches skill specification
+```
+
+---
+
+### Test 3.2.5: browser-validator-specialist → browser-validator
+
+**Setup:** Implemented component reachable at a test URL
+
+**Test Procedure:**
+```
+User: Test this component in the browser
+```
+
+**Expected Behavior:**
+- [ ] browser-validator-specialist spawns
+- [ ] Skill loaded: browser-validator
+- [ ] Agent uses skill knowledge to:
+  - [ ] Test breakpoints (320px, 768px, 1024px)
+  - [ ] Run WCAG AA checks (contrast, keyboard, ARIA)
+  - [ ] Report console errors and remediation steps
+
+**Verification Log:**
+```
+✓ Agent spawned: browser-validator-specialist
+✓ Skills referenced: browser-validator
+✓ Skill knowledge applied: breakpoint matrix tested
+✓ Output format matches skill specification
+```
+
+---
+
+### Test 3.2.6: drupalorg-issue-specialist → Issue Skills
+
+**Setup:** Contributed Drupal module with a bug to report
+
+**Test Procedure:**
+```
+User: Help me create a drupal.org issue for this bug
+```
+
+**Expected Behavior:**
+- [ ] drupalorg-issue-specialist spawns
+- [ ] Skills loaded: drupalorg-issue-helper, drupal-issue
+- [ ] Agent uses skill knowledge to:
+  - [ ] Structure the issue per drupal.org conventions
+  - [ ] Include required sections (summary, steps to reproduce, proposed resolution)
+
+**Verification Log:**
+```
+✓ Agent spawned: drupalorg-issue-specialist
+✓ Skills referenced: drupalorg-issue-helper, drupal-issue
+✓ Skill knowledge applied: drupal.org issue template followed
+✓ Output format matches skill specification
+```
+
+---
+
+### Test 3.2.7: drupalorg-mr-specialist → Contribution Skills
+
+**Setup:** Local fix for a contributed Drupal project
+
+**Test Procedure:**
+```
+User: Create a merge request for this fix on drupal.org
+```
+
+**Expected Behavior:**
+- [ ] drupalorg-mr-specialist spawns
+- [ ] Skills loaded: drupalorg-contribution-helper, drupal-mr
+- [ ] Agent uses skill knowledge to:
+  - [ ] Use correct issue-fork branch naming
+  - [ ] Provide git.drupalcode.org commands
+  - [ ] Flag the manual issue-fork creation step
+
+**Verification Log:**
+```
+✓ Agent spawned: drupalorg-mr-specialist
+✓ Skills referenced: drupalorg-contribution-helper, drupal-mr
+✓ Skill knowledge applied: drupal.org MR workflow followed
+✓ Output format matches skill specification
 ```
 
 ---
@@ -253,43 +230,20 @@ User: Run /audit-live-site https://example.com
 
 **Test Procedure:**
 ```
-1. User: Run /audit-a11y (spawns accessibility-specialist)
-2. User: Run /audit-perf (spawns performance-specialist)
+1. User: Run /docs-generate (spawns documentation-specialist)
+2. User: Run /test-generate (spawns testing-specialist)
 ```
 
 **Expected Behavior:**
-- [ ] accessibility-specialist has ONLY accessibility-checker skill
-- [ ] performance-specialist has ONLY performance-analyzer skill
+- [ ] documentation-specialist has ONLY its documentation skill
+- [ ] testing-specialist has ONLY its testing skills
 - [ ] No skill sharing between agents
 - [ ] Each agent has isolated skill context
 
 **Verification:**
-- accessibility-specialist should NOT mention performance metrics
-- performance-specialist should NOT mention WCAG criteria
+- documentation-specialist should NOT produce test scaffolding
+- testing-specialist should NOT produce API documentation
 - Skills are scoped per agent, not shared
-
----
-
-### Test 3.3.2: Orchestrators Access Skills via Delegation Only
-
-**Test Procedure:**
-```
-User: Run /audit-live-site https://example.com
-```
-
-**Expected Behavior:**
-- [ ] live-audit-specialist has NO skills
-- [ ] Delegates to specialists who have skills:
-  - accessibility-specialist (accessibility-checker)
-  - performance-specialist (performance-analyzer)
-  - security-specialist (security-scanner)
-  - code-quality-specialist (code-standards-checker)
-- [ ] Skills accessed indirectly via delegation
-
-**Verification:**
-- Pure orchestrator never directly uses skills
-- All skill usage happens in delegated specialists
-- Orchestrator only synthesizes specialist outputs
 
 ---
 
@@ -307,39 +261,24 @@ for agent in agents/*/AGENT.md; do
 done
 ```
 
-**Expected Output:**
-```
-=== accessibility-specialist ===
-accessibility-checker
+**Dynamic parity check — every referenced skill must exist:**
 
-=== performance-specialist ===
-performance-analyzer
-
-=== security-specialist ===
-security-scanner
-
-=== testing-specialist ===
-test-scaffolding, test-plan-generator, coverage-analyzer
-
-=== workflow-specialist ===
-commit-message-generator
-
-=== documentation-specialist ===
-documentation-generator
-
-=== code-quality-specialist ===
-code-standards-checker
-
-=== live-audit-specialist ===
-[]
+```bash
+for agent in agents/*/AGENT.md; do
+  name=$(basename $(dirname "$agent"))
+  for skill in $(sed -n 's/^skills: *//p' "$agent" | tr -d ',' ); do
+    [ -f "skills/$skill/SKILL.md" ] \
+      && echo "✓ $name → $skill" \
+      || echo "✗ $name → $skill (MISSING)"
+  done
+done
 ```
 
 ### Verification Checklist
-- [ ] All leaf specialists have exactly 1 skill (except testing-specialist with 3)
-- [ ] testing-specialist has exactly 3 skills
-- [ ] workflow-specialist has exactly 1 skill
-- [ ] live-audit-specialist has 0 skills (empty array or empty)
-- [ ] No agent lists skills they don't use
+- [ ] Every agent lists at least one skill
+- [ ] Every skill referenced in agent frontmatter exists in `skills/`
+- [ ] No agent lists skills it doesn't use
+- [ ] Frontmatter mappings match the tables in this file
 
 ---
 
@@ -347,38 +286,15 @@ code-standards-checker
 
 | Agent | Skill(s) | Loaded | Used | Isolated |
 |-------|----------|--------|------|----------|
-| accessibility-specialist | accessibility-checker | ☐ | ☐ | ☐ |
-| performance-specialist | performance-analyzer | ☐ | ☐ | ☐ |
-| security-specialist | security-scanner | ☐ | ☐ | ☐ |
-| testing-specialist | test-*, coverage-analyzer | ☐ | ☐ | ☐ |
-| workflow-specialist | commit-message-generator | ☐ | ☐ | ☐ |
 | documentation-specialist | documentation-generator | ☐ | ☐ | ☐ |
-| code-quality-specialist | code-standards-checker | ☐ | ☐ | ☐ |
-| live-audit-specialist | (none) | N/A | N/A | N/A |
+| testing-specialist | test-*, coverage-analyzer | ☐ | ☐ | ☐ |
+| design-specialist | design-analyzer, design-to-* | ☐ | ☐ | ☐ |
+| responsive-styling-specialist | responsive-styling | ☐ | ☐ | ☐ |
+| browser-validator-specialist | browser-validator | ☐ | ☐ | ☐ |
+| drupalorg-issue-specialist | drupalorg-issue-helper, drupal-issue | ☐ | ☐ | ☐ |
+| drupalorg-mr-specialist | drupalorg-contribution-helper, drupal-mr | ☐ | ☐ | ☐ |
 
 **Pass Criteria:** All checkboxes must be ✅
-
----
-
-## Skill Verification Commands
-
-### Check Skill Files Exist
-```bash
-ls -1 skills/*/SKILL.md | wc -l
-# Expected: 9
-```
-
-### Verify Skill-Agent Mapping
-```bash
-# Check each skill is referenced by at least one agent
-for skill in skills/*/; do
-  skill_name=$(basename "$skill")
-  echo -n "Checking $skill_name: "
-  grep -r "$skill_name" agents/*/AGENT.md >/dev/null && echo "✓" || echo "✗"
-done
-```
-
-**Expected:** All skills show ✓
 
 ---
 
@@ -392,7 +308,7 @@ done
 ### Skill Leaking to Main Conversation
 - Check: Skill description too broad (triggers auto-activation)
 - Fix: Make skill description more specific to agent context
-- Example: "Invoke when accessibility-specialist agent needs..."
+- Example: "Invoke when documentation-specialist agent needs..."
 
 ### Agent Can't Access Skill
 - Check: Skill listed in agent's `skills:` frontmatter

@@ -1,182 +1,53 @@
-# Test 04: Orchestration & Delegation Patterns
+# Test 04: Skill-Level Orchestration Patterns
 
-**Category:** Agent Orchestration
+**Category:** Orchestration
 **Purpose:** Verify that skill-level spawning works correctly and agents do NOT attempt to spawn subagents
-**Focus:** Skill-level parallel spawning, inline quality checks, no recursive agent spawning
+**Focus:** Skill-level sequential spawning, inline scenario generation, no recursive agent spawning
 
 ---
 
 ## Background: Claude Code Orchestration Model
 
 In Claude Code, only the **main session** can spawn agents. Agents CANNOT spawn further agents
-(the `Agent` tool is not available to spawned subagents). CMS Cultivator's orchestration model:
+(the `Agent` tool is not available to spawned subagents). As of 2.0 there are **no orchestrating
+agents** in CMS Cultivator — every agent is a leaf agent. Orchestration happens at the skill level:
 
-- **Skill-level spawning**: Skills in the main session spawn agents in parallel or sequentially
-- **Inline analysis**: The `testing-specialist` agent performs quality checks inline using its own tools. PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) also run inline — they are skills invoked directly by the main session, with no orchestrator agent.
+- **Skill-level spawning**: Skills in the main session spawn agents sequentially (design pipeline)
+- **Inline analysis**: The `testing-specialist` agent generates security-focused and
+  accessibility-focused test scenarios inline using its own tools — it no longer has the Task
+  tool and does not coordinate with other specialists
 - **No recursive spawning**: No agent spawns another agent
-
-> **History:** `workflow-specialist` was removed in v1.1.0; sections below that reference it are preserved for historical context but should be skipped.
 
 ---
 
 ## Test 4.1: Tool Configuration Verification
 
-### Test 4.1.1: Orchestrators Do NOT Have Task Tool
+### Test 4.1.1: No Agent Has the Task Tool
 
 **Check Agent Frontmatter:**
 ```bash
-# Should NOT show Task tool for orchestrator agents
-grep "^tools:" agents/workflow-specialist/AGENT.md
-grep "^tools:" agents/testing-specialist/AGENT.md
-grep "^tools:" agents/design-specialist/AGENT.md
+# Should return NO matches — no agent may list Task in its tools
+grep -l "^tools:.*Task" agents/*/AGENT.md
 ```
 
-**Expected Output:**
-```
-tools: Read, Glob, Grep, Bash, Task, Write, Edit
-tools: Read, Glob, Grep, Bash, Task, Write, Edit
-tools: Read, Glob, Grep, Bash, Write, Edit, ToolSearch, figma MCP, chrome-devtools MCP, playwright MCP
-```
+**Expected Output:** (empty)
 
-**Note:** The `tools: Task` frontmatter line controls what the agent THINKS it has, but Claude Code
-does not make the `Agent` spawning tool available to subagents regardless. Verify that agents do not
-attempt to use Task for spawning — check their AGENT.md prose for spawning instructions.
+**Note:** The `tools:` frontmatter line controls what the agent THINKS it has, but Claude Code
+does not make the `Agent` spawning tool available to subagents regardless. Also verify that
+agents do not attempt to use Task for spawning — check their AGENT.md prose for spawning
+instructions.
 
 **Verification:**
-- [ ] workflow-specialist AGENT.md describes inline quality checks (not Task spawning)
+- [ ] No agent lists Task in its tools frontmatter
 - [ ] testing-specialist AGENT.md describes inline scenario generation (not Task spawning)
 - [ ] design-specialist AGENT.md describes code generation only (not spawning)
+- [ ] No AGENT.md prose instructs the agent to spawn other agents
 
 ---
 
-### Test 4.1.2: Leaf Specialists Do NOT Have Task Tool
+## Test 4.2: Testing Specialist Inline Scenario Generation
 
-**Check Agent Frontmatter:**
-```bash
-grep "^tools:" agents/accessibility-specialist/AGENT.md
-grep "^tools:" agents/performance-specialist/AGENT.md
-grep "^tools:" agents/security-specialist/AGENT.md
-grep "^tools:" agents/documentation-specialist/AGENT.md
-grep "^tools:" agents/code-quality-specialist/AGENT.md
-```
-
-**Expected Output:**
-```
-tools: Read, Glob, Grep, Bash
-tools: Read, Glob, Grep, Bash
-tools: Read, Glob, Grep, Bash
-tools: Read, Glob, Grep, Bash, Write, Edit
-tools: Read, Glob, Grep, Bash
-```
-
-**Verification:**
-- [ ] No leaf specialist has Task tool
-- [ ] Clear separation between orchestrators and leaf specialists
-
----
-
-## Test 4.2: Workflow Specialist Inline Quality Checks
-
-### Test 4.2.1: Inline Checks - UI Changes
-
-**Setup:**
-- Git repo with staged changes
-- Changes include: New form component with inputs
-
-**Test Procedure:**
-```
-User: Run /pr-create for the new LoginForm component
-```
-
-**Expected Pattern:**
-```
-workflow-specialist
-  ├─→ Analyzes git diff (sees UI changes)
-  ├─→ Generates commit message (uses skill)
-  ├─→ Reviews accessibility concerns inline (Read/Grep on changed files)
-  ├─→ Reviews test coverage inline (Read/Glob for test files)
-  └─→ Compiles PR description with inline findings
-```
-
-**Verification Checklist:**
-- [ ] workflow-specialist spawned
-- [ ] Read/Grep tools used on changed files
-- [ ] NO other agents spawned (no Task tool calls)
-- [ ] Accessibility findings included in PR description
-- [ ] Test coverage review included
-
-**Log Validation:**
-```
-✓ "Analyzing git changes..."
-✓ "Detected UI component changes — reviewing accessibility inline..."
-✓ "Checking test coverage..."
-✓ "Compiling PR description..."
-✗ NOT: "Spawning accessibility-specialist..."
-✗ NOT: "Spawning testing-specialist..."
-```
-
----
-
-### Test 4.2.2: Inline Checks - Security Code
-
-**Setup:**
-- Git repo with staged changes
-- Changes include: Authentication middleware with password hashing
-
-**Test Procedure:**
-```
-User: Run /pr-create for authentication middleware
-```
-
-**Expected Pattern:**
-```
-workflow-specialist
-  ├─→ Analyzes git diff (sees security code)
-  ├─→ Generates commit message (uses skill)
-  ├─→ Reviews security concerns inline (Read/Grep on changed files)
-  └─→ Compiles PR description with security focus
-```
-
-**Verification Checklist:**
-- [ ] workflow-specialist spawned
-- [ ] Security concerns reviewed inline using Read/Grep
-- [ ] NO security-specialist spawned
-- [ ] Security findings prominent in PR description
-- [ ] Security testing checklist included
-
----
-
-### Test 4.2.3: No Checks - Simple Change
-
-**Setup:**
-- Git repo with staged changes
-- Changes include: README.md typo fix only
-
-**Test Procedure:**
-```
-User: Run /pr-create for README typo fix
-```
-
-**Expected Behavior:**
-```
-workflow-specialist
-  ├─→ Analyzes git diff (sees documentation only)
-  ├─→ Generates commit message (uses skill)
-  ├─→ Determines NO inline checks needed
-  └─→ Generates simple PR description
-```
-
-**Verification Checklist:**
-- [ ] workflow-specialist spawned
-- [ ] NO other agents spawned
-- [ ] No unnecessary quality checks run
-- [ ] Simple PR description generated
-
----
-
-## Test 4.3: Testing Specialist Inline Scenario Generation
-
-### Test 4.3.1: Security-Sensitive Code
+### Test 4.2.1: Security-Sensitive Code
 
 **Setup:** Authentication function needing tests
 
@@ -197,12 +68,12 @@ testing-specialist
 **Verification Checklist:**
 - [ ] testing-specialist spawned
 - [ ] Standard tests generated first
-- [ ] Security test scenarios generated inline (NOT via spawning security-specialist)
+- [ ] Security test scenarios generated inline (NOT via spawning another agent)
 - [ ] Both standard and security test scenarios in final output
 
 ---
 
-### Test 4.3.2: UI Component Code
+### Test 4.2.2: UI Component Code
 
 **Setup:** Form component with accessibility concerns
 
@@ -223,12 +94,12 @@ testing-specialist
 **Verification Checklist:**
 - [ ] testing-specialist spawned
 - [ ] Standard component tests generated
-- [ ] Accessibility test scenarios generated inline (NOT via spawning accessibility-specialist)
+- [ ] Accessibility test scenarios generated inline (NOT via spawning another agent)
 - [ ] Keyboard and screen reader test coverage included
 
 ---
 
-### Test 4.3.3: Simple Utility Function
+### Test 4.2.3: Simple Utility Function
 
 **Setup:** Pure utility function with no special concerns
 
@@ -253,86 +124,9 @@ testing-specialist
 
 ---
 
-## Test 4.4: live-site-audit Skill Spawning
+## Test 4.3: Design Skill Sequential Spawning
 
-### Test 4.4.1: Full Parallel Spawning from Main Session
-
-**Setup:** Any live website or staging environment
-
-**Test Procedure:**
-```
-User: Run /audit-live-site https://staging.example.com
-```
-
-**Expected Pattern (main session, NOT a subagent):**
-```
-live-site-audit skill (main session)
-  ├─→ Spawns ALL 4 specialists IN PARALLEL:
-  │     ├─→ performance-specialist
-  │     ├─→ accessibility-specialist
-  │     ├─→ security-specialist
-  │     └─→ code-quality-specialist
-  ├─→ Waits for all to complete
-  └─→ Main session synthesizes unified report
-```
-
-**Verification Checklist - Parallel Execution:**
-- [ ] 4 Agent() calls made in a single message (parallel)
-- [ ] ALL 4 specialists spawned:
-  - [ ] performance-specialist
-  - [ ] accessibility-specialist
-  - [ ] security-specialist
-  - [ ] code-quality-specialist
-- [ ] Spawned simultaneously (not sequential)
-- [ ] Main session synthesizes (no additional orchestrator agent)
-
-**Parallel Execution Indicators:**
-```
-✓ Multiple Agent tool calls in single message
-✓ NOT: spawning via a live-audit-specialist subagent
-✓ NOT: "First performance, then accessibility, then..."
-✓ YES: "All specialists running concurrently..."
-```
-
----
-
-### Test 4.4.2: Synthesis Quality
-
-**Verification:** After all specialists return findings
-
-**Expected Synthesis Features:**
-- [ ] Executive summary with overall health score
-- [ ] Issues categorized by severity (Critical → Low)
-- [ ] Issues from ALL 4 specialists included
-- [ ] Cross-category prioritization (not per-specialist)
-- [ ] Remediation roadmap with time estimates
-- [ ] Positive findings acknowledged
-
-**Output Structure Validation:**
-```markdown
-# Expected Structure:
-
-## Executive Summary
-[Overall health, scores across all categories]
-
-## Critical Issues (All Specialists Combined)
-[Issues from performance, a11y, security, code quality]
-
-## By Specialist (Detailed Findings)
-### Performance Findings
-### Accessibility Findings
-### Security Findings
-### Code Quality Findings
-
-## Prioritized Remediation Roadmap
-[Ordered by impact, not by specialist]
-```
-
----
-
-## Test 4.5: Design Skill Sequential Spawning
-
-### Test 4.5.1: Design-to-WP-Block Sequential Flow
+### Test 4.3.1: Design-to-WP-Block Sequential Flow
 
 **Setup:** Figma URL or design screenshot
 
@@ -341,63 +135,48 @@ live-site-audit skill (main session)
 User: Run /design-to-wp-block [figma-url]
 ```
 
-**Expected Sequential Pattern (main session):**
+**Expected Sequential Pattern (spawned by the invoking SKILL in the main session, not by an agent):**
 ```
-Step 1: Spawns design-specialist (code generation)
+Step 1: Skill spawns design-specialist (code generation)
          └─→ Returns structured output: file paths, SCSS paths, design specs, test URL
 
-Step 2: Spawns responsive-styling-specialist
+Step 2: Skill spawns responsive-styling-specialist
          └─→ Uses SCSS paths + design specs from Step 1
 
-Step 3: Spawns browser-validator-specialist
+Step 3: Skill spawns browser-validator-specialist
          └─→ Uses test URL from Step 1
 ```
 
 **Verification Checklist:**
 - [ ] design-specialist spawned first
 - [ ] design-specialist returns structured output with SCSS paths and test URL
-- [ ] responsive-styling-specialist spawned after Step 1 completes
-- [ ] browser-validator-specialist spawned after Step 1 completes
+- [ ] responsive-styling-specialist spawned by the skill after Step 1 completes
+- [ ] browser-validator-specialist spawned by the skill after Step 1 completes
 - [ ] Steps 2 and 3 use output from Step 1 (not hardcoded paths)
+- [ ] design-specialist itself does NOT spawn the follow-up agents
+
+**Note:** The same flow applies to `/design-to-drupal-paragraph`.
 
 ---
 
-## Test 4.6: Delegation Failure Handling
+## Test 4.4: Spawn Failure Handling
 
-### Test 4.6.1: Specialist Not Available
+### Test 4.4.1: Pipeline Agent Not Available
 
-**Scenario:** What if a spawned specialist fails to start?
+**Scenario:** What if a spawned agent in the design pipeline fails to start?
 
 **Test Setup:**
 ```
-Temporarily rename agents/accessibility-specialist directory
-Run /audit-live-site
+Temporarily rename agents/browser-validator-specialist directory
+Run /design-to-wp-block [figma-url]
 ```
 
 **Expected Behavior:**
-- [ ] Main session attempts to spawn accessibility-specialist
+- [ ] Skill attempts to spawn browser-validator-specialist (Step 3)
 - [ ] Spawn fails (agent not found)
 - [ ] Main session handles error gracefully
-- [ ] Continues with other 3 specialists
-- [ ] Notes accessibility audit failed in report
-
----
-
-### Test 4.6.2: Specialist Returns Empty Results
-
-**Scenario:** Specialist spawns but finds no issues
-
-**Test Procedure:**
-```
-User: Run /audit-live-site on a well-optimized site
-```
-
-**Expected Behavior:**
-- [ ] All 4 specialists spawn
-- [ ] Some may return "No issues found"
-- [ ] Main session handles empty results
-- [ ] Synthesis includes positive findings
-- [ ] Overall report still generated
+- [ ] Steps 1 and 2 output still delivered
+- [ ] Skill notes that browser validation was skipped
 
 ---
 
@@ -405,15 +184,12 @@ User: Run /audit-live-site on a well-optimized site
 
 | Pattern | Test | Passed | Notes |
 |---------|------|--------|-------|
-| workflow → inline checks | UI changes | ☐ | Read/Grep inline, no spawning |
-| workflow → inline checks | Security code | ☐ | Read/Grep inline, no spawning |
-| workflow → no checks | Simple change | ☐ | Should NOT run checks |
+| no agent has Task tool | Frontmatter check | ☐ | grep must return empty |
 | testing → inline scenarios | Security code | ☐ | Generates scenarios inline |
 | testing → inline scenarios | UI code | ☐ | Generates scenarios inline |
 | testing → no scenarios | Utility code | ☐ | Should NOT generate extra scenarios |
-| live-site-audit skill → parallel | Any site | ☐ | MUST spawn all 4 from main session |
-| live-site-audit skill → synthesis | Quality | ☐ | Unified report in main session |
-| design skill → sequential | Figma design | ☐ | 3 agents in sequence |
+| design skill → sequential | Figma design | ☐ | Skill spawns pipeline agents in sequence |
+| design skill → failure handling | Missing agent | ☐ | Graceful degradation |
 
 **Pass Criteria:** All checkboxes must be ✅
 
@@ -425,46 +201,36 @@ User: Run /audit-live-site on a well-optimized site
 MAIN SESSION (Can Spawn Agents)
 ==========================================================================
 
-live-site-audit skill
-    ├── Spawns in parallel: performance, accessibility, security, code-quality
-    └── Synthesizes inline after all complete
-
 design-to-wp-block / design-to-drupal-paragraph skills
     ├── Step 1: Spawns design-specialist (code generation)
     ├── Step 2: Spawns responsive-styling-specialist (SCSS)
     └── Step 3: Spawns browser-validator-specialist (validation)
 
-pr-create / pr-review / pr-commit-msg / pr-release skills
-    └── Spawns workflow-specialist (inline quality checks, no subagent spawning)
-
 test-generate / test-plan / test-coverage skills
     └── Spawns testing-specialist (inline scenario generation, no subagent spawning)
 
+pr-create / pr-review / pr-release / commit-message-generator skills
+    └── Run directly in the main session (no agent spawned)
 
-AGENTS (Cannot Spawn Further Agents)
+
+AGENTS (All Leaf — Cannot Spawn Further Agents)
 ==========================================================================
 
-workflow-specialist
-    ├── Tools: Read, Glob, Grep, Bash, Write, Edit
-    ├── Quality checks: INLINE (no subagent spawning)
-    └── Pattern: Analyze code → inline checks → PR generation
-
 testing-specialist
-    ├── Tools: Read, Glob, Grep, Bash, Write, Edit
-    ├── Scenario generation: INLINE (no subagent spawning)
+    ├── Scenario generation: INLINE (security + accessibility scenarios)
     └── Pattern: Analyze code → tests → inline security/a11y scenarios
 
 design-specialist
-    ├── Tools: Read, Glob, Grep, Bash, Write, Edit, ToolSearch, figma, playwright, chrome-devtools
     ├── Spawning: NONE (code generation only)
     └── Pattern: Analyze design → generate files → return structured output
 
-LEAF SPECIALISTS (Cannot Delegate)
-==========================================================================
+responsive-styling-specialist
+    └── Pattern: Consume design specs → generate mobile-first SCSS
 
-[accessibility|performance|security|documentation|code-quality]-specialist
-    ├── Tools: [read/grep/bash only]
-    ├── Spawns: NONE
+browser-validator-specialist
+    └── Pattern: Load test URL → validate breakpoints + WCAG AA → report
+
+documentation-specialist / drupalorg-issue-specialist / drupalorg-mr-specialist
     └── Pattern: Direct execution only
 ```
 
@@ -475,19 +241,15 @@ LEAF SPECIALISTS (Cannot Delegate)
 ### Agent Tries to Spawn Another Agent
 - Check: Does the agent's AGENT.md prose describe spawning/delegation?
 - Fix: Update AGENT.md to describe inline analysis instead
-- Note: Even if Task is in tools frontmatter, the Agent spawn tool is unavailable to subagents in Claude Code
+- Note: Even if Task appears in tools frontmatter, the Agent spawn tool is unavailable to subagents in Claude Code
 
-### Skill Not Spawning in Parallel
-- Check: Are Agent() calls made in a single message (not sequential)?
-- Fix: Skill SKILL.md should instruct parallel Agent calls in one message
-
-### Sequential Instead of Parallel (live-site-audit)
-- Check: Skill SKILL.md specifies parallel execution?
-- Fix: Spawn all 4 agents before waiting for any results
+### Design Pipeline Runs Out of Order
+- Check: Skill SKILL.md specifies sequential steps with Step 1 output feeding Steps 2 and 3?
+- Fix: Steps 2 and 3 must consume design-specialist's structured output
 
 ### Over-Analysis
-- Check: Agent logic too broad (running inline checks unnecessarily)?
-- Fix: Add conditional logic — only check when code type warrants it
+- Check: testing-specialist logic too broad (generating security/a11y scenarios unnecessarily)?
+- Fix: Add conditional logic — only generate scenarios when code type warrants it
 
 ---
 

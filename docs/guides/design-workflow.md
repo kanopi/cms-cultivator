@@ -1188,7 +1188,6 @@ ddev launch
 - **[`/design-to-wp-block`](../commands/design-workflow.md#design-to-wp-block)** - Create WordPress block patterns from designs
 - **[`/design-to-drupal-paragraph`](../commands/design-workflow.md#design-to-drupal-paragraph)** - Create Drupal paragraph types from designs
 - **[`/browser-validator`](../commands/design-workflow.md#browser-validator)** - Validate implementation in browser
-- **[`/accessibility-audit`](../commands/accessibility.md)** - Comprehensive WCAG accessibility audit
 
 ---
 

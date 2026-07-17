@@ -220,17 +220,16 @@ Then restart Claude Code.
 
 WordPress skills and CMS Cultivator skills work together seamlessly:
 
-### CMS Cultivator Skills (14)
+### CMS Cultivator Skills
 
 Provide cross-platform development guidance:
-- `accessibility-checker` - WCAG compliance checks
-- `browser-validator` - Cross-browser testing
+- `browser-validator` - Real-browser responsive and accessibility validation
 - `code-standards-checker` - PHPCS/ESLint integration
-- `security-scanner` - Security vulnerability scanning
-- `performance-analyzer` - Performance analysis
+- `design-to-wp-block` - WordPress block patterns from designs
+- `test-scaffolding` - Test generation
 - And more...
 
-### WordPress Skills (13)
+### WordPress Skills
 
 Provide WordPress-specific expertise:
 - `wp-block-development` - Gutenberg blocks
@@ -249,9 +248,9 @@ Provide WordPress-specific expertise:
 
 When working on a WordPress plugin:
 
-1. **CMS Cultivator** checks code quality and security
+1. **CMS Cultivator** checks coding standards and scaffolds tests
 2. **WordPress skills** provide WordPress-specific guidance
-3. **CMS Cultivator** validates accessibility and performance
+3. **CMS Cultivator** validates the result in a real browser
 4. **WordPress skills** ensure WordPress best practices
 
 Both skill sets enhance Claude's ability to help with WordPress development.

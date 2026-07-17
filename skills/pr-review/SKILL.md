@@ -194,7 +194,7 @@ non-interactively:
 
 - Skip step 7 entirely — do NOT post to GitHub. The parent routine handles posting.
 - Skip user dialogue ("ask the user", "present to the user first") — no user is present.
-- Skip the strategic-thinking 5 Cs prose; just apply the framework silently to land on a verdict.
+- Skip the 5 Cs prose; just apply the framework silently to land on a verdict.
 - Output ONLY the review report (step 6 template), with NO preamble.
 - End the output with this exact sentinel on its own line:
     FINAL_RECOMMENDATION: Approve
@@ -207,7 +207,7 @@ notification rules.
 
 ## Strategic Decision Framework
 
-When deciding whether to recommend "approve" vs. "request changes," apply the **5 Cs** from the `strategic-thinking` skill:
+When deciding whether to recommend "approve" vs. "request changes," apply the **5 Cs** (Context, Color, Connective Tissue, Cost, Consequence — from Brené Brown's *Strong Ground*):
 
 - **Color** — Production hotfix vs. exploratory branch sets different bars.
 - **Consequence** — What breaks if this ships with the issues you found?
@@ -220,5 +220,6 @@ Use these to provide a recommendation with reasoning, not just a verdict.
 
 - **commit-message-generator** — Used during PR creation
 - **pr-create** — Create the PR after a passing self-review
-- **security-scanner** — Deep security checks on specific code shown inline
-- **accessibility-checker** — Element-level accessibility checks
+- **security-scanner** / **accessibility-checker** (Kanopi's internal audit
+  library) — deep security and element-level accessibility checks when that
+  plugin is installed

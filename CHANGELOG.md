@@ -7,6 +7,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-16
+
+### Changed — BREAKING
+
+CMS Cultivator 2.0 refocuses the plugin on **CMS development workflows**:
+PR workflows, design-to-code, testing and code quality, documentation,
+Drupal.org contribution, and development tooling.
+
+Capabilities outside that focus moved to separate libraries:
+
+- **Delivery Record** (the `delivery-record` and `delivery-record-verify`
+  skills, the `spec/` schema, and the verifier scripts) moved to its own
+  public library: <https://github.com/kanopi/delivery-record>. The new
+  library accepts records written against the old spec URI, so existing
+  records keep validating.
+- **Audit capabilities** (comprehensive and focused accessibility,
+  performance, security, code-quality, structured-data, GTM, live-site, and
+  strategist audits, plus audit reporting/export and their specialist
+  agents) moved to an internal Kanopi library.
+- **DevOps capabilities** (Pantheon project onboarding for Drupal and
+  WordPress, Playwright scaffolding, private Composer packaging, and the
+  DevOps specialist agent) moved to an internal Kanopi library.
+- **PM and strategy capabilities** (Teamwork workflows, client triage,
+  meeting prep, heartbeats, QA review, FRD generation, estimation, CSV
+  export, strategic thinking) moved to an internal Kanopi library.
+
+If you depend on the removed skills, stay on the final 1.x release — it
+remains available as a tagged, frozen reference. There is no compatibility
+shim.
+
+Other breaking-adjacent changes:
+
+- `testing-specialist` is now a leaf agent: it generates security-focused
+  and accessibility-focused test scenarios inline instead of spawning
+  audit specialists (which no longer live in this plugin). Its Task tool
+  was removed.
+- `pr-review` applies the 5 Cs decision framework directly (previously
+  referenced the strategic-thinking skill) and points element-level
+  security/accessibility checks at Kanopi's internal audit library.
+
+### Added
+
+- **TF-IDF routing evals** (`scripts/run-evals.js` + `evals/routing-prompts.json`):
+  every skill description is ranked against realistic prompts in CI with a
+  rank-1 floor, and near-duplicate descriptions are flagged as collisions.
+- **Codex parity check** (`scripts/check-codex-parity.sh`): CI now verifies
+  `.codex/agents/*.toml` name/description parity with `agents/*/AGENT.md`
+  and validates `skills/*/agents/openai.yaml` policy files.
+- Both checks run in `.github/workflows/test.yml`.
+
+### Fixed
+
+- `testing-specialist.toml` and `design-specialist.toml` contained invalid
+  TOML (unescaped backslashes) and description drift from their AGENT.md
+  sources — caught by the new parity check.
+- `tests/test-plugin.bats` rebuilt on a dynamic-parity scaffold: counts are
+  derived (skill directories vs `skills/README.md` entries, agent
+  directories vs Codex TOMLs) instead of hardcoded.
+
+- `skills/composer-patch-generator/SKILL.md` — new skill for generating and maintaining CI-safe patches for Composer-installed packages (Drupal contrib modules, WordPress plugins/packages, PHP libraries) via `cweagans/composer-patches`. Codifies the failure modes that cause "applies locally, fails in CI": use `diff -ruN` (not `git diff`) because CI installs from dist archives with no `.git` so composer-patches falls back to the `patch` command; base the diff on the dist archive (not a git clone) to avoid spurious `LICENSE.txt`/packaging-metadata hunks; never pass `--exclude` to `diff` (it leaks into headers); and exclude the composer-patches-generated `PATCHES.txt` artifact. Covers snapshotting a pristine base, path normalization, wiring `extra.patches` in `composer.json` (ordering, `patchLevel`), handling new files, and verifying via `patch -p1 --dry-run` plus `composer install`. Model-invoked (no command). Registered in `skills/README.md` and the `docs/agents-and-skills.md` reference table.
+
+### Changed (pre-split housekeeping)
+- `README.md` — refreshed the Agent Skills roster to list all current skills (grouped by capability) and added curated Key Features sections for Development Workflow, Drupal.org Contribution, and DevOps & Onboarding, plus previously unlisted skills (`gtm-performance-audit`, `structured-data-analyzer`, `drupal-sdc-twig`, `strategic-thinking`).
+- `CLAUDE.md` — the "Adding a New Feature" checklist now requires updating all registry files on every new skill: `CHANGELOG.md` (`[Unreleased]`), `skills/README.md` (append the next number so the count matches the skill-directory count enforced by `tests/test-plugin.bats`), the `docs/agents-and-skills.md` reference table, and the top-level `README.md` roster.
+
+## [1.6.0] - 2026-07-07
+
+### Added
+- **Delivery Record** — seven additional `activity_type` values covering the rest of the AI-workflow lifecycle: `design`, `qa`, `launch`, `deployment`, `devops`, `project-setup`, and `ongoing-improvement`. Each ships a schema `if/then` branch, a `checks/<activity_type>.json` sub-schema, a validated `examples/*.md` fixture, and a skill body template. The existing seven values are unchanged (additive, backward-compatible within v1). Enum now totals 14.
+
+### Changed
+- `skills/delivery-record` now **indexes records by posting a comment** on the project's Teamwork "Delivery Records" notebook instead of appending to the notebook body — notebooks have no append operation, so commenting avoids clobbering existing content and keeps a per-record audit trail.
+- `tests/test-delivery-record.bats` derives the activity-type list from the schema enum (parity checks against `checks/`, examples, and templates) rather than hardcoding the count, so the suite grows with the spec.
+- Fixed repository links in the Delivery Record docs/spec (and `docs/testing.md`) to point at the `1.x` branch (were `main`), and removed links to the private `kanopi/ai-workflows` repo.
+- `.gitignore` now excludes `.claude/worktrees/`.
+
+## [1.5.0] - 2026-06-30
+
+### Added
+- `spec/delivery-record/v1/` — the canonical, machine-readable **Delivery Record** schema: a self-contained JSON Schema 2020-12 (`schema.json`) for the record front-matter with per-`activity_type` `if/then` branches, seven standalone `checks/<activity_type>.json` sub-schemas (the single source of truth for each activity's required check keys), seven fully filled-in `examples/*.md` that double as validation fixtures, and a human-readable `README.md`. `predicate_type` is a resolvable URL (`https://kanopi.github.io/cms-cultivator/spec/delivery-record/v1`) that resolves to a docs-site schema page. `spec/delivery-record/VERSIONING.md` documents the additive-within-version / new-directory-for-breaking-changes policy.
+- `skills/delivery-record/` — new skill that drafts a Delivery Record for a significant AI-assisted output (code, FRD, audit, discovery, design-handoff, strategy, client-comm), **refuses to write without a named human reviewer and both checkpoint notes** (the curl rule), writes to `docs/delivery-records/` (code) or Drive (non-code), and indexes the record in the project's Teamwork "Delivery Records" notebook. Ships per-activity body templates (`templates/*.md`) and an `agents/openai.yaml` Codex policy (`allow_implicit_invocation: false`).
+- `skills/delivery-record-verify/` — new read-only skill that validates a Delivery Record against the schema (resolving the version from `predicate_type`), enforces the per-`activity_type` required-keys policy, and applies the threshold rule (a `fail` needs a `## Waiver`; an `n/a` needs a one-line justification) as soft warnings or, with `--strict`, hard failures. Includes an `agents/openai.yaml` Codex policy.
+- `scripts/delivery_record_verify.py` + `scripts/delivery-record-verify.sh` — the shared Python validator (stdlib + `pyyaml` + `jsonschema`) and a CI wrapper. The wrapper is a drop-in CI lint for other projects (`scripts/delivery-record-verify.sh --strict`); it is **not** enabled in cms-cultivator's own CI by default.
+- `docs/spec/delivery-record/v1.md` (the predicate-URL target), `docs/commands/delivery-record.md`, and `docs/commands/delivery-record-verify.md` doc pages, with new `Specification` and Skills nav entries in `zensical.toml`.
+- `tests/test-delivery-record.bats` and `tests/test-delivery-record-verify.bats` — spec-validates-against-itself, bad-records-fail, per-activity required-key, schema/sub-schema sync, `--strict`, and auto-detect coverage.
+- `README.md`, `skills/README.md`, and `docs/agents-and-skills.md` updated for the two new skills.
+
 ## [1.4.0] - 2026-06-19
 
 ### Added

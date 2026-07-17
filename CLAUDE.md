@@ -22,7 +22,7 @@ This file provides context for Claude (or other AI assistants) when working on t
    - Orchestrate complex workflows with parallel execution
    - Each agent has a specific domain expertise
    - **IMPORTANT:** When agents reference other agents via the Task tool, use fully qualified names: `cms-cultivator:agent-name:agent-name`
-   - Examples: accessibility-specialist, security-specialist, performance-specialist, etc.
+   - Examples: design-specialist, responsive-styling-specialist, browser-validator-specialist, etc.
 
 2. **Agent Skills** (`/skills/`)
    - Model-invoked (Claude decides when to use)
@@ -56,10 +56,10 @@ Task(cms-cultivator:agent-name:agent-name, prompt="Task description")
 **Format:** `plugin-name:agent-directory:agent-name`
 
 **Examples:**
-- `cms-cultivator:accessibility-specialist:accessibility-specialist`
-- `cms-cultivator:security-specialist:security-specialist`
-- `cms-cultivator:performance-specialist:performance-specialist`
 - `cms-cultivator:design-specialist:design-specialist`
+- `cms-cultivator:responsive-styling-specialist:responsive-styling-specialist`
+- `cms-cultivator:browser-validator-specialist:browser-validator-specialist`
+- `cms-cultivator:drupalorg-issue-specialist:drupalorg-issue-specialist`
 
 **Why fully qualified names?**
 - Avoids naming conflicts with other plugins
@@ -68,19 +68,17 @@ Task(cms-cultivator:agent-name:agent-name, prompt="Task description")
 
 **Parallel Agent Execution:**
 
-When spawning multiple agents, always do so in a single message with multiple Task calls:
+When a skill spawns multiple agents with no dependencies between them,
+always do so in a single message with multiple Task calls so they run in
+parallel:
 
-```markdown
-I'm spawning all four specialists in parallel:
+```
+Task(cms-cultivator:design-specialist:design-specialist, prompt="...")
+Task(cms-cultivator:responsive-styling-specialist:responsive-styling-specialist, prompt="...")
 ```
 
-Then make 4 Task calls:
-```
-Task(cms-cultivator:performance-specialist:performance-specialist, prompt="...")
-Task(cms-cultivator:accessibility-specialist:accessibility-specialist, prompt="...")
-Task(cms-cultivator:security-specialist:security-specialist, prompt="...")
-Task(cms-cultivator:code-quality-specialist:code-quality-specialist, prompt="...")
-```
+(As of 2.0 every agent in this plugin is a leaf agent — agents do not spawn
+other agents; skills in the main session do the orchestrating.)
 
 ### Kanopi Integration
 
@@ -109,10 +107,12 @@ Skills automatically reference Kanopi-specific tools when available:
    - Include all code examples, patterns, best practices
    - Add Drupal and WordPress examples
 
-2. **Update documentation**:
-   - Add to `docs/agents-and-skills.md`
-   - Update `skills/README.md`
-   - Update README if needed
+2. **Register the skill** (required — update ALL of these on every new skill so the docs, changelog, evals, and tests stay in sync):
+   - Add an `### Added` entry under `[Unreleased]` in `CHANGELOG.md`
+   - Add a numbered entry in `skills/README.md` (the number of `### N.` entries must equal the number of skill directories — `tests/test-plugin.bats` asserts this, so append the next number rather than inserting mid-list)
+   - Add 2–3 routing prompts to `evals/routing-prompts.json` (CI enforces a rank-1 floor via `scripts/run-evals.js`)
+   - Add a row to the Skills Reference Table in `docs/agents-and-skills.md`
+   - Add the skill to the Agent Skills roster (and the relevant Key Features section) in the top-level `README.md`
 
 ### Updating Existing Features
 
@@ -143,8 +143,8 @@ description: Automatically generate conventional commit messages when user has s
 
 ✅ **Good** (Clear activation context):
 ```yaml
-name: security-scanner
-description: Automatically scan code for security vulnerabilities when user asks if code is secure or shows potentially unsafe code. Performs focused security checks on specific code, functions, or patterns. Invoke when user asks "is this secure?", "security issue?", mentions XSS, SQL injection, or shows security-sensitive code.
+name: browser-validator
+description: Automatically validate implementations in real browsers after code is written or when user says "test this". Uses Chrome DevTools MCP to test responsive breakpoints (320px, 768px, 1024px), check accessibility compliance (WCAG AA contrast, keyboard navigation, ARIA), validate interactions, and generate detailed technical reports with file paths and specific fixes.
 ```
 
 ❌ **Bad** (Too vague, no trigger terms):
@@ -194,38 +194,32 @@ cms-cultivator/
 ├── .codex-plugin/
 │   └── plugin.json          # OpenAI Codex plugin manifest
 ├── .codex/
-│   └── agents/              # 17 .toml Codex agent translation files
+│   └── agents/              # Codex agent translation files (one .toml per agent)
 ├── .github/workflows/
 │   ├── docs.yml             # Zensical deployment
-│   └── test.yml             # BATS test automation
-├── agents/                  # Specialist agent directories
-│   ├── accessibility-specialist/
-│   ├── security-specialist/
-│   ├── performance-specialist/
-│   └── ...                  # specialist agents
-├── skills/                  # Agent Skill directories
-│   ├── commit-message-generator/
-│   ├── code-standards-checker/
-│   ├── test-scaffolding/
-│   ├── documentation-generator/
-│   ├── test-plan-generator/
-│   ├── accessibility-checker/
-│   ├── performance-analyzer/
-│   ├── security-scanner/
-│   ├── coverage-analyzer/
-│   ├── structured-data-analyzer/
-│   └── README.md            # Skills overview
+│   └── test.yml             # BATS + frontmatter + routing evals + codex parity
+├── agents/                  # Specialist agent directories (one per agent)
+│   ├── design-specialist/
+│   ├── responsive-styling-specialist/
+│   ├── browser-validator-specialist/
+│   ├── documentation-specialist/
+│   ├── testing-specialist/
+│   ├── drupalorg-issue-specialist/
+│   └── drupalorg-mr-specialist/
+├── skills/                  # Agent Skill directories (one per skill)
+│   ├── <skill-name>/SKILL.md
+│   └── README.md            # Skills overview (numbered — parity-tested)
+├── evals/
+│   └── routing-prompts.json # TF-IDF routing eval cases
 ├── docs/                    # Zensical documentation site
-│   ├── commands/            # Skill category documentation pages
-│   ├── kanopi-tools/        # Kanopi integration docs
-│   ├── agents-and-skills.md # Agents & Skills guide
-│   ├── index.md             # Home page
-│   ├── quick-start.md       # Getting started guide
-│   └── contributing.md      # Contribution guidelines
 ├── scripts/
-│   └── validate-frontmatter.sh  # Frontmatter validation script
+│   ├── validate-frontmatter.sh   # Frontmatter validation
+│   ├── run-evals.js              # TF-IDF routing + collision evals
+│   ├── check-codex-parity.sh     # Codex TOML/openai.yaml drift detection
+│   ├── package-plugin.sh         # Claude Desktop plugin zip
+│   └── package-skills.sh         # Per-skill .skill zips
 ├── tests/
-│   └── test-plugin.bats     # 75 BATS tests
+│   └── test-plugin.bats     # BATS suite (dynamic parity checks, no hardcoded counts)
 ├── zensical.toml            # Zensical configuration
 ├── CHANGELOG.md             # Version history (Keep a Changelog format)
 ├── CLAUDE.md                # This file (AI assistant context)
@@ -433,4 +427,4 @@ Ideas for future development:
 
 ---
 
-Last updated: 2026-05-14
+Last updated: 2026-07-16

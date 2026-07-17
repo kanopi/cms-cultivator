@@ -175,7 +175,6 @@ git add feature.php
 # 2. Before creating PR - self-review
 /pr-review self           # Analyze your own changes
 /code-standards-checker        # Check code standards
-/security-audit secrets  # Check for exposed secrets
 
 # 3. Create PR
 /pr-create PROJ-123    # Generates description and creates PR
@@ -329,4 +328,3 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 - **[Quick Start](../quick-start.md)** - Common workflow examples
 - **[Skills Overview](overview.md)** - All skills
 - **[Code Quality Commands](code-quality.md)** - Maintain code quality
-- **[Security Commands](security.md)** - Security scanning

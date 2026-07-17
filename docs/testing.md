@@ -84,93 +84,84 @@ bats tests/test-plugin.bats --tap
 
 ## Test Coverage
 
-The test suite includes **54 tests** across multiple categories:
+The test suite covers multiple categories:
 
-### Plugin Manifest Tests (7 tests)
+### Plugin Manifest Tests
 
 - ✅ Manifest file exists and is valid JSON
 - ✅ Required fields present (name, version, description)
 - ✅ Version follows semver
 - ✅ Repository URL configured
 
-### Command File Structure Tests (5 tests)
+### Skill File Structure Tests
 
-- ✅ Commands directory exists with correct files
-- ✅ All files have .md extension
-- ✅ Command count matches expected (25)
+- ✅ Skills directory exists with correct files
+- ✅ All skill directories contain a `SKILL.md`
+- ✅ Skill counts stay in parity with the docs (dynamic checks, no hardcoded totals)
 
-### Command Frontmatter Tests (5 tests)
+### Skill Frontmatter Tests
 
-- ✅ All commands have YAML frontmatter
-- ✅ Required fields: description, allowed-tools
+- ✅ All skills have YAML frontmatter
+- ✅ Required fields: name, description
 - ✅ Valid YAML syntax
 - ✅ No empty descriptions
 
-### Command Naming Convention Tests
+### Skill Naming Convention Tests
 
-- ✅ PR commands: `pr-*`
-- ✅ Accessibility: `accessibility-audit`
-- ✅ Performance: `performance-audit`
-- ✅ Security: `security-audit`
+- ✅ PR skills: `pr-*`
 - ✅ Testing: `test-*`
-- ✅ Quality: `quality-*`
-- ✅ Documentation: `docs-*`
 - ✅ Design: `design-*`
-- ✅ Live auditing: `live-site-audit`
+- ✅ Drupal.org contribution: `drupal-*` / `drupalorg-*`
+- ✅ Skill names match their directory names
 
-### Command Content Tests (3 tests)
+### Skill Content Tests
 
-- ✅ All commands have markdown headers
-- ✅ Commands contain code examples
+- ✅ All skills have markdown headers
+- ✅ Skills contain code examples
 - ✅ No uncommitted TODO markers
 
-### Allowed-Tools Validation Tests (2 tests)
-
-- ✅ Valid tool patterns in frontmatter
-- ✅ Both direct and DDEV variants for composer
-
-### Documentation Tests (9 tests)
+### Documentation Tests
 
 - ✅ README exists with proper badges
 - ✅ Zensical configuration valid
 - ✅ All documentation pages exist
 - ✅ GitHub Actions workflow configured
 
-### Kanopi Integration Tests (3 tests)
+### Kanopi Integration Tests
 
 - ✅ Kanopi tools documentation present
-- ✅ Commands reference Kanopi where appropriate
+- ✅ Skills reference Kanopi where appropriate
 
-### License and Metadata Tests (3 tests)
+### License and Metadata Tests
 
 - ✅ LICENSE file exists
 - ✅ CHANGELOG.md exists
 - ✅ CLAUDE.md exists
 
-### File Hygiene Tests (3 tests)
+### File Hygiene Tests
 
 - ✅ No trailing whitespace
 - ✅ No merge conflict markers
 - ✅ No debug statements
 
-### Security Tests (2 tests)
+### Security Tests
 
 - ✅ No hardcoded secrets
 - ✅ No private URLs
 
-### Cross-Reference Tests (2 tests)
+### Cross-Reference Tests
 
-- ✅ README commands match actual files
-- ✅ Command counts in README are accurate
+- ✅ README skill roster matches actual skill directories
+- ✅ Docs and README stay in parity with the skills directory
 
-### Performance Tests (2 tests)
+### Performance Tests
 
-- ✅ No command file exceeds 100KB
+- ✅ No skill file exceeds 100KB
 - ✅ Total size is reasonable
 
-### Integration Tests (2 tests - optional)
+### Integration Tests (optional)
 
-- ✅ MkDocs can build documentation
+- ✅ Zensical can build documentation
 - ✅ Markdown files pass linting
 
 ## CI/CD Integration
@@ -181,14 +172,14 @@ Tests run automatically via GitHub Actions on:
 - Pull requests
 - Manual workflow dispatch
 
-See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob/main/.github/workflows/test.yml) for the complete CI/CD configuration.
+See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob/1.x/.github/workflows/test.yml) for the complete CI/CD configuration.
 
 ### GitHub Actions Jobs
 
 1. **BATS Tests** - Runs all BATS test suite
-2. **Frontmatter Validation** - Validates command frontmatter
+2. **Frontmatter Validation** - Validates skill frontmatter
 3. **Documentation Build** - Builds Zensical site
-4. **Command Count Validation** - Verifies expected counts
+4. **Parity Validation** - Verifies docs stay in sync with skill directories
 5. **Security Scan** - Checks for secrets and conflicts
 6. **JSON/YAML/TOML Validation** - Validates config files
 
@@ -204,16 +195,16 @@ See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob
 ✓ plugin version follows semver
 ...
 
-54 tests, 0 failures
+All tests passed, 0 failures
 ```
 
 ### Failure Output
 
 ```
-✗ all commands have description in frontmatter
+✗ all skills have description in frontmatter
    (in test file tests/test-plugin.bats, line 78)
-     `if ! grep -q "^description:" "$cmd"; then' failed
-   Missing description in commands/example.md
+     `if ! grep -q "^description:" "$skill"; then' failed
+   Missing description in skills/example/SKILL.md
 
 1 test, 1 failure
 ```
@@ -314,7 +305,7 @@ pip install zensical
 - [BATS Documentation](https://bats-core.readthedocs.io/)
 - [BATS GitHub Repository](https://github.com/bats-core/bats-core)
 - [Test Anything Protocol (TAP)](https://testanything.org/)
-- [GitHub Actions Workflows](https://github.com/kanopi/cms-cultivator/tree/main/.github/workflows)
+- [GitHub Actions Workflows](https://github.com/kanopi/cms-cultivator/tree/1.x/.github/workflows)
 
 ---
 

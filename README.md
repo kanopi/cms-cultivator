@@ -7,6 +7,12 @@ Specialist agents and auto-invoked skills for Drupal/WordPress development. Work
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)
 
+> **What changed in 2.0?** CMS Cultivator now focuses on CMS development
+> workflows. Delivery Record moved to its own public library:
+> [kanopi/delivery-record](https://github.com/kanopi/delivery-record). Audit,
+> DevOps, and PM capabilities moved to separate internal Kanopi libraries.
+> The final 1.x release remains available as a tagged reference.
+
 ---
 
 ## Quick Start
@@ -52,35 +58,46 @@ Generate commit messages, PR descriptions, changelogs, and review code.
 - `pr-review` - AI-assisted code review
 - `pr-release` - Generate release PR with changelog
 
-### Quality Analysis
-Code standards, test coverage, accessibility, security audits.
+### Testing & Code Quality
+Standards compliance, test generation, and coverage analysis.
 
 **Skills:**
-- `quality-audit` - Technical debt and code quality
 - `code-standards-checker` - Coding standards compliance (PHPCS, ESLint)
 - `test-scaffolding` - Generate test scaffolding
 - `coverage-analyzer` - Analyze test coverage gaps
 - `test-plan-generator` - Create comprehensive QA test plans
 
-### Auditing
-Comprehensive performance, accessibility, and security audits with flexible argument modes.
-
-**Skills:**
-- `accessibility-audit` - WCAG 2.1 Level AA compliance
-- `security-audit` - OWASP Top 10 vulnerability scanning
-- `performance-audit` - Core Web Vitals and optimization
-- `quality-audit` - Code quality and technical debt
-- `live-site-audit` - Comprehensive parallel audit (all specialists)
-- `audit-export` - Export audit findings to CSV for project management tools
-- `audit-report` - Generate client-facing executive summaries
-
 ### Design-to-Code
 Figma → WordPress blocks, Drupal paragraphs with browser validation.
 
 **Skills:**
+- `design-analyzer` - Extract technical specs from design references
 - `design-to-wp-block` - Create WordPress block pattern
 - `design-to-drupal-paragraph` - Create Drupal paragraph type
+- `responsive-styling` - Mobile-first responsive CSS/SCSS (WCAG AA)
 - `browser-validator` - Validate implementation in Chrome
+- `drupal-sdc-twig` - Best practices for Drupal Single Directory Components (Twig)
+
+### Development Workflow
+Parallel work with git worktrees and safe changes to Composer-managed dependencies.
+
+**Skills:**
+- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation)
+- `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
+
+### Drupal.org Contribution
+Create issues and merge requests on drupal.org from your local environment.
+
+**Skills:**
+- `drupal-contribute` - Full contribution workflow (issue + merge request)
+- `drupal-issue` - Create, update, and comment on drupal.org issues
+- `drupal-mr` - Create merge requests via git.drupalcode.org
+- `drupal-cleanup` - List and clean up cloned drupal.org repositories
+- `drupalorg-contribution-helper` - Quick help with drupal.org git workflows
+- `drupalorg-issue-helper` - Quick help with drupal.org issue templates
+
+### WordPress
+- `wp-add-skills` - Install official WordPress agent-skills
 
 ### Documentation
 API docs, user guides, developer documentation, changelogs.
@@ -88,32 +105,7 @@ API docs, user guides, developer documentation, changelogs.
 **Skill:**
 - `documentation-generator` - Generate comprehensive documentation
 
-### Project Planning
-Generate Functional Requirements Documents, estimate work, and export task backlogs.
-
-**Skills:**
-- `frd-generator` - Generate comprehensive Functional Requirements Documents
-- `story-point-estimator` - Fibonacci-based story point estimation with hour conversions
-- `csv-exporter` - Convert FRD requirements into Teamwork-ready CSV backlogs
-
-### PM Workflows
-Aggregate context from Teamwork, Slack, Gmail, and Fathom for client communication and QA review. Requires connected MCP servers.
-
-**Skills:**
-- `client-request-triage` - Review a client task, research solutions, and draft a reply (Teamwork + web search)
-- `pm-meeting-prep` - Aggregate context for an upcoming check-in (Teamwork + Slack + Gmail + Fathom)
-- `project-heartbeat` - Draft a client-facing project status update (Teamwork + Slack + Fathom)
-- `qa-review` - Full QA validation of a multidev environment from a Teamwork task (Teamwork + CoWork browser automation)
-
-### Strategy
-Strategist-focused discovery audits — not developer audits. Requires CoWork.
-
-**Skills:**
-- `strategist-site-audit` - Audit a site against the 21 UX Laws (lawsofux.com), review content hierarchy, synthesise qualitative data, run Lighthouse, and produce a Project Knowledge Summary (Markdown) plus an iterable client-facing HTML Artifact (CoWork)
-
 **See [docs site](https://kanopi.github.io/cms-cultivator/) for complete skill reference and usage examples.**
-
----
 
 ---
 
@@ -121,33 +113,27 @@ Strategist-focused discovery audits — not developer audits. Requires CoWork.
 
 ### Specialist Agents
 
-Skills spawn specialized agents for focused, parallel work:
-
-**Review/Audit Agents:**
-- accessibility-specialist, code-quality-specialist, security-specialist, performance-specialist, structured-data-specialist
+Skills spawn specialized agents for focused work:
 
 **Generation Agents:**
-- documentation-specialist, testing-specialist, responsive-styling-specialist, design-specialist
+- design-specialist, responsive-styling-specialist, documentation-specialist, testing-specialist
 
 **Browser Validation:**
 - browser-validator-specialist
+
+**Drupal.org Contribution:**
+- drupalorg-issue-specialist, drupalorg-mr-specialist
 
 PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
 
 ### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
-- accessibility-checker, security-scanner, performance-analyzer
-- commit-message-generator, test-scaffolding, coverage-analyzer
-- documentation-generator, test-plan-generator, code-standards-checker
-- structured-data-analyzer, design-analyzer, responsive-styling, browser-validator
-- accessibility-audit, performance-audit, security-audit, quality-audit
-- live-site-audit, pr-review, audit-export, audit-report
-- design-to-wp-block, design-to-drupal-paragraph, pr-create, pr-release
-- devops-setup, drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, wp-add-skills
-- frd-generator, story-point-estimator, csv-exporter
-- client-request-triage, pm-meeting-prep, project-heartbeat, qa-review
-- strategist-site-audit
+- **PR & development workflow:** commit-message-generator, pr-create, pr-review, pr-release, worktree-manager, composer-patch-generator
+- **Testing & code quality:** code-standards-checker, test-scaffolding, test-plan-generator, coverage-analyzer, documentation-generator
+- **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
+- **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper
+- **WordPress:** wp-add-skills
 
 ### How It Works
 
@@ -160,13 +146,12 @@ pr-create skill (main session)
     ↓
 Unified PR description → user approval → gh pr create
 
-live-site-audit skill (main session)
-    ├─→ Spawns performance-specialist (parallel)
-    ├─→ Spawns accessibility-specialist (parallel)
-    ├─→ Spawns security-specialist (parallel)
-    ├─→ Spawns code-quality-specialist (parallel)
+design-to-wp-block skill (main session)
+    ├─→ Spawns design-specialist (extract specs, generate block pattern)
+    ├─→ Spawns responsive-styling-specialist (mobile-first CSS)
+    ├─→ Spawns browser-validator-specialist (real-browser validation)
     ↓
-Synthesize findings → Unified audit report
+Validated block pattern + annotated screenshots
 ```
 
 ---

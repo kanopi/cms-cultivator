@@ -164,8 +164,8 @@ touch newfile.md
 ### Available Commands
 
 - `/pr-create` - Create pull request
-- `/accessibility-audit` - Check accessibility
-- `/performance-audit` - Analyze performance
+- `/pr-review` - Review a pull request
+- `/browser-validator` - Validate in a real browser
 ```
 
 ### Use Headings When
@@ -260,7 +260,7 @@ Edit your configuration file:
 
 **Explicit Commands:**
 - `/pr-create` - Create PR
-- `/accessibility-audit` - Full audit
+- `/browser-validator` - Browser validation
 ```
 
 **After (✅):**
@@ -275,7 +275,7 @@ Edit your configuration file:
 #### Explicit Commands
 
 - `/pr-create` - Create PR
-- `/accessibility-audit` - Full audit
+- `/browser-validator` - Browser validation
 ```
 
 ### Example 3: Step-by-Step Instructions
@@ -477,7 +477,7 @@ Keep tables simple:
 | Command | Description |
 |---------|-------------|
 | `/pr-create` | Create pull request |
-| `/accessibility-audit` | Check accessibility |
+| `/pr-review` | Review a pull request |
 ```
 
 For complex content, use headings and lists instead of tables.

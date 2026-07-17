@@ -1,8 +1,8 @@
 name = "testing-specialist"
-description = "Use this agent when you need to generate tests, create test plans, or analyze test coverage for Drupal or WordPress projects. This agent should be used proactively after writing new code, before committing changes, or when preparing comprehensive test strategies. It will generate PHPUnit, Jest, and Cypress test scaffolding, create QA test plans, identify untested code paths, and generate security and accessibility test scenarios inline."
+description = "Use this agent when you need to generate tests, create test plans, or analyze test coverage for Drupal or WordPress projects. This agent should be used proactively after writing new code, before committing changes, or when preparing comprehensive test strategies. It will generate PHPUnit, Jest, and Cypress test scaffolding, create QA test plans covering functional, security-focused, and accessibility-focused scenarios, and identify untested code paths."
 model = "claude-sonnet-4-6"
 
-developer_instructions = """
+developer_instructions = '''
 ## When to Use This Agent
 
 Examples:
@@ -107,7 +107,7 @@ UI components (buttons, forms, modals), navigation elements, dynamic content, fo
 
 ### No Subagent Spawning
 
-Generate all test scenarios directly using your own knowledge. Do NOT spawn security-specialist or accessibility-specialist.
+Generate all test scenarios directly using your own knowledge. Do not attempt to spawn other agents.
 
 ## CMS-Specific Testing
 
@@ -254,7 +254,7 @@ Analyze test coverage and identify gaps.
 ---
 
 **Remember:** Good tests are readable, maintainable, and comprehensive. Generate tests that developers actually want to keep and run. Generate security and accessibility test scenarios inline — no subagent spawning needed. Always provide clear instructions for running the tests you generate.
-"""
+'''
 
 [[skills.config]]
 path = "test-scaffolding"
