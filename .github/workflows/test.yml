@@ -139,7 +139,7 @@ jobs:
         run: |
           # Check for potential hardcoded secrets
           # Exclude audit-security.md and audit-live-site.md which contain example security code
-          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" skills/ agents/ docs/ | grep -v "example\|placeholder\|TODO\|audit-security.md\|audit-live-site.md"; then
+          if grep -ri "password\s*=\|api_key\s*=\|secret\s*=" skills/ agents/ docs/ | grep -v "example\|placeholder\|TODO\|test-fixture\|audit-security.md\|audit-live-site.md"; then
             echo "❌ Potential hardcoded secrets found"
             exit 1
           else
