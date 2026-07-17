@@ -62,22 +62,6 @@
       "expect": "browser-validator"
     },
     {
-      "prompt": "I fixed a bug in a contrib module — walk me through contributing it back to drupal.org",
-      "expect": "drupal-contribute"
-    },
-    {
-      "prompt": "create a drupal.org issue for this bug in the webform module",
-      "expect": "drupal-issue"
-    },
-    {
-      "prompt": "push my fix as a merge request on git.drupalcode.org",
-      "expect": "drupal-mr"
-    },
-    {
-      "prompt": "clean up this Drupal codebase — unused modules and leftover config",
-      "expect": "drupal-cleanup"
-    },
-    {
       "prompt": "how does the drupal.org issue fork and branch naming workflow go?",
       "expect": "drupalorg-contribution-helper"
     },
@@ -88,10 +72,6 @@
     {
       "prompt": "props or slots for this single directory component? review my component.yml",
       "expect": "drupal-sdc-twig"
-    },
-    {
-      "prompt": "install the WordPress development skills into this project",
-      "expect": "wp-add-skills"
     },
     {
       "prompt": "generate a composer patch for this contrib module fix and wire it into composer.json",

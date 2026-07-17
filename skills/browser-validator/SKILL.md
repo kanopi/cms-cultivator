@@ -1,6 +1,6 @@
 ---
 name: browser-validator
-description: Automatically validate implementations in real browsers after code is written or when user says "test this". Uses Chrome DevTools MCP to test responsive breakpoints (320px, 768px, 1024px), check accessibility compliance (WCAG AA contrast, keyboard navigation, ARIA), validate interactions, and generate detailed technical reports with file paths and specific fixes.
+description: Automatically validate implementations in real browsers after code is written or when user says "test this", "test what you built in the browser", "check it in a real browser", or "validate at the breakpoints". Uses Chrome DevTools MCP to test responsive breakpoints (320px, 768px, 1024px), check accessibility compliance (WCAG AA contrast, keyboard navigation, ARIA), validate interactions, and generate detailed technical reports with file paths and specific fixes.
 ---
 
 # Browser Validator Skill

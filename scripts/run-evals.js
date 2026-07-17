@@ -43,7 +43,7 @@ const PROMPTS_FILE = path.join(ROOT, 'evals', 'routing-prompts.json');
 
 // --- Frontmatter description extraction -------------------------------------
 
-function extractDescription(skillMd) {
+function extractFrontmatter(skillMd) {
   const content = fs.readFileSync(skillMd, 'utf8');
   const lines = content.split('\n');
   if (lines[0] !== '---') return null;
@@ -52,6 +52,19 @@ function extractDescription(skillMd) {
     if (lines[i] === '---') break;
     fm.push(lines[i]);
   }
+  return fm;
+}
+
+function isModelInvocable(fm) {
+  // Skills with disable-model-invocation: true are slash-command-only —
+  // they never participate in model-side routing, so ranking them (or
+  // writing prompts that expect them) measures nothing real.
+  return !fm.some((l) => /^disable-model-invocation:\s*true\s*$/.test(l));
+}
+
+function extractDescription(skillMd) {
+  const fm = extractFrontmatter(skillMd);
+  if (fm === null) return null;
   // Find "description:" and consume any following indented continuation
   // lines (plain multi-line values and >-/|-style block scalars).
   for (let i = 0; i < fm.length; i++) {
@@ -62,6 +75,10 @@ function extractDescription(skillMd) {
     for (let j = i + 1; j < fm.length; j++) {
       if (/^\s+\S/.test(fm[j])) {
         parts.push(fm[j].trim());
+      } else if (/^\s*$/.test(fm[j])) {
+        // blank lines are legal inside folded/literal blocks — keep going,
+        // but stop if the next non-blank line is a new top-level key
+        continue;
       } else {
         break;
       }
@@ -139,16 +156,25 @@ if (!fs.existsSync(SKILLS_DIR)) {
 }
 
 const skills = [];
+const excluded = [];
 for (const entry of fs.readdirSync(SKILLS_DIR, { withFileTypes: true })) {
   if (!entry.isDirectory()) continue;
   const skillMd = path.join(SKILLS_DIR, entry.name, 'SKILL.md');
   if (!fs.existsSync(skillMd)) continue;
+  const fm = extractFrontmatter(skillMd);
+  if (fm !== null && !isModelInvocable(fm)) {
+    excluded.push(entry.name);
+    continue;
+  }
   const description = extractDescription(skillMd);
   if (!description) {
     console.error(`ERROR: no description in ${skillMd}`);
     process.exit(1);
   }
   skills.push({ name: entry.name, description });
+}
+if (excluded.length) {
+  console.log(`(excluded from routing: ${excluded.join(', ')} — disable-model-invocation)`);
 }
 
 if (skills.length === 0) {
@@ -212,6 +238,11 @@ const skillIndex = new Map(skills.map((s, i) => [s.name, i]));
 let rank1Count = 0;
 
 for (const c of cases) {
+  if (excluded.includes(c.expect)) {
+    console.error(`   ✗ prompt expects slash-only skill "${c.expect}" (disable-model-invocation): "${c.prompt}" — remove this prompt`);
+    failures++;
+    continue;
+  }
   if (!skillIndex.has(c.expect)) {
     console.error(`   ✗ prompt expects unknown skill "${c.expect}": "${c.prompt}"`);
     failures++;

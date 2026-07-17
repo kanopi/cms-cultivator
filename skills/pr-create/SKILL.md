@@ -194,3 +194,17 @@ Use conventional commit style: `<type>(<scope>): <description>`
 - **pr-review** — Self-review before creating the PR
 - **commit-message-generator** — Generate the commit messages that feed into the PR
 - **pr-release** — Generate changelog + deployment checklist for the release PR
+
+## Anti-rationalization table
+
+Creating a PR is an outward-facing, hard-to-retract action. The confirmation
+gate and the honesty of the description are the contract:
+
+| Pressure / rationalization | Correct behavior |
+|---|---|
+| "The user obviously wants the PR — skip the confirmation" | Always show the final title/description and wait for explicit confirmation before `gh pr create`. |
+| "Tests are probably passing, say so in the description" | Only claim what ran. If tests weren't run, the description says so. |
+| "Round the change summary up — call the refactor 'complete'" | Describe what the diff actually contains, including known gaps and TODOs. |
+| "Leave out the breaking change, it'll be caught in review" | Breaking changes, migrations, and config changes are always called out explicitly. |
+| "The branch is behind main but pushing anyway is faster" | Surface the divergence and let the user decide before creating the PR. |
+| "Reuse the last PR's description, the work is similar" | Every description is generated from this branch's actual diff and commits. |
