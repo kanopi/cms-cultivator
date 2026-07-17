@@ -308,10 +308,10 @@ See [Contributing Guide](docs/contributing.md#validating-frontmatter) for detail
 
 ### Manual Testing
 
-1. **Install locally**: `ln -s $(pwd) ~/.config/claude/plugins/cms-cultivator`
-2. **Enable**: `claude plugins enable cms-cultivator`
-3. **Test skill**: Open Claude Code and use natural language to trigger the skill
-4. **Verify**:
+1. **Run with the local checkout**: `claude --plugin-dir $(pwd)` (the old
+   `~/.config/claude/plugins/` symlink approach no longer works)
+2. **Test skill**: Use natural language to trigger the skill
+3. **Verify**:
    - Skill activates on expected trigger phrases
    - Output is formatted correctly
    - Examples work for both Drupal and WordPress

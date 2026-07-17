@@ -27,10 +27,11 @@ Specialist agents and auto-invoked skills for Drupal/WordPress development. Work
 /plugin install cms-cultivator@claude-toolbox
 ```
 
-**Claude Code — Direct Install**
+**Claude Code — Local development**
 
 ```bash
-/plugin install https://github.com/kanopi/cms-cultivator
+git clone https://github.com/kanopi/cms-cultivator
+claude --plugin-dir /path/to/cms-cultivator
 ```
 
 **OpenAI Codex — Via Marketplace**
