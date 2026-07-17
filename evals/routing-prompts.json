@@ -76,6 +76,10 @@
     {
       "prompt": "generate a composer patch for this contrib module fix and wire it into composer.json",
       "expect": "composer-patch-generator"
+    },
+    {
+      "prompt": "commit this with the AI attribution trailer so we have the audit trail",
+      "expect": "commit-message-generator"
     }
   ]
 }
