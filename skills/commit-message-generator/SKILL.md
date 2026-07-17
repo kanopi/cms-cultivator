@@ -1,6 +1,6 @@
 ---
 name: commit-message-generator
-description: Automatically generate conventional commit messages when user has staged changes and mentions committing. Analyzes git diff and status to create properly formatted commit messages following conventional commits specification. Invoke when user mentions "commit", "staged", "committing", or asks for help with commit messages.
+description: Automatically generate conventional commit messages when user has staged changes and mentions committing. Analyzes git diff and status to create properly formatted commit messages following conventional commits specification, and appends the Assisted-by git trailer recording which AI model (Claude, GPT, Gemini, or any other LLM) assisted the change. Invoke when user mentions "commit", "staged", "committing", or asks for help with commit messages.
 ---
 
 # Commit Message Generator
@@ -139,15 +139,53 @@ feat(auth): add two-factor authentication support
 - Plugin work: `fix(plugin): correct ACF field validation`
 - Blocks: `feat(blocks): add testimonial Gutenberg block`
 
-### 5. Present to User for Approval
+### 5. Append the Assisted-by Trailer
+
+When AI assisted in producing the **change itself** (not merely this commit
+message), append an `Assisted-by:` git trailer as the last block of the
+message — the per-commit provenance convention adopted by the Linux kernel,
+Fedora, and the OpenInfra Foundation. The per-PR complement is the Delivery
+Record ([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
+
+**Format** — `Assisted-by: <Vendor>/<model-id>`, using whichever assistant
+actually did the work. This is deliberately vendor-neutral:
+
+```
+Assisted-by: Claude/claude-fable-5
+Assisted-by: OpenAI/gpt-5.4-codex
+Assisted-by: Google/gemini-3-pro
+```
+
+Rules:
+
+- Identify the current session's model from your own runtime context; never
+  guess or hardcode a model name. One trailer line per assisting model if
+  more than one contributed.
+- Place trailers at the end of the message, after any `Refs:` /
+  `BREAKING CHANGE:` footers, so `git interpret-trailers` and
+  `git log --grep="^Assisted-by:"` work.
+- **Skip the trailer** when the change was written entirely by a human and
+  AI only helped phrase this commit message — the trailer attests to the
+  change, not the prose. Also skip on explicit request (`--no-assisted-by`).
+- This trailer replaces `Co-Authored-By` for AI attribution — never add
+  `Co-Authored-By: Claude…` (or any AI co-author line) to commit messages.
+
+The audit trail this enables:
+
+```bash
+git log --grep="^Assisted-by:"        # every AI-assisted commit
+git log --grep="^Assisted-by: Claude" # by vendor
+```
+
+### 6. Present to User for Approval
 
 Show the generated commit message in a clear code block and ask:
 
 > "Here's a commit message based on your staged changes. Would you like me to commit with this message, or would you like to modify it?"
 
-Wait for explicit user approval (e.g., "approve", "yes, commit", or an edited version) before running `git commit`. Never add `Co-Authored-By: Claude…` to commit messages.
+Wait for explicit user approval (e.g., "approve", "yes, commit", or an edited version) before running `git commit`.
 
-### 6. Execute Commit (only after approval)
+### 7. Execute Commit (only after approval)
 
 ```bash
 git commit -m "commit message here"
@@ -161,6 +199,9 @@ feat(auth): add two-factor authentication support
 - Implement TOTP-based 2FA
 - Add backup codes generation
 - Include recovery flow
+
+Refs: PROJ-123
+Assisted-by: Claude/claude-fable-5
 EOF
 )"
 ```
@@ -169,7 +210,7 @@ EOF
 
 This skill is invoked directly by the main session when the user mentions committing — there is no orchestrator agent in between. The skill works the same way whether triggered conversationally ("I'm ready to commit") or explicitly ("generate a commit message").
 
-The companion **`pr-create`** skill picks up where this one ends — once you've committed, ask to "create a PR" and `pr-create` will generate the PR description from your commits.
+The companion **`pr-create`** skill picks up where this one ends — once you've committed, ask to "create a PR" and `pr-create` will generate the PR description from your commits. The `Assisted-by:` trailers this skill writes are the per-commit half of Kanopi's provenance model; the per-PR half is the Delivery Record ([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
 
 ## Best Practices
 
@@ -192,6 +233,8 @@ fix(auth): resolve session timeout on remember-me login
 
 - Correct cookie expiration logic
 - Add test coverage for remember-me flow
+
+Assisted-by: Claude/claude-fable-5
 
 Would you like me to commit with this message?
 ```

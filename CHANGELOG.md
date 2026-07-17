@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `commit-message-generator` now appends the `Assisted-by: <Vendor>/<model-id>`
+  git trailer when AI assisted in producing the change — vendor-neutral
+  (Claude, GPT, Gemini, or any other LLM), one line per assisting model,
+  skipped for purely human-authored changes. This implements the per-commit
+  provenance convention documented alongside the Delivery Record; audit with
+  `git log --grep="^Assisted-by:"`.
+
 ## [2.0.0] - 2026-07-16
 
 ### Changed — BREAKING
