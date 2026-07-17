@@ -58,7 +58,7 @@ jobs:
 
   # Deploy job
   deploy:
-    if: github.ref == 'refs/heads/1.x'
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
