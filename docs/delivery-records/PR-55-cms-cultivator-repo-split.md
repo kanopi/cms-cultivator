@@ -65,9 +65,10 @@ and every push executed only after explicit human confirmation.
 ## What the human verified
 
 Checkpoint 1 (plan approval): Approved the committed migration plan
-(`plans/2026-07-16-cms-cultivator-repo-split.md`) — five-repo topology, MIT
-relicense for delivery-record, 1.x freeze with no public redirect table —
-and gated each phase at its boundary before execution.
+(`docs/plans/2026-07-16-cms-cultivator-repo-split.md` in Kanopi's internal
+AI-workflow documentation repository) — five-repo topology, MIT relicense
+for delivery-record, 1.x freeze with no public redirect table — and gated
+each phase at its boundary before execution.
 
 Checkpoint 2 (final approval): Opened the five repos on GitHub and checked
 visibility and licenses landed right (public template + delivery-record,
