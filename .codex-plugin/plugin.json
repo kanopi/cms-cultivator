@@ -1,6 +1,6 @@
 {
   "name": "cms-cultivator",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Agent Skills and specialist agents for Drupal and WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.",
   "author": {
     "name": "Kanopi Studios",
@@ -10,7 +10,14 @@
   "homepage": "https://kanopi.github.io/cms-cultivator/",
   "repository": "https://github.com/kanopi/cms-cultivator",
   "license": "GPL-2.0-or-later",
-  "keywords": ["drupal", "wordpress", "cms", "design-to-code", "pr-workflow", "codex"],
+  "keywords": [
+    "drupal",
+    "wordpress",
+    "cms",
+    "design-to-code",
+    "pr-workflow",
+    "codex"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "CMS Cultivator",
