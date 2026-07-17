@@ -2,10 +2,11 @@ name: Deploy Documentation
 
 on:
   push:
-    branches: [ 1.x ]
+    branches: [ main ]
     paths:
       - 'docs/**'
       - 'zensical.toml'
+  workflow_dispatch:
       - '.github/workflows/docs.yml'
   pull_request:
     branches: [ 1.x ]
