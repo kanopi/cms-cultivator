@@ -18,5 +18,9 @@
       "type": "output_not_matches",
       "pattern": "(?i)pull request (was |has been )?created"
     }
+  ],
+  "cant": [
+    "CANT-1",
+    "CANT-3"
   ]
 }

@@ -18,5 +18,9 @@
       "type": "tool_not_called",
       "pattern": "^(Write|Edit|NotebookEdit) "
     }
+  ],
+  "cant": [
+    "CANT-1",
+    "CANT-3"
   ]
 }

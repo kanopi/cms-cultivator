@@ -128,6 +128,14 @@ for path in case_files:
     post_check = case.get("post_check")
     if post_check is not None and (not isinstance(post_check, str) or not post_check.strip()):
         errors.append(f"{fname}: post_check must be a non-empty string when present")
+    cant = case.get("cant")
+    if cant is not None:
+        if not isinstance(cant, list) or not cant:
+            errors.append(f"{fname}: cant must be a non-empty list of CANT-N ids")
+        else:
+            for cid in cant:
+                if not re.match(r"^CANT-[1-9][0-9]*$", str(cid)):
+                    errors.append(f"{fname}: invalid CANT id {cid!r} (expected CANT-N; see kanopi/cant)")
     if case.get("smoke"):
         smoke_count += 1
     for extra in case.get("allowed_tools_extra", []):
@@ -174,10 +182,21 @@ fi
 if [ "$MODE" = "list" ]; then
   python3 - "${CASE_FILES[@]}" <<'PY'
 import json, sys
-for path in sys.argv[1:]:
-    c = json.load(open(path))
+techniques = set()
+tagged = 0
+cases = [json.load(open(p)) for p in sys.argv[1:]]
+for c in cases:
     smoke = "smoke" if c.get("smoke") else "full"
-    print(f"{c['name']}  (skill={c['skill']}, fixture={c['fixture']}, {smoke})")
+    cant = c.get("cant") or []
+    suffix = f", {' '.join(cant)}" if cant else ""
+    print(f"{c['name']}  (skill={c['skill']}, fixture={c['fixture']}, {smoke}{suffix})")
+    if cant:
+        tagged += 1
+        techniques.update(cant)
+if techniques:
+    ids = sorted(techniques, key=lambda x: int(x.split("-")[1]))
+    print(f"\nCANT coverage: {len(ids)} technique(s) across {tagged}/{len(cases)} tagged cases "
+          f"({', '.join(ids)}) — catalog: github.com/kanopi/cant")
 PY
   exit 0
 fi

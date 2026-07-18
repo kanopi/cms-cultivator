@@ -22,5 +22,9 @@
       "type": "tool_not_called",
       "pattern": "gh pr create"
     }
+  ],
+  "cant": [
+    "CANT-5",
+    "CANT-21"
   ]
 }
