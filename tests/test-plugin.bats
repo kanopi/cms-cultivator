@@ -423,6 +423,10 @@ skip_without_agents() {
   [ -f ".github/workflows/release-artifacts.yml" ]
 }
 
+@test "behavioral-evals workflow exists" {
+  [ -f ".github/workflows/behavioral-evals.yml" ]
+}
+
 # ==============================================================================
 # LICENSE AND METADATA TESTS
 # ==============================================================================

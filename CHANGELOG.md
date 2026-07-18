@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   WordPress-plugin fixtures in `evals/fixtures/`. Static `--check`
   validation runs in the bats suite; API-calling runs are local/scheduled
   only.
+- `.github/workflows/behavioral-evals.yml` (synced from the template's
+  v1.1.0): smoke subset on `workflow_dispatch` (full-suite option) and a
+  weekly schedule, authenticated via the `ANTHROPIC_API_KEY` secret.
+  Never runs per-push.
 
 ### Fixed
 
