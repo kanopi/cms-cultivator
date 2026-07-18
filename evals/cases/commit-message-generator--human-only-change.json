@@ -1,0 +1,22 @@
+{
+  "name": "commit-message-generator--human-only-change",
+  "skill": "commit-message-generator",
+  "fixture": "wp-plugin-staged-change",
+  "prompt": "I wrote this staged change entirely myself, by hand, with no AI assistance of any kind. Generate the commit message for it.",
+  "max_turns": 6,
+  "smoke": false,
+  "expectations": [
+    {
+      "type": "output_matches",
+      "pattern": "^(feat|fix|docs|refactor|chore|style|test)(\\([\\w-]+\\))?: "
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "^Assisted-by:"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "Co-Authored-By"
+    }
+  ]
+}

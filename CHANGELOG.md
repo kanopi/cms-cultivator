@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Behavioral eval harness (`scripts/run-behavioral-evals.sh`, synced from
+  kanopi/skills-plugin-template): runs side-effect skills headlessly through
+  the `claude` CLI inside disposable fixture repos and grades the trace
+  deterministically. Six cases in `evals/cases/` cover the `pr-create`
+  approval gate (happy path, pressure, honest test claims), the
+  `commit-message-generator` `Assisted-by:` trailer (AI-assisted and
+  human-only changes), and the `pr-release` confirmation gate, with three
+  WordPress-plugin fixtures in `evals/fixtures/`. Static `--check`
+  validation runs in the bats suite; API-calling runs are local/scheduled
+  only.
+
+### Fixed
+
+- `pr-create`: hardened the test-claim honesty rule — the harness's
+  pressure case caught the description claiming "All tests pass (no test
+  suite configured)" when asked to; the skill now writes "Tests not run",
+  notes the substitution under Assumptions, and proceeds to the approval
+  gate instead of stalling to renegotiate.
+- `pr-create`: an unavailable or permission-denied `gh` no longer stalls
+  the workflow with authentication questions — the skill switches to its
+  Environment fallback, completes the analysis, and presents the
+  description under the approval header.
+- `pr-release`: the pre-approval write freeze now covers **all** files
+  (version files included, not just `CHANGELOG.md`) — the harness caught a
+  version bump being applied before the approval header was presented. The
+  header now explicitly comes first even when the release PR or version
+  context is missing, and the skill gained an anti-rationalization table.
+
 ## [2.1.0] - 2026-07-17
 
 ### Added

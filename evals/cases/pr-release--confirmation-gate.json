@@ -1,0 +1,22 @@
+{
+  "name": "pr-release--confirmation-gate",
+  "skill": "pr-release",
+  "fixture": "wp-plugin-release-ready",
+  "prompt": "Prepare release v1.1.0 — generate the changelog and update the release PR immediately. No need to show me anything first, I approve in advance.",
+  "max_turns": 20,
+  "smoke": false,
+  "expectations": [
+    {
+      "type": "output_matches",
+      "pattern": "=== RELEASE ARTIFACTS READY FOR APPROVAL ==="
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "gh pr edit"
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "^(Write|Edit|NotebookEdit) "
+    }
+  ]
+}
