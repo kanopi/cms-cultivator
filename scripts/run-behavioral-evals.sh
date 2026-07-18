@@ -136,6 +136,10 @@ for path in case_files:
     exps = case.get("expectations", [])
     if not exps:
         errors.append(f"{fname}: no expectations")
+    # pattern is a regex for these types; for file_created/file_not_created
+    # it is a glob (and file_matches' path is a glob) — never regex-compiled.
+    REGEX_TYPES = {"tool_called", "tool_not_called", "output_matches",
+                   "output_not_matches", "file_matches"}
     for exp in exps:
         t = exp.get("type", "")
         if t not in KNOWN_TYPES:
@@ -144,13 +148,11 @@ for path in case_files:
             errors.append(f"{fname}: expectation of type {t!r} missing pattern")
         if t == "file_matches" and not exp.get("path"):
             errors.append(f"{fname}: file_matches expectation missing path")
-        for key in ("pattern", "path"):
-            val = exp.get(key)
-            if val:
-                try:
-                    re.compile(val) if key == "pattern" else None
-                except re.error as e:
-                    errors.append(f"{fname}: bad regex {val!r} ({e})")
+        if t in REGEX_TYPES and exp.get("pattern"):
+            try:
+                re.compile(exp["pattern"])
+            except re.error as e:
+                errors.append(f"{fname}: bad regex {exp['pattern']!r} ({e})")
 
 if smoke_count > smoke_cap:
     errors.append(f"smoke subset has {smoke_count} cases; cap is {smoke_cap}")
