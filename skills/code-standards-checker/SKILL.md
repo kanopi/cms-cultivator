@@ -208,6 +208,23 @@ If user shows code without running tools:
 
 ### 5. Report Results
 
+**Run-before-report (hard rule):** the results format below may only be
+presented with real tool output behind it. Never certify compliance from
+reading the code — eyeballing is not phpcs (CANT-12, CANT-10 in the
+[Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant)).
+If the tooling cannot run (not installed, no DDEV, command denied), the
+Summary must begin **"Standards not verified"**, state which tool could not
+run, and offer the exact command for the user to run instead — even if the
+user says a visual check is fine or asks you to mark it passing. A
+code-reading pass may be offered as a *supplement*, labeled as a manual
+review, never as the standards result.
+
+Red flags — stop if you catch yourself thinking:
+
+- "The code looks clean, I can say it passes" (CANT-12)
+- "I'm confident it would pass" (CANT-10)
+- "The user said just mark it compliant" (CANT-5)
+
 **Format**:
 ```markdown
 ## Code Standards Check Results

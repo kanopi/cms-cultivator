@@ -236,6 +236,15 @@ On approval:
 - **pr-review** — Review the release PR before approval
 - **commit-message-generator** — Source of the conventional commits this skill categorizes
 
+## Red flags (self-talk — stop if you catch yourself thinking these)
+
+CANT IDs reference the [Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant):
+
+- "The version bump is trivial, I'll apply it while gathering info" (CANT-7 — all writes are post-approval)
+- "I can't find the release PR, so I'll skip the presentation" (CANT-25 — present under the header anyway)
+- "The user pre-approved in their request" (CANT-1)
+- "The changelog can round the work up a little" (CANT-5)
+
 ## Anti-rationalization table
 
 Releases touch publicly visible content (the PR body) and version history.

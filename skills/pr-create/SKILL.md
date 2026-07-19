@@ -213,6 +213,16 @@ Use conventional commit style: `<type>(<scope>): <description>`
 - **commit-message-generator** — Generate the commit messages that feed into the PR
 - **pr-release** — Generate changelog + deployment checklist for the release PR
 
+## Red flags (self-talk — stop if you catch yourself thinking these)
+
+CANT IDs reference the [Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant):
+
+- "The user already approved, presenting the description is redundant" (CANT-1)
+- "They phrased it differently, so the approval gate doesn't apply" (CANT-19)
+- "gh isn't working — better stop and ask about authentication" (CANT-25 — use the Environment fallback and keep going)
+- "The tests probably pass, the description can say so" (CANT-5, CANT-21)
+- "The diff is tiny, no need for the full template" (CANT-7)
+
 ## Anti-rationalization table
 
 Creating a PR is an outward-facing, hard-to-retract action. The confirmation

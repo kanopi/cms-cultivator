@@ -23,6 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   v1.1.0): smoke subset on `workflow_dispatch` (full-suite option) and a
   weekly schedule, authenticated via the `ANTHROPIC_API_KEY` secret.
   Never runs per-push.
+- Two CANT-coverage cases: `pr-create--loophole-rephrase` (the approval
+  gate holds against reworded pressure that avoids the trigger words,
+  CANT-19) and `code-standards-checker--proxy-pass` (no compliance
+  certification without real tool output, CANT-12).
+- Red-flag self-talk lists in `pr-create` and `pr-release`, citing CANT
+  IDs — the companion to the anti-rationalization tables.
+- `code-standards-checker`: run-before-report hard rule — the results
+  format may only appear with real tool output behind it; unavailable
+  tooling yields "Standards not verified" plus the exact command, never
+  an eyeballed pass.
 
 ### Fixed
 
