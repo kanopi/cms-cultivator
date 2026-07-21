@@ -156,6 +156,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Generate and wire up Composer patches for contrib projects
 **Related Command**: `/composer-patch-generator`
 
+### 25. drupal-rector-update
+
+**Triggers**: "update rector", "rector.php", "composer-based sets", "DrupalSetProvider"
+**Purpose**: Migrate Drupal Rector config to Composer-based sets (auto version selection)
+**Related Command**: `/drupal-rector-update`
+
 ## How Skills Work
 
 ### Automatic Activation

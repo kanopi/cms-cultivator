@@ -472,6 +472,7 @@ Don't try to "game" the system—just describe what you need:
 | drupalorg-issue-helper | "drupal.org issue template" | Quick issue formatting reference | — |
 | drupalorg-contribution-helper | "drupal.org git workflow", "issue fork" | Quick git workflow reference | — |
 | composer-patch-generator | "composer patch", "patch a contrib module", "cweagans", "diff -ruN", "extra.patches", "applies locally but fails in CI" | CI-safe patches for Composer packages (correct diff -ruN format, dist-archive base, composer.json wiring, verification) | `composer-patch-generator` |
+| drupal-rector-update | "update rector", "rector.php", "DrupalSetProvider", "withComposerBased", "composer-based sets", "stop maintaining rector set lists" | Migrating Drupal Rector to Composer-based sets (automatic version selection, PHPStan 2.x upgrade, dry-run before apply) | `drupal-rector-update` |
 | wp-add-skills | "add WordPress skills", "install the official WordPress agent-skills" | Installing the WordPress/agent-skills catalog | `wp-add-skills` |
 
 ## Integration with Workflow

@@ -85,6 +85,7 @@ Parallel work with git worktrees and safe changes to Composer-managed dependenci
 **Skills:**
 - `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation)
 - `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
+- `drupal-rector-update` - Migrate Drupal Rector config to Composer-based sets (automatic version selection)
 
 ### Drupal.org Contribution
 Create issues and merge requests on drupal.org from your local environment.
@@ -130,7 +131,7 @@ PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`
 ### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
-- **PR & development workflow:** commit-message-generator, pr-create, pr-review, pr-release, worktree-manager, composer-patch-generator
+- **PR & development workflow:** commit-message-generator, pr-create, pr-review, pr-release, worktree-manager, composer-patch-generator, drupal-rector-update
 - **Testing & code quality:** code-standards-checker, test-scaffolding, test-plan-generator, coverage-analyzer, documentation-generator
 - **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
 - **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper
