@@ -365,6 +365,32 @@ skip_without_agents() {
 }
 
 # ==============================================================================
+# BEHAVIORAL EVAL CONFIG TESTS
+# ==============================================================================
+# Cheap static checks only — the harness's API-calling runs are a separate,
+# manually/weekly triggered concern (see .github/workflows/behavioral-evals.yml).
+
+@test "scripts/run-behavioral-evals.sh exists and is executable" {
+  [ -x "scripts/run-behavioral-evals.sh" ]
+}
+
+@test "behavioral eval cases pass static validation (--check, no API calls)" {
+  run bash scripts/run-behavioral-evals.sh --check
+  [ "$status" -eq 0 ]
+}
+
+@test "behavioral eval fixtures with setup.sh delete themselves before committing" {
+  for setup in evals/fixtures/*/setup.sh; do
+    if [ -f "$setup" ]; then
+      if ! grep -q "rm -f setup.sh" "$setup"; then
+        echo "$setup does not remove itself before seeding the fixture commit"
+        return 1
+      fi
+    fi
+  done
+}
+
+# ==============================================================================
 # PACKAGING SCRIPTS
 # ==============================================================================
 
@@ -395,6 +421,10 @@ skip_without_agents() {
 
 @test "release-artifacts workflow exists" {
   [ -f ".github/workflows/release-artifacts.yml" ]
+}
+
+@test "behavioral-evals workflow exists" {
+  [ -f ".github/workflows/behavioral-evals.yml" ]
 }
 
 # ==============================================================================

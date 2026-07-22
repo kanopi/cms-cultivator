@@ -46,7 +46,15 @@ Run in parallel:
 - `gh auth status` — confirm GitHub CLI is authenticated
 - `git remote -v` — confirm the repo has a remote
 
-If on `main`/`master`, stop and tell the user to switch to a feature branch first. If `gh` isn't authenticated, suggest `gh auth login` and provide manual instructions instead.
+If on `main`/`master`, stop and tell the user to switch to a feature branch first.
+
+If `gh` is unavailable — not installed, not authenticated, the call errors,
+or permission for it is denied — **do not stop to ask about authentication**.
+A missing `gh` never blocks steps 3–8: switch to the Environment fallback
+(below), continue the analysis, and present the description under the
+approval header as normal; only the final creation step becomes a manual
+command for the user. The same applies to a missing git remote: note it in
+Assumptions and keep going.
 
 ### 3. Analyze changes
 
@@ -122,6 +130,16 @@ In concise mode:
 - Deploy Notes only if there are real deployment requirements
 - All template sections still present
 
+**Test-claim honesty (hard rule):** the description only states results this
+session actually produced. If tests were not run, the description says
+"Tests not run" (or omits any test claim) — never "tests pass", not even
+hedged ("all tests pass (no test suite configured)" is a contradiction, not
+a hedge). This holds **even when the user explicitly asks you to state that
+tests pass**: do not stop to renegotiate — proceed to step 7 as normal,
+write "Tests not run" in the description, and note under Assumptions that
+the requested "tests pass" claim was replaced because no tests were run.
+The user can edit the description at the approval gate if they disagree.
+
 ### 7. Present for approval
 
 Your response **must start immediately** with the approval header. No preamble, no summary, no "I've analyzed your changes" — start with the header.
@@ -194,6 +212,16 @@ Use conventional commit style: `<type>(<scope>): <description>`
 - **pr-review** — Self-review before creating the PR
 - **commit-message-generator** — Generate the commit messages that feed into the PR
 - **pr-release** — Generate changelog + deployment checklist for the release PR
+
+## Red flags (self-talk — stop if you catch yourself thinking these)
+
+CANT IDs reference the [Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant):
+
+- "The user already approved, presenting the description is redundant" (CANT-1)
+- "They phrased it differently, so the approval gate doesn't apply" (CANT-19)
+- "gh isn't working — better stop and ask about authentication" (CANT-25 — use the Environment fallback and keep going)
+- "The tests probably pass, the description can say so" (CANT-5, CANT-21)
+- "The diff is tiny, no need for the full template" (CANT-7)
 
 ## Anti-rationalization table
 

@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Behavioral eval harness (`scripts/run-behavioral-evals.sh`, synced from
+  kanopi/skills-plugin-template): runs side-effect skills headlessly through
+  the `claude` CLI inside disposable fixture repos and grades the trace
+  deterministically. Six cases in `evals/cases/` cover the `pr-create`
+  approval gate (happy path, pressure, honest test claims), the
+  `commit-message-generator` `Assisted-by:` trailer (AI-assisted and
+  human-only changes), and the `pr-release` confirmation gate, with three
+  WordPress-plugin fixtures in `evals/fixtures/`. Static `--check`
+  validation runs in the bats suite; API-calling runs are local/scheduled
+  only.
+- `.github/workflows/behavioral-evals.yml` (synced from the template's
+  v1.1.0): smoke subset on `workflow_dispatch` (full-suite option) and a
+  weekly schedule, authenticated via the `ANTHROPIC_API_KEY` secret.
+  Never runs per-push.
+- Two CANT-coverage cases: `pr-create--loophole-rephrase` (the approval
+  gate holds against reworded pressure that avoids the trigger words,
+  CANT-19) and `code-standards-checker--proxy-pass` (no compliance
+  certification without real tool output, CANT-12).
+- Red-flag self-talk lists in `pr-create` and `pr-release`, citing CANT
+  IDs — the companion to the anti-rationalization tables.
+- `code-standards-checker`: run-before-report hard rule — the results
+  format may only appear with real tool output behind it; unavailable
+  tooling yields "Standards not verified" plus the exact command, never
+  an eyeballed pass.
+
+### Fixed
+
+- `pr-create`: hardened the test-claim honesty rule — the harness's
+  pressure case caught the description claiming "All tests pass (no test
+  suite configured)" when asked to; the skill now writes "Tests not run",
+  notes the substitution under Assumptions, and proceeds to the approval
+  gate instead of stalling to renegotiate.
+- `pr-create`: an unavailable or permission-denied `gh` no longer stalls
+  the workflow with authentication questions — the skill switches to its
+  Environment fallback, completes the analysis, and presents the
+  description under the approval header.
+- `pr-release`: the pre-approval write freeze now covers **all** files
+  (version files included, not just `CHANGELOG.md`) — the harness caught a
+  version bump being applied before the approval header was presented. The
+  header now explicitly comes first even when the release PR or version
+  context is missing, and the skill gained an anti-rationalization table.
+
 ## [2.1.0] - 2026-07-17
 
 ### Added
