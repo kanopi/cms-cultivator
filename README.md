@@ -1,8 +1,5 @@
 # CMS Cultivator
 
-![Maintained](https://img.shields.io/maintenance/yes/2026.svg)
-[![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
-
 Specialist agents and auto-invoked skills for Drupal/WordPress development. Works in Claude Code, Claude Desktop, and OpenAI Codex.
 
 **Full documentation:** [https://kanopi.github.io/cms-cultivator/](https://kanopi.github.io/cms-cultivator/)

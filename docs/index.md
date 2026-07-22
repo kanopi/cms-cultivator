@@ -1,8 +1,5 @@
 # CMS Cultivator
 
-![Maintained](https://img.shields.io/maintenance/yes/2025.svg)
-[![Documentation](https://img.shields.io/badge/docs-zensical-blue.svg)](https://kanopi.github.io/cms-cultivator/)
-
 **CMS Cultivator** is a plugin for Claude Code, Claude Desktop, and OpenAI Codex providing Agent Skills for Drupal and WordPress development. Streamline PR workflows, convert designs into components, generate tests, contribute back to drupal.org, and maintain documentation.
 
 !!! note "What changed in 2.0"
