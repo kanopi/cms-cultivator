@@ -88,6 +88,12 @@ Work on multiple tickets — or run multiple AI sessions — in parallel:
 - Runs DDEV setup with automatic project isolation
 - Reports the directory, branch, and local URL
 
+Already have the branch? Attach a worktree to it instead of creating one:
+
+```bash
+/worktree-manager create --branch feature/tw1234-hero-block
+```
+
 ### 4. Convert a Design to a Component
 
 Turn a Figma design or screenshot into a working component:

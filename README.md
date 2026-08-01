@@ -80,7 +80,7 @@ Figma → WordPress blocks, Drupal paragraphs with browser validation.
 Parallel work with git worktrees and safe changes to Composer-managed dependencies.
 
 **Skills:**
-- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation)
+- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation); creates a new branch or attaches to an existing one with `--branch`
 - `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
 
 ### Drupal.org Contribution
