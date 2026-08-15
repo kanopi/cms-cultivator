@@ -405,6 +405,7 @@ Or just say: "Does this follow Drupal coding standards?" — skills activate aut
 In Claude Code, type `/` to see all available skills. In Codex, type `@` to see installed plugin skills. CMS Cultivator skills are organized by category:
 
 - **PR Workflow**: `/pr-create`, `/pr-review`, `/commit-message-generator`, `/pr-release`, `/worktree-manager`
+- **Local Environment**: `/ddev-workflow`, `/ddev-docker-cleanup`
 - **Design Workflow**: `/design-to-wp-block`, `/design-to-drupal-paragraph`, `/browser-validator`
 - **Testing**: auto-invoked (say "I need tests for this class")
 - **Code Quality**: `/code-standards-checker`, `/composer-patch-generator`
@@ -594,7 +595,7 @@ git status
 
 If you're working on Kanopi projects with DDEV add-ons, see the [Kanopi Tools guide](kanopi-tools/overview.md) for additional integration features:
 
-- **Composer Scripts**: `ddev composer code-check`, `phpstan`, `rector-check`
+- **Composer Scripts**: discovered from the project's `composer.json` (commonly `code-check`, `phpstan`, `rector-check`)
 - **DDEV Commands**: `ddev theme-build`, `ddev cypress-run`, `ddev critical-run`
 - **Database Tools**: `ddev db-refresh`, `ddev db-backup`
 

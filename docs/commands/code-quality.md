@@ -20,25 +20,33 @@ Check coding standards compliance with PHPCS/ESLint for Drupal and WordPress pro
 /code-standards-checker wordpress # WordPress coding standards
 ```
 
-### What It Checks
+### How It Works
 
-- **PHP**: PHPCS against Drupal or WordPress coding standards
-- **JavaScript**: ESLint with the project's configuration
-- **Auto-detection**: Reads project structure to pick the right standard
+The skill discovers commands rather than assuming them. Script aliases are defined by
+each project, so a memorized list goes stale — and recommending a command a project
+never declared is a confusing failure.
 
-### Quick Start (Kanopi Projects)
+1. **Detect** — read the `scripts` blocks in `composer.json` and `package.json` at the
+   level that owns the changed files (theme, plugin, module, or project root), prefix
+   with `ddev` when `.ddev/` exists, and check for config files (`.phpcs.xml.dist`,
+   `phpstan.neon`, `rector.php`, `.eslintrc*`, `.stylelintrc*`) that reveal a
+   configured tool with no alias wrapping it
+2. **Map** — match the changed file type to a job: PHP to PHPCS, Twig to twig-cs-fixer,
+   JS and SCSS to the wp-scripts or ESLint/stylelint commands, with a raw
+   `vendor/bin/…` or `npx …` fallback when no alias exists
+3. **Run auto-fix, then verify** — `phpcbf` before `phpcs`, `format` before `lint:js`,
+   then re-run the check and report what survived
+4. **Report** — remaining violations with `file:line` and the command to re-verify
 
-```bash
-# Drupal
-ddev composer code-check      # phpstan + rector + phpcs in one pass
-ddev composer code-fix        # Auto-fix violations
+Kanopi starter script names (`code-fix`, `code-sniff`, `twig-lint`, `rector-check`) appear
+in the skill as one row of a general alias lookup, alongside vanilla Drupal, WordPress,
+and wp-scripts conventions — a reference to confirm against the project, not a command
+list to recite.
 
-# WordPress
-ddev composer phpcs           # Check standards
-ddev composer phpcbf          # Auto-fix violations
-```
-
-For projects without Kanopi tooling, the skill runs PHPCS/ESLint directly and reports violations with suggested fixes.
+If no alias, binary, or config file exists, the skill says so and offers to install the
+standards rather than guessing. It never certifies compliance from reading code: with
+the tooling unavailable, the summary begins "Standards not verified" and names what
+could not run.
 
 ## composer-patch-generator Skill
 
