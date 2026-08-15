@@ -10,6 +10,14 @@
       "expect": "code-standards-checker"
     },
     {
+      "prompt": "I just edited the SCSS in the theme — what do I need to run?",
+      "expect": "code-standards-checker"
+    },
+    {
+      "prompt": "I changed a Twig template, which lint command should I run and does it auto-fix?",
+      "expect": "code-standards-checker"
+    },
+    {
       "prompt": "I wrote this service class but it has no tests yet — scaffold some",
       "expect": "test-scaffolding"
     },
