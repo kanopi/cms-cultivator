@@ -156,6 +156,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Generate and wire up Composer patches for contrib projects
 **Related Command**: `/composer-patch-generator`
 
+### 25. ddev-workflow
+
+**Triggers**: "site won't load", "fresh database", "build the theme", `ddev init`, `db-refresh`
+**Purpose**: Run a Kanopi DDEV site day to day — init, database pulls, theme builds, e2e suites — reading the project's real command set instead of a memorized list
+**Related Command**: `/ddev-workflow`
+
 ## How Skills Work
 
 ### Automatic Activation

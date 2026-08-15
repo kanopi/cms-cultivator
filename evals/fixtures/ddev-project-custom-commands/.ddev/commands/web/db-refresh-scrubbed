@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+## Description: Pull the production database and scrub client PII before import. This project has no unscrubbed refresh by policy.
+## Usage: db-refresh-scrubbed [env]
+## Example: "ddev db-refresh-scrubbed live"
+## Aliases: db:refresh-scrubbed,scrub
+
+set -euo pipefail
+echo "eval fixture: would pull and scrub"

@@ -33,8 +33,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   format may only appear with real tool output behind it; unavailable
   tooling yields "Standards not verified" plus the exact command, never
   an eyeballed pass.
+- `ddev-workflow`: running a Kanopi DDEV site day to day. Agents reach for
+  `ddev start` and bare `npm run build` and end up with a booted container,
+  no database, and no compiled assets; the add-ons solve this with custom
+  commands that nothing told the agent about. The skill covers the lifecycle
+  (init, database refresh, front-end build, e2e suites), the host-versus-web
+  split, and the aliases people actually say, plus a symptom-to-fix
+  troubleshooting table.
+- `ddev-workflow` teaches discovery before any command list: detect the add-on
+  from `.ddev/commands/{host,web}/`, then read the real command set from
+  `ddev help` or the `## Description` / `## Usage` / `## Aliases` headers the
+  command files already carry. The skill says outright that the project wins
+  over its own tables, because sites customize their commands.
 
 ### Changed
+
+- `ddev-workflow`: read-before-name hard rule plus a CANT red-flag list. The
+  behavioral case below caught the first draft answering entirely from the
+  skill's own tables — zero tool calls — on a fixture whose commands are
+  deliberately not the add-on defaults. The tables are now labeled as defaults
+  that must be confirmed against the project, and the skill must name none if
+  it cannot read the command set.
+- Behavioral eval case `ddev-workflow--reads-commands-not-recalls` (CANT-20)
+  and fixture `ddev-project-custom-commands`: a DDEV project shipping
+  `project-init`, `db-refresh-scrubbed`, and `assets-compile` and no plain
+  `db-refresh`. The case grades that the answer names the project's own
+  commands and never the add-on names this project does not have.
+- `docs/kanopi-tools/ddev-commands.md` regenerated from the add-on command
+  headers: 34 commands with aliases, platform, and the host-versus-web split,
+  up from a hand-written 7. Labeled a dated snapshot that points at
+  `ddev help` as the live source. The old list had drifted enough to omit
+  `playwright-*`, `recipe-apply`, and `theme-create-block` entirely.
 
 - `code-standards-checker` is now discovery-first. Instead of a "Quick Start
   (Kanopi Projects)" branch listing memorized command names, it reads the

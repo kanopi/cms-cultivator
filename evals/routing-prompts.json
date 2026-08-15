@@ -50,6 +50,18 @@
       "expect": "worktree-manager"
     },
     {
+      "prompt": "the site won't load after I cloned it, I just get errors",
+      "expect": "ddev-workflow"
+    },
+    {
+      "prompt": "how do I get a fresh database from Pantheon on my local?",
+      "expect": "ddev-workflow"
+    },
+    {
+      "prompt": "my theme changes aren't showing up — how do I rebuild the assets?",
+      "expect": "ddev-workflow"
+    },
+    {
       "prompt": "extract the colors, typography, and spacing specs from this Figma link",
       "expect": "design-analyzer"
     },
