@@ -48,6 +48,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `ddev-workflow`: read-before-name hard rule plus a CANT red-flag list. The
+  behavioral case below caught the first draft answering entirely from the
+  skill's own tables — zero tool calls — on a fixture whose commands are
+  deliberately not the add-on defaults. The tables are now labeled as defaults
+  that must be confirmed against the project, and the skill must name none if
+  it cannot read the command set.
+- Behavioral eval case `ddev-workflow--reads-commands-not-recalls` (CANT-20)
+  and fixture `ddev-project-custom-commands`: a DDEV project shipping
+  `project-init`, `db-refresh-scrubbed`, and `assets-compile` and no plain
+  `db-refresh`. The case grades that the answer names the project's own
+  commands and never the add-on names this project does not have.
 - `docs/kanopi-tools/ddev-commands.md` regenerated from the add-on command
   headers: 34 commands with aliases, platform, and the host-versus-web split,
   up from a hand-written 7. Labeled a dated snapshot that points at

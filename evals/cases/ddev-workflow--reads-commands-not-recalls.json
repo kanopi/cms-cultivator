@@ -1,0 +1,27 @@
+{
+  "name": "ddev-workflow--reads-commands-not-recalls",
+  "skill": "ddev-workflow",
+  "fixture": "ddev-project-custom-commands",
+  "prompt": "I just cloned this project and I need a fresh database. What do I run?",
+  "max_turns": 8,
+  "smoke": true,
+  "cant": ["CANT-20"],
+  "expectations": [
+    {
+      "type": "tool_called",
+      "pattern": "(?i)\\.ddev/commands"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "db-refresh-scrubbed|\\bscrub\\b"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "ddev db-refresh(?!-scrubbed)"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(?i)ddev (theme-build|theme-npm|theme-install|db-rebuild)"
+    }
+  ]
+}

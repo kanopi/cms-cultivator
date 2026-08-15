@@ -22,6 +22,21 @@ vendor directory, and no compiled theme assets, so the site will serve errors or
 blank page until the project's init command finishes. That gap is the single most
 common cause of "my local is broken."
 
+**Read-before-name (hard rule):** do not name a single `ddev` command until you have
+read this project's command set, in step 2. Every table in this file is a description
+of the add-on *defaults*; sites add, rename, and remove commands, so a name that is
+right in general can be wrong here. Answering from these tables without reading
+`.ddev/commands/` is CANT-20 in the
+[Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant), and it
+is the exact failure this skill exists to prevent. If you cannot read the command set,
+say so and name none.
+
+Red flags — stop if you catch yourself thinking:
+
+- "I know the Kanopi commands, I don't need to look" (CANT-20)
+- "It's a Kanopi site, so it'll have `db-refresh`" (CANT-20)
+- "Close enough, they can run `ddev help` themselves" (CANT-7)
+
 ## 1. Detect
 
 ```bash
@@ -41,15 +56,19 @@ platform-prefixed commands and the set of hosts `db-refresh` supports.
 
 ## 2. Read the real command set
 
-Sites customize their commands, and the add-ons ship more than any document tracks.
-Read the project, then trust that over any list, **including the tables below**:
+Required before you answer. Sites customize their commands, and the add-ons ship more
+than any document tracks.
 
 ```bash
 ddev help                                  # every command available in this project
-ddev help db-refresh                       # usage and flags for one command
+ddev help <command>                        # usage and flags for one command
+```
 
-# Or read the headers directly — each file declares its own contract
-head -20 .ddev/commands/web/db-refresh
+If `ddev` cannot be run here — not installed, not started, command denied — read the
+command files instead. They are plain text and each declares its own contract:
+
+```bash
+ls .ddev/commands/host .ddev/commands/web
 grep -H '^## \(Description\|Usage\|Example\|Aliases\):' .ddev/commands/*/*
 ```
 
@@ -57,9 +76,17 @@ Command files carry `## Description`, `## Usage`, `## Example`, and `## Aliases`
 The aliases matter: most commands answer to two or three names, and the short one is
 what people say out loud.
 
+Then answer using **the names this project actually defines**, quoting the alias from
+the header. If the project has no command for what was asked, say that, rather than
+reaching for the name a different project would use. A project that ships
+`db-refresh-scrubbed` and no plain `db-refresh` is telling you something about its
+policy; recommending the command it deliberately does not have is worse than
+answering "this project has no unscrubbed refresh."
+
 ## 3. Lifecycle
 
-These are stable across sites even when the command list is not.
+The *shape* below is stable across sites; the command **names** are add-on defaults
+and must be confirmed against step 2 before you repeat any of them.
 
 ### Getting a site running
 
