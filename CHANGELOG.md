@@ -7,31 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `pr-review` reworked around filters instead of checklists. Two pieces of
-  feedback drove it: too verbose, and it reported things that were not true.
-  Running it against kanopi/spokaneairport#310 produced roughly ten points
-  across eight fixed sections, two of which were false, and one of which
-  explicitly claimed a verification that never happened. Both false claims were
-  assertions about plugin behavior made without opening the plugin source.
-  - Eligibility gate ahead of everything: closed, draft, already-reviewed,
-    automated, or trivially mechanical PRs get `Skipping review:` and a reason
-  - Six focus-area checklists and twelve CMS checks replaced by two axes, Spec
-    (does the diff do what the ticket says, quoting the requirement) and
-    Correctness, with blast-radius and silent-failure lenses under the latter
-  - Every finding must carry a concrete failure scenario, and any claim about
-    contrib, plugin, or vendor behavior must cite the `file:line` actually read.
-    A candidate that cannot get a scenario is dropped, not softened
-  - Verbatim 0-100 confidence rubric with a report-only-at-80 floor
-  - A fourteen-item CMS false-positive exclusion list, the piece with no
-    equivalent elsewhere: no Drupal and WordPress list ships in any of the
-    reference implementations reviewed
-  - Output contract: no fixed section headers, omit what has no content, cap at
-    8 findings, severity prefixes, and `No issues found` as a complete answer.
-    The 5 Cs stay as silent reasoning behind the verdict, not as required prose
-  - Delegated mode and its `FINAL_RECOMMENDATION:` sentinel are unchanged; the
-    filters apply there too
+## [2.2.0] - 2026-08-15
 
 ### Added
 
@@ -44,9 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   says 1.0.0.
 - `pr-create` and `pr-review` now point at `pm-skills:pr-to-teamwork` and
   `pm-skills:qa-validation-checklist` as their next steps.
-
-### Added
-
 - Behavioral eval harness (`scripts/run-behavioral-evals.sh`, synced from
   kanopi/skills-plugin-template): runs side-effect skills headlessly through
   the `claude` CLI inside disposable fixture repos and grades the trace
@@ -86,6 +59,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `pr-review` reworked around filters instead of checklists. Two pieces of
+  feedback drove it: too verbose, and it reported things that were not true.
+  Running it against kanopi/spokaneairport#310 produced roughly ten points
+  across eight fixed sections, two of which were false, and one of which
+  explicitly claimed a verification that never happened. Both false claims were
+  assertions about plugin behavior made without opening the plugin source.
+  - Eligibility gate ahead of everything: closed, draft, already-reviewed,
+    automated, or trivially mechanical PRs get `Skipping review:` and a reason
+  - Six focus-area checklists and twelve CMS checks replaced by two axes, Spec
+    (does the diff do what the ticket says, quoting the requirement) and
+    Correctness, with blast-radius and silent-failure lenses under the latter
+  - Every finding must carry a concrete failure scenario, and any claim about
+    contrib, plugin, or vendor behavior must cite the `file:line` actually read.
+    A candidate that cannot get a scenario is dropped, not softened
+  - Verbatim 0-100 confidence rubric with a report-only-at-80 floor
+  - A fourteen-item CMS false-positive exclusion list, the piece with no
+    equivalent elsewhere: no Drupal and WordPress list ships in any of the
+    reference implementations reviewed
+  - Output contract: no fixed section headers, omit what has no content, cap at
+    8 findings, severity prefixes, and `No issues found` as a complete answer.
+    The 5 Cs stay as silent reasoning behind the verdict, not as required prose
+  - Delegated mode and its `FINAL_RECOMMENDATION:` sentinel are unchanged; the
+    filters apply there too
 - `ddev-workflow`: read-before-name hard rule plus a CANT red-flag list. The
   behavioral case below caught the first draft answering entirely from the
   skill's own tables — zero tool calls — on a fixture whose commands are
