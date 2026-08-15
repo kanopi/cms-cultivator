@@ -211,6 +211,8 @@ Use conventional commit style: `<type>(<scope>): <description>`
 
 - **pr-review** — Self-review before creating the PR
 - **commit-message-generator** — Generate the commit messages that feed into the PR
+- **pm-skills:pr-to-teamwork** — Post the PR and its description to the referenced
+  Teamwork ticket and move it to Code Review; the natural next step after this skill
 - **pr-release** — Generate changelog + deployment checklist for the release PR
 
 ## Red flags (self-talk — stop if you catch yourself thinking these)
