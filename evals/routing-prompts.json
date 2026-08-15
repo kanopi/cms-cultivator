@@ -62,6 +62,18 @@
       "expect": "ddev-workflow"
     },
     {
+      "prompt": "my disk is nearly full and Docker is using a hundred gigs — can you clean it up?",
+      "expect": "ddev-docker-cleanup"
+    },
+    {
+      "prompt": "OrbStack shows a pile of unused volumes, is it safe to prune them?",
+      "expect": "ddev-docker-cleanup"
+    },
+    {
+      "prompt": "I cloned the site and it serves errors — what do I run to get it working?",
+      "expect": "ddev-workflow"
+    },
+    {
       "prompt": "extract the colors, typography, and spacing specs from this Figma link",
       "expect": "design-analyzer"
     },
