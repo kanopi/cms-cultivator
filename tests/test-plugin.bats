@@ -593,8 +593,9 @@ skip_without_agents() {
   done < <(grep -rhoE '`[a-z][a-z0-9]+-[a-z0-9]+-[a-z0-9-]+`' docs/commands/ 2>/dev/null | tr -d '`' | sort -u)
 }
 
-@test "README has documentation badge and site link" {
-  grep -q "docs-zensical" README.md
+@test "README links to the documentation site" {
+  # The docs-zensical badge was removed deliberately in cc27f95; the site
+  # link is the assertion that still carries weight.
   grep -q "kanopi.github.io/cms-cultivator" README.md
 }
 
