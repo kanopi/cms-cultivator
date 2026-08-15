@@ -38,8 +38,8 @@ mkdir -p dist
 rm -f "$OUTPUT"
 
 # Include only the paths the plugin needs at runtime. Excludes internal
-# tooling (.beads, scripts, tests), CI config (.github, .gitattributes),
-# docs site source (docs, zensical.toml), and local state (.claude).
+# tooling (scripts, tests), CI config (.github), docs site source
+# (docs, zensical.toml), and local state (.claude).
 git archive \
   --format=zip \
   --prefix=cms-cultivator/ \
