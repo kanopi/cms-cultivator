@@ -34,6 +34,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tooling yields "Standards not verified" plus the exact command, never
   an eyeballed pass.
 
+### Changed
+
+- `code-standards-checker` is now discovery-first. Instead of a "Quick Start
+  (Kanopi Projects)" branch listing memorized command names, it reads the
+  `scripts` blocks in `composer.json` and `package.json` at the level that owns
+  the changed files, checks for `.ddev/` to decide on the `ddev` prefix, and
+  falls back to raw tool invocations when no alias exists. Script aliases are
+  project-defined, so reciting them is how a skill ends up recommending a
+  command the project never declared.
+- `code-standards-checker` absorbs the linting workflow previously carried in a
+  personal `kanopi-lint` skill: auto-fix before check-only then verify, run at
+  the most specific level (theme, plugin, module, or project root), and a
+  file-type-to-tool map covering PHP, Twig, JS, SCSS/CSS, JSON, and theme
+  builds. Kanopi's starter script names survive as one row in a general alias
+  lookup table rather than as the skill's primary path.
+- `code-standards-checker` drops the philosophy section, the style checklists,
+  and the platform code samples, going from 426 lines to 149. Its `name` and
+  `description` triggers are unchanged, so existing routing holds; the
+  description gains the auto-fix-first and level-selection rules.
+- `code-standards-checker`: the run-before-report hard rule, the "Standards not verified"
+  contract, and the CANT red-flag list added in the behavioral-eval work are
+  carried forward verbatim into the rewritten skill. The rewrite shortens the
+  skill; it does not relax what it may claim.
+
 ### Fixed
 
 - `pr-create`: hardened the test-claim honesty rule — the harness's

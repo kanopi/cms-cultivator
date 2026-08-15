@@ -179,26 +179,28 @@ Would you like me to commit with this message?
 
 **Automatically triggers when you:**
 - Ask "does this follow standards?"
-- Show code and ask "is this properly formatted?"
-- Mention "coding standards", "PHPCS", or "ESLint"
+- Ask what to run after editing PHP, Twig, JS, or SCSS
+- Mention "coding standards", "linting", "PHPCS", "PHPStan", "Rector", or "ESLint"
 - Ask "should I fix the style?"
 
 **What it does:**
-- Detects project type (Drupal/WordPress/JavaScript)
-- Runs appropriate linter (PHPCS, ESLint)
-- Identifies style violations
-- Provides fixes for common issues
+- Reads the `scripts` blocks in `composer.json` and `package.json` to find the
+  project's own commands, at the level that owns the changed files
+- Prefixes with `ddev` when `.ddev/` is present
+- Runs auto-fix before check-only (`phpcbf` then `phpcs`, `format` then `lint:js`)
+  and verifies afterward
+- Falls back to raw tool invocations when no script alias exists
+- Reports remaining violations with `file:line` and the re-verify command
 
 **Example:**
 ```
-You: "Does this follow WordPress coding standards?"
-Claude: "Let me check against WordPress Coding Standards...
+You: "I just edited the SCSS in the theme — what do I need to run?"
+Claude: "The theme's package.json defines lint:css and build.
 
-✅ Proper tab indentation
-✅ Output properly escaped
-⚠️ Missing docblock
+ddev npm run lint:css   # wp-scripts lint-style
+ddev npm run build      # compile the production assets
 
-Overall good! Just add a docblock above the function."
+Running both now..."
 ```
 
 **Explicit invocation:** `/code-standards-checker` - For comprehensive project-wide standards checks
