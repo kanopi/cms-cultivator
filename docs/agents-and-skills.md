@@ -456,6 +456,7 @@ Don't try to "game" the system—just describe what you need:
 | pr-review | "review this PR", "review my changes" | PR review or pre-PR self-review | `pr-review` |
 | pr-release | "prepare a release", "generate a changelog" | Changelog + deployment checklist | `pr-release` |
 | worktree-manager | "new worktree", "work on two tickets at once" | Parallel tickets/sessions with DDEV isolation | `worktree-manager` |
+| ddev-workflow | "site won't load", "fresh database", `ddev init`, `db-refresh` | Running a Kanopi DDEV site day to day: init, databases, front-end build, e2e suites | `ddev-workflow` |
 | code-standards-checker | "standards", "style" | Code review | `code-standards-checker` |
 | test-scaffolding | "need tests", "how to test" | Single class tests | `test-scaffolding` |
 | test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan-generator` |

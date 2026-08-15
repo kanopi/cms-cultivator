@@ -33,8 +33,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   format may only appear with real tool output behind it; unavailable
   tooling yields "Standards not verified" plus the exact command, never
   an eyeballed pass.
+- `ddev-workflow`: running a Kanopi DDEV site day to day. Agents reach for
+  `ddev start` and bare `npm run build` and end up with a booted container,
+  no database, and no compiled assets; the add-ons solve this with custom
+  commands that nothing told the agent about. The skill covers the lifecycle
+  (init, database refresh, front-end build, e2e suites), the host-versus-web
+  split, and the aliases people actually say, plus a symptom-to-fix
+  troubleshooting table.
+- `ddev-workflow` teaches discovery before any command list: detect the add-on
+  from `.ddev/commands/{host,web}/`, then read the real command set from
+  `ddev help` or the `## Description` / `## Usage` / `## Aliases` headers the
+  command files already carry. The skill says outright that the project wins
+  over its own tables, because sites customize their commands.
 
 ### Changed
+
+- `docs/kanopi-tools/ddev-commands.md` regenerated from the add-on command
+  headers: 34 commands with aliases, platform, and the host-versus-web split,
+  up from a hand-written 7. Labeled a dated snapshot that points at
+  `ddev help` as the live source. The old list had drifted enough to omit
+  `playwright-*`, `recipe-apply`, and `theme-create-block` entirely.
 
 - `code-standards-checker` is now discovery-first. Instead of a "Quick Start
   (Kanopi Projects)" branch listing memorized command names, it reads the
