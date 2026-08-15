@@ -457,6 +457,7 @@ Don't try to "game" the system—just describe what you need:
 | pr-release | "prepare a release", "generate a changelog" | Changelog + deployment checklist | `pr-release` |
 | worktree-manager | "new worktree", "work on two tickets at once" | Parallel tickets/sessions with DDEV isolation | `worktree-manager` |
 | ddev-workflow | "site won't load", "fresh database", `ddev init`, `db-refresh` | Running a Kanopi DDEV site day to day: init, databases, front-end build, e2e suites | `ddev-workflow` |
+| ddev-docker-cleanup | "low on disk", "prune Docker", "unused volumes" | Reclaiming DDEV/Docker disk safely, with the databases protected | `ddev-docker-cleanup` |
 | code-standards-checker | "standards", "style" | Code review | `code-standards-checker` |
 | test-scaffolding | "need tests", "how to test" | Single class tests | `test-scaffolding` |
 | test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan-generator` |
