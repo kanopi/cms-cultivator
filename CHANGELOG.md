@@ -198,7 +198,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   carried forward verbatim into the rewritten skill. The rewrite shortens the
   skill; it does not relax what it may claim.
 
-
 ### Fixed
 
 - `pr-create`: hardened the test-claim honesty rule — the harness's
