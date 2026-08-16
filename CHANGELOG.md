@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.4.0] - 2026-08-16
 
 ### Changed
 
+- `ddev-docker-cleanup`: comments in `scripts/lib.sh` now explain the bash 3.2
+  accommodations (macOS ships bash 3.2 as `/bin/bash`). No behavior change.
 - `pr-review` rebuilt from scratch after three same-day reworks each fixed the stated
   complaint and introduced a new one. The root cause was that every directive in the
   209-line skill was satisfied by writing more, and each word-limiting instrument tried
