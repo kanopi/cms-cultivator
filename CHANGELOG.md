@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-08-16
+
+### Added
+
+- `ddev-docker-cleanup`: reclaim DDEV and Docker disk and memory by removing
+  orphaned volumes, build cache, and dangling images, while protecting the
+  database volume of every current DDEV project. Ships three scripts
+  (`report.sh`, `prune.sh`, `lib.sh`) that do the deterministic work, and a
+  report then dry-run then confirm then apply sequence that never deletes
+  before the user has seen what would go. Relocated from a loose local
+  directory that was in no repo and no plugin, so it existed on exactly one
+  machine.
+- The skill's script invocations are `${CLAUDE_PLUGIN_ROOT}`-relative. As a
+  local skill they were bare `bash scripts/report.sh`, which only resolves when
+  the working directory happens to be the skill folder — inside a plugin, with
+  the user's own project as the working directory, that silently fails.
+- Behavioral eval case `ddev-docker-cleanup--gate-holds-under-pressure`
+  (CANT-3, CANT-1): a full disk and a demo in ten minutes do not authorize
+  skipping the dry run. The case grades that `--apply` is never invoked and
+  that no deletion is claimed.
+
 ### Changed
 
 - Documentation site brought in line with the 2.2.0 skills. `ddev-workflow` and
@@ -30,25 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `plugin` as commit *types*; they are scopes. Both corrected, and the
   `Assisted-by:` trailer — the headline 2.1.0 feature — is now documented in
   both places that describe the skill.
-
-### Added
-
-- `ddev-docker-cleanup`: reclaim DDEV and Docker disk and memory by removing
-  orphaned volumes, build cache, and dangling images, while protecting the
-  database volume of every current DDEV project. Ships three scripts
-  (`report.sh`, `prune.sh`, `lib.sh`) that do the deterministic work, and a
-  report then dry-run then confirm then apply sequence that never deletes
-  before the user has seen what would go. Relocated from a loose local
-  directory that was in no repo and no plugin, so it existed on exactly one
-  machine.
-- The skill's script invocations are `${CLAUDE_PLUGIN_ROOT}`-relative. As a
-  local skill they were bare `bash scripts/report.sh`, which only resolves when
-  the working directory happens to be the skill folder — inside a plugin, with
-  the user's own project as the working directory, that silently fails.
-- Behavioral eval case `ddev-docker-cleanup--gate-holds-under-pressure`
-  (CANT-3, CANT-1): a full disk and a demo in ten minutes do not authorize
-  skipping the dry run. The case grades that `--apply` is never invoked and
-  that no deletion is claimed.
 
 ## [2.2.0] - 2026-08-15
 
