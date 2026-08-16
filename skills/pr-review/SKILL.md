@@ -155,65 +155,78 @@ Do not report:
 
 ### 5. Produce the review
 
-**Budgets, and they are hard limits.** A reviewer scans. Meaning drowns in prose long
-before it drowns in findings, so length is capped independently of count:
+The test for every finding: **can the author fix this without asking you a question?**
+Not "is it short." Short is a means; actionable is the goal.
 
-- **250 words for the whole review**, excluding code blocks
-- **50 words per finding**
-- **8 findings**, most severe first
+#### Show the change, do not describe it
 
-Count before you emit. Over budget means **cut findings**, never compress the same
-content into denser paragraphs. The lowest-ranked finding is the one that goes, and
-correctness outranks cleanup when the cap bites.
+When the fix is code, the finding contains the code — the replacement text and the
+line range it replaces, ready to paste. Never a description of the edit in adjectives.
+"Rewrite it in the builder style" is not an instruction; it is a hint that leaves the
+work undone.
+
+Code blocks do not count toward any length target, so this costs you nothing. Prose
+gets short **because** the code carries the meaning, not by squeezing the prose.
+
+If you cannot produce corrected code you have verified — the package is not installed,
+the API is unknown — say that in a plain sentence at the end of the finding, name what
+you could not check, and describe the change as precisely as you honestly can. Never
+invent an API to fill the code block.
+
+#### Write for someone who has not read the file today
+
+Name the thing instead of reaching for shorthand. Terms of art, invented nouns, and
+compressed noun phrases are how a review becomes unreadable while staying grammatical.
+
+| Do not write | Write |
+|---|---|
+| "rewrite it in the builder style" | "line 22 is `return RectorConfig::configure()`, and every setting is another method on the end of that same statement" |
+| "the chain", "the fluent form" | the actual code, quoted |
+| "SKILL.md:126 sends migrators here" | "`SKILL.md:126` points people here when migrating an existing config" |
+| "a conflicting companion update is swallowed" | "if that update fails, the error is thrown away and you never see it" |
+
+#### Keep our tooling out of the author's review
+
+No CANT IDs, no eval-case names, no token costs, no references to this skill's own
+machinery. Those belong in our repo. The reader is fixing their code.
+
+#### Length targets, not limits
+
+Aim for **250 words of prose** in the whole review, **50 per finding**, and **8
+findings** maximum. Code blocks are free.
+
+These are goals. **If hitting a target would cost plain language or a concrete
+instruction, go over the target.** Clarity wins every time. A finding that is 90 words
+and immediately actionable beats one that is 40 words and needs a follow-up question.
+When a review runs long, the first thing to cut is a weak finding, never the words
+that make a strong one usable.
+
+#### Shape
 
 Severity prefixes: **Critical** (ships a bug, security hole, or data loss), no prefix
 (required before merge), **Optional** (worth doing, not blocking), **Nit** (author's
 discretion), **FYI** (no action wanted).
 
-Each finding is exactly this shape. Three lines, no paragraphs:
+Each finding, in order: a plain-language headline of what is wrong, the `file:line`,
+what breaks and for whom, the corrected code, and any honest caveat about what you
+could not verify.
 
-```
-**<Prefix> — <claim in one clause>.** `file:line`
-<Failure scenario: specific input or state, specific wrong result. One sentence.>
-<Fix. One sentence, or a short diff.>
-```
+**A clean axis produces no text.** Spec and correctness appear only as findings. Do not
+write a paragraph reporting that spec checks out or listing what you examined and
+approved — that is the empty-section habit wearing prose. What you checked goes in one
+short closing line, and only there.
 
-**A clean axis produces no text.** Spec and correctness appear only as findings. Do
-not write a paragraph reporting that spec checks out, that security looks fine, or
-what you examined and approved — that is the empty-section habit wearing prose. What
-you checked goes in **one closing line of 40 words or less**, and only there. That
-line is a receipt, not a narrative: name the axes, the file count, and what you could
-not see. If a caveat there needs a failure scenario to be useful, it is a finding —
-promote it and spend the words there instead.
-
-**No praise.** Do not tell the author what the change does well, or characterize the
+**No praise.** Do not tell the author what the change does well or characterize the
 work. Judging quality is the reader's job; the review's job is what needs attention.
 
 **If nothing scores 80 or above**, output `No issues found`, one closing line naming
-what you checked and what you could not see, and stop. Do not manufacture suggestions
-to look thorough. A clean review is a real result.
+what you checked and what you could not see, and stop. A clean review is a real result.
 
-**Recommendation is one line**, first or last, your choice: approve, request changes,
-or comment. Give reasoning **only when requesting changes** — that is the case where
-the author needs to know why. Approve when the change definitely improves code
-health, even if imperfect. Apply the 5 Cs (Context, Color, Connective Tissue, Cost,
-Consequence) as silent reasoning; never write them out.
-
-Worked example of the whole output, at 60 words:
-
-```
-**#412 · Approve** — 2 findings, neither blocking.
-
-**Optional — retry loop expires silently.** `src/Sync.php:88`
-After 5 failed attempts the loop exits and the record stays unsynced with nothing
-logged, so the next person sees missing data and no cause.
-Log one warning naming the record ID on the final attempt.
-
-**Nit — comment says 768px, the rule fires at 781px.** `_timeline.scss:48`
-Reword to name the stacking breakpoint.
-
-Checked: 4 ticket requirements against the diff, 3 changed files. No browser run.
-```
+**Recommendation is one line**: approve, request changes, or comment. Give reasoning
+**only when requesting changes** — that is when the author needs to know why. Approve
+when the change definitely improves code health, even if imperfect. Apply the 5 Cs
+(Context, Color, Connective Tissue, Cost, Consequence) as silent reasoning; never write
+them out.
 
 ### 6. Optional: post to GitHub
 

@@ -9,22 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `pr-review` now has hard length budgets, the mechanism the rework should have
-  carried from the start: 250 words for the whole review excluding code blocks,
-  50 per finding, and a 40-word closing line. Over budget means cutting
-  findings, never compressing prose. Findings take a fixed three-line shape so
-  paragraphs are structurally impossible; a clean axis produces no text at all;
-  approval is one line with reasoning only when requesting changes; and praise
-  is banned outright. The 2.2.0 rework removed fixed section headers and
-  fabricated findings but never bounded length, so the verbosity moved into
-  prose — a review of a 3-finding PR ran to roughly 750 words.
+- `pr-review` reviews must now be *actionable*, not merely short. The 2.2.0
+  rework stopped fabrication and empty sections but never bounded length, so
+  the verbosity moved into prose — a three-finding review ran to roughly 750
+  words. A first attempt at fixing that with hard word caps made it worse in a
+  different way: squeezing prose to hit a number produced compressed jargon
+  ("rewrite it in the builder style", "the chain", "migrators") that a reader
+  could not act on without asking a follow-up question. The rules now target
+  the thing that actually matters:
+  - **Show the change, do not describe it.** When the fix is code, the finding
+    carries the replacement text and the line range it replaces, ready to
+    paste. Code blocks are free against every length target, so prose gets
+    short because the code carries the meaning
+  - **Length targets, not limits** — 250 words of prose, 50 per finding, 8
+    findings. Explicitly: if hitting a target would cost plain language or a
+    concrete instruction, go over it. Cut a weak finding, never the words that
+    make a strong one usable
+  - **Write for someone who has not read the file today**, with a table of
+    shorthand to avoid and the plain-language version of each
+  - **Say what you could not verify** in a plain sentence, and never invent an
+    API to fill a code block
+  - **Keep our tooling out of the author's review** — no CANT IDs, no eval-case
+    names, no token costs
+  - A clean axis produces no text, approval is one line, and praise is banned
 
 ### Added
 
-- Behavioral eval case `pr-review--stays-within-budget` (CANT-26) and fixture
-  `wp-plugin-buggy-change`. It grades both halves at once: the review must stay
-  under a word ceiling *and* still report the off-by-one loop bound the fixture
-  plants on an added line, so brevity cannot be bought by skipping the work.
+- Behavioral eval case `pr-review--findings-are-actionable` with the fixture
+  `wp-plugin-buggy-change`, which plants an off-by-one loop bound on an added
+  line. It grades the contract rather than a word count: the review must contain
+  a code block, must still catch the planted bug, must not leak CANT IDs or
+  token costs into an author-facing review, must not praise, and must not run
+  past a generous bloat ceiling. Brevity cannot be bought by skipping the work,
+  and clarity is not punished.
 
 ## [2.3.0] - 2026-08-16
 
