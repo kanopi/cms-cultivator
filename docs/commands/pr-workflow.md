@@ -125,19 +125,23 @@ Generate conventional commit messages from staged changes.
 # Stage your changes first
 git add .
 
-# Generate commit message options
+# Generate the commit message
 /commit-message-generator
 ```
 
 **What it generates:**
-- 3-5 commit message options
-- Follows conventional commits format
-- Platform-specific types (Drupal/WordPress)
-- Explanations for each option
+- One commit message, presented for approval before anything is committed
+- Conventional commits format, matched to the repository's existing commit style
+- An `Assisted-by: <Vendor>/<model-id>` git trailer when AI assisted the change
+  itself, skipped for human-authored changes and never `Co-Authored-By`
+- A suggestion to split the commit when the staged changes cover unrelated work
 
 **Commit types:**
-- `feat`, `fix`, `docs`, `refactor`, `perf`, `test`
-- `config` (Drupal), `module` (Drupal), `theme`, `plugin` (WordPress)
+`feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`
+
+**Scopes** are the module, component, or feature area — Drupal work commonly uses
+`config`, `custom_module`, or `hooks`; WordPress work uses `theme`, `plugin`, or
+`blocks`. For example `feat(blocks): add testimonial Gutenberg block`.
 
 ---
 
