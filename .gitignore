@@ -24,6 +24,6 @@ composer.lock
 # mkdocs
 /site*
 
-# Dolt database files (added by bd init)
+# Local databases
 .dolt/
 *.db

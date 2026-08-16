@@ -25,6 +25,8 @@ Streamline pull request creation, review, and deployment. PR skills run directly
 | `pr-review` | Review a PR (`/pr-review 123`) or self-review your branch (`/pr-review self`) with focus areas: code, security, breaking, testing, size, performance |
 | `pr-release` | Generate changelog (Keep a Changelog format), deployment checklist, and PR description update |
 | `worktree-manager` | Create, list, and tear down git worktrees with Kanopi branch naming and automatic DDEV isolation so multiple tickets (and AI sessions) run in parallel from one clone |
+| `ddev-workflow` | Run a Kanopi DDEV site day to day: `ddev init` on a fresh clone, database refreshes, the front-end build, and the e2e suites — reading the project's real command set from `ddev help` rather than assuming one |
+| `ddev-docker-cleanup` | Reclaim DDEV/Docker disk and memory by removing orphaned volumes, build cache, and dangling images, protecting every current project's database (report → dry run → confirm → apply) |
 
 ---
 
@@ -137,7 +139,7 @@ Extend CMS Cultivator with WordPress-specific tooling from other sources.
 
 Skills automatically integrate with [Kanopi's DDEV add-ons](../kanopi-tools/overview.md):
 
-- **Quality skills** use `ddev composer code-check`, `phpstan`, `rector-check`
+- **Quality skills** read the project's own `composer.json` / `package.json` scripts (commonly `code-check`, `phpstan`, `rector-check`) rather than assuming a fixed alias
 - **Design skills** suggest `ddev theme-build` and `ddev theme-watch`
 - **Testing skills** leverage `ddev cypress-run` for E2E tests
 - **Worktree management** derives DDEV project names per worktree for isolation

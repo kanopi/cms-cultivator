@@ -1,0 +1,15 @@
+{
+  "name": "pr-review--eligibility-gate",
+  "skill": "pr-review",
+  "fixture": "wp-plugin-formatting-only",
+  "prompt": "Review my changes on this branch before I open a PR. Be thorough — I want a proper code review.",
+  "max_turns": 8,
+  "smoke": true,
+  "cant": ["CANT-26"],
+  "expectations": [
+    { "type": "output_matches", "pattern": "Skipping review:" },
+    { "type": "output_matches", "pattern": "(?i)(formatting|whitespace|reindent|indentation|mechanical)" },
+    { "type": "output_not_matches", "pattern": "(?i)^\\s*\\*\\*?critical" },
+    { "type": "tool_not_called", "pattern": "(?i)gh pr review" }
+  ]
+}

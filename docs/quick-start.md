@@ -195,7 +195,7 @@ git commit -m "[selected message]"
 ```bash
 # 1. Run Kanopi quality checks
 # (skills automatically use ddev composer scripts)
-/code-standards-checker   # Uses ddev composer code-sniff
+/code-standards-checker   # Runs the project's own lint scripts
 /coverage-analyzer        # Uses ddev cypress-run
 
 # 2. Patch a contrib dependency safely
@@ -214,6 +214,8 @@ git commit -m "[selected message]"
 /commit-message-generator           # Generate commit message
 /pr-release [focus]                 # Generate changelog and deployment docs
 /worktree-manager [create|list|remove] # Parallel tickets via git worktrees
+/ddev-workflow                      # Get the local site running, database, theme build
+/ddev-docker-cleanup                # Reclaim DDEV/Docker disk safely
 ```
 
 ### 🎨 Design Workflow

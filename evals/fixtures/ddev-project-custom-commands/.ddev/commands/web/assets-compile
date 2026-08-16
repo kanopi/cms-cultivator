@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+## Description: Compile the front-end assets for the custom theme.
+## Usage: assets-compile
+## Example: "ddev assets-compile"
+## Aliases: assets:compile,assets
+
+set -euo pipefail
+echo "eval fixture: would compile assets"

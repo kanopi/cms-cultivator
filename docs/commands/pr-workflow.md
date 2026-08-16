@@ -105,21 +105,27 @@ Review a pull request or analyze your own changes before creating a PR.
 - `size` - Size and complexity assessment
 - `performance` - Performance optimization opportunities
 
-**What it analyzes:**
-- Code quality and maintainability
-- Security vulnerabilities (SQL injection, XSS, CSRF)
-- Breaking changes and migration paths
-- PR size and complexity
-- Test coverage
-- Drupal/WordPress best practices
-- Deployment considerations
+**What it reviews**, on two axes:
+- **Spec** — does the diff do what the linked Teamwork ticket and PR body say it does?
+  Missing, partial, incorrect, or out-of-scope requirements, each quoting the
+  requirement line
+- **Correctness** — bugs in the code the diff touched, including blast radius (a
+  selector, hook, or override that also reaches things the ticket never mentioned) and
+  silent failure (a poll, retry, or fallback that swallows its own failure path)
+
+**What it filters out.** Every candidate must carry a concrete failure scenario, and any
+claim about contrib, plugin, or vendor behavior must cite the `file:line` actually read.
+Candidates are then scored 0–100 and only 80-and-above is reported. A fourteen-item CMS
+exclusion list drops what CI already catches, pre-existing issues, unmodified lines, and
+the other usual false positives.
 
 **Outputs:**
-- Comprehensive review report
-- Size and complexity analysis
-- Breaking changes with severity ratings
-- Detailed test plan
-- Actionable recommendations
+- At most 8 findings, most severe first, each with a severity prefix (Critical,
+  Required, Optional, Nit, FYI), a `file:line`, the failure scenario, and the fix
+- Only the sections that have content — there is no fixed template
+- `No issues found`, plus one line on what was checked, when nothing clears the bar.
+  A clean review is a real result, not a failure to look hard enough
+- A reasoned approve / request changes / comment recommendation
 
 ---
 
@@ -132,19 +138,23 @@ Generate conventional commit messages from staged changes.
 # Stage your changes first
 git add .
 
-# Generate commit message options
+# Generate the commit message
 /commit-message-generator
 ```
 
 **What it generates:**
-- 3-5 commit message options
-- Follows conventional commits format
-- Platform-specific types (Drupal/WordPress)
-- Explanations for each option
+- One commit message, presented for approval before anything is committed
+- Conventional commits format, matched to the repository's existing commit style
+- An `Assisted-by: <Vendor>/<model-id>` git trailer when AI assisted the change
+  itself, skipped for human-authored changes and never `Co-Authored-By`
+- A suggestion to split the commit when the staged changes cover unrelated work
 
 **Commit types:**
-- `feat`, `fix`, `docs`, `refactor`, `perf`, `test`
-- `config` (Drupal), `module` (Drupal), `theme`, `plugin` (WordPress)
+`feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`
+
+**Scopes** are the module, component, or feature area — Drupal work commonly uses
+`config`, `custom_module`, or `hooks`; WordPress work uses `theme`, `plugin`, or
+`blocks`. For example `feat(blocks): add testimonial Gutenberg block`.
 
 ---
 

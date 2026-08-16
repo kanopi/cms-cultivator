@@ -10,6 +10,14 @@
       "expect": "code-standards-checker"
     },
     {
+      "prompt": "I just edited the SCSS in the theme — what do I need to run?",
+      "expect": "code-standards-checker"
+    },
+    {
+      "prompt": "I changed a Twig template, which lint command should I run and does it auto-fix?",
+      "expect": "code-standards-checker"
+    },
+    {
       "prompt": "I wrote this service class but it has no tests yet — scaffold some",
       "expect": "test-scaffolding"
     },
@@ -40,6 +48,30 @@
     {
       "prompt": "I need to work on another ticket without losing my current work — set up a worktree",
       "expect": "worktree-manager"
+    },
+    {
+      "prompt": "the site won't load after I cloned it, I just get errors",
+      "expect": "ddev-workflow"
+    },
+    {
+      "prompt": "how do I get a fresh database from Pantheon on my local?",
+      "expect": "ddev-workflow"
+    },
+    {
+      "prompt": "my theme changes aren't showing up — how do I rebuild the assets?",
+      "expect": "ddev-workflow"
+    },
+    {
+      "prompt": "my disk is nearly full and Docker is using a hundred gigs — can you clean it up?",
+      "expect": "ddev-docker-cleanup"
+    },
+    {
+      "prompt": "OrbStack shows a pile of unused volumes, is it safe to prune them?",
+      "expect": "ddev-docker-cleanup"
+    },
+    {
+      "prompt": "I cloned the site and it serves errors — what do I run to get it working?",
+      "expect": "ddev-workflow"
     },
     {
       "prompt": "I already have the branch locally — check it out in a separate worktree instead of creating a new branch",

@@ -1,225 +1,209 @@
 ---
 name: pr-review
-description: "Review a pull request or analyze local changes before submitting. Auto-activates when user mentions reviewing a PR, asks for code review, wants to analyze their changes before submitting, or mentions \"pr-review self\". Invoke when user provides a PR number to review or says \"review self\", \"review my changes\", or \"pr review\". Supports focus areas: code, security, breaking, testing, size, performance."
+description: >-
+  Review a pull request or analyze local changes before submitting. Checks the diff
+  against what the ticket asked for, then for correctness bugs, and reports only
+  findings that survive a concrete failure scenario and a confidence floor. Silence is
+  a valid result. Auto-activates when the user mentions reviewing a PR, asks for code
+  review, wants to analyze changes before submitting, or mentions "pr-review self".
+  Invoke when the user provides a PR number to review or says "review self", "review
+  my changes", or "pr review". Supports focus areas: code, security, breaking,
+  testing, size, performance.
 ---
 
 # PR Review
 
-Review a pull request or analyze your local changes before submitting. The main session runs this skill directly — no orchestrator agent is involved.
+Review a pull request, or your own changes before you open one. Runs directly in the
+main session; no agents.
 
-## Usage
+Ten plausible findings containing two fabrications is worse than two verified
+findings, because the reader now has to check everything. Every mechanism below exists
+to delete candidates, not to generate them.
 
-**Review someone else's PR:**
-- "Review PR #123" / "Review pull request 456"
-- With focus: "Review PR #123 for security issues"
-
-**Self-review your own changes before creating a PR:**
-- "Review my changes" / "Self-review before PR"
-- With focus: "Check my changes for breaking changes"
-
-**Focus options:** `code`, `security`, `breaking`, `testing`, `size`, `performance` (or `all` for a comprehensive review).
+Usage: "Review PR #123", "review my changes", optionally with a focus area.
 
 ## Workflow
 
+### 0. Eligibility gate
+
+Before reading anything, check whether this PR should be reviewed at all. Skip and
+say which reason applies:
+
+- Closed or merged
+- Draft
+- Already reviewed by you, unless there are new commits since
+- Automated (dependency bumps, lockfile-only, generated files, release chores)
+- Trivially mechanical: pure formatting, a rename applied uniformly, comment-only
+
+When one applies, reply with `Skipping review:` and the reason, and stop. "Skipping
+review: lockfile bump, no reviewable logic" is a complete, correct response. Do not
+review something ineligible just because you were asked to, and do not pad the reply
+with findings to justify the turn.
+
 ### 1. Determine target
 
-- **PR number provided** (e.g., `PR #123`, `pr-review 456`) → review that PR.
-- **"self" / "my changes" / "before submitting"** → review local changes against the default branch.
-- **No clear target** → ask the user which one they want.
-- If invoked from a subagent context (the prompt names a specific PR number and says "delegated" or "automated routine"), do not ask clarifying questions — proceed with that PR.
+- PR number given → review that PR
+- "self" / "my changes" / "before submitting" → review local changes against the
+  default branch
+- Neither → ask
+- Delegated context (prompt names a PR and says "delegated" or "automated routine")
+  → proceed without asking
 
 ### 2. Gather context
 
-**For PR review (Tier 2 with `gh` available):**
+**PR:** in parallel, `gh pr view <n> --json title,body,baseRefName,author,additions,deletions,changedFiles`,
+`gh pr diff <n>`, `gh pr checks <n>`.
 
-Run in parallel:
+**Self-review:** resolve the base with
+`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`, then in parallel
+`git log --oneline <base>..HEAD` and `git diff <base>...HEAD`.
 
-- `gh pr view <number> --json title,body,baseRefName,headRefName,author,additions,deletions,changedFiles`
-- `gh pr diff <number>`
-- `gh pr checks <number>` (if CI status matters)
+**No `gh`:** ask for the description and diff, review what you were given, and say
+what you could not see.
 
-**For self-review:**
+Fetch the ticket too — Kanopi PR bodies link a Teamwork task, and that link is the
+spec for axis 1. With no ticket and no PR body, say so and skip axis 1 rather than
+guessing at what was asked.
 
-Determine the default branch (`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`) — usually `main` or `1.x`. Then run in parallel:
+Size: XS <10, S 10–100, M 100–400, L 400–1,000, XL >1,000 lines. XL: suggest a split.
 
-- `git branch --show-current`
-- `git log --oneline <default>..HEAD`
-- `git diff --stat <default>...HEAD`
-- `git diff <default>...HEAD`
+### 3. Review on two axes
 
-**For portable environments (no `gh`):**
+**Axis 1 — Spec.** Does the diff do what the ticket and PR body say it does? Quote the
+requirement line for each finding.
 
-Ask the user to share the PR description, the diff, or the file list. Do as much analysis as the provided context allows; note what would have been checked with full access.
+- A requirement with no implementation
+- A requirement implemented partially
+- A requirement implemented incorrectly: the code runs, but not what was asked
+- Scope creep: changes nothing in the ticket asked for
 
-### 3. Classify size and complexity
+**Axis 2 — Correctness.** Bugs, in the code the diff touched. Logic errors, unhandled
+states, wrong boundaries, broken assumptions about data or lifecycle, races across
+requests, security defects that are actually reachable.
 
-| Size | Lines changed |
-|------|---------------|
-| XS | < 10 |
-| S | 10–100 |
-| M | 100–400 |
-| L | 400–1,000 |
-| XL | > 1,000 — recommend splitting |
+Two lenses that catch what a diff-shaped reading misses:
 
-Complexity is a judgment call: low for isolated changes, high for cross-cutting refactors or unfamiliar areas.
+**Blast radius.** For every selector, class, hook, filter, or config key the diff
+touches, enumerate what *else* it matches before judging the change correct. Name the
+other layouts, variants, templates, or content types that share it. A CMS block class
+is usually shared by every variant of that block, so a rule hung on the wrapper hits
+the ones the ticket never mentioned. A fix that works and quietly changes a neighbour
+is still a defect, and "the targeted case looks right" is not an answer to "what else
+matches this?"
 
-### 4. Run inline analysis by focus area
+**Silent failure.** A poll, retry, timeout, fallback, or `catch` that swallows its own
+failure path leaves no signal when it stops working. Ask what the user or the next
+developer sees when the fallback is the branch that runs. A bounded loop that expires
+without a warning is a defect even when it usually succeeds.
 
-Use Read, Grep, and Bash directly. Spawn no agents — the skill performs the analysis itself.
+Cleanup, convention, and style findings rank below both axes and are the first cut
+when the cap binds.
 
-#### Code quality (`code`)
+### 4. Filter every candidate
 
-- Readability, naming, function length, duplication
-- Project convention adherence (compare against neighbor files)
-- Design patterns and SOLID principles where applicable
-- Magic numbers, hard-coded strings, dead code
+Nothing reaches the reader without passing all three filters.
 
-#### Security (`security`)
+#### 4a. Evidence
 
-- **Input handling:** unvalidated `$_GET`/`$_POST`, request params used directly in queries or output
-- **SQL:** raw concatenation vs. prepared statements (`$wpdb->prepare`, `db_select` placeholders)
-- **Output escaping:** unescaped echo, missing `esc_html`/`esc_attr`/`esc_url`/`Html::escape`/`Xss::filter`
-- **Auth:** missing capability checks (`current_user_can`), missing nonce verification (`wp_verify_nonce`), missing Drupal access checks
-- **Secrets:** API keys, tokens, passwords committed in code
-- **Deserialization:** `unserialize` on user input
-- **File handling:** path traversal, unrestricted uploads
+Every finding states a concrete failure scenario: specific inputs or state leading to
+a specific wrong output, crash, or data problem. "This could be fragile" is not a
+scenario. A candidate that cannot be given one is **dropped, not softened** — hedging
+it into a "consider" bullet is how noise gets in.
 
-#### Breaking changes (`breaking`)
+Any claim about the behavior of a contrib module, plugin, vendor library, or framework
+internal must cite the `file:line` in that source that you actually opened. No
+citation, no finding. Never write that you verified something you did not.
 
-- Function/method signature changes (public API)
-- Database schema changes (table/column drops, type changes)
-- Removed routes, endpoints, hooks, filters, services
-- Dependency major version bumps in `composer.json`/`package.json`
-- Config schema changes that won't migrate cleanly
-- Permission/capability changes
+Asserting third-party behavior from memory is CANT-20, and claiming a check you did
+not run is CANT-23, both in the
+[Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant).
 
-#### Testing (`testing`)
+#### 4b. Confidence
 
-- New/modified code without corresponding tests
-- Test quality: do the assertions actually cover the behavior?
-- Edge cases: empty input, null, large input, concurrent access
-- Test isolation: do tests pollute state?
+Score every surviving candidate 0–100 with this rubric, and report only 80 and above:
 
-#### Size (`size`)
+- **0** — Not confident. A false positive that doesn't survive light scrutiny, or a
+  pre-existing issue.
+- **25** — Somewhat confident. Might be real, might not; you could not verify it.
+- **50** — Moderately confident. Verified real, but a nitpick or rare in practice.
+- **75** — Highly confident. Verified, very likely hit in practice, directly impacts
+  functionality.
+- **100** — Certain. Confirmed, will happen frequently, evidence directly supports it.
 
-- Lines/files counts
-- Mixed concerns (refactor + feature + bugfix in one PR)
-- Suggest split points for XL PRs
+#### 4c. CMS false-positive exclusions
 
-#### Performance (`performance`)
+Do not report:
 
-- N+1 queries inside loops
-- Missing caching on expensive operations
-- Large unminified assets, missing lazy-load
-- Synchronous external HTTP calls in request path
-- Cache invalidation patterns
+1. Anything PHPCS, PHPStan, Rector, ESLint, stylelint, or twig-lint catches. CI runs
+   these; point at `code-standards-checker` instead
+2. Issues on lines the PR did not modify
+3. Pre-existing issues, including code the diff only moves
+4. Missing escaping where Twig autoescape, `wp_kses_post`, or Drupal's render layer
+   already escapes the value
+5. Missing nonce or capability checks on read-only public front-end output
+6. Missing capability checks in client-side JS — client code is untrusted by
+   definition and the check belongs server-side
+7. Absent tests for CSS, SCSS, or template-only changes
+8. Theoretical race conditions inside a single PHP request lifecycle
+9. Contrib, plugin, or vendor code the PR does not modify
+10. Any assertion about third-party behavior not confirmed by reading its source
+11. Generic "add caching" or "this may be slow" without naming the loop and the query
+12. Accessibility findings that belong to `browser-validator`, unless the diff
+    introduces the regression
+13. Missing sanitization on values that never leave a trusted context
+14. Restructuring suggestions for a file the PR touched incidentally
 
-### 5. CMS-specific checks
+### 5. Produce the review
 
-**Drupal:**
+Report at most **8 findings**, most severe first. Correctness outranks cleanup when
+the cap forces a cut.
 
-- Config management: `config/sync/` changes match code changes
-- Update hooks: present for schema changes
-- Database API: no raw queries; `db_query`/`db_select` with placeholders
-- Cache tags / contexts on render arrays
-- Access control on routes and entity operations
-- Services in `*.services.yml` properly wired
+Prefix each so required and optional are distinguishable: **Critical** (ships a bug,
+security hole, or data loss), no prefix (required before merge), **Optional** (worth
+doing, not blocking), **Nit** (author's discretion), **FYI** (no action wanted).
 
-**WordPress:**
+Each finding carries the prefix, a one-line claim, `file:line`, the failure scenario,
+and the fix. Propose the move, not just the problem.
 
-- `$wpdb->prepare()` on all dynamic queries
-- Nonce verification on form/AJAX handlers
-- Capability checks (`current_user_can`) before admin actions
-- Sanitization on input (`sanitize_text_field`, `wp_kses`)
-- Escaping on output (`esc_html`, `esc_attr`, `esc_url`)
-- ACF field group exports in `acf-json/`
-- Gutenberg block `block.json` correct, attributes typed
+Write only the sections you have content for. There is no template to fill. Never
+print an empty heading — "no security concerns" is a clause in the summary at most,
+never a section of its own.
 
-### 6. Produce the review
+**If nothing scores 80 or above**, output `No issues found`, one line naming what you
+checked (axes, files, and anything you could not see), and stop. Do not manufacture
+suggestions to look thorough. A clean review is a real result.
 
-```markdown
-# 🤖 AI Code Review — PR #<number>
+Close with a recommendation — approve, request changes, or comment — reasoned, not
+just a verdict. Approve when the change definitely improves code health, even if
+imperfect. Apply the 5 Cs (Context, Color, Connective Tissue, Cost, Consequence) as
+silent reasoning behind that call; do not write them out as prose.
 
-**Size:** <XS/S/M/L/XL> (<N> files, +<X>/-<Y> lines)
-**Complexity:** <Low/Medium/High>
+### 6. Optional: post to GitHub
 
-## Summary
-<2–4 sentence overall assessment>
+For a PR review, not a self-review, and only if asked: present the review, ask "Post
+this as a PR review? (approve / request changes / comment)", and on approval run
+`gh pr review <n> --<action> --body-file <file>`. Self-reviews stay local.
 
-## Required Changes
+## Delegated mode (automated routines)
 
-### Critical Issues
-- [ ] **<issue>** (`<file>:<line>`) — <problem and recommended fix>
+When invoked from a subagent prompt, behave non-interactively:
 
-### Security Concerns
-- [ ] **<issue>** (`<file>:<line>`) — <risk and fix>
-
-## Suggestions
-
-### Performance
-- <bullet>
-
-### Code Quality
-- <bullet>
-
-### Testing Gaps
-- <bullet>
-
-## Test Plan
-- <specific test case>
-- <specific test case>
-
-## Overall Recommendation
-- [ ] Approve
-- [ ] Request Changes
-- [ ] Comment
-```
-
-Each finding should be **specific** (`auth.php:42`, not "authentication code"), include **why** it matters, and **suggest a fix**. Avoid generic checklist output.
-
-### 7. Optional: post the review to GitHub
-
-If reviewing a PR (not self-review) and the user wants the review posted:
-
-1. Present the review to the user first.
-2. Ask: "Post this as a PR review on GitHub? (approve / request changes / comment)"
-3. On approval, use `gh pr review <number> --<action> --body "$(cat <<'EOF'\n<review>\nEOF\n)"`.
-
-Self-reviews stay local — they're not posted anywhere.
-
-## Delegated mode (for automated routines)
-
-When invoked via a subagent prompt (e.g. from the code-review routine), behave
-non-interactively:
-
-- Skip step 7 entirely — do NOT post to GitHub. The parent routine handles posting.
-- Skip user dialogue ("ask the user", "present to the user first") — no user is present.
-- Skip the 5 Cs prose; just apply the framework silently to land on a verdict.
-- Output ONLY the review report (step 6 template), with NO preamble.
-- End the output with this exact sentinel on its own line:
+- Skip step 6 entirely — do NOT post. The parent routine posts.
+- Skip all user dialogue; no user is present.
+- Output ONLY the review, with no preamble.
+- End with this exact sentinel on its own line, one of the three verbatim, because the
+  parent parses it:
     FINAL_RECOMMENDATION: Approve
     FINAL_RECOMMENDATION: Request Changes
     FINAL_RECOMMENDATION: Comment
-  (one of the three, verbatim — the parent parses this line.)
 
-The parent is responsible for posting to Teamwork/GitHub/Slack and for any
-notification rules.
-
-## Strategic Decision Framework
-
-When deciding whether to recommend "approve" vs. "request changes," apply the **5 Cs** (Context, Color, Connective Tissue, Cost, Consequence — from Brené Brown's *Strong Ground*):
-
-- **Color** — Production hotfix vs. exploratory branch sets different bars.
-- **Consequence** — What breaks if this ships with the issues you found?
-- **Cost** — How much rework do the required changes represent?
-- **Connective Tissue** — Does this PR affect other in-flight work?
-
-Use these to provide a recommendation with reasoning, not just a verdict.
+The filters in step 4 apply unchanged in delegated mode. An automated review that
+invents findings is worse than one that returns none.
 
 ## Related Skills
 
-- **commit-message-generator** — Used during PR creation
-- **pr-create** — Create the PR after a passing self-review
-- **security-scanner** / **accessibility-checker** (Kanopi's internal audit
-  library) — deep security and element-level accessibility checks when that
-  plugin is installed
+- `code-standards-checker` — run before review; it owns everything in exclusion 1
+- `pr-create` — create the PR after a passing self-review
+- `pm-skills:qa-validation-checklist` — write the reviewer-facing validation steps
+  once the review passes
+- `browser-validator` — real-browser accessibility and responsive checks
