@@ -20,13 +20,14 @@ Agents are specialized AI assistants that handle complex, multi-step workflows. 
 - **browser-validator-specialist** - Real-browser validation via Chrome DevTools MCP
 - **drupalorg-issue-specialist** - drupal.org issue drafting and formatting
 - **drupalorg-mr-specialist** - Merge request setup on git.drupalcode.org
+- **pr-review-specialist** - Fresh-context code review for `pr-review self`, read-only
 
 **Orchestrators** (coordinate complex workflows):
 
 - **testing-specialist** - Test generation and coverage (inline security and accessibility test scenarios)
 - **design-specialist** - Design-to-code generation (code generation only; skill spawns responsive-styling and browser-validator agents)
 
-PR and development-workflow skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow.
+PR and development-workflow skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run **directly from the main session** without an orchestrator agent — each skill contains its complete workflow. The one exception: `pr-review self` spawns pr-review-specialist so the review runs in a fresh context.
 
 ### How Agents Work
 
@@ -95,8 +96,9 @@ Spawns browser-validator-specialist (validation from test URL)
 | browser-validator-specialist | `design-to-wp-block`, `design-to-drupal-paragraph`, `browser-validator` | Leaf |
 | drupalorg-issue-specialist | `drupal-contribute`, `drupal-issue` | Leaf |
 | drupalorg-mr-specialist | `drupal-contribute`, `drupal-mr` | Leaf |
+| pr-review-specialist | `pr-review` | Leaf; self-review only, read-only |
 
-PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — no agent is spawned.
+PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session — no agent is spawned, except `pr-review self`, which spawns pr-review-specialist.
 
 ### Agent-to-Skill Mapping
 
@@ -109,8 +111,9 @@ Each agent uses specific skills for detailed "how-to" knowledge:
 | design-specialist | design-analyzer, responsive-styling |
 | drupalorg-issue-specialist | drupalorg-issue-helper |
 | drupalorg-mr-specialist | drupalorg-contribution-helper |
+| pr-review-specialist | pr-review |
 
-PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run directly from the main session — they use the relevant tooling (GitHub CLI, git) without an orchestrator agent.
+PR skills (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`, `worktree-manager`) run directly from the main session — they use the relevant tooling (GitHub CLI, git) without an orchestrator agent. `pr-review self` is the exception: it spawns pr-review-specialist for a fresh-context review.
 
 ### Why Agents?
 

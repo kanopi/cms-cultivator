@@ -1,0 +1,51 @@
+{
+  "name": "pr-review--findings-are-actionable",
+  "skill": "pr-review",
+  "fixture": "wp-plugin-buggy-change",
+  "prompt": "Review my changes on this branch before I open a PR.",
+  "max_turns": 10,
+  "smoke": true,
+  "cant": ["CANT-26"],
+  "expectations": [
+    {
+      "type": "output_matches",
+      "pattern": "(?i)^\\s*\\**(critical|important|minor)\\b"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "(?im)^\\s*[-*]?\\s*\\**(issue|fix)\\**\\s*:"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "(?im)^\\s*[-*]?\\s*\\**file\\**\\s*:.*:\\d+"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "```"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "(?i)(off.by.one|<=|one past|past the end|count\\( ?\\$posts ?\\))"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "CANT-\\d|\\$0\\.\\d|behavioral eval|run-behavioral-evals"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(?i)(nice work|great job|well[- ]built|excellent work|solid work|good catch|### strengths)"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(\\S+\\s+){400,}"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(?im)^\\s*[-*]?\\s*\\**(issue|fix)\\**\\s*:.{200,}$"
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "(?i)gh pr review"
+    }
+  ]
+}

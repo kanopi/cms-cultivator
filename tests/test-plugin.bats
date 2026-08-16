@@ -584,8 +584,8 @@ skip_without_agents() {
       # Public successor library (allowed reference)
       delivery-record) ;;
       *)
-        if [ ! -d "skills/$name" ]; then
-          echo "ERROR: docs/commands reference a non-existent skill: $name"
+        if [ ! -d "skills/$name" ] && [ ! -d "agents/$name" ]; then
+          echo "ERROR: docs/commands reference a non-existent skill or agent: $name"
           return 1
         fi
         ;;

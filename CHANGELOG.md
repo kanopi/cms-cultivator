@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `pr-review` rebuilt from scratch after three same-day reworks each fixed the stated
+  complaint and introduced a new one. The root cause was that every directive in the
+  209-line skill was satisfied by writing more, and each word-limiting instrument tried
+  (hard cap, soft target, per-label budget) either got ignored or bought its words back
+  as jargon. The rebuilt skill has no word or count limits anywhere. Length is bounded
+  by structure instead: a review is exactly one verdict line, findings most severe
+  first, and one closing `Unverified:` line, and a sentence with no slot is deleted.
+- Each finding uses a labeled micro-template: a bold severity headline (`Critical` /
+  `Important` / `Minor`), then `File: path:line`, `Issue:` (the input or state, then the
+  wrong result), and `Fix:` (a `suggestion` block or one named action), one line each.
+  Two locations, because they are often different lines: `File:` is where the problem
+  shows, `Apply:` is where the change goes, omitted when they match. Inline comments
+  anchor at `Apply:`, since that is the line GitHub applies a suggestion to; measured
+  runs put a third of suggestion blocks on the wrong line before this.
+- The 0-100 confidence score with its 80 floor is replaced by verify votes. Each
+  finding is re-read against the file and voted CONFIRMED (quote the triggering line),
+  PLAUSIBLE (state what would confirm it), or REFUTED (quote the line that disproves
+  it, then drop it). A quoted line is checkable; a self-reported number is not. This
+  keeps the verify-before-post step that caught a fabricated claim (`use` after
+  `return` asserted as a syntax error where `php -l` accepts it) on its way to a
+  colleague's PR.
+- Correctness review gains a third lens, removed behavior: for every line the diff
+  deletes or replaces, name the invariant it enforced and find where the new code
+  re-establishes it. All three lenses (blast radius, silent failure, removed behavior)
+  now direct investigation only; their answers reach the output solely as verified
+  findings or on the `Unverified:` line, which also carries shared selectors, hooks,
+  and config keys the review could not clear. The prior wording rewarded narrating
+  lens answers into the review body, which is where a measured 472-word single-finding
+  review came from.
+- Posted reviews carry a body wrapper (see `references/posted-format.md`): an AI Code
+  Review title, Recommendation checkboxes, a Changes Requested section for Critical
+  and Important findings, and a Suggestions section for Minor ones. The checked box
+  and the delegated-mode `FINAL_RECOMMENDATION` sentinel derive from the one
+  recommendation, while the GitHub review event is always a non-blocking comment:
+  reviews post as whoever ran the skill, often an automated routine, and an approve or
+  request-changes event from that account would gate the PR on that person
+  re-reviewing. Self-reviews stay bare and are never posted.
+- Still no Strengths section and no praise, against the obra/superpowers reference
+  this rework otherwise borrows from. Credibility comes from findings that survive
+  verification, not from balancing them with compliments.
+
+### Added
+
+- `pr-review-specialist` agent: `pr-review self` now spawns it so the review runs in a
+  fresh context that holds none of the reasoning that produced the code. Read-only,
+  never spawns another agent, never posts, and inherits the session model: a sonnet pin
+  was measured first and found 0 of 6 known defects across three fixture PRs where the
+  session model found them plus new ones, so the cost saving was rejected. The skill
+  checks the base ref resolves and the diff is non-empty before spawning, and falls
+  back to an in-session review where agents do not exist (Claude Desktop, Codex,
+  sandboxed evals).
+- `skills/pr-review/references/posted-format.md`: the posted-body wrapper spec, loaded
+  only at the posting step.
+- Behavioral eval case `pr-review--findings-are-actionable`, with its
+  `wp-plugin-buggy-change` fixture, graded against the new format: a severity headline,
+  the `Issue:` and `Fix:` labels, a code block, the planted off-by-one still caught, no
+  praise, no internal tooling noise, and a bloat ceiling.
+
 ## [2.3.0] - 2026-08-16
 
 ### Added
