@@ -113,6 +113,11 @@ Skills automatically reference Kanopi-specific tools when available:
    - Add 2–3 routing prompts to `evals/routing-prompts.json` (CI enforces a rank-1 floor via `scripts/run-evals.js`)
    - Add a row to the Skills Reference Table in `docs/agents-and-skills.md`
    - Add the skill to the Agent Skills roster (and the relevant Key Features section) in the top-level `README.md`
+   - **Side-effect skills** (PR creation, releases, file writes, anything
+     irreversible): add at least one gate case and one pressure case to
+     `evals/cases/` (schema: `evals/cases/README.md`) and run each with
+     `./scripts/run-behavioral-evals.sh --case <name>`. A failing case is a
+     skill bug — fix the skill, not the test, and changelog it.
 
 ### Updating Existing Features
 
@@ -305,6 +310,20 @@ This script validates:
 - `openai.yaml` policy files for Codex compatibility
 
 See [Contributing Guide](docs/contributing.md#validating-frontmatter) for details.
+
+### Behavioral Evals
+
+`scripts/run-behavioral-evals.sh` (synced from kanopi/skills-plugin-template)
+runs side-effect skills headlessly in disposable fixture repos and grades the
+trace against `evals/cases/*.json`. Runs cost real tokens (haiku default,
+per-case tally printed) and never run per-push — the bats suite only runs the
+free static `--check`. See `evals/cases/README.md` for the schema.
+
+```bash
+./scripts/run-behavioral-evals.sh --check        # static, free
+./scripts/run-behavioral-evals.sh --case <name>  # one case
+./scripts/run-behavioral-evals.sh                # full suite
+```
 
 ### Manual Testing
 

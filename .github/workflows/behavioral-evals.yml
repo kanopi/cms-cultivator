@@ -1,0 +1,51 @@
+# Behavioral evals — real headless `claude -p` runs graded against
+# evals/cases/*.json. These cost real tokens, so they NEVER run per-push:
+# manual dispatch + a weekly smoke-subset schedule only. The per-push gate
+# stays the fast quartet in test.yml (which includes this harness's free
+# static --check via bats).
+#
+# Requires the ANTHROPIC_API_KEY repo/org secret. The full suite remains a
+# documented local command: ./scripts/run-behavioral-evals.sh
+
+name: Behavioral Evals
+
+on:
+  workflow_dispatch:
+    inputs:
+      subset:
+        description: "Which cases to run"
+        type: choice
+        options:
+          - smoke
+          - full
+        default: smoke
+  schedule:
+    # Weekly smoke run, Mondays 06:17 UTC (off the top of the hour).
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  behavioral-evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run behavioral evals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY secret is not set — cannot run behavioral evals." >&2
+            exit 1
+          fi
+          if [ "${{ inputs.subset || 'smoke' }}" = "full" ]; then
+            ./scripts/run-behavioral-evals.sh
+          else
+            ./scripts/run-behavioral-evals.sh --smoke
+          fi

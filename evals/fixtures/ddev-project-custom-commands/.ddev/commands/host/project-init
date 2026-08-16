@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+## Description: Initialize local development for this project.
+## Usage: project-init
+## Example: "ddev project-init"
+## Aliases: project:init,init
+
+set -euo pipefail
+echo "eval fixture: would install deps and pull a database"

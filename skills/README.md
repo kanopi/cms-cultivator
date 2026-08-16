@@ -156,7 +156,19 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Generate and wire up Composer patches for contrib projects
 **Related Command**: `/composer-patch-generator`
 
-### 25. drupal-rector-update
+### 25. ddev-workflow
+
+**Triggers**: "site won't load", "fresh database", "build the theme", `ddev init`, `db-refresh`
+**Purpose**: Run a Kanopi DDEV site day to day — init, database pulls, theme builds, e2e suites — reading the project's real command set instead of a memorized list
+**Related Command**: `/ddev-workflow`
+
+### 26. ddev-docker-cleanup
+
+**Triggers**: "low on disk", "Docker is huge", "prune Docker", "OrbStack space", "unused volumes"
+**Purpose**: Reclaim DDEV/Docker disk and memory by removing orphaned volumes, build cache, and dangling images, while protecting every current project's database
+**Related Command**: `/ddev-docker-cleanup`
+
+### 27. drupal-rector-update
 
 **Triggers**: "update rector", "rector.php", "composer-based sets", "DrupalSetProvider"
 **Purpose**: Migrate Drupal Rector config to Composer-based sets (auto version selection)

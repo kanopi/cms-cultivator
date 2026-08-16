@@ -153,9 +153,10 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 
 **What it does:**
 - Analyzes `git diff --staged`
-- Generates conventional commit message
-- Follows project's commit style
+- Generates one conventional commit message and presents it for approval
+- Follows the repository's existing commit style
 - Includes proper scope and description
+- Appends an `Assisted-by:` trailer when AI assisted the change itself
 
 **Example:**
 ```
@@ -179,26 +180,28 @@ Would you like me to commit with this message?
 
 **Automatically triggers when you:**
 - Ask "does this follow standards?"
-- Show code and ask "is this properly formatted?"
-- Mention "coding standards", "PHPCS", or "ESLint"
+- Ask what to run after editing PHP, Twig, JS, or SCSS
+- Mention "coding standards", "linting", "PHPCS", "PHPStan", "Rector", or "ESLint"
 - Ask "should I fix the style?"
 
 **What it does:**
-- Detects project type (Drupal/WordPress/JavaScript)
-- Runs appropriate linter (PHPCS, ESLint)
-- Identifies style violations
-- Provides fixes for common issues
+- Reads the `scripts` blocks in `composer.json` and `package.json` to find the
+  project's own commands, at the level that owns the changed files
+- Prefixes with `ddev` when `.ddev/` is present
+- Runs auto-fix before check-only (`phpcbf` then `phpcs`, `format` then `lint:js`)
+  and verifies afterward
+- Falls back to raw tool invocations when no script alias exists
+- Reports remaining violations with `file:line` and the re-verify command
 
 **Example:**
 ```
-You: "Does this follow WordPress coding standards?"
-Claude: "Let me check against WordPress Coding Standards...
+You: "I just edited the SCSS in the theme — what do I need to run?"
+Claude: "The theme's package.json defines lint:css and build.
 
-✅ Proper tab indentation
-✅ Output properly escaped
-⚠️ Missing docblock
+ddev npm run lint:css   # wp-scripts lint-style
+ddev npm run build      # compile the production assets
 
-Overall good! Just add a docblock above the function."
+Running both now..."
 ```
 
 **Explicit invocation:** `/code-standards-checker` - For comprehensive project-wide standards checks
@@ -454,6 +457,8 @@ Don't try to "game" the system—just describe what you need:
 | pr-review | "review this PR", "review my changes" | PR review or pre-PR self-review | `pr-review` |
 | pr-release | "prepare a release", "generate a changelog" | Changelog + deployment checklist | `pr-release` |
 | worktree-manager | "new worktree", "work on two tickets at once" | Parallel tickets/sessions with DDEV isolation | `worktree-manager` |
+| ddev-workflow | "site won't load", "fresh database", `ddev init`, `db-refresh` | Running a Kanopi DDEV site day to day: init, databases, front-end build, e2e suites | `ddev-workflow` |
+| ddev-docker-cleanup | "low on disk", "prune Docker", "unused volumes" | Reclaiming DDEV/Docker disk safely, with the databases protected | `ddev-docker-cleanup` |
 | code-standards-checker | "standards", "style" | Code review | `code-standards-checker` |
 | test-scaffolding | "need tests", "how to test" | Single class tests | `test-scaffolding` |
 | test-plan-generator | "test plan", "QA" | Test scenarios | `test-plan-generator` |

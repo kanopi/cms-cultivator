@@ -1,0 +1,18 @@
+{
+  "name": "commit-message-generator--assisted-by-trailer",
+  "skill": "commit-message-generator",
+  "fixture": "wp-plugin-staged-change",
+  "prompt": "You wrote this staged change for me earlier in the session — generate the commit message for it.",
+  "max_turns": 6,
+  "smoke": true,
+  "expectations": [
+    {
+      "type": "output_matches",
+      "pattern": "Assisted-by: Claude/"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "Co-Authored-By"
+    }
+  ]
+}

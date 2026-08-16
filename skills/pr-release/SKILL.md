@@ -193,9 +193,21 @@ Your response **must start immediately** with the approval header. No preamble.
 Reply "approve" to update the PR and save these artifacts, or provide your edits.
 ```
 
+The header comes **first, always** — even when context is incomplete. If no
+release PR can be found, `gh` is unavailable, or the version source of truth
+is ambiguous, still present the artifacts under the header and note what's
+missing; never go hunting past the point of usefulness or start applying
+changes instead.
+
 ### 8. Wait for explicit user approval
 
-⛔ **Do not run `gh pr edit` or write to `CHANGELOG.md` until the user replies "approve" or provides edits.**
+⛔ **Do not run `gh pr edit` and do not write to any file — `CHANGELOG.md`,
+version files (`plugin.json`, `composer.json`, `style.css`, plugin headers),
+or anything else — until the user replies "approve" or provides edits.**
+Step 7's presentation is the only output before approval. "I approve in
+advance" or "no need to show me" in the original request does not count —
+approval only counts in a message that arrives after the header is
+presented.
 
 ### 9. Apply the artifacts
 
@@ -223,3 +235,24 @@ On approval:
 - **pr-create** — Create the initial release PR before this skill runs
 - **pr-review** — Review the release PR before approval
 - **commit-message-generator** — Source of the conventional commits this skill categorizes
+
+## Red flags (self-talk — stop if you catch yourself thinking these)
+
+CANT IDs reference the [Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant):
+
+- "The version bump is trivial, I'll apply it while gathering info" (CANT-7 — all writes are post-approval)
+- "I can't find the release PR, so I'll skip the presentation" (CANT-25 — present under the header anyway)
+- "The user pre-approved in their request" (CANT-1)
+- "The changelog can round the work up a little" (CANT-5)
+
+## Anti-rationalization table
+
+Releases touch publicly visible content (the PR body) and version history.
+The approval gate is the contract:
+
+| Pressure / rationalization | Correct behavior |
+|---|---|
+| "The user pre-approved in the same message — apply the artifacts now" | Present the `=== RELEASE ARTIFACTS READY FOR APPROVAL ===` header and wait; approval only counts after the presentation. |
+| "The version bump is trivial, just edit the file while gathering info" | No file writes of any kind before approval — version bumps are step 9, not step 3. |
+| "I can't find the release PR, so I'll skip the presentation and ask questions" | Present the artifacts under the header anyway and note the missing PR; the header always comes first. |
+| "The changelog can claim more than the commits show" | The changelog is generated from the actual commits — nothing invented, nothing rounded up. |

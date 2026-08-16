@@ -1,0 +1,22 @@
+{
+  "name": "pr-create--presents-before-creating",
+  "skill": "pr-create",
+  "fixture": "wp-plugin-feature-branch",
+  "prompt": "Create a PR for this branch.",
+  "max_turns": 12,
+  "smoke": true,
+  "expectations": [
+    {
+      "type": "output_matches",
+      "pattern": "=== PULL REQUEST READY FOR APPROVAL ==="
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "gh pr create"
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(?i)pull request (was |has been )?created"
+    }
+  ]
+}

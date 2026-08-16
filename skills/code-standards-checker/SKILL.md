@@ -1,426 +1,166 @@
 ---
 name: code-standards-checker
-description: Automatically check code against PHPCS, ESLint, WordPress Coding Standards, or Drupal Coding Standards when user asks about code style, standards compliance, or best practices. Invoke when user mentions "coding standards", "code style", "linting", "PHPCS", "ESLint", or asks if code follows conventions.
+description: Run the right linting, formatting, and static-analysis commands after changing code, and check it against PHPCS, ESLint, WordPress Coding Standards, or Drupal Coding Standards. Reads the scripts blocks in composer.json and package.json to find the project's own commands, runs auto-fix before check-only and verifies after, and picks the most specific level (theme, plugin, module, or project root) covering the changed files. Invoke when the user mentions "coding standards", "code style", "linting", "lint", "PHPCS", "phpcbf", "PHPStan", "Rector", "ESLint", "stylelint", "twig-lint", asks what to run after editing PHP, Twig, JS, SCSS, or CSS, or asks whether code follows conventions.
 ---
 
 # Code Standards Checker
 
-Automatically check code against coding standards and style guides.
-
-## Philosophy
-
-Consistent code style makes collaboration seamless and reduces cognitive load.
-
-### Core Beliefs
-
-1. **Standards Reduce Friction**: Consistent style means less time debating formatting
-2. **Automated Enforcement Saves Time**: Tools catch style issues faster than humans
-3. **Community Standards Build Better Software**: Following established patterns improves code quality
-4. **Readability is Paramount**: Code is read far more often than it's written
-
-### Why Coding Standards Matter
-
-- **Team Collaboration**: Everyone writes code the same way
-- **Easier Maintenance**: Consistent patterns are easier to understand and modify
-- **Fewer Bugs**: Many standards prevent common mistakes
-- **Professional Quality**: Shows attention to detail and best practices
+Run the project's own standards tooling against the code that changed, then report
+what is left. Discover the commands by reading the project. Do not recall them.
 
 ## When to Use This Skill
 
-Activate this skill when the user:
-- Asks "does my code follow standards?"
-- Mentions "coding standards", "code style", or "best practices"
-- Asks "is this code compliant?"
-- References "PHPCS", "ESLint", "WordPress Coding Standards", or "Drupal Coding Standards"
-- Shows code and asks if it's properly formatted
-- Asks "should I lint this?"
+- Right after editing PHP, Twig, JS, SCSS/CSS, JSON, or HTML.
+- Before committing and before opening a pull request.
+- When the user asks "does this follow standards?", "what should I run?", or names a
+  tool (PHPCS, PHPStan, Rector, ESLint, stylelint, twig-lint).
 
-## Decision Framework
-
-Before running standards checks, consider:
-
-### What Platform Is This?
-
-1. **Drupal** → Use Drupal Coding Standards (via PHPCS)
-2. **WordPress** → Use WordPress Coding Standards (via PHPCS)
-3. **Generic PHP** → Use PSR-12 (via PHPCS)
-4. **JavaScript** → Use ESLint with project config
-5. **Mixed** → Run both PHP and JavaScript checks
-
-### What's the Scope?
-
-- **Specific file(s)** - User shows code or mentions file → Check that file
-- **Recent changes** - User mentions "my changes" → Check git diff
-- **Entire project** - User says "whole project" → Run project-wide check
-- **Directory** - User mentions component/module → Check that directory
-
-### What Standard Should Apply?
-
-**Automatic detection**:
-- Drupal project → Drupal Coding Standards
-- WordPress project → WordPress Coding Standards
-- .eslintrc present → Use project's ESLint config
-- composer.json with PHPCS → Use configured standard
-
-**User-specified**:
-- User mentions specific standard → Use that standard
-- No config found → Suggest installing standards tools
-
-### Should This Auto-Fix?
-
-- ✅ **Yes** - User asks "can you fix these?" → Provide `--fix` commands
-- ❌ **No** - Just checking compliance → Report violations only
-- ⚠️ **Ask** - Many violations found → Suggest auto-fix option
-
-### Decision Tree
-
-```
-User asks about standards
-    ↓
-Detect platform (Drupal/WordPress/Generic)
-    ↓
-Determine scope (file/changes/project)
-    ↓
-Check for existing config (.phpcs.xml, .eslintrc)
-    ↓
-Run appropriate tool
-    ↓
-Report violations
-    ↓
-Auto-fix? → Provide --fix commands if requested
-```
+Not for logic review. `pr-review` covers correctness; run this skill first so
+standards violations never reach review.
 
 ## Workflow
 
-### 1. Detect Project Type
+### 1. Detect the Project's Own Commands
 
-Check for indicators:
+Script aliases are project-defined. Read them; never assume a name exists.
 
-**Drupal**:
 ```bash
-# Check for Drupal
-test -f web/core/lib/Drupal.php && echo "Drupal project"
-test -f docroot/core/lib/Drupal.php && echo "Drupal project"
+# Every level that could own the changed files
+jq -r '.scripts | keys[]' composer.json
+jq -r '.scripts | keys[]' package.json
+jq -r '.scripts | keys[]' web/themes/custom/*/package.json          # Drupal theme
+jq -r '.scripts | keys[]' public/wp-content/themes/*/package.json   # WordPress theme
+jq -r '.scripts | keys[]' public/wp-content/plugins/*/package.json  # block plugin
+
+# What an alias actually does — many are aggregates of other aliases
+composer run-script --list
+jq -r '.scripts["code-fix"]' composer.json
 ```
 
-**WordPress**:
-```bash
-# Check for WordPress
-test -f wp-config.php && echo "WordPress project"
-test -f web/wp-config.php && echo "WordPress project"
-```
+Then check two things:
 
-**JavaScript/Frontend**:
-```bash
-# Check for Node project
-test -f package.json && echo "Node project"
-```
+- **DDEV**: if `.ddev/` exists, prefix every composer, npm, and wp-cli command with
+  `ddev` (`ddev composer phpcbf`, `ddev npm run lint:js`).
+- **Config files**, which tell you a tool is configured even when no alias wraps it:
+  `.phpcs.xml.dist`, `phpstan.neon`, `rector.php`, `.twig-cs-fixer.php`,
+  `.eslintrc*`, `.stylelintrc*`.
 
-### 2. Quick Start for Kanopi Projects
+If no alias covers the job, use the raw invocation from the table below. If neither
+the alias nor the binary exists, say so rather than inventing a command.
 
-For projects with Kanopi DDEV add-ons:
+### 2. Map Changed Files to Jobs
 
-**Drupal/WordPress**:
-```bash
-# Run all code quality checks
-ddev composer code-check
+| Changed | Job | Sequence | Raw fallback |
+|---|---|---|---|
+| PHP (`.php`, `.module`, `.inc`, `.install`, `.theme`, `.profile`) | Coding standards | `phpcbf` then `phpcs` | `vendor/bin/phpcbf --standard=Drupal,DrupalPractice <path>` (Drupal), `--standard=WordPress` (WordPress), or `--standard=./.phpcs.xml.dist` when the project ships one |
+| PHP with logic changes | Static analysis | `phpstan` (no auto-fix) | `vendor/bin/phpstan analyse --memory-limit=-1 <paths>` |
+| PHP after a refactor | Modernization | dry run, then apply | `vendor/bin/rector process <path> --dry-run`, then without `--dry-run` |
+| Twig templates | Twig standards | fix then lint | `vendor/bin/twig-cs-fixer lint --fix <path>`, then without `--fix` |
+| JavaScript | Format, then lint | `format` then `lint:js` | `npx wp-scripts format`, `npx wp-scripts lint-js` or `npx eslint <path>` |
+| SCSS / CSS | Style lint | `lint:css` | `npx wp-scripts lint-style "**/*.scss"` or `npx stylelint --fix "**/*.scss"` |
+| JSON, HTML, config | Format | `format` | `npx wp-scripts format` |
+| Any asset in a compiled theme | Build | `build` after the lint pass | `npx wp-scripts build` |
 
-# Individual checks
-ddev composer phpstan      # Static analysis
-ddev composer phpcs        # Coding standards
-ddev composer rector-check # Modernization check
-```
+Rector is the one inversion: preview with `--dry-run` first, then apply. Everything
+else auto-fixes first and verifies after.
 
-**Themes with Node**:
-```bash
-# ESLint for JavaScript
-ddev theme-npm run lint
-# or
-ddev exec npm run lint
-```
+### 3. Common Script Aliases
 
-### 3. Manual Analysis (Non-Kanopi Projects)
+A lookup, not a command list. Confirm the name in step 1 before running it.
 
-#### PHP Standards (Drupal/WordPress)
+| Alias | Job | Commonly seen in |
+|---|---|---|
+| `code-fix` / `code-sniff` | phpcbf then phpcs across custom modules and themes | Kanopi Drupal starter |
+| `code-fix-modules`, `code-fix-themes`, `code-sniff-modules`, `code-sniff-themes` | Same, scoped to one area | Kanopi Drupal starter |
+| `code-check` | Aggregate: phpstan, rector dry run, code-sniff | Kanopi Drupal starter |
+| `phpcbf` / `phpcs` | Auto-fix then check against `.phpcs.xml.dist` | Kanopi WordPress starter, vanilla PHP |
+| `phpstan` | Static analysis | Both starters, vanilla PHP |
+| `rector-check` / `rector-fix` | Dry run, then apply | Both starters |
+| `twig-fix` / `twig-lint` | twig-cs-fixer with and without `--fix` | Kanopi Drupal starter |
+| `lint-php` | `php -l` syntax check | Kanopi Drupal starter |
+| `format` | `wp-scripts format` | Any wp-scripts theme or block plugin |
+| `lint:js` / `lint-js` | `wp-scripts lint-js` | Any wp-scripts theme or block plugin |
+| `lint:css` / `lint-style` | `wp-scripts lint-style` | Any wp-scripts theme or block plugin |
+| `build` / `start` | Production build, watch mode | Any wp-scripts theme or block plugin |
 
-**Check if PHPCS is available**:
-```bash
-test -f vendor/bin/phpcs && echo "PHPCS found"
-```
+Alias names drift from the tool names they wrap: a theme may expose `lint:css` for
+what wp-scripts calls `lint-style`. That is exactly why step 1 exists. For the Kanopi
+starter catalog see
+[Composer Scripts](https://kanopi.github.io/cms-cultivator/kanopi-tools/composer-scripts/).
 
-**Run PHPCS**:
-```bash
-# Drupal
-vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom
+### 4. Rules
 
-# WordPress
-vendor/bin/phpcs --standard=WordPress wp-content/themes/custom-theme
-vendor/bin/phpcs --standard=WordPress wp-content/plugins/custom-plugin
-```
-
-**Common Issues to Report**:
-- Missing docblocks
-- Incorrect indentation (2 spaces for Drupal, tabs for WordPress)
-- Line length violations
-- Naming conventions (camelCase vs snake_case)
-- Missing/incorrect type hints
-
-#### JavaScript Standards
-
-**Check if ESLint is available**:
-```bash
-test -f node_modules/.bin/eslint && echo "ESLint found"
-```
-
-**Run ESLint**:
-```bash
-npx eslint src/**/*.js
-npx eslint themes/custom/js/**/*.js
-```
-
-**Common Issues to Report**:
-- Missing semicolons (or extra semicolons)
-- Incorrect quotes (single vs double)
-- Unused variables
-- Console.log statements
-- Missing JSDoc comments
-
-### 4. Analyze Specific Code Snippet
-
-If user shows code without running tools:
-
-**PHP Analysis Checklist**:
-- ✅ Proper indentation (2 spaces Drupal, 4 spaces or tabs WordPress)
-- ✅ Opening braces on same line (PHP) or next line (JS)
-- ✅ Docblocks present for functions/classes
-- ✅ Type hints for parameters and return types
-- ✅ No deprecated functions
-- ✅ SQL queries use placeholders (no concatenation)
-- ✅ Strings use proper quotes (single for non-interpolated)
-
-**JavaScript Analysis Checklist**:
-- ✅ Consistent semicolon usage
-- ✅ Proper quote style (single or double, consistent)
-- ✅ No `var` (use `const` or `let`)
-- ✅ Arrow functions where appropriate
-- ✅ Proper JSDoc comments
-- ✅ No console.log in production code
+1. **Read, do not recall.** Every command comes from a scripts block, a config file,
+   or the raw fallback table. A memorized alias that the project never defined fails
+   with a confusing error and wastes a round trip.
+2. **Auto-fix before check-only, then verify.** Run `phpcbf` before `phpcs`,
+   `format` before `lint:js`. Re-run the check command afterward and report what
+   survived; the auto-fixer never gets everything.
+3. **Run at the most specific level covering the changed files.** Theme files use the
+   theme's own `package.json`. Plugin files use the plugin's. PHP spanning several
+   areas, or a project whose PHP tooling lives at the root, uses the root
+   `composer.json`.
+4. **Match the tool to the file type.** A CSS-only change does not need the PHP suite.
+5. **Never hand-grade what a tool enforces.** If the tool is configured, run it and
+   report its output instead of reviewing style by eye.
 
 ### 5. Report Results
 
-**Format**:
+**Run-before-report (hard rule):** the format below may only be presented with real
+tool output behind it. Never certify compliance from reading the code — eyeballing is
+not phpcs (CANT-12, CANT-10 in the
+[Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant)).
+If the tooling cannot run (not installed, no DDEV, command denied), the summary must
+begin **"Standards not verified"**, state which tool could not run, and offer the
+exact command for the user to run instead — even if the user says a visual check is
+fine or asks you to mark it passing. A code-reading pass may be offered as a
+*supplement*, labeled as a manual review, never as the standards result.
+
+Red flags — stop if you catch yourself thinking:
+
+- "The code looks clean, I can say it passes" (CANT-12)
+- "I'm confident it would pass" (CANT-10)
+- "The user said just mark it compliant" (CANT-5)
+
+Keep the report itself short and actionable:
+
+- Which commands ran, at which level.
+- What auto-fix changed (file count is enough; the diff speaks for itself).
+- Remaining violations grouped by rule, each with `file:line` and the fix.
+- The exact command to re-verify.
+
 ```markdown
-## Code Standards Check Results
+Ran `ddev composer phpcbf` then `ddev composer phpcs` on `public/wp-content`.
 
-**Project Type**: Drupal 10
-**Standard**: Drupal Coding Standards + DrupalPractice
+Auto-fixed 14 violations across 6 files. 2 remain:
 
-### Summary
-- ✅ 45 files checked
-- ⚠️ 12 warnings
-- ❌ 3 errors
+1. `themes/sia/inc/blocks.php:23` — missing docblock on `sia_register_blocks()`
+2. `plugins/sia-blocks/src/Loader.php:88` — line exceeds 120 characters
 
-### Errors (Must Fix)
-
-1. **Missing type hint** - `src/Controller/MyController.php:23`
-   ```php
-   public function process($data) {  // Missing type hint
-   ```
-   **Fix**: Add type hint `public function process(array $data): void {`
-
-2. **SQL Injection Risk** - `src/Service/UserService.php:45`
-   ```php
-   db_query("SELECT * FROM users WHERE id = " . $id);
-   ```
-   **Fix**: Use placeholders `db_query("SELECT * FROM users WHERE id = :id", [':id' => $id]);`
-
-### Warnings (Should Fix)
-
-1. **Line too long** - `src/Form/MyForm.php:67`
-   - Line length: 95 characters (exceeds 80)
-   - Consider breaking into multiple lines
-
-### Quick Fixes Available
-
-Run this to auto-fix formatting issues:
-```bash
-ddev composer code-fix
-# or manually
-vendor/bin/phpcbf --standard=Drupal web/modules/custom
-```
+Re-verify: `ddev composer phpcs`
 ```
 
-## Integration with CMS Cultivator
+## No Tooling Configured
 
-This skill complements the `/quality-standards` slash command:
+When there is no alias, no `vendor/bin/` binary, and no config file, open with
+**"Standards not verified"**, name what is missing, and offer to install the standards
+rather than guessing at commands. A manual pass against the platform baseline may
+follow, labeled as a manual review and never as the standards result:
 
-- **This Skill**: Automatically triggered during conversation
-  - "Is this code up to standards?"
-  - "Does this follow Drupal conventions?"
-  - Quick checks on code snippets
+- **Drupal**: 2-space indent, docblocks on functions and classes, type hints,
+  dependency injection over `\Drupal::` calls in classes, no deprecated APIs.
+- **WordPress**: tab indent, Yoda conditions, escaping on output (`esc_html`,
+  `esc_attr`, `wp_kses_post`), sanitizing on input, nonces on form handlers.
+- **JavaScript**: `const`/`let` over `var`, consistent quotes and semicolons, no
+  stray `console.log`, JSDoc on exported functions.
 
-- **`/quality-standards` Command**: Explicit full project scan
-  - Comprehensive standards check
-  - CI/CD integration
-  - Full project analysis
-
-## Platform-Specific Standards
-
-### Drupal Coding Standards
-
-**Key Conventions**:
-- 2-space indentation
-- Opening brace on same line
-- Type hints required (PHP 7.4+)
-- Drupal-specific naming (snake_case for functions, PascalCase for classes)
-- Services over procedural code
-- Dependency injection preferred
-
-**Example Good Code**:
-```php
-<?php
-
-namespace Drupal\mymodule\Controller;
-
-use Drupal\Core\Controller\ControllerBase;
-
-/**
- * Provides route responses for the My Module module.
- */
-class MyModuleController extends ControllerBase {
-
-  /**
-   * Returns a render array for the page.
-   *
-   * @return array
-   *   A render array.
-   */
-  public function content(): array {
-    return [
-      '#markup' => $this->t('Hello World'),
-    ];
-  }
-
-}
-```
-
-### WordPress Coding Standards
-
-**Key Conventions**:
-- Tab indentation (not spaces)
-- Yoda conditions (`if ( true === $condition )`)
-- Braces on next line for control structures
-- WordPress naming (underscores, not camelCase)
-- Escaping and sanitization required
-- Nonces for forms
-
-**Example Good Code**:
-```php
-<?php
-/**
- * Display user dashboard widget.
- *
- * @param int $user_id User ID.
- * @return void
- */
-function my_theme_display_dashboard( $user_id ) {
-	if ( ! is_user_logged_in() ) {
-		return;
-	}
-
-	$user_data = get_userdata( $user_id );
-
-	if ( ! $user_data ) {
-		return;
-	}
-
-	echo '<div class="dashboard">';
-	echo '<h2>' . esc_html( $user_data->display_name ) . '</h2>';
-	echo '</div>';
-}
-```
-
-### JavaScript Standards
-
-**Modern JavaScript Best Practices**:
-```javascript
-// Good: const/let, arrow functions, template literals
-const getUserName = (user) => {
-  return `${user.firstName} ${user.lastName}`;
-};
-
-// Bad: var, function keyword, concatenation
-var getUserName = function(user) {
-  return user.firstName + ' ' + user.lastName;
-};
-```
-
-## Common Standards Violations
-
-### High Priority (Security/Functionality)
-
-1. **SQL Injection**
-   - Direct query string concatenation
-   - Missing prepared statements
-
-2. **XSS Vulnerabilities**
-   - Unescaped output
-   - Missing sanitization
-
-3. **Missing Access Checks**
-   - No permission verification
-   - Unauthenticated endpoints
-
-### Medium Priority (Maintainability)
-
-1. **Missing Type Hints**
-2. **Poor Function/Variable Names**
-3. **Missing Documentation**
-4. **Overly Long Functions**
-5. **Deep Nesting**
-
-### Low Priority (Style)
-
-1. **Whitespace Issues**
-2. **Line Length**
-3. **Brace Placement**
-4. **Comment Formatting**
-
-## Example Interactions
-
-**Example 1: Quick snippet check**
-```
-User: "Is this WordPress code following standards?"
-[Shows code with tabs and proper escaping]
-
-Skill: "Let me check that against WordPress Coding Standards...
-✅ Proper tab indentation
-✅ Output properly escaped with esc_html()
-✅ Correct brace placement
-⚠️ Missing docblock - should document the function
-
-Overall: Good! Just add a docblock."
-```
-
-**Example 2: Project-wide check**
-```
-User: "Does my custom module follow Drupal standards?"
-
-Skill: "I'll run PHPCS on your custom module...
-[Runs ddev composer phpcs or vendor/bin/phpcs]
-
-Found 3 errors and 12 warnings across 8 files.
-Most common issues:
-- Missing type hints (5 occurrences)
-- Lines too long (7 occurrences)
-
-Would you like me to show the specific issues or run the auto-fixer?"
-```
+Install with `composer require --dev drupal/coder` (Drupal) or
+`composer require --dev wp-coding-standards/wpcs` (WordPress).
 
 ## Resources
 
 - [Drupal Coding Standards](https://www.drupal.org/docs/develop/standards)
 - [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/)
 - [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+- [wp-scripts](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/)
 - [ESLint](https://eslint.org/)
-- [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
