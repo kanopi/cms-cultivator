@@ -17,8 +17,18 @@ require_deps() {
   fi
 }
 
-# bash 3.2 (macOS system bash) has no `mapfile`. Provide a minimal shim that
-# covers the only usage here: `mapfile -t VAR < <(...)`.
+# These scripts target bash 3.2, the system bash on macOS (/bin/bash, 3.2.57),
+# not just bash 4+ from Homebrew. Two accommodations follow, both backward
+# compatible so the scripts still run unmodified on bash 5:
+#
+#   1. The `mapfile` shim below. bash 3.2 has no `mapfile` builtin.
+#   2. `${ARR[@]+"${ARR[@]}"}` wherever an array is expanded. Under `set -u`,
+#      bash 3.2 treats "${ARR[@]}" on an *empty* array as an unbound variable
+#      and aborts. The `+` form expands to nothing instead. Do not "simplify"
+#      those to "${ARR[@]}" — it breaks only on macOS system bash, and only
+#      when the array is empty, which is the no-projects-found path.
+#
+# The shim covers the only usage here: `mapfile -t VAR < <(...)`.
 if ! type mapfile >/dev/null 2>&1; then
   mapfile() {
     local __var="" __line
