@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Documentation site brought in line with the 2.2.0 skills. `ddev-workflow` and
+  `ddev-docker-cleanup` were registered in the Skills Reference Table but missing
+  from the command overview table, the quick start, the installation category
+  list, and the index examples; all four now carry them.
+- `docs/commands/code-quality.md` described `code-standards-checker`'s old shape:
+  a "Quick Start (Kanopi Projects)" block of hardcoded aliases plus a fallback for
+  everyone else. Replaced with the discovery flow the skill actually follows, and
+  the "Standards not verified" contract.
+- `docs/commands/pr-workflow.md` described `pr-review` as producing a
+  "comprehensive review report" with a "detailed test plan". It now documents the
+  two axes, the evidence and confidence filters, the 8-finding cap with severity
+  prefixes, and `No issues found` as a valid complete result.
+- Three places claimed quality skills run `ddev composer code-check`. They now say
+  the commands are read from the project's own scripts, with those names as
+  examples.
+
 ### Added
 
 - `ddev-docker-cleanup`: reclaim DDEV and Docker disk and memory by removing

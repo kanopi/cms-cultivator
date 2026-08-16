@@ -45,6 +45,8 @@ Natural language (skills auto-activate):
 "Create a block from this design"    → builds a WordPress block pattern
 "I need tests for this class"        → generates test scaffolding
 "Does this follow Drupal standards?" → checks code standards
+"My local site won't load"           → gets DDEV running and the database in
+"Docker is eating my disk"           → reclaims space without losing databases
 ```
 
 Explicit invocation:

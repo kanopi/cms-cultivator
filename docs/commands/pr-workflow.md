@@ -92,21 +92,27 @@ Review a pull request or analyze your own changes before creating a PR.
 - `size` - Size and complexity assessment
 - `performance` - Performance optimization opportunities
 
-**What it analyzes:**
-- Code quality and maintainability
-- Security vulnerabilities (SQL injection, XSS, CSRF)
-- Breaking changes and migration paths
-- PR size and complexity
-- Test coverage
-- Drupal/WordPress best practices
-- Deployment considerations
+**What it reviews**, on two axes:
+- **Spec** — does the diff do what the linked Teamwork ticket and PR body say it does?
+  Missing, partial, incorrect, or out-of-scope requirements, each quoting the
+  requirement line
+- **Correctness** — bugs in the code the diff touched, including blast radius (a
+  selector, hook, or override that also reaches things the ticket never mentioned) and
+  silent failure (a poll, retry, or fallback that swallows its own failure path)
+
+**What it filters out.** Every candidate must carry a concrete failure scenario, and any
+claim about contrib, plugin, or vendor behavior must cite the `file:line` actually read.
+Candidates are then scored 0–100 and only 80-and-above is reported. A fourteen-item CMS
+exclusion list drops what CI already catches, pre-existing issues, unmodified lines, and
+the other usual false positives.
 
 **Outputs:**
-- Comprehensive review report
-- Size and complexity analysis
-- Breaking changes with severity ratings
-- Detailed test plan
-- Actionable recommendations
+- At most 8 findings, most severe first, each with a severity prefix (Critical,
+  Required, Optional, Nit, FYI), a `file:line`, the failure scenario, and the fix
+- Only the sections that have content — there is no fixed template
+- `No issues found`, plus one line on what was checked, when nothing clears the bar.
+  A clean review is a real result, not a failure to look hard enough
+- A reasoned approve / request changes / comment recommendation
 
 ---
 
