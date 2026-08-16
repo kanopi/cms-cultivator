@@ -1,209 +1,170 @@
 ---
 name: pr-review
 description: >-
-  Review a pull request or analyze local changes before submitting. Checks the diff
-  against what the ticket asked for, then for correctness bugs, and reports only
-  findings that survive a concrete failure scenario and a confidence floor. Silence is
-  a valid result. Auto-activates when the user mentions reviewing a PR, asks for code
-  review, wants to analyze changes before submitting, or mentions "pr-review self".
-  Invoke when the user provides a PR number to review or says "review self", "review
-  my changes", or "pr review". Supports focus areas: code, security, breaking,
-  testing, size, performance.
+  Review a pull request or analyze local changes before submitting. Checks the diff against what
+  the ticket asked for, then for correctness bugs, and reports only findings that survive a
+  concrete failure scenario and verification against the file. Findings post as inline
+  suggestions, and silence is a valid result. Invoke when the user gives a PR number, asks for a
+  code review, wants changes analyzed before submitting, or says "pr review", "review self",
+  "review my changes", or "pr-review self". Focus areas: code, security, breaking, testing, size,
+  performance.
 ---
 
 # PR Review
 
-Review a pull request, or your own changes before you open one. Runs directly in the
-main session; no agents.
+Report only findings that survive verification. A fabricated finding forces the reader to
+re-check everything. Usage: "Review PR #123", "review my changes".
 
-Ten plausible findings containing two fabrications is worse than two verified
-findings, because the reader now has to check everything. Every mechanism below exists
-to delete candidates, not to generate them.
+## Output
 
-Usage: "Review PR #123", "review my changes", optionally with a focus area.
+Copy this shape in every mode. Delivery is decided in step 6 and never changes what you write.
+
+````markdown
+Request changes. The overflow rule clips two card variants the ticket never mentions, and the
+alert dismissal reads an option name nothing writes.
+
+**Critical: the dismissal expiry is read from an option nothing writes**
+- File: `inc/class-alerts.php:88`
+- Issue: The save path writes `alert_dismissed_until`, so this read always falls back to 0 and the alert never stays dismissed.
+- Fix:
+```suggestion
+	$until = (int) get_option( 'alert_dismissed_until', 0 );
+```
+
+**Important: `.card` overflow clips every card variant**
+- File: `css/blocks.css:31`
+- Issue: `.card--profile` and `.card--stat` hang their badge outside the box; this rule cuts it off.
+- Fix:
+```suggestion
+.card--event { overflow: hidden; }
+```
+
+**Minor: `card--event` is missing from the variant table**
+- File: `css/blocks.css:31`
+- Apply: `docs/components/cards.md` (not in this diff)
+- Issue: The table is how the next developer finds a variant, so an absent one gets rebuilt by hand.
+- Fix: Add a `card--event` row beside the existing `card--profile` row.
+
+Unverified: the 781px stacking, since no browser ran here.
+````
+
+Rules for the shape:
+
+- A review is three parts: one verdict line, findings most severe first, one closing
+  `Unverified:` line. Every sentence lives in one of these slots. A sentence with no slot is
+  deleted, not relocated.
+- Each label holds one line. `Issue:` is one short sentence: the input or state, then the wrong
+  result. Write "the last pass reads `$posts[3]` of a 3-item array and fatals on null", not
+  "`count()` is a valid index only up to `count() - 1`, so the loop runs one pass too many and
+  reads an undefined offset, throwing a fatal whenever posts exist". The proof stays in your
+  head; the `Fix:` carries the mechanism.
+- Severity: `Critical` ships a bug, security hole, or data loss. `Important` blocks the merge.
+  `Minor` is the author's call. Approve when the change improves code health, even if imperfect.
+- `File:` is where the problem shows, on every finding. `Apply:` is where the change goes,
+  omitted when that is the same line.
+- `Fix:` is a ```suggestion``` block replacing exactly the `Apply:` line (or the `File:` line
+  when there is no `Apply:`), or one named concrete action. No line to replace, no block.
+- `Unverified:` names what could not be checked, including shared selectors, classes, hooks, or
+  config keys the diff touches that you could not clear.
 
 ## Workflow
 
-### 0. Eligibility gate
+1. **Gate.** Closed, merged, draft, already reviewed with no new commits, automated (dependency
+   bumps, lockfiles, generated files), or purely mechanical (formatting, a uniform rename,
+   comments only): reply `Skipping review:` with the reason and stop.
+2. **Target.** A PR number: review that PR in this session. "self" or "my changes": spawn the
+   specialist (below). A prompt naming a base and head: you are the spawned specialist or an
+   automated routine, so review that diff here, with no dialogue, and never spawn. None of
+   these: ask.
+3. **Context.** In parallel: `gh pr view <n> --json title,body,baseRefName,changedFiles`,
+   `gh pr diff <n>`, `gh pr checks <n>`, and `gh issue view <n>` for any issue the PR or its
+   commits reference. Local diff: against the default branch, plus uncommitted changes. No
+   `gh`: ask for the diff and say what you could not see. Over 1,000 lines: suggest a split.
+4. **Spec axis.** Follow the Teamwork link in the PR body, then a GitHub issue the PR or its
+   commits reference, then the PR body. Quote the requirement line for each spec finding.
+   When none of these carries requirements, say so in one line and skip this axis. Never
+   invent a requirement.
+5. **Correctness axis.** Bugs in the changed lines and in the unchanged lines of any function
+   the diff touches. Three lenses direct the investigation. Their answers reach the output only
+   as findings that survive step 6, or on the `Unverified:` line, never as narration.
+   - **Blast radius.** For every selector, class, hook, filter, or config key the diff touches,
+     search the theme, plugin, and content for the other things carrying it.
+   - **Silent failure.** For every poll, retry, timeout, fallback, or `catch`, find the branch
+     that runs when it gives up and what that branch logs. A bounded loop that expires without
+     a warning is a defect.
+   - **Removed behavior.** For every line the diff deletes or replaces, name the invariant it
+     enforced, then find where the new code re-establishes it. Nowhere is a candidate.
+6. **Verify, then deliver.** Re-read each finding against the file and vote:
+   - **CONFIRMED**: you can name the inputs or state that trigger it and the wrong result.
+     Quote the line.
+   - **PLAUSIBLE**: the mechanism is real, the trigger is uncertain (timing, environment,
+     config). State what would confirm it in the `Issue:` line.
+   - **REFUTED**: factually wrong or guarded elsewhere. Quote the line that proves it, then
+     drop the finding.
 
-Before reading anything, check whether this PR should be reviewed at all. Skip and
-say which reason applies:
+   Report CONFIRMED and PLAUSIBLE findings only. Read every ```suggestion``` block as the
+   literal replacement for its `Apply:` line. Then check each finding's form: `Issue:` holds
+   exactly one sentence; a second sentence, a worked instance, or a restated rule gets deleted
+   here, not shipped. If nothing survives, the whole review is two lines, `No issues found`
+   and one sentence naming the axes and files covered, plus `Unverified:` when needed.
+   Nothing before them, no list of what checked out. Report what you have; never invent a
+   finding to hit a count.
 
-- Closed or merged
-- Draft
-- Already reviewed by you, unless there are new commits since
-- Automated (dependency bumps, lockfile-only, generated files, release chores)
-- Trivially mechanical: pure formatting, a rename applied uniformly, comment-only
+   Delivery: a self-review returns the bare review and nothing is posted. For a PR, ask "Post
+   this review?", format the body per `references/posted-format.md`, and post in one
+   `gh api repos/{owner}/{repo}/pulls/<n>/reviews` call with `event: COMMENT`, `body`, and a
+   `comments` array of `{path, line, body}`. Always `COMMENT`: the review posts as whoever ran
+   the skill, often an automated routine, and an approve or request-changes event from that
+   account gates the PR on that person re-reviewing. The Recommendation checkboxes carry the
+   verdict instead. Use another event only when the user explicitly asks for it. Anchor each
+   finding at its `Apply:` line, or `File:` when there is no `Apply:`; findings whose anchor is
+   not in the diff stay in the body.
 
-When one applies, reply with `Skipping review:` and the reason, and stop. "Skipping
-review: lockfile bump, no reviewable logic" is a complete, correct response. Do not
-review something ineligible just because you were asked to, and do not pad the reply
-with findings to justify the turn.
+## Filters
 
-### 1. Determine target
+Do not report: anything PHPCS, PHPStan, Rector, ESLint, stylelint, or twig-lint catches (point
+at `code-standards-checker`); pre-existing issues in code the diff does not touch, including
+code it only moves; third-party behavior you did not confirm by reading it. Any claim about a
+contrib module, plugin, vendor library, or framework internal quotes the `file:line` you read.
+Never claim a check you ran only in your head; `php -l` accepts `use` after `return`. One
+structural problem outranks ten nits.
 
-- PR number given → review that PR
-- "self" / "my changes" / "before submitting" → review local changes against the
-  default branch
-- Neither → ask
-- Delegated context (prompt names a PR and says "delegated" or "automated routine")
-  → proceed without asking
+No praise, no Strengths section, and no list of what you verified, whatever the heading. No
+empty headings. No shorthand the author would have to ask about. No CANT ids, eval-case names,
+model names, or token costs in an author-facing review.
 
-### 2. Gather context
+## Self-review
 
-**PR:** in parallel, `gh pr view <n> --json title,body,baseRefName,author,additions,deletions,changedFiles`,
-`gh pr diff <n>`, `gh pr checks <n>`.
+The author's context hides the bug. Use a fresh one. Confirm the base ref resolves and the
+diff is non-empty (`git rev-parse`, `git diff --stat`); an empty diff means there is nothing
+to review, so say that and stop. Then:
 
-**Self-review:** resolve the base with
-`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`, then in parallel
-`git log --oneline <base>..HEAD` and `git diff <base>...HEAD`.
+```
+Task(cms-cultivator:pr-review-specialist:pr-review-specialist,
+     prompt="Review the local diff. Base: <default-branch>. Head: HEAD, plus uncommitted
+             changes. Working directory: <cwd>. Output only the bare review.")
+```
 
-**No `gh`:** ask for the description and diff, review what you were given, and say
-what you could not see.
-
-Fetch the ticket too — Kanopi PR bodies link a Teamwork task, and that link is the
-spec for axis 1. With no ticket and no PR body, say so and skip axis 1 rather than
-guessing at what was asked.
-
-Size: XS <10, S 10–100, M 100–400, L 400–1,000, XL >1,000 lines. XL: suggest a split.
-
-### 3. Review on two axes
-
-**Axis 1 — Spec.** Does the diff do what the ticket and PR body say it does? Quote the
-requirement line for each finding.
-
-- A requirement with no implementation
-- A requirement implemented partially
-- A requirement implemented incorrectly: the code runs, but not what was asked
-- Scope creep: changes nothing in the ticket asked for
-
-**Axis 2 — Correctness.** Bugs, in the code the diff touched. Logic errors, unhandled
-states, wrong boundaries, broken assumptions about data or lifecycle, races across
-requests, security defects that are actually reachable.
-
-Two lenses that catch what a diff-shaped reading misses:
-
-**Blast radius.** For every selector, class, hook, filter, or config key the diff
-touches, enumerate what *else* it matches before judging the change correct. Name the
-other layouts, variants, templates, or content types that share it. A CMS block class
-is usually shared by every variant of that block, so a rule hung on the wrapper hits
-the ones the ticket never mentioned. A fix that works and quietly changes a neighbour
-is still a defect, and "the targeted case looks right" is not an answer to "what else
-matches this?"
-
-**Silent failure.** A poll, retry, timeout, fallback, or `catch` that swallows its own
-failure path leaves no signal when it stops working. Ask what the user or the next
-developer sees when the fallback is the branch that runs. A bounded loop that expires
-without a warning is a defect even when it usually succeeds.
-
-Cleanup, convention, and style findings rank below both axes and are the first cut
-when the cap binds.
-
-### 4. Filter every candidate
-
-Nothing reaches the reader without passing all three filters.
-
-#### 4a. Evidence
-
-Every finding states a concrete failure scenario: specific inputs or state leading to
-a specific wrong output, crash, or data problem. "This could be fragile" is not a
-scenario. A candidate that cannot be given one is **dropped, not softened** — hedging
-it into a "consider" bullet is how noise gets in.
-
-Any claim about the behavior of a contrib module, plugin, vendor library, or framework
-internal must cite the `file:line` in that source that you actually opened. No
-citation, no finding. Never write that you verified something you did not.
-
-Asserting third-party behavior from memory is CANT-20, and claiming a check you did
-not run is CANT-23, both in the
-[Catalog of Agent Neutralization Techniques](https://github.com/kanopi/cant).
-
-#### 4b. Confidence
-
-Score every surviving candidate 0–100 with this rubric, and report only 80 and above:
-
-- **0** — Not confident. A false positive that doesn't survive light scrutiny, or a
-  pre-existing issue.
-- **25** — Somewhat confident. Might be real, might not; you could not verify it.
-- **50** — Moderately confident. Verified real, but a nitpick or rare in practice.
-- **75** — Highly confident. Verified, very likely hit in practice, directly impacts
-  functionality.
-- **100** — Certain. Confirmed, will happen frequently, evidence directly supports it.
-
-#### 4c. CMS false-positive exclusions
-
-Do not report:
-
-1. Anything PHPCS, PHPStan, Rector, ESLint, stylelint, or twig-lint catches. CI runs
-   these; point at `code-standards-checker` instead
-2. Issues on lines the PR did not modify
-3. Pre-existing issues, including code the diff only moves
-4. Missing escaping where Twig autoescape, `wp_kses_post`, or Drupal's render layer
-   already escapes the value
-5. Missing nonce or capability checks on read-only public front-end output
-6. Missing capability checks in client-side JS — client code is untrusted by
-   definition and the check belongs server-side
-7. Absent tests for CSS, SCSS, or template-only changes
-8. Theoretical race conditions inside a single PHP request lifecycle
-9. Contrib, plugin, or vendor code the PR does not modify
-10. Any assertion about third-party behavior not confirmed by reading its source
-11. Generic "add caching" or "this may be slow" without naming the loop and the query
-12. Accessibility findings that belong to `browser-validator`, unless the diff
-    introduces the regression
-13. Missing sanitization on values that never leave a trusted context
-14. Restructuring suggestions for a file the PR touched incidentally
-
-### 5. Produce the review
-
-Report at most **8 findings**, most severe first. Correctness outranks cleanup when
-the cap forces a cut.
-
-Prefix each so required and optional are distinguishable: **Critical** (ships a bug,
-security hole, or data loss), no prefix (required before merge), **Optional** (worth
-doing, not blocking), **Nit** (author's discretion), **FYI** (no action wanted).
-
-Each finding carries the prefix, a one-line claim, `file:line`, the failure scenario,
-and the fix. Propose the move, not just the problem.
-
-Write only the sections you have content for. There is no template to fill. Never
-print an empty heading — "no security concerns" is a clause in the summary at most,
-never a section of its own.
-
-**If nothing scores 80 or above**, output `No issues found`, one line naming what you
-checked (axes, files, and anything you could not see), and stop. Do not manufacture
-suggestions to look thorough. A clean review is a real result.
-
-Close with a recommendation — approve, request changes, or comment — reasoned, not
-just a verdict. Approve when the change definitely improves code health, even if
-imperfect. Apply the 5 Cs (Context, Color, Connective Tissue, Cost, Consequence) as
-silent reasoning behind that call; do not write them out as prose.
-
-### 6. Optional: post to GitHub
-
-For a PR review, not a self-review, and only if asked: present the review, ask "Post
-this as a PR review? (approve / request changes / comment)", and on approval run
-`gh pr review <n> --<action> --body-file <file>`. Self-reviews stay local.
+Print what returns verbatim and stop: no preface, no edits, no commentary after it. Where
+agents do not exist (Claude Desktop, Codex, sandboxed evals), say so in one line and review in
+this session; the output is identical. Never spawn a second reviewer, and a spawned reviewer
+never spawns.
 
 ## Delegated mode (automated routines)
 
-When invoked from a subagent prompt, behave non-interactively:
+When the prompt names a target and says "delegated" or "automated routine": no dialogue, no
+preamble, never spawn. Output the review formatted per `references/posted-format.md`; the
+parent posts it, anchoring each finding at its `Apply:` line, or `File:` when there is no
+`Apply:`. The checked Recommendation box must match the sentinel. End with one of these
+verbatim, on its own line, because the parent parses it:
 
-- Skip step 6 entirely — do NOT post. The parent routine posts.
-- Skip all user dialogue; no user is present.
-- Output ONLY the review, with no preamble.
-- End with this exact sentinel on its own line, one of the three verbatim, because the
-  parent parses it:
     FINAL_RECOMMENDATION: Approve
     FINAL_RECOMMENDATION: Request Changes
     FINAL_RECOMMENDATION: Comment
 
-The filters in step 4 apply unchanged in delegated mode. An automated review that
-invents findings is worse than one that returns none.
+## Related skills
 
-## Related Skills
-
-- `code-standards-checker` — run before review; it owns everything in exclusion 1
-- `pr-create` — create the PR after a passing self-review
-- `pm-skills:qa-validation-checklist` — write the reviewer-facing validation steps
-  once the review passes
-- `browser-validator` — real-browser accessibility and responsive checks
+`code-standards-checker` runs before review and owns the tooling exclusion. `pr-create` opens
+the PR after a passing self-review. `pm-skills:qa-validation-checklist` writes the
+reviewer-facing steps once it passes. `browser-validator` does the real-browser accessibility
+and responsive checks.

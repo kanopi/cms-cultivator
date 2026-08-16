@@ -121,10 +121,13 @@ Skills spawn specialized agents for focused work:
 **Browser Validation:**
 - browser-validator-specialist
 
+**Code Review:**
+- pr-review-specialist
+
 **Drupal.org Contribution:**
 - drupalorg-issue-specialist, drupalorg-mr-specialist
 
-PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
+PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow. The one exception: `pr-review self` spawns pr-review-specialist so the review runs in a fresh context.
 
 ### Agent Skills
 
