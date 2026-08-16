@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Three places claimed quality skills run `ddev composer code-check`. They now say
   the commands are read from the project's own scripts, with those names as
   examples.
+- `commit-message-generator` was documented as producing "3-5 commit message
+  options" with "explanations for each option". It produces one message and
+  presents it for approval. The same page listed `config`, `module`, `theme`,
+  and `plugin` as commit *types*; they are scopes. Both corrected, and the
+  `Assisted-by:` trailer — the headline 2.1.0 feature — is now documented in
+  both places that describe the skill.
 
 ### Added
 

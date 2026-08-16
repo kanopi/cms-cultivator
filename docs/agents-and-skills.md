@@ -153,9 +153,10 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 
 **What it does:**
 - Analyzes `git diff --staged`
-- Generates conventional commit message
-- Follows project's commit style
+- Generates one conventional commit message and presents it for approval
+- Follows the repository's existing commit style
 - Includes proper scope and description
+- Appends an `Assisted-by:` trailer when AI assisted the change itself
 
 **Example:**
 ```
