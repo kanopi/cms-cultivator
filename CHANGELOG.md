@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `pr-review` now has hard length budgets, the mechanism the rework should have
+  carried from the start: 250 words for the whole review excluding code blocks,
+  50 per finding, and a 40-word closing line. Over budget means cutting
+  findings, never compressing prose. Findings take a fixed three-line shape so
+  paragraphs are structurally impossible; a clean axis produces no text at all;
+  approval is one line with reasoning only when requesting changes; and praise
+  is banned outright. The 2.2.0 rework removed fixed section headers and
+  fabricated findings but never bounded length, so the verbosity moved into
+  prose — a review of a 3-finding PR ran to roughly 750 words.
+
+### Added
+
+- Behavioral eval case `pr-review--stays-within-budget` (CANT-26) and fixture
+  `wp-plugin-buggy-change`. It grades both halves at once: the review must stay
+  under a word ceiling *and* still report the off-by-one loop bound the fixture
+  plants on an added line, so brevity cannot be bought by skipping the work.
+
 ## [2.3.0] - 2026-08-16
 
 ### Added

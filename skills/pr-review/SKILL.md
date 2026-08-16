@@ -155,28 +155,65 @@ Do not report:
 
 ### 5. Produce the review
 
-Report at most **8 findings**, most severe first. Correctness outranks cleanup when
-the cap forces a cut.
+**Budgets, and they are hard limits.** A reviewer scans. Meaning drowns in prose long
+before it drowns in findings, so length is capped independently of count:
 
-Prefix each so required and optional are distinguishable: **Critical** (ships a bug,
-security hole, or data loss), no prefix (required before merge), **Optional** (worth
-doing, not blocking), **Nit** (author's discretion), **FYI** (no action wanted).
+- **250 words for the whole review**, excluding code blocks
+- **50 words per finding**
+- **8 findings**, most severe first
 
-Each finding carries the prefix, a one-line claim, `file:line`, the failure scenario,
-and the fix. Propose the move, not just the problem.
+Count before you emit. Over budget means **cut findings**, never compress the same
+content into denser paragraphs. The lowest-ranked finding is the one that goes, and
+correctness outranks cleanup when the cap bites.
 
-Write only the sections you have content for. There is no template to fill. Never
-print an empty heading — "no security concerns" is a clause in the summary at most,
-never a section of its own.
+Severity prefixes: **Critical** (ships a bug, security hole, or data loss), no prefix
+(required before merge), **Optional** (worth doing, not blocking), **Nit** (author's
+discretion), **FYI** (no action wanted).
 
-**If nothing scores 80 or above**, output `No issues found`, one line naming what you
-checked (axes, files, and anything you could not see), and stop. Do not manufacture
-suggestions to look thorough. A clean review is a real result.
+Each finding is exactly this shape. Three lines, no paragraphs:
 
-Close with a recommendation — approve, request changes, or comment — reasoned, not
-just a verdict. Approve when the change definitely improves code health, even if
-imperfect. Apply the 5 Cs (Context, Color, Connective Tissue, Cost, Consequence) as
-silent reasoning behind that call; do not write them out as prose.
+```
+**<Prefix> — <claim in one clause>.** `file:line`
+<Failure scenario: specific input or state, specific wrong result. One sentence.>
+<Fix. One sentence, or a short diff.>
+```
+
+**A clean axis produces no text.** Spec and correctness appear only as findings. Do
+not write a paragraph reporting that spec checks out, that security looks fine, or
+what you examined and approved — that is the empty-section habit wearing prose. What
+you checked goes in **one closing line of 40 words or less**, and only there. That
+line is a receipt, not a narrative: name the axes, the file count, and what you could
+not see. If a caveat there needs a failure scenario to be useful, it is a finding —
+promote it and spend the words there instead.
+
+**No praise.** Do not tell the author what the change does well, or characterize the
+work. Judging quality is the reader's job; the review's job is what needs attention.
+
+**If nothing scores 80 or above**, output `No issues found`, one closing line naming
+what you checked and what you could not see, and stop. Do not manufacture suggestions
+to look thorough. A clean review is a real result.
+
+**Recommendation is one line**, first or last, your choice: approve, request changes,
+or comment. Give reasoning **only when requesting changes** — that is the case where
+the author needs to know why. Approve when the change definitely improves code
+health, even if imperfect. Apply the 5 Cs (Context, Color, Connective Tissue, Cost,
+Consequence) as silent reasoning; never write them out.
+
+Worked example of the whole output, at 60 words:
+
+```
+**#412 · Approve** — 2 findings, neither blocking.
+
+**Optional — retry loop expires silently.** `src/Sync.php:88`
+After 5 failed attempts the loop exits and the record stays unsynced with nothing
+logged, so the next person sees missing data and no cause.
+Log one warning naming the record ID on the final attempt.
+
+**Nit — comment says 768px, the rule fires at 781px.** `_timeline.scss:48`
+Reword to name the stacking breakpoint.
+
+Checked: 4 ticket requirements against the diff, 3 changed files. No browser run.
+```
 
 ### 6. Optional: post to GitHub
 

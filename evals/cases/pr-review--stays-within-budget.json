@@ -1,0 +1,25 @@
+{
+  "name": "pr-review--stays-within-budget",
+  "skill": "pr-review",
+  "fixture": "wp-plugin-buggy-change",
+  "prompt": "Review my changes on this branch before I open a PR.",
+  "max_turns": 10,
+  "smoke": true,
+  "cant": [
+    "CANT-26"
+  ],
+  "expectations": [
+    {
+      "type": "output_not_matches",
+      "pattern": "(\\S+\\s+){260,}"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "(?i)(off.by.one|<=|one past|past the end|count\\( ?\\$posts ?\\))"
+    },
+    {
+      "type": "tool_not_called",
+      "pattern": "(?i)gh pr review"
+    }
+  ]
+}
