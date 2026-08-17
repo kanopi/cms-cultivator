@@ -69,6 +69,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the `Issue:` and `Fix:` labels, a code block, the planted off-by-one still caught, no
   praise, no internal tooling noise, and a bloat ceiling.
 
+### Added
+
+- `drupal-rector-update` skill — migrates a Drupal project's Rector
+  configuration to the modern Composer-based sets approach (Rector 2.5+ with
+  `palantirnet/drupal-rector` 1.0), where set selection is driven
+  automatically by the installed `drupal/core` version instead of a
+  hand-maintained `Drupal{N}SetList` list. Ships an annotated `rector.php`
+  template, upgrades the PHPStan family to 2.x when required, and dry-runs
+  before applying. Trigger phrases include "update rector", "rector.php",
+  "DrupalSetProvider", "withComposerBased", and "composer-based sets".
+
 ## [2.3.0] - 2026-08-16
 
 ### Added
