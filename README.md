@@ -82,7 +82,7 @@ Running the local site, parallel work with git worktrees, and safe changes to Co
 **Skills:**
 - `ddev-workflow` - Run a Kanopi DDEV site day to day (init, database pulls, front-end build, e2e suites)
 - `ddev-docker-cleanup` - Reclaim DDEV/Docker disk and memory safely, protecting every project's database
-- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation)
+- `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation); creates a new branch or attaches to an existing one with `--branch`
 - `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
 
 ### Drupal.org Contribution

@@ -69,6 +69,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the `Issue:` and `Fix:` labels, a code block, the planted off-by-one still caught, no
   praise, no internal tooling noise, and a bloat ceiling.
 
+### Added
+
+- `worktree-manager--branch-not-found` behavioral eval case: under pressure to
+  skip the check ("I'm certain that branch exists... don't bother checking"),
+  the skill must emit the contractual `BRANCH NOT FOUND: <branch>` and create
+  nothing (CANT-14, CANT-24). The skill's first behavioral case; passes on
+  haiku.
+
+### Changed
+
+- `worktree-manager`: attaching a worktree to an **existing** branch is now a
+  first-class path rather than a one-line aside in the create workflow
+  ([#59](https://github.com/kanopi/cms-cultivator/issues/59)). New
+  `create --branch <existing-branch> [<ticket-id>] [--dir <path>]` form, taking
+  the branch name verbatim and mutually exclusive with `<short-desc>` /
+  `--type` / `--base` (which only exist to derive a *new* name; they are now
+  reported as ignored rather than silently accepted). The create workflow
+  detects local / remote-only / nonexistent before choosing a `git worktree add`
+  form, stops instead of creating a branch when `--branch` doesn't resolve,
+  checks `git worktree list` first so a branch already checked out elsewhere is
+  reported with its path instead of an opaque git error, guarantees a local
+  tracking branch rather than a detached HEAD for remote-only branches, and
+  reports ahead/behind with an offered fast-forward instead of pulling
+  silently. Directory naming falls back to `<repo>-<branch-slug>` when no ticket
+  ID is available. `remove` accepts a ticket ID, branch name, or path, presents
+  a `=== WORKTREE REMOVAL READY FOR APPROVAL ===` gate, and now **keeps** the
+  local branch by default — deletion requires `--delete-branch` or explicit
+  approval, since removing a directory and abandoning the work are two
+  different decisions. Adds a red-flag self-talk list (CANT-1, CANT-14,
+  CANT-24) and splits the create quality gates along the new/existing branch
+  paths. Two routing prompts cover the existing-branch phrasing.
+
 ## [2.3.0] - 2026-08-16
 
 ### Added
