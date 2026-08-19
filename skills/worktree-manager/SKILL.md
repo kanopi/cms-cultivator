@@ -111,6 +111,12 @@ If platform is ambiguous (no `.ddev/`, no `next.config.*`), ask which platform i
 
 **Confirmation gate:** state exactly what will be deleted (worktree directory, local branch if merged, DDEV project + database) and wait for explicit approval before proceeding.
 
+**Report the branch, not the folder name.** Nothing enforces that `<repo>-tw1234` still contains tw1234's branch — checkouts get reused, and the ticket the user names may have no worktree at all. Resolve it before quoting anything back:
+```bash
+git -C ../<repo>-tw<id> branch --show-current
+```
+If it disagrees with the ticket the user asked for, say so and let them confirm the target. Otherwise the gate describes tearing down one ticket while it actually tears down another.
+
 1. **Verify the branch is merged** (or the user confirms abandoning it):
    ```bash
    git branch --merged main | grep <type>/tw<id>
@@ -124,6 +130,21 @@ If platform is ambiguous (no `.ddev/`, no `next.config.*`), ask which platform i
    git worktree remove ../<repo>-tw<id>
    git worktree prune
    ```
+   **Check the exit code — this command half-succeeds.** It deletes tracked files but refuses to delete ignored ones, so on any repo with `node_modules/`, `vendor/`, `playwright-report/` or a build cache it fails with `error: failed to delete '<path>': Directory not empty` *after* the tracked tree is already gone. `git worktree prune` then clears the registration, so `git worktree list` reports clean while the directory is still on disk — a silent orphan (253M in the case this was found). `git status --porcelain` will not have warned you: it hides ignored files, so the checkout reads as "0 changes" right up until removal fails.
+
+   Finishing it means `rm -rf`, so prove the directory is disposable first:
+   ```bash
+   # a. It must not still be a registered worktree, or this is live work.
+   [ -d <main>/.git/worktrees/<repo>-tw<id> ] && echo "ABORT: still registered"
+
+   # b. Nothing unique may remain — compare against the main clone.
+   diff <(cd <orphan> && find . -type f -not -path './node_modules/*' -not -path './.git/*' | sort) \
+        <(cd <main>   && find . -type f -not -path './node_modules/*' -not -path './.git/*' | sort)
+
+   # c. Guard the path so a bad variable cannot expand into something catastrophic.
+   case "$D" in <expected absolute path>) rm -rf "$D";; *) echo "ABORT: unexpected path"; exit 1;; esac
+   ```
+   Expect (b) to report only DDEV's generated `.ddev/traefik/` certs and config for the deleted project, plus the orphaned `.git` pointer file. Anything else — an untracked script, a `.env`, an unread report — stops the deletion until the user has seen it.
 4. **Delete the local branch** once merged (mirrors Kanopi's branch-cleanup discipline):
    ```bash
    git branch -d <type>/tw<id>-<short-desc>
@@ -139,8 +160,14 @@ Before reporting a create as complete:
 
 Before a remove:
 1. ✅ User explicitly approved the deletion
-2. ✅ Branch is merged, or user confirmed abandoning unmerged work
-3. ✅ DDEV project torn down before the directory is removed
+2. ✅ The branch actually checked out in that directory was reported, and is the one the user means
+3. ✅ Branch is merged, or user confirmed abandoning unmerged work
+4. ✅ DDEV project torn down before the directory is removed
+
+After a remove — a half-finished teardown reports success, so confirm each layer:
+5. ✅ `git worktree list` no longer lists it **and** the directory is absent from disk (`ls -d <path>`)
+6. ✅ `ddev list` no longer shows the project
+7. ✅ The local branch is gone, and any `-BAK` branches and stashes still exist (stashes live in the main clone's `refs/stash` and are shared across worktrees — if they vanished, something deleted more than it should have)
 
 ## Notes
 
