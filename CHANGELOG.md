@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `worktree-manager`: the remove workflow assumed `git worktree remove` either
+  succeeds or fails cleanly. It does neither — it deletes the tracked tree, then
+  refuses to delete ignored files (`node_modules/`, `vendor/`, build caches) and
+  exits non-zero with `Directory not empty`. Because step 3 runs `git worktree
+  prune` immediately after, the registration is cleared and `git worktree list`
+  reports clean while the directory survives on disk, so every subsequent check
+  agrees the teardown worked. Found on a real teardown that left 253M behind.
+  Step 3 now requires checking the exit code, and gives the three proofs to run
+  before `rm -rf`: the path is no longer a registered worktree, a diff against
+  the main clone shows nothing unique, and the path is guarded so a bad variable
+  cannot expand into something catastrophic. Notes that `git status --porcelain`
+  cannot warn about this, since it hides the ignored files that cause it.
+
+### Changed
+
+- `worktree-manager`: the remove confirmation gate now reports the branch the
+  directory actually has checked out rather than trusting the folder name.
+  Checkouts get reused, so `<repo>-tw1234` need not still hold tw1234's branch —
+  and the ticket the user named may have no worktree at all. Without this the
+  gate can describe tearing down one ticket while it tears down another.
+- `worktree-manager`: added post-remove quality gates. Confirming a teardown now
+  means checking the directory is gone from disk as well as from `git worktree
+  list`, that `ddev list` no longer shows the project, and that `-BAK` branches
+  and stashes survived — stashes are shared across worktrees via the main
+  clone's `refs/stash`, so their disappearance means something over-deleted.
+
 ## [2.4.0] - 2026-08-16
 
 ### Changed
