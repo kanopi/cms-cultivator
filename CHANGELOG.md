@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Per-push CI moved from GitHub Actions to CircleCI to cut GitHub Actions
+  minute spend. The seven jobs in `.github/workflows/test.yml` (removed) are
+  consolidated into three CircleCI jobs in `.circleci/config.yml`:
+  `tests-and-validation` (BATS, frontmatter, Codex parity, security scan,
+  JSON/YAML/TOML validation), `routing-evals`, and `documentation-build`.
+  Fewer containers per push also keeps CircleCI credit spend down; all jobs
+  run on the `small` resource class.
+- Still on GitHub Actions deliberately: `docs.yml` (GitHub Pages OIDC deploy
+  only works from Actions, and it is path-filtered to docs changes),
+  `behavioral-evals.yml` (weekly schedule plus manual dispatch only), and
+  `release-artifacts.yml` (per-release, uses the built-in `GITHUB_TOKEN`).
+
 ## [2.4.0] - 2026-08-16
 
 ### Changed
