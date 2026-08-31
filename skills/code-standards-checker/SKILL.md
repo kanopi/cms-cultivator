@@ -10,13 +10,32 @@ what is left. Discover the commands by reading the project. Do not recall them.
 
 ## When to Use This Skill
 
-- Right after editing PHP, Twig, JS, SCSS/CSS, JSON, or HTML.
+- After finishing a set of edits to any code the project has tooling for. Step 1
+  discovers what that is; step 2 maps the changed files to jobs.
 - Before committing and before opening a pull request.
 - When the user asks "does this follow standards?", "what should I run?", or names a
   tool (PHPCS, PHPStan, Rector, ESLint, stylelint, twig-lint).
 
 Not for logic review. `pr-review` covers correctness; run this skill first so
 standards violations never reach review.
+
+### When to Skip
+
+Dependency-only updates need no standards run. This tooling grades custom code, and a
+version bump changes none of it.
+
+- Composer or npm dependency version bumps
+- Drupal module and WordPress plugin updates
+- Lockfile updates (`composer.lock`, `package-lock.json`, `yarn.lock`)
+- Dependency metadata changes
+
+**Exception:** if a dependency is being patched, forked, or overridden as part of the
+work — a `cweagans/composer-patches` entry, a committed patch file, a vendor override —
+that changed code is custom code. Map it in step 2 and run the full pass against it.
+
+Name the files you classified as dependency-only, then move on. In particular, do not
+run `format` against a `composer.json` version bump on the strength of the JSON row in
+step 2's table.
 
 ## Workflow
 
@@ -103,6 +122,10 @@ starter catalog see
 4. **Match the tool to the file type.** A CSS-only change does not need the PHP suite.
 5. **Never hand-grade what a tool enforces.** If the tool is configured, run it and
    report its output instead of reviewing style by eye.
+6. **Finish editing before running anything.** Complete all planned changes, then run
+   the pass once. Re-running phpcs, phpstan, or eslint between individual file edits
+   burns time and churns the report. The exception is diagnostic — when a specific
+   check is needed to understand a failure, run only that one.
 
 ### 5. Report Results
 
@@ -139,6 +162,34 @@ Auto-fixed 14 violations across 6 files. 2 remain:
 
 Re-verify: `ddev composer phpcs`
 ```
+
+### 6. Feeding a Quality Report
+
+When the work is heading for a pull request that carries a Quality Report, this skill
+supplies the **Static Analysis** section and nothing else. Emit it in that shape
+alongside the short report above, so it drops in without rewording:
+
+```markdown
+### Static Analysis
+- [x] PHPCS: 0 errors — `ddev composer phpcs` on `public/wp-content`
+- [x] PHPStan: 0 errors at level 5 — `ddev composer phpstan`
+- [ ] Rector: not configured
+```
+
+Rules for those lines:
+
+1. **One line per tool that ran.** A tool the project does not configure reads
+   "not configured" with an unchecked box — never a checked box, never "N/A".
+2. **A blocked tool reads "not verified"** and names the blocker. The hard rule in
+   step 5 applies unchanged: a Quality Report line is a compliance claim, and a
+   checked box that no command produced is a false one.
+3. **Name the command and scope.** "0 errors" alone is unverifiable; "0 errors —
+   `ddev composer phpcs` on `public/wp-content`" can be re-run by the reviewer.
+4. **Leave the other sections alone.** Security Analysis, Test Coverage, Performance,
+   Accessibility, and Manual Testing Steps belong to the skills that run those checks.
+   Do not fill them in, and do not mark them passing because the standards pass.
+
+`pr-create` assembles the sections into the final report.
 
 ## No Tooling Configured
 
