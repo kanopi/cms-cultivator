@@ -161,7 +161,8 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
   "this should", and any recap of what was already said.
 
 Terse shortens the content, never the structure: every section the template
-has still appears.
+has still appears, except Deploy Notes, which is omitted when nothing beyond a
+routine deploy is needed.
 
 **Body rules:**
 

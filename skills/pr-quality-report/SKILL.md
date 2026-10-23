@@ -101,6 +101,10 @@ directory and report Pass or Fail with its findings. **Never mark it N/A** — i
 code changed, the scan is applicable. On a dependency-only change the whole section is
 omitted, so there is no line to write.
 
+If Snyk reports no supported files (`SNYK-CODE-0006` — Markdown, YAML, and other
+files it cannot analyze), say so and leave the box unchecked. No supported files is a
+result, not a Pass.
+
 ### Honesty
 
 State only what this session produced. A test file that was written is not a test that
