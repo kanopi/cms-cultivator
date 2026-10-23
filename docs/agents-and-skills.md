@@ -159,7 +159,7 @@ Agent Skills are **model-invoked** capabilities—Claude decides when to use the
 - Generates one conventional commit message and presents it for approval
 - Follows the repository's existing commit style
 - Includes proper scope and description
-- Appends an `Assisted-by:` trailer when AI assisted the change itself
+- Leaves AI attribution to the tool's own trailer (Claude Code's `Co-Authored-By:`), adding no second one
 
 **Example:**
 ```

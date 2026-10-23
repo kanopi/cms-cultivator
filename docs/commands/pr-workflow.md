@@ -60,7 +60,7 @@ Create pull request directly on GitHub with generated description.
 **What it does:**
 1. Analyzes git changes (commits, diffs, files)
 2. Detects Drupal/WordPress-specific changes
-3. Generates comprehensive PR description
+3. Generates a terse PR description
 4. Shows preview and asks for confirmation
 5. Creates PR on GitHub via `gh` CLI
 
@@ -171,8 +171,8 @@ git add .
 **What it generates:**
 - One commit message, presented for approval before anything is committed
 - Conventional commits format, matched to the repository's existing commit style
-- An `Assisted-by: <Vendor>/<model-id>` git trailer when AI assisted the change
-  itself, skipped for human-authored changes and never `Co-Authored-By`
+- No attribution trailer of its own: Claude Code's `Co-Authored-By:` trailer is
+  the per-commit AI attribution, and the skill never adds a second one
 - A suggestion to split the commit when the staged changes cover unrelated work
 
 **Commit types:**
@@ -356,7 +356,7 @@ See [Kanopi Tools](../kanopi-tools/overview.md) for more information.
 - Self-review with `/pr-review self` first
 - Run quality checks before creating PR
 - Keep PRs focused (< 400 lines optimal)
-- Include comprehensive description
+- Keep the description terse; depth belongs in the ticket
 
 ### PR Review
 - Review promptly (within 24 hours)
