@@ -81,8 +81,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pr-quality-report` / `code-standards-checker`: a core, framework, or PHP
   upgrade beyond a patch release is no longer treated as dependency-only.
   Static checks run against custom code, and Security Analysis applies.
-- `commit-message-generator`: skips the `Assisted-by:` trailer when the
-  session's attribution settings say to add no attribution lines to commits.
+- `commit-message-generator`: drops the `Assisted-by:` trailer. Claude Code's
+  own `Co-Authored-By:` trailer, carrying the session's real model, is the
+  per-commit AI attribution; the skill never adds a second one and keeps
+  `Refs:` directly above it in one trailer block.
 
 ### Fixed
 
