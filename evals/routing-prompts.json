@@ -38,6 +38,18 @@
       "expect": "pr-create"
     },
     {
+      "prompt": "write the quality report for this pull request",
+      "expect": "pr-quality-report"
+    },
+    {
+      "prompt": "update the quality report on PR 347 after my last push",
+      "expect": "pr-quality-report"
+    },
+    {
+      "prompt": "how do I pass a long multiline PR body to gh without the quoting breaking",
+      "expect": "pr-quality-report"
+    },
+    {
       "prompt": "review my local changes before I submit the PR",
       "expect": "pr-review"
     },

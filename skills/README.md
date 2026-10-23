@@ -168,6 +168,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Reclaim DDEV/Docker disk and memory by removing orphaned volumes, build cache, and dangling images, while protecting every current project's database
 **Related Command**: `/ddev-docker-cleanup`
 
+### 27. pr-quality-report
+
+**Triggers**: "quality report", "update the quality report on the PR", "regenerate the PR report"
+**Purpose**: Write the Quality Report that closes a PR description — only the sections the diff touched — and attach or regenerate it as the last section of the PR body (with confirmation)
+**Related Command**: `/pr-quality-report`
+
 ## How Skills Work
 
 ### Automatic Activation

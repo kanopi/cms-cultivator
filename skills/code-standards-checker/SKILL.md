@@ -10,7 +10,8 @@ what is left. Discover the commands by reading the project. Do not recall them.
 
 ## When to Use This Skill
 
-- Right after editing PHP, Twig, JS, SCSS/CSS, JSON, or HTML.
+- After finishing a set of edits to any code the project has tooling for. Step 1
+  discovers what that is; step 2 maps the changed files to jobs.
 - Before committing and before opening a pull request.
 - When the user asks "does this follow standards?", "what should I run?", or names a
   tool (PHPCS, PHPStan, Rector, ESLint, stylelint, twig-lint).
@@ -18,11 +19,39 @@ what is left. Discover the commands by reading the project. Do not recall them.
 Not for logic review. `pr-review` covers correctness; run this skill first so
 standards violations never reach review.
 
+### When to Skip
+
+Dependency-only updates need no standards run. This tooling grades custom code, and a
+version bump changes none of it.
+
+- Composer or npm dependency version bumps
+- Drupal module and WordPress plugin updates
+- Lockfile updates (`composer.lock`, `package-lock.json`, `yarn.lock`)
+- Dependency metadata changes
+
+**Exception:** if a dependency is being patched, forked, or overridden as part of the
+work — a `cweagans/composer-patches` entry, a committed patch file, a vendor override —
+that changed code is custom code. Map it in step 2 and run the full pass against it.
+
+Name the files you classified as dependency-only, then move on. In particular, do not
+run `format` against a `composer.json` version bump on the strength of the JSON row in
+step 2's table.
+
 ## Workflow
 
 ### 1. Detect the Project's Own Commands
 
 Script aliases are project-defined. Read them; never assume a name exists.
+
+Start with CI. Whatever CI gates on is what must pass, so its config is the
+authoritative list of checks and the exact commands it runs:
+
+```bash
+cat .circleci/config.yml                    # Kanopi default
+ls .github/workflows/ .gitlab-ci.yml bitbucket-pipelines.yml 2>/dev/null
+```
+
+Then the task runners CI usually calls:
 
 ```bash
 # Every level that could own the changed files
@@ -103,6 +132,10 @@ starter catalog see
 4. **Match the tool to the file type.** A CSS-only change does not need the PHP suite.
 5. **Never hand-grade what a tool enforces.** If the tool is configured, run it and
    report its output instead of reviewing style by eye.
+6. **Finish editing before running anything.** Complete all planned changes, then run
+   the pass once. Re-running phpcs, phpstan, or eslint between individual file edits
+   burns time and churns the report. The exception is diagnostic — when a specific
+   check is needed to understand a failure, run only that one.
 
 ### 5. Report Results
 
@@ -139,6 +172,16 @@ Auto-fixed 14 violations across 6 files. 2 remain:
 
 Re-verify: `ddev composer phpcs`
 ```
+
+### 6. Results Stay Out of the PR Body
+
+Fix every violation before the PR opens. Do not restate standards results in the PR
+description: the GitHub checks UI is the live record for anything CI runs, and a
+pass/fail table in the body is a snapshot that goes stale on the next push.
+
+The one exception is a tool that ran locally and has **no CI equivalent** — its result
+appears nowhere in the GitHub UI. Hand that single line, with the command and scope,
+to `pr-quality-report` for the section that covers it.
 
 ## No Tooling Configured
 
