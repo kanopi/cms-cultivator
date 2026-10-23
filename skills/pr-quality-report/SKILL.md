@@ -112,9 +112,17 @@ passed; tests run in CI are reported by the checks UI, not here. Unknown is neve
 
 ## Attaching it to the PR
 
-The report is always the **last** section of the PR body. That makes regenerating it
-safe: strip the previous report, then append the new one. Nothing ever goes below it —
-anything placed after the report is destroyed on the next regeneration.
+The report is the last section of the PR body. That makes regenerating it safe: strip
+the previous report, then append the new one. Only org attribution may follow it —
+anything else placed after the report is destroyed on the next regeneration.
+
+**Org attribution.** Claude Code's `attribution.pr`, often pushed through org managed
+settings, ends PR descriptions with a fixed line — Kanopi's is
+`- [x] Was AI used in this pull request?`. It outranks this skill's placement rules.
+The strip below would remove it with the old report, so regeneration keeps it: if the
+body currently **ends** with that line, it is moved back to the end after the new
+report and any other copy is dropped. If the body does not end with it, nothing is
+added — the attribution covers PRs the agent creates, not ones it edits.
 
 **New PR** — `pr-create` appends the report before its approval gate and creates the PR
 once, with the whole body on stdin.
@@ -126,14 +134,23 @@ it back after approval:
 BODY=$(gh pr view <pr-number> --json body -q .body)
 [ -n "$BODY" ] || { echo "Could not read PR body; aborting."; exit 1; }
 
+# The session's org attribution text, if it has one; Kanopi's shown. It is only ever
+# kept, never added, so the default is safe when the session carries none.
+ATTR='- [x] Was AI used in this pull request?'
+LAST=$(printf '%s\n' "$BODY" | grep -v '^[[:space:]]*$' | tail -1)
+KEEP=""; [ "$LAST" = "$ATTR" ] && KEEP="$ATTR"
+
 {
-  # Keep everything above the previous Quality Report; it is always last.
-  printf '%s\n' "$BODY" | awk '/^## Quality Report$/{exit} {print}'
+  # Everything above the previous report — minus the attribution, if it moves to the end.
+  printf '%s\n' "$BODY" | awk '/^## Quality Report$/{exit} {print}' \
+    | if [ -n "$KEEP" ]; then grep -vFx -- "$ATTR"; else cat; fi
 
   cat <<'PRBODY'
 ## Quality Report
 <the report>
 PRBODY
+
+  [ -z "$KEEP" ] || printf '\n%s\n' "$KEEP"
 } | gh pr edit <pr-number> --body-file -
 ```
 
@@ -185,7 +202,9 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 | "Copy the CI results in so it's all in one place" | The checks UI is the record. Restate only a check with no CI equivalent. |
 | "Tests were written, so mark them passing" | Written is not passed. Report what this session ran. |
 | "Just append the new report below the old one" | Strip the old report first. One report per body. |
-| "Put the delivery-record link at the very end" | Nothing goes below the report. Place it above. |
+| "Put the delivery-record link at the very end" | Only org attribution goes below the report. Place the link above. |
+| "Regenerating anyway — the trailing attribution line can go" | Keep it. The org requires the body to end with it, and the strip would delete it. |
+| "Add the attribution to this PR too, while editing" | Never add it to a body that doesn't already end with it. It covers PRs the agent creates. |
 | "The PR body read failed — write the report anyway" | Abort. Writing without the read destroys the description. |
 
 ## Related Skills

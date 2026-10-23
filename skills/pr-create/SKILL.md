@@ -172,6 +172,12 @@ routine deploy is needed.
 - **Each template element appears exactly once**, in the position the template
   declares it. Never repeat a checkbox, ticket line, or footer at the end of the body
   as a sign-off — a duplicated "Was AI used in this pull request?" is the usual form.
+- **Org attribution outranks template placement.** If the session carries a pull
+  request attribution instruction — Claude Code's `attribution.pr`, often pushed
+  through org managed settings — its text is the last line of the body, after the
+  Quality Report. When it duplicates a template element (Kanopi's is
+  `- [x] Was AI used in this pull request?`), drop the template's copy so the line
+  appears once, at the end.
 - **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
   environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
@@ -182,8 +188,8 @@ routine deploy is needed.
   commands.
 - **Quality Report.** When the project's instructions call for one, generate it with
   `pr-quality-report` and append it as the **last** section before step 7, so the
-  approval gate shows it. Nothing goes below it — that skill regenerates the report
-  by stripping everything from its heading down.
+  approval gate shows it. Nothing goes below it except org attribution, which that
+  skill re-appends when it regenerates the report.
 - **Length.** GitHub rejects a body over 65,536 characters with a 422 and the
   description is lost, not truncated. Aim for a screen and a half: quote the summary
   line of tool output, never the log; link to files instead of pasting them; never
