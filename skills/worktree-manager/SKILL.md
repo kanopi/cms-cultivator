@@ -13,34 +13,44 @@ A worktree checks out a second branch into its own directory while sharing one `
 
 ## Usage
 
-- `/worktree-manager create <ticket-id> <short-desc> [--type feature|bug|hotfix] [--base main]` — create a worktree on a **new** branch
+- `/worktree-manager create <ticket-id> <short-desc> [--type feature|bug|hotfix|devops] [--base <default-branch>]` — create a worktree on a **new** branch
 - `/worktree-manager create --branch <existing-branch> [<ticket-id>] [--dir <path>]` — attach a worktree to a branch that **already exists** (locally or on origin)
 - `/worktree-manager list` — show active worktrees and their DDEV status
 - `/worktree-manager remove <ticket-id|branch|path> [--delete-branch]` — tear down a worktree (destructive; requires confirmation)
 
-If the user gives a Teamwork URL or task ID, parse the numeric ID from it (e.g. `tw1234`).
+If the user gives a Teamwork URL or task ID, parse the numeric ID from it: `tw1234` and a Teamwork task URL both yield `1234`. Branch names use the bare number.
+
+**Default branch.** Never assume `main` — many Kanopi repos use `master`. Resolve it once and use it wherever this skill says `<default-branch>`:
+
+```bash
+DEFAULT=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name 2>/dev/null \
+  || git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+```
 
 `--branch` is mutually exclusive with `<short-desc>`, `--type`, and `--base` — all three exist only to *derive* a new branch name, and there is nothing to derive when the branch is given. If the user supplies both, use `--branch` and say in the report that the others were ignored.
 
 ## Naming convention
 
-Branch (unchanged from Kanopi standards):
+Branch — Kanopi standard, the bare Teamwork ID with no `tw` prefix:
 
 ```
-<type>/tw<ticketID>-<short-desc>
-# feature/tw1234-hero-block
-# bug/tw1235-menu-fix
-# hotfix/tw1236-login-error
+<type>/<ticketID>-<short-desc>
+# feature/1234-hero-block
+# bug/1235-menu-fix
+# hotfix/1236-login-error
+# devops/1237-add-ddev
 ```
+
+Types: `feature`, `bug`, `hotfix`, `devops` (infrastructure, tooling, CI/CD, dev environment). `commit-message-generator` reads the `Refs:` footer from this shape, so keep it exact.
 
 For a sub-task or dependent feature, use the **parent** task ID, matching the complex-feature parent/child model.
 
-Worktree directory — a sibling of the main clone, named to mirror the branch:
+Worktree directory — a sibling of the main clone, named for the ticket. The directory keeps the `tw` prefix: it becomes the DDEV project name and hostname, where `tw` makes the ticket readable at a glance.
 
 ```
-<repo>/                       # main clone, stays on main
-<repo>-tw1234/                # worktree for feature/tw1234-hero-block
-<repo>-tw1235/                # worktree for bug/tw1235-menu-fix
+<repo>/                       # main clone, stays on the default branch
+<repo>-tw1234/                # worktree for feature/1234-hero-block
+<repo>-tw1235/                # worktree for bug/1235-menu-fix
 ```
 
 Keep worktrees as siblings (not nested inside the main clone) so build tooling, IDE indexers, and DDEV file mounts don't recurse into them.
@@ -50,7 +60,11 @@ Keep worktrees as siblings (not nested inside the main clone) so build tooling, 
 `--branch` may point at a branch with no ticket ID in it — a colleague's branch, a long-lived `develop`, a branch that predates the convention. Resolve `<worktree-dir>` in this order:
 
 1. `--dir` if the user gave one.
-2. `<repo>-tw<id>` if a ticket ID was supplied *or* the branch name contains `tw<digits>`.
+2. `<repo>-tw<id>` if a ticket ID was supplied, or the branch name carries one — `<type>/<digits>-…`, or the older `<type>/tw<digits>-…`:
+
+   ```bash
+   ID=$(printf '%s' "$BRANCH" | sed -nE 's@^[a-z]+/(tw)?([0-9]+)-.*@\2@p')
+   ```
 3. Otherwise `<repo>-<branch-slug>`, where the slug lowercases the branch and collapses every run of non-alphanumeric characters to a single `-`:
 
 ```bash
@@ -78,7 +92,7 @@ Run the steps directly, pausing at the confirmation gate for destructive actions
 
 1. **Resolve inputs.**
 
-   With `--branch`, that name is `BRANCH` verbatim — do not normalize it, do not add a `<type>/` prefix, do not correct its spelling to match the convention. Otherwise derive `BRANCH=<type>/tw<id>-<short-desc>` from the ticket ID, short description (kebab-case, ≤4 words), and type (default `feature`), branching from `--base` (default `main`).
+   With `--branch`, that name is `BRANCH` verbatim — do not normalize it, do not add a `<type>/` prefix, do not correct its spelling to match the convention. Otherwise derive `BRANCH=<type>/<id>-<short-desc>` from the ticket ID, short description (kebab-case, ≤4 words), and type (default `feature`), branching from `--base` (default: `$DEFAULT`).
 
    Then resolve `<worktree-dir>` per **Directory name when there is no ticket ID** above.
 
@@ -188,7 +202,7 @@ The target may be a ticket ID, a branch name, or a directory path. Resolve it to
 git worktree list --porcelain    # match on the worktree path or its branch line
 ```
 
-**Report the branch, not the folder name.** Take `BRANCH` from that worktree's own `branch` line (or `git -C ../<worktree-dir> branch --show-current`), never from the directory name or the convention. Nothing enforces that `<repo>-tw1234` still holds tw1234's branch — checkouts get reused, and the ticket the user names may have no worktree at all. If the branch disagrees with the ticket the user asked for, say so in the gate and let them confirm the target. Otherwise the gate describes tearing down one ticket while it actually tears down another.
+**Report the branch, not the folder name.** Take `BRANCH` from that worktree's own `branch` line (or `git -C ../<worktree-dir> branch --show-current`), never from the directory name or the convention — worktrees made before the `tw` prefix was dropped from branch names are on `<type>/tw<id>-…` branches. Nothing enforces that `<repo>-tw1234` still holds tw1234's branch — checkouts get reused, and the ticket the user names may have no worktree at all. If the branch disagrees with the ticket the user asked for, say so in the gate and let them confirm the target. Otherwise the gate describes tearing down one ticket while it actually tears down another.
 
 **Confirmation gate.** Your response **must start immediately** with the removal header — no preamble, no "I'll go ahead and". List exactly what will be deleted and wait for explicit approval:
 
@@ -196,7 +210,7 @@ git worktree list --porcelain    # match on the worktree path or its branch line
 === WORKTREE REMOVAL READY FOR APPROVAL ===
 
 Worktree:     ../<worktree-dir>
-Branch:       <branch>            (merged into main: yes/no)
+Branch:       <branch>            (merged into <default-branch>: yes/no)
 DDEV project: <project-name>      (database will be deleted)
 Local branch: KEEP / DELETE
 Uncommitted:  <count> file(s)     (list them, or "clean")
@@ -206,7 +220,7 @@ Then run the steps in this order:
 
 1. **Verify the branch is merged** (or the user confirms abandoning it):
    ```bash
-   git branch --merged main --format='%(refname:short)' | grep -Fx "$BRANCH"
+   git branch --merged "$DEFAULT" --format='%(refname:short)' | grep -Fx "$BRANCH"
    ```
    Use `--format`, not bare `git branch --merged` — the plain output pads names with two spaces and marks the current branch with `* `, so a naive `grep` on the branch name misses it.
 2. **Tear down DDEV** for that project (snapshot kept by default for safety):

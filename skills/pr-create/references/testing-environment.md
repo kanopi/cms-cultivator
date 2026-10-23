@@ -126,7 +126,7 @@ at the gate, so it adds no new content and needs no second approval — report t
 substitution after writing. Edit the sections above the Quality Report:
 
 ```bash
-BODY=$(gh pr view <pr-number> --json body -q .body)
+BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')
 [ -n "$BODY" ] || { echo "Could not read PR body; aborting."; exit 1; }
 # Substitute the base URL into the placeholder and the bare paths, then:
 printf '%s\n' "$BODY_UPDATED" | gh pr edit <pr-number> --body-file -

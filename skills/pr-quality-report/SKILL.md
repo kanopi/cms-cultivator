@@ -29,8 +29,12 @@ covers the report and no second confirmation is needed.
   application code, templates, build config, tests.
 - **Dependency-only change** — version bumps and lockfile churn with no custom code
   edited: Composer and npm bumps, Drupal module updates, WordPress plugin updates,
-  package metadata. A dependency that is patched, forked, or overridden counts as
-  custom code.
+  package metadata, and core patch or security releases (Drupal 11.3.19 → 11.3.20). A
+  dependency that is patched, forked, or overridden counts as custom code.
+- **Core, framework, or PHP upgrade beyond a patch release** (Drupal 11.3 → 11.4,
+  WordPress 6.7 → 6.8, PHP 8.3 → 8.4) is **not** dependency-only: it runs update hooks,
+  changes config, and deprecates APIs the custom code uses. Security Analysis applies,
+  and Snyk runs on the custom code it touches.
 
 ## What goes in the report
 
@@ -112,9 +116,19 @@ passed; tests run in CI are reported by the checks UI, not here. Unknown is neve
 
 ## Attaching it to the PR
 
-The report is always the **last** section of the PR body. That makes regenerating it
-safe: strip the previous report, then append the new one. Nothing ever goes below it —
-anything placed after the report is destroyed on the next regeneration.
+The report is the last section of the PR body. That makes regenerating it safe: strip
+the previous report, then append the new one. Only org attribution may follow it —
+anything else placed after the report is destroyed on the next regeneration. A
+`Delivery Record:` link belongs above the report.
+
+**Org attribution.** Claude Code's `attribution.pr`, often pushed through org managed
+settings, ends PR descriptions with a fixed line — Kanopi's is
+`- [x] Was AI used in this pull request?`. It outranks this skill's placement rules.
+The strip below would remove it with the old report, so regeneration keeps it: if the
+body currently **ends** with that line, it is moved back to the end after the new
+report and any other copy is dropped. If the body does not end with it, nothing is
+added at the end — the attribution covers PRs the agent creates, not ones it edits. A
+body with no checkbox anywhere is handled by the disclosure check below.
 
 **New PR** — `pr-create` appends the report before its approval gate and creates the PR
 once, with the whole body on stdin.
@@ -123,22 +137,57 @@ once, with the whole body on stdin.
 it back after approval:
 
 ```bash
-BODY=$(gh pr view <pr-number> --json body -q .body)
+# Strip \r: a body last edited in the GitHub web UI has CRLF line endings, and the
+# anchored matches below would miss every line — appending a second report.
+BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')
 [ -n "$BODY" ] || { echo "Could not read PR body; aborting."; exit 1; }
 
+# The session's org attribution text, if it has one; Kanopi's shown. It is only ever
+# kept, never added, so the default is safe when the session carries none. Set it to
+# the session's own text when that differs, or a different org's line is dropped.
+ATTR='- [x] Was AI used in this pull request?'
+LAST=$(printf '%s\n' "$BODY" | grep -v '^[[:space:]]*$' | tail -1)
+KEEP=""; [ "$LAST" = "$ATTR" ] && KEEP="$ATTR"
+
 {
-  # Keep everything above the previous Quality Report; it is always last.
-  printf '%s\n' "$BODY" | awk '/^## Quality Report$/{exit} {print}'
+  # Everything above the previous report — minus the attribution, if it moves to the end.
+  # Drop every tick state of the AI checkbox too, or an unticked template copy survives.
+  printf '%s\n' "$BODY" | awk '/^## Quality Report$/{exit} {print}' \
+    | if [ -n "$KEEP" ]; then
+        grep -vFx -- "$ATTR" | grep -vE '^- \[[ xX]\] Was AI used in this pull request\?$'
+      else cat; fi
 
   cat <<'PRBODY'
 ## Quality Report
 <the report>
 PRBODY
+
+  [ -z "$KEEP" ] || printf '\n%s\n' "$KEEP"
 } | gh pr edit <pr-number> --body-file -
 ```
 
 **The emptiness check is not optional.** Without it, a failed `gh pr view` pipes nothing
 through `awk` and the description is overwritten with the report alone.
+
+**Check the AI disclosure every time you write the body.** The `Was AI used in this pull
+request?` checkbox must appear exactly once — in the template's position, or last when
+org attribution puts it there — and be ticked when AI assisted the change itself, not
+merely its description. Count whole checkbox lines only; the bare phrase also turns up when
+a description quotes it:
+
+```bash
+gh pr view <pr-number> --json body -q .body | tr -d '\r' \
+  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'
+# must print 1 — or 0 when the template has no box and the session's
+# attribution settings forbid adding one
+```
+
+A missing, duplicated, or wrongly unticked box sits above the report, so fixing it is a
+separate edit: read the body, correct that one line — adding it under `## Description`,
+after the ticket line, if it is missing — and write it back with the same empty-read
+guard. Show the fix at the approval gate. If the session's attribution settings say to
+add no attribution lines to PR descriptions, never add a missing box; only correct one
+the template already has.
 
 - **Never append a second report.** One body holds exactly one, reflecting the latest
   run.
@@ -185,7 +234,10 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 | "Copy the CI results in so it's all in one place" | The checks UI is the record. Restate only a check with no CI equivalent. |
 | "Tests were written, so mark them passing" | Written is not passed. Report what this session ran. |
 | "Just append the new report below the old one" | Strip the old report first. One report per body. |
-| "Put the delivery-record link at the very end" | Nothing goes below the report. Place it above. |
+| "Put the delivery-record link at the very end" | Only org attribution goes below the report. Place the link above. |
+| "Regenerating anyway — the trailing attribution line can go" | Keep it. The org requires the body to end with it, and the strip would delete it. |
+| "Add the attribution line at the end of this PR too, while editing" | Never add a trailing line to a body that doesn't already end with one. If the body has no checkbox at all, add it under `## Description` instead. |
+| "The AI checkbox is missing, but that's outside the report" | Fix it in a separate edit above the report. Disclosure is required on every PR. |
 | "The PR body read failed — write the report anyway" | Abort. Writing without the read destroys the description. |
 
 ## Related Skills
@@ -193,4 +245,5 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 - **pr-create** — Creates the PR and calls this skill before its approval gate
 - **code-standards-checker** — Fixes standards violations before the PR opens; hands
   over only a local check that has no CI equivalent
-- **commit-message-generator** — Per-commit `Assisted-by:` provenance
+- **commit-message-generator** — Commit messages; per-commit provenance is the tool's
+  own `Co-Authored-By:` trailer

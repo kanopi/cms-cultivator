@@ -84,14 +84,14 @@ Work on multiple tickets — or run multiple AI sessions — in parallel:
 ```
 
 **What it does:**
-- Creates a sibling worktree with a Kanopi-style branch (`feature/tw1234-hero-block`)
+- Creates a sibling worktree with a Kanopi-style branch (`feature/1234-hero-block`)
 - Runs DDEV setup with automatic project isolation
 - Reports the directory, branch, and local URL
 
 Already have the branch? Attach a worktree to it instead of creating one:
 
 ```bash
-/worktree-manager create --branch feature/tw1234-hero-block
+/worktree-manager create --branch feature/1234-hero-block
 ```
 
 ### 4. Convert a Design to a Component

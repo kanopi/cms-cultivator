@@ -8,11 +8,11 @@
   "expectations": [
     {
       "type": "output_matches",
-      "pattern": "Assisted-by: Claude/"
+      "pattern": "^(feat|fix|docs|refactor|chore|style|test)(\\([\\w-]+\\))?: "
     },
     {
       "type": "output_not_matches",
-      "pattern": "Co-Authored-By"
+      "pattern": "Assisted-by:"
     }
   ]
 }

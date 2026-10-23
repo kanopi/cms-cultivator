@@ -24,6 +24,11 @@ standards violations never reach review.
 Dependency-only updates need no standards run. This tooling grades custom code, and a
 version bump changes none of it.
 
+**Not a skip:** a core, framework, or PHP upgrade beyond a patch release (Drupal 11.3 →
+11.4, WordPress 6.7 → 6.8, PHP 8.3 → 8.4). The upgrade deprecates APIs the custom code
+calls, so run the static checks against the custom code even though none of it was
+edited. Core patch and security releases (11.3.19 → 11.3.20) stay in the skip list.
+
 - Composer or npm dependency version bumps
 - Drupal module and WordPress plugin updates
 - Lockfile updates (`composer.lock`, `package-lock.json`, `yarn.lock`)

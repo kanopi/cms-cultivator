@@ -172,6 +172,19 @@ routine deploy is needed.
 - **Each template element appears exactly once**, in the position the template
   declares it. Never repeat a checkbox, ticket line, or footer at the end of the body
   as a sign-off — a duplicated "Was AI used in this pull request?" is the usual form.
+- **Org attribution outranks template placement.** If the session carries a pull
+  request attribution instruction — Claude Code's `attribution.pr`, often pushed
+  through org managed settings — its text is the last line of the body, after the
+  Quality Report. When it duplicates a template element (Kanopi's is
+  `- [x] Was AI used in this pull request?`), drop the template's copy so the line
+  appears once, at the end.
+- **AI disclosure, every PR.** The body carries the `Was AI used in this pull
+  request?` checkbox exactly once — in the template's position, or last when org
+  attribution puts it there. If the resolved template has none, add it under
+  `## Description`, after the ticket line — unless the session's attribution
+  settings say to add no attribution lines to PR descriptions; then keep a template
+  copy if there is one and add nothing. Tick it (`[x]`) when AI assisted the change
+  itself, not merely its description.
 - **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
   environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
@@ -182,8 +195,9 @@ routine deploy is needed.
   commands.
 - **Quality Report.** When the project's instructions call for one, generate it with
   `pr-quality-report` and append it as the **last** section before step 7, so the
-  approval gate shows it. Nothing goes below it — that skill regenerates the report
-  by stripping everything from its heading down.
+  approval gate shows it. Nothing goes below it except org attribution, which that
+  skill re-appends when it regenerates the report. A `Delivery Record:` link goes
+  above the report.
 - **Length.** GitHub rejects a body over 65,536 characters with a 422 and the
   description is lost, not truncated. Aim for a screen and a half: quote the summary
   line of tool output, never the log; link to files instead of pasting them; never
@@ -242,6 +256,24 @@ PRBODY
 Pass the body on stdin, never with `--body "$(…)"` — that sends it through argv and
 command substitution strips trailing newlines. Keep the delimiter quoted and unusual
 (`<<'PRBODY'`, not `<<EOF`); `pr-quality-report` covers why.
+
+Verify the AI disclosure landed exactly once. Match the whole checkbox line — the bare
+phrase also appears when a description quotes it:
+
+```bash
+gh pr view <pr-number> --json body -q .body | tr -d '\r' \
+  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'
+# must print 1 — or 0 when the template has no box and the session's
+# attribution settings forbid adding one
+```
+
+Strip `\r` first: a body last edited in the GitHub web UI comes back with CRLF line
+endings, and the `$` anchor then matches nothing.
+
+**Delivery record.** If the project's instructions call for one — required for a core,
+framework, or PHP upgrade beyond a patch release, offered for medium- and
+high-complexity work — finalize it now that the PR exists, with the `delivery-record`
+skill. Its `Delivery Record:` link goes above the Quality Report, never below.
 
 Return the PR URL to the user. If the Affected URL is a Tugboat placeholder, run pass 2
 from the testing-environment reference once the build finishes. Suggest next steps
@@ -311,5 +343,6 @@ gate and the honesty of the description are the contract:
 | "The branch is behind main but pushing anyway is faster" | Surface the divergence and let the user decide before creating the PR. |
 | "Reuse the last PR's description, the work is similar" | Every description is generated from this branch's actual diff and commits. |
 | "The Tugboat build isn't done — link the dashboard and move on" | Write the placeholder, then fetch the real preview URL in pass 2. A dashboard link is never the answer. |
+| "The repo's template has no AI checkbox, so there's nothing to tick" | Add it under `## Description`. Disclosure is required on every PR, whatever the template. |
 | "This change is big — it deserves a longer description" | Keep the limits. Depth belongs in the ticket or a linked doc; the diff carries the detail. |
 | "A sentence on where the preview URL came from helps the reviewer" | The Affected URL section holds the link and nothing else. Findings from the preview go in Deploy Notes or Assumptions. |

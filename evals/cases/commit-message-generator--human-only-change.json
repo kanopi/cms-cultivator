@@ -13,10 +13,6 @@
     {
       "type": "output_not_matches",
       "pattern": "^Assisted-by:"
-    },
-    {
-      "type": "output_not_matches",
-      "pattern": "Co-Authored-By"
     }
   ]
 }
