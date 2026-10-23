@@ -13,31 +13,34 @@ A worktree checks out a second branch into its own directory while sharing one `
 
 ## Usage
 
-- `/worktree-manager create <ticket-id> <short-desc> [--type feature|bug|hotfix] [--base main]` — create a worktree + branch
+- `/worktree-manager create <ticket-id> <short-desc> [--type feature|bug|hotfix|devops] [--base main]` — create a worktree + branch
 - `/worktree-manager list` — show active worktrees and their DDEV status
 - `/worktree-manager remove <ticket-id>` — tear down a worktree (destructive; requires confirmation)
 
-If the user gives a Teamwork URL or task ID, parse the numeric ID from it (e.g. `tw1234`).
+If the user gives a Teamwork URL or task ID, parse the numeric ID from it: `tw1234` and a Teamwork task URL both yield `1234`. Branch names use the bare number.
 
 ## Naming convention
 
-Branch (unchanged from Kanopi standards):
+Branch — Kanopi standard, the bare Teamwork ID with no `tw` prefix:
 
 ```
-<type>/tw<ticketID>-<short-desc>
-# feature/tw1234-hero-block
-# bug/tw1235-menu-fix
-# hotfix/tw1236-login-error
+<type>/<ticketID>-<short-desc>
+# feature/1234-hero-block
+# bug/1235-menu-fix
+# hotfix/1236-login-error
+# devops/1237-add-ddev
 ```
+
+Types: `feature`, `bug`, `hotfix`, `devops` (infrastructure, tooling, CI/CD, dev environment).
 
 For a sub-task or dependent feature, use the **parent** task ID, matching the complex-feature parent/child model.
 
-Worktree directory — a sibling of the main clone, named to mirror the branch:
+Worktree directory — a sibling of the main clone, named for the ticket. The directory keeps the `tw` prefix: it becomes the DDEV project name and hostname, where `tw` makes the ticket readable at a glance.
 
 ```
 <repo>/                       # main clone, stays on main
-<repo>-tw1234/                # worktree for feature/tw1234-hero-block
-<repo>-tw1235/                # worktree for bug/tw1235-menu-fix
+<repo>-tw1234/                # worktree for feature/1234-hero-block
+<repo>-tw1235/                # worktree for bug/1235-menu-fix
 ```
 
 Keep worktrees as siblings (not nested inside the main clone) so build tooling, IDE indexers, and DDEV file mounts don't recurse into them.
@@ -64,11 +67,11 @@ Run the steps directly, pausing at the confirmation gate for destructive actions
    ```
 3. **Create the worktree + branch** off the up-to-date remote base:
    ```bash
-   git worktree add ../<repo>-tw<id> -b <type>/tw<id>-<short-desc> origin/<base>
+   git worktree add ../<repo>-tw<id> -b <type>/<id>-<short-desc> origin/<base>
    ```
    If the branch already exists (resuming work), omit `-b`:
    ```bash
-   git worktree add ../<repo>-tw<id> <type>/tw<id>-<short-desc>
+   git worktree add ../<repo>-tw<id> <type>/<id>-<short-desc>
    ```
 4. **Run platform setup** — see Platform Notes below.
 5. **Report** the directory path, branch name, and (for DDEV projects) the local URL from `ddev describe`, plus the Tier 1 instructions for attaching a CLI or Desktop session.
@@ -111,9 +114,11 @@ If platform is ambiguous (no `.ddev/`, no `next.config.*`), ask which platform i
 
 **Confirmation gate:** state exactly what will be deleted (worktree directory, local branch if merged, DDEV project + database) and wait for explicit approval before proceeding.
 
+**Read the branch from the worktree; do not reconstruct it** — `git -C ../<repo>-tw<id> branch --show-current`. Worktrees created before the `tw` prefix was dropped from branch names are on `<type>/tw<id>-…` branches, which the patterns below would miss. Use the name it returns in steps 1 and 4.
+
 1. **Verify the branch is merged** (or the user confirms abandoning it):
    ```bash
-   git branch --merged main | grep <type>/tw<id>
+   git branch --merged main | grep '<type>/<id>-'
    ```
 2. **Tear down DDEV** for that project (snapshot kept by default for safety):
    ```bash
@@ -126,7 +131,7 @@ If platform is ambiguous (no `.ddev/`, no `next.config.*`), ask which platform i
    ```
 4. **Delete the local branch** once merged (mirrors Kanopi's branch-cleanup discipline):
    ```bash
-   git branch -d <type>/tw<id>-<short-desc>
+   git branch -d <type>/<id>-<short-desc>
    ```
    Use `-D` only with explicit confirmation — it discards unmerged work.
 
