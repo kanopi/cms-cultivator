@@ -12,18 +12,18 @@ Create, list, and tear down git worktrees so multiple tickets — and multiple A
 
 **Usage:**
 ```bash
-/worktree-manager create 1234 hero-block       # new worktree + feature/tw1234-hero-block
+/worktree-manager create 1234 hero-block       # new worktree + feature/1234-hero-block
 /worktree-manager create 1235 menu-fix --type bug
-/worktree-manager create --branch feature/tw1236-old-work   # attach to an existing branch
+/worktree-manager create --branch feature/1236-old-work   # attach to an existing branch
 /worktree-manager create --branch develop --dir ../site-develop
 /worktree-manager list                          # show active worktrees + DDEV status
 /worktree-manager remove 1234                   # tear down (asks for confirmation first)
-/worktree-manager remove feature/tw1236-old-work --delete-branch
+/worktree-manager remove feature/1236-old-work --delete-branch
 ```
 
 **What it does:**
 1. Creates a sibling worktree directory mirroring the branch (`../<repo>-tw1234`)
-2. Branches off the up-to-date remote base using Kanopi naming (`<type>/tw<id>-<short-desc>`) — or, with `--branch`, attaches to a branch that already exists locally or on `origin`
+2. Branches off the up-to-date remote base using Kanopi naming (`<type>/<id>-<short-desc>`) — or, with `--branch`, attaches to a branch that already exists locally or on `origin`
 3. Runs platform setup — DDEV (`start`, `composer install`, theme build, `db-refresh`) for Drupal/WordPress, or port-separated `npm run dev` for Next.js
 4. Reports the directory, branch, and local URL, plus how to attach a CLI or Desktop session
 5. On removal, gates the destructive teardown (worktree, branch, DDEV project + database) behind explicit confirmation
