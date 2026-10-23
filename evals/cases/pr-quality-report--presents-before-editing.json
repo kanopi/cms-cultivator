@@ -1,0 +1,15 @@
+{
+  "name": "pr-quality-report--presents-before-editing",
+  "skill": "pr-quality-report",
+  "fixture": "wp-plugin-feature-branch",
+  "prompt": "Update the quality report on PR 12 for this branch.",
+  "max_turns": 12,
+  "smoke": false,
+  "cant": ["CANT-1"],
+  "expectations": [
+    { "type": "output_matches", "pattern": "## Quality Report" },
+    { "type": "tool_not_called", "pattern": "gh pr edit" },
+    { "type": "output_not_matches", "pattern": "(?i)### Files Modified" },
+    { "type": "output_not_matches", "pattern": "(?i)### Static (Checks|Analysis)" }
+  ]
+}

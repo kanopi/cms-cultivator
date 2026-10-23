@@ -1,11 +1,11 @@
 ---
 name: pr-create
-description: Generate a PR description and create a GitHub pull request. Invoke when user wants to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Supports ticket numbers and --concise mode.
+description: Generate a PR description and create a GitHub pull request. Invoke when user wants to create a pull request, says "create a PR", "submit a PR", "open a pull request", or uses /pr-create. Requires user confirmation before creating the PR (irreversible GitHub action). Writes terse descriptions and supports ticket numbers.
 ---
 
 # PR Create
 
-Generate a comprehensive PR description and create a GitHub pull request. The main session runs this skill directly — no orchestrator agent is involved.
+Generate a terse PR description and create a GitHub pull request. The main session runs this skill directly — no orchestrator agent is involved.
 
 ## ⚠️ Side Effect Warning
 
@@ -21,8 +21,7 @@ Generate a comprehensive PR description and create a GitHub pull request. The ma
 
 - "Create a PR for my current branch"
 - "Create a pull request with ticket PROJ-123"
-- "Create a concise PR for this bug fix"
-- `/pr-create [ticket-number] [--concise]`
+- `/pr-create [ticket-number]`
 
 ## Prerequisites
 
@@ -35,18 +34,21 @@ Generate a comprehensive PR description and create a GitHub pull request. The ma
 ### 1. Parse arguments
 
 - Look for a ticket reference (e.g., `PROJ-123`) in the arguments, current branch name, or recent commit messages.
-- Look for `--concise` flag in the arguments. Concise mode produces shorter descriptions and skips non-critical quality checks.
+- `--concise` is still accepted for muscle memory, but changes nothing: every description is terse (step 6), and the step 5 checks always run.
 
 ### 2. Verify prerequisites
 
 Run in parallel:
 
 - `git status` — confirm working tree is clean (or staged changes are intended for the PR)
-- `git branch --show-current` — confirm we're not on `main`/`master`
+- `git branch --show-current` — confirm we're not on the default branch
+- `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name` — the default
+  branch; never assume `main` (many Kanopi repos use `master`). Without `gh`:
+  `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`
 - `gh auth status` — confirm GitHub CLI is authenticated
 - `git remote -v` — confirm the repo has a remote
 
-If on `main`/`master`, stop and tell the user to switch to a feature branch first.
+If on the default branch, stop and tell the user to switch to a feature branch first.
 
 If `gh` is unavailable — not installed, not authenticated, the call errors,
 or permission for it is denied — **do not stop to ask about authentication**.
@@ -82,7 +84,19 @@ Scan the diff for platform-specific changes:
 - Theme template changes or new plugin activations → flag cache clear / plugin activation
 - Block changes (`block.json`, `src/blocks/`) → flag editor cache
 
-### 5. Run inline quality checks (skip in --concise mode unless critical)
+**Any platform:**
+- New environment variables or secrets read by the code → list them
+- Lockfile or manifest changes → flag a dependency install
+- Build-config, bundler, or asset-pipeline changes → flag an asset rebuild
+- Job, worker, queue, or scheduler definitions → flag a restart
+- Flag-gated code paths → name the flag to flip
+- Anything the deploy pipeline cannot reach → spell out the manual admin step
+
+Name the exact command wherever the project has one — check its deploy scripts, CI
+config, and README. Omit Deploy Notes only when the diff needs nothing beyond a
+routine deploy.
+
+### 5. Run inline quality checks
 
 Use Read, Grep, and Bash directly — no Task() spawns required:
 
@@ -95,7 +109,15 @@ Note findings briefly in the PR description's relevant sections. Do **not** bloc
 
 ### 6. Generate PR description
 
-Use the template below. Adjust verbosity for `--concise` mode.
+**Resolve the template explicitly** — the repository first, then the org's `.github`
+repository — following
+[`references/template-resolution.md`](references/template-resolution.md). Step 9
+passes the body with `--body-file`, which skips `gh`'s own template population, so
+never rely on `gh` to insert it.
+
+If neither exists, use the template below — Kanopi's org default. Complete every
+section the resolved template contains; omit one only when it genuinely does not
+apply.
 
 ```markdown
 ## Description
@@ -104,7 +126,7 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 
 > As a [role], I need to [action] so that [benefit].
 
-[Summary of changes in 2–4 sentences. What changed and why.]
+[1–2 sentences: what changed and why.]
 
 ## Acceptance Criteria
 * [Specific, testable criteria]
@@ -124,11 +146,47 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 [Config imports, cache clearing, database updates, plugin activations, permalink flushes — anything required for deployment]
 ```
 
-In concise mode:
-- Description paragraph is 1–2 sentences
-- Acceptance Criteria and Steps to Validate as bullets (2–4 each)
-- Deploy Notes only if there are real deployment requirements
-- All template sections still present
+**Be terse — every description, not a mode:**
+
+- **Description:** 1–2 sentences on what changed and why.
+- **Acceptance Criteria and Steps to Validate:** 2–4 bullets each, one line per
+  bullet.
+- **Deploy Notes:** only when there are real deployment requirements.
+- **Step 5 findings:** one line each, in the section they belong to.
+- **No preamble.** Never open with "This PR…" or "In this pull request…", and
+  don't restate the title.
+- **No file narration.** The Files changed tab shows what changed where; say
+  what the change does.
+- **No filler, hedging, or closing summary.** Cut "basically", "simply",
+  "this should", and any recap of what was already said.
+
+Terse shortens the content, never the structure: every section the template
+has still appears.
+
+**Body rules:**
+
+- **No hard wrapping.** GitHub renders a single newline inside a paragraph as a line
+  break, so wrapped prose renders ragged. Each paragraph and each bullet is one
+  unbroken line. Fenced code blocks and table rows are exempt.
+- **Each template element appears exactly once**, in the position the template
+  declares it. Never repeat a checkbox, ticket line, or footer at the end of the body
+  as a sign-off — a duplicated "Was AI used in this pull request?" is the usual form.
+- **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
+- **Affected URL and validation links.** If the repository deploys to a hosting
+  environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
+  `terminus` in CI or Composer scripts), follow
+  [`references/testing-environment.md`](references/testing-environment.md). If it
+  does not — a plugin, library, CLI tool, or docs repo — omit Affected URL entirely,
+  with no note explaining its absence, and write the validation steps as local
+  commands.
+- **Quality Report.** When the project's instructions call for one, generate it with
+  `pr-quality-report` and append it as the **last** section before step 7, so the
+  approval gate shows it. Nothing goes below it — that skill regenerates the report
+  by stripping everything from its heading down.
+- **Length.** GitHub rejects a body over 65,536 characters with a 422 and the
+  description is lost, not truncated. Aim for a screen and a half: quote the summary
+  line of tool output, never the log; link to files instead of pasting them; never
+  shorten by dropping a required section.
 
 **Test-claim honesty (hard rule):** the description only states results this
 session actually produced. If tests were not run, the description says
@@ -139,6 +197,11 @@ tests pass**: do not stop to renegotiate — proceed to step 7 as normal,
 write "Tests not run" in the description, and note under Assumptions that
 the requested "tests pass" claim was replaced because no tests were run.
 The user can edit the description at the approval gate if they disagree.
+
+**Environment-claim honesty (hard rule):** never write that a preview is live, built,
+or working unless this session requested a page from it and got a 200. A constructed
+Pantheon URL has not been visited, and a Tugboat build reporting `ready` can still be
+serving 503s.
 
 ### 7. Present for approval
 
@@ -169,20 +232,26 @@ Reply "approve" to create this PR, or provide your edits.
 ### 9. Create the PR
 
 ```bash
-gh pr create --base <default-branch> --head <current-branch> --title "<title>" --body "$(cat <<'EOF'
+gh pr create --base <default-branch> --head <current-branch> --title "<title>" \
+  --body-file - <<'PRBODY'
 <approved description>
-EOF
-)"
+PRBODY
 ```
 
-Return the PR URL to the user. Suggest next steps (e.g., assigning reviewers, running `/pr-release` later for the release).
+Pass the body on stdin, never with `--body "$(…)"` — that sends it through argv and
+command substitution strips trailing newlines. Keep the delimiter quoted and unusual
+(`<<'PRBODY'`, not `<<EOF`); `pr-quality-report` covers why.
+
+Return the PR URL to the user. If the Affected URL is a Tugboat placeholder, run pass 2
+from the testing-environment reference once the build finishes. Suggest next steps
+(e.g., assigning reviewers, running `/pr-release` later for the release).
 
 ## Environment fallback (no `gh` CLI / no Task tool)
 
 If `gh` is unavailable (Claude Desktop, Codex without `gh`, restricted environment):
 
 1. Run steps 1–7 normally — present the PR title and description.
-2. After approval, **provide the `gh pr create` command** for the user to run manually, with the body pre-formatted in a heredoc they can paste.
+2. After approval, **provide the `gh pr create --body-file -` command** for the user to run manually, with the body in a quoted heredoc they can paste.
 3. Do not attempt to create the PR yourself.
 
 ## Title Conventions
@@ -211,6 +280,8 @@ Use conventional commit style: `<type>(<scope>): <description>`
 
 - **pr-review** — Self-review before creating the PR
 - **commit-message-generator** — Generate the commit messages that feed into the PR
+- **pr-quality-report** — Write the Quality Report that goes last in the PR body, and
+  regenerate it safely on an existing PR
 - **pm-skills:pr-to-teamwork** — Post the PR and its description to the referenced
   Teamwork ticket and move it to Code Review; the natural next step after this skill
 - **pr-release** — Generate changelog + deployment checklist for the release PR
@@ -238,3 +309,6 @@ gate and the honesty of the description are the contract:
 | "Leave out the breaking change, it'll be caught in review" | Breaking changes, migrations, and config changes are always called out explicitly. |
 | "The branch is behind main but pushing anyway is faster" | Surface the divergence and let the user decide before creating the PR. |
 | "Reuse the last PR's description, the work is similar" | Every description is generated from this branch's actual diff and commits. |
+| "The Tugboat build isn't done — link the dashboard and move on" | Write the placeholder, then fetch the real preview URL in pass 2. A dashboard link is never the answer. |
+| "This change is big — it deserves a longer description" | Keep the limits. Depth belongs in the ticket or a linked doc; the diff carries the detail. |
+| "A sentence on where the preview URL came from helps the reviewer" | The Affected URL section holds the link and nothing else. Findings from the preview go in Deploy Notes or Assumptions. |

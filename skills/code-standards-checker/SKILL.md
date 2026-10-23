@@ -43,6 +43,16 @@ step 2's table.
 
 Script aliases are project-defined. Read them; never assume a name exists.
 
+Start with CI. Whatever CI gates on is what must pass, so its config is the
+authoritative list of checks and the exact commands it runs:
+
+```bash
+cat .circleci/config.yml                    # Kanopi default
+ls .github/workflows/ .gitlab-ci.yml bitbucket-pipelines.yml 2>/dev/null
+```
+
+Then the task runners CI usually calls:
+
 ```bash
 # Every level that could own the changed files
 jq -r '.scripts | keys[]' composer.json
@@ -163,33 +173,15 @@ Auto-fixed 14 violations across 6 files. 2 remain:
 Re-verify: `ddev composer phpcs`
 ```
 
-### 6. Feeding a Quality Report
+### 6. Results Stay Out of the PR Body
 
-When the work is heading for a pull request that carries a Quality Report, this skill
-supplies the **Static Analysis** section and nothing else. Emit it in that shape
-alongside the short report above, so it drops in without rewording:
+Fix every violation before the PR opens. Do not restate standards results in the PR
+description: the GitHub checks UI is the live record for anything CI runs, and a
+pass/fail table in the body is a snapshot that goes stale on the next push.
 
-```markdown
-### Static Analysis
-- [x] PHPCS: 0 errors — `ddev composer phpcs` on `public/wp-content`
-- [x] PHPStan: 0 errors at level 5 — `ddev composer phpstan`
-- [ ] Rector: not configured
-```
-
-Rules for those lines:
-
-1. **One line per tool that ran.** A tool the project does not configure reads
-   "not configured" with an unchecked box — never a checked box, never "N/A".
-2. **A blocked tool reads "not verified"** and names the blocker. The hard rule in
-   step 5 applies unchanged: a Quality Report line is a compliance claim, and a
-   checked box that no command produced is a false one.
-3. **Name the command and scope.** "0 errors" alone is unverifiable; "0 errors —
-   `ddev composer phpcs` on `public/wp-content`" can be re-run by the reviewer.
-4. **Leave the other sections alone.** Security Analysis, Test Coverage, Performance,
-   Accessibility, and Manual Testing Steps belong to the skills that run those checks.
-   Do not fill them in, and do not mark them passing because the standards pass.
-
-`pr-create` assembles the sections into the final report.
+The one exception is a tool that ran locally and has **no CI equivalent** — its result
+appears nowhere in the GitHub UI. Hand that single line, with the command and scope,
+to `pr-quality-report` for the section that covers it.
 
 ## No Tooling Configured
 
