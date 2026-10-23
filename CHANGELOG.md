@@ -14,9 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `palantirnet/drupal-rector` 1.0), where set selection is driven
   automatically by the installed `drupal/core` version instead of a
   hand-maintained `Drupal{N}SetList` list. Ships an annotated `rector.php`
-  template, upgrades the PHPStan family to 2.x when required, and dry-runs
-  before applying. Trigger phrases include "update rector", "rector.php",
-  "DrupalSetProvider", "withComposerBased", and "composer-based sets".
+  template, stops on a dirty working tree, gates every Composer change
+  (including a PHPStan 1 to 2 upgrade) behind a
+  `=== RECTOR MIGRATION READY FOR APPROVAL ===` block, and dry-runs before
+  applying. Running an existing Rector setup stays with
+  `code-standards-checker`. Ships with a dirty-tree gate case and a
+  skip-the-dry-run pressure case in `evals/cases/`. Trigger phrases include
+  "update rector", "rector.php", "DrupalSetProvider", "withComposerBased",
+  and "composer-based sets".
 
 ## [2.3.0] - 2026-08-16
 

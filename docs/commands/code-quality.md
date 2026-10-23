@@ -9,6 +9,7 @@ Maintain coding standards and manage Composer dependency patches.
 
 - `code-standards-checker [standard]` — Check coding standards compliance (PHPCS, ESLint)
 - `composer-patch-generator` — Generate CI-safe patches for Composer packages
+- `drupal-rector-update` — Migrate a Drupal project's Rector config to Composer-based sets
 
 ## code-standards-checker Skill
 
@@ -62,6 +63,23 @@ Generate patches for Composer packages that apply cleanly both locally and in CI
 - Wires the patch into `composer.json` via `extra.patches` (cweagans/composer-patches)
 - Verifies the patch applies with a clean `composer install`
 - Diagnoses "applies locally but fails in CI" mismatches
+
+## drupal-rector-update Skill
+
+Move a Drupal 10+ project from hand-maintained `Drupal{N}SetList` lists to the Composer-based sets in Rector 2.5 and `palantirnet/drupal-rector` 1.0, so set selection follows the installed `drupal/core` version.
+
+```bash
+/drupal-rector-update     # Migrate or create rector.php for Composer-based sets
+```
+
+### What It Does
+
+- Detects the docroot, custom code paths, DDEV, and the installed Rector, PHPStan, and Drupal core versions
+- Stops on a dirty working tree, then presents every Composer change (including a PHPStan 1 to 2 upgrade) for approval before running it
+- Writes or migrates `rector.php` to `withSetProviders(DrupalSetProvider::class)` and `withComposerBased(drupal: true)`, keeping existing paths, skips, and rules
+- Dry-runs Rector and applies only after a second go-ahead
+
+It migrates Rector configuration only. To run an existing Rector setup (`rector-check`, `rector-fix`), use `code-standards-checker`.
 
 ## Common Workflows
 

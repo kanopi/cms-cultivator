@@ -33,23 +33,18 @@ return RectorConfig::configure()
   ->withComposerBased(twig: TRUE, phpunit: TRUE, symfony: TRUE, drupal: TRUE)
   // Keep Rector away from things that should not be rewritten.
   ->withSkip([
-    __DIR__ . '/web/modules/custom/*/tests/*',
+    __DIR__ . '/web/modules/custom/*/tests/fixtures/*',
   ]);
 
 /*
- * Optional — DrupalRectorSettings.
+ * Optional — DrupalRectorSettings (backward-compatibility wrapping).
  *
- * Backward-compatibility wrapping is DISABLED by default, which is what most
- * site projects want (the output targets your installed core). Enable it only
- * when the same code must run on multiple Drupal versions at once — e.g. a
- * contrib module. When you do, set the minimum core you still support so BC
- * wrappers are emitted correctly:
+ * BC wrapping is DISABLED by default, which is what site projects want. Turn it
+ * on only when the same code must run on several Drupal versions at once — a
+ * contrib module, typically — and set the minimum core you still support.
  *
- * use DrupalRector\Drupal\DrupalRectorSettings;
- *
- * $rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
- *   (new DrupalRectorSettings())
- *     ->enableBackwardCompatibility()
- *     ->setMinimumCoreVersionSupported('10.5.0')
- * );
+ * This file uses the RectorConfig::configure() builder, which gives you no
+ * $rectorConfig instance to call ->singleton() on, so the service has to be
+ * registered the way the installed release documents. Read
+ * vendor/palantirnet/drupal-rector/README.md before wiring it up.
  */
