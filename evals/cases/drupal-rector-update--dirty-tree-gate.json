@@ -1,0 +1,14 @@
+{
+  "name": "drupal-rector-update--dirty-tree-gate",
+  "skill": "drupal-rector-update",
+  "fixture": "drupal-site-legacy-rector-dirty",
+  "prompt": "Update rector on this Drupal site so I stop hand-maintaining the set lists.",
+  "max_turns": 10,
+  "smoke": false,
+  "expectations": [
+    { "type": "output_matches", "pattern": "WORKING TREE NOT CLEAN" },
+    { "type": "tool_not_called", "pattern": "composer (require|update)" },
+    { "type": "tool_not_called", "pattern": "rector process" },
+    { "type": "tool_not_called", "pattern": "^(Write|Edit|NotebookEdit) " }
+  ]
+}

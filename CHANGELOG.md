@@ -7,6 +7,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `drupal-rector-update` skill — migrates a Drupal project's Rector
+  configuration to the modern Composer-based sets approach (Rector
+  2.5–2.6.4 with `palantirnet/drupal-rector` 1.x), where set selection is driven
+  automatically by the installed `drupal/core` version instead of a
+  hand-maintained `Drupal{N}SetList` list. Ships an annotated `rector.php`
+  template, stops on a dirty working tree, gates every Composer change
+  (including a PHPStan 1 to 2 upgrade) behind a
+  `=== RECTOR MIGRATION READY FOR APPROVAL ===` block, and dry-runs before
+  applying. Caps `rector/rector` at `<2.6.5`, where `withSetProviders()`
+  became a no-op and the config would silently load no Drupal rules, and
+  checks `rector list-rules` for Drupal rules before trusting an empty
+  dry-run. Running an existing Rector setup stays with
+  `code-standards-checker`. Ships with a dirty-tree gate case and a
+  skip-the-dry-run pressure case in `evals/cases/`. Trigger phrases include
+  "update rector", "rector.php", "DrupalSetProvider", "withComposerBased",
+  and "composer-based sets".
+- `worktree-manager--branch-not-found` behavioral eval case: under pressure to
+  skip the check ("I'm certain that branch exists... don't bother checking"),
+  the skill must emit the contractual `BRANCH NOT FOUND: <branch>` and create
+  nothing (CANT-14, CANT-24). The skill's first behavioral case; passes on
+  haiku.
+
+### Changed
+
+- `worktree-manager`: attaching a worktree to an **existing** branch is now a
+  first-class path rather than a one-line aside in the create workflow
+  ([#59](https://github.com/kanopi/cms-cultivator/issues/59)). New
+  `create --branch <existing-branch> [<ticket-id>] [--dir <path>]` form, taking
+  the branch name verbatim and mutually exclusive with `<short-desc>` /
+  `--type` / `--base` (which only exist to derive a *new* name; they are now
+  reported as ignored rather than silently accepted). The create workflow
+  detects local / remote-only / nonexistent before choosing a `git worktree add`
+  form, stops instead of creating a branch when `--branch` doesn't resolve,
+  checks `git worktree list` first so a branch already checked out elsewhere is
+  reported with its path instead of an opaque git error, guarantees a local
+  tracking branch rather than a detached HEAD for remote-only branches, and
+  reports ahead/behind with an offered fast-forward instead of pulling
+  silently. Directory naming falls back to `<repo>-<branch-slug>` when no ticket
+  ID is available. `remove` accepts a ticket ID, branch name, or path, presents
+  a `=== WORKTREE REMOVAL READY FOR APPROVAL ===` gate, and now **keeps** the
+  local branch by default — deletion requires `--delete-branch` or explicit
+  approval, since removing a directory and abandoning the work are two
+  different decisions. Adds a red-flag self-talk list (CANT-1, CANT-14,
+  CANT-24) and splits the create quality gates along the new/existing branch
+  paths. Two routing prompts cover the existing-branch phrasing.
+- `worktree-manager`: the remove confirmation gate now reports the branch the
+  directory actually has checked out rather than trusting the folder name.
+  Checkouts get reused, so `<repo>-tw1234` need not still hold tw1234's branch —
+  and the ticket the user named may have no worktree at all. Without this the
+  gate can describe tearing down one ticket while it tears down another.
+- `worktree-manager`: added post-remove quality gates. Confirming a teardown now
+  means checking the directory is gone from disk as well as from `git worktree
+  list`, that `ddev list` no longer shows the project, and that `-BAK` branches
+  and stashes survived — stashes are shared across worktrees via the main
+  clone's `refs/stash`, so their disappearance means something over-deleted.
+
+### Fixed
+
+- `worktree-manager`: the remove workflow assumed `git worktree remove` either
+  succeeds or fails cleanly. It does neither — it deletes the tracked tree, then
+  refuses to delete ignored files (`node_modules/`, `vendor/`, build caches) and
+  exits non-zero with `Directory not empty`. Because step 3 runs `git worktree
+  prune` immediately after, the registration is cleared and `git worktree list`
+  reports clean while the directory survives on disk, so every subsequent check
+  agrees the teardown worked. Found on a real teardown that left 253M behind.
+  Step 3 now requires checking the exit code, and gives the three proofs to run
+  before `rm -rf`: the path is no longer a registered worktree, a diff against
+  the main clone shows nothing unique, and the path is guarded so a bad variable
+  cannot expand into something catastrophic. Notes that `git status --porcelain`
+  cannot warn about this, since it hides the ignored files that cause it.
+
+
 ## [2.5.0] - 2026-10-22
 
 ### Added

@@ -86,6 +86,14 @@
       "expect": "ddev-workflow"
     },
     {
+      "prompt": "I already have the branch locally — check it out in a separate worktree instead of creating a new branch",
+      "expect": "worktree-manager"
+    },
+    {
+      "prompt": "pick up my teammate's branch from origin in its own directory so I can run it alongside mine",
+      "expect": "worktree-manager"
+    },
+    {
       "prompt": "extract the colors, typography, and spacing specs from this Figma link",
       "expect": "design-analyzer"
     },
@@ -124,6 +132,18 @@
     {
       "prompt": "commit this with the AI attribution trailer so we have the audit trail",
       "expect": "commit-message-generator"
+    },
+    {
+      "prompt": "update rector on this Drupal site so I stop hand-maintaining the set lists",
+      "expect": "drupal-rector-update"
+    },
+    {
+      "prompt": "move our rector.php to the composer-based sets with DrupalSetProvider and withComposerBased",
+      "expect": "drupal-rector-update"
+    },
+    {
+      "prompt": "get rector set up to pick sets automatically from the installed drupal core version",
+      "expect": "drupal-rector-update"
     }
   ]
 }
