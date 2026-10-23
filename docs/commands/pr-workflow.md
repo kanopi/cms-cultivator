@@ -14,16 +14,29 @@ Create, list, and tear down git worktrees so multiple tickets — and multiple A
 ```bash
 /worktree-manager create 1234 hero-block       # new worktree + feature/tw1234-hero-block
 /worktree-manager create 1235 menu-fix --type bug
+/worktree-manager create --branch feature/tw1236-old-work   # attach to an existing branch
+/worktree-manager create --branch develop --dir ../site-develop
 /worktree-manager list                          # show active worktrees + DDEV status
 /worktree-manager remove 1234                   # tear down (asks for confirmation first)
+/worktree-manager remove feature/tw1236-old-work --delete-branch
 ```
 
 **What it does:**
 1. Creates a sibling worktree directory mirroring the branch (`../<repo>-tw1234`)
-2. Branches off the up-to-date remote base using Kanopi naming (`<type>/tw<id>-<short-desc>`)
+2. Branches off the up-to-date remote base using Kanopi naming (`<type>/tw<id>-<short-desc>`) — or, with `--branch`, attaches to a branch that already exists locally or on `origin`
 3. Runs platform setup — DDEV (`start`, `composer install`, theme build, `db-refresh`) for Drupal/WordPress, or port-separated `npm run dev` for Next.js
 4. Reports the directory, branch, and local URL, plus how to attach a CLI or Desktop session
 5. On removal, gates the destructive teardown (worktree, branch, DDEV project + database) behind explicit confirmation
+
+**Working with an existing branch:**
+
+`--branch` takes the branch name verbatim — useful for resuming abandoned work, picking up a colleague's branch, or attaching to a long-lived branch that doesn't follow the ticket convention. It is mutually exclusive with `<short-desc>`, `--type`, and `--base`, which exist only to derive a *new* branch name.
+
+- A branch that exists only on `origin` gets a local tracking branch, never a detached HEAD
+- A branch already checked out in another worktree (including the main clone) is reported with that path instead of a raw git error
+- A branch behind `origin` reports its ahead/behind counts and offers a fast-forward — it is never pulled silently, since existing branches are the ones most likely to carry local-only work
+- Without a ticket ID, the directory falls back to `<repo>-<branch-slug>` unless you pass `--dir`
+- On teardown, the local branch is kept by default and deleted only with `--delete-branch` or explicit approval
 
 **Why worktrees:**
 - Run two Claude Code sessions (or a CLI session and a Claude Desktop "code" session) on different tickets at once — no `git checkout` thrash

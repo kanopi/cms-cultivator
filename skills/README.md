@@ -68,8 +68,8 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 
 ### 10. worktree-manager
 
-**Triggers**: "create a worktree", "work on two tickets at once"
-**Purpose**: Create, list, and tear down git worktrees with DDEV isolation
+**Triggers**: "create a worktree", "work on two tickets at once", "worktree for an existing branch"
+**Purpose**: Create, list, and tear down git worktrees with DDEV isolation — on a new branch, or attached to a branch that already exists
 **Related Command**: `/worktree-manager`
 
 ### 11. design-analyzer
