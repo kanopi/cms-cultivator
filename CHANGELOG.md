@@ -7,7 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `pr-quality-report`: writes the Quality Report that closes a PR description and
+  attaches it as the last section of the body, or regenerates it on an existing PR
+  by stripping the old report and appending the new one, with an empty-read guard
+  so a failed `gh pr view` cannot wipe the description. Sections appear only when
+  the diff touched their subject; no file list, and no restating of results the CI
+  checks UI already shows. Also documents passing multiline bodies to `gh` on stdin
+  with `--body-file -` and a quoted heredoc.
+
 ### Changed
+
+- `pr-create`: resolves the PR template from the repo, then the org `.github`
+  repo, before falling back to the built-in one, since `--body-file` skips `gh`'s
+  own template population. The resolution script lives in
+  `references/template-resolution.md`. Checks the real default branch instead of assuming
+  `main`/`master`. New body rules: no hard wrapping, each template element exactly
+  once (no duplicated "Was AI used" checkbox), nothing below the Quality Report,
+  and a 65,536-character length limit. Adds platform-independent deploy
+  requirements and an environment-claim honesty rule. Creates the PR via
+  `--body-file -` on stdin instead of `--body "$(…)"`.
+- `pr-create`: descriptions are terse by default — 1–2 sentence description,
+  2–4 one-line bullets for Acceptance Criteria and Steps to Validate, no preamble,
+  file narration, or closing summary. `--concise` is retired as a mode (still
+  accepted, now a no-op), and the inline quality checks it used to skip always run.
+- `pr-create`: new `references/testing-environment.md` for repos that deploy.
+  Pantheon multidev URLs are constructed; Tugboat preview URLs are fetched in two
+  passes, from the Tugboat API (token in `~/.tugboat.yml`) or Tugboat's PR comment,
+  since the hash makes them unguessable. Affected URL holds the link only, every
+  navigating validation step gets a deep link, and repos with no hosting
+  environment omit the section silently. A `ready` Tugboat build is not taken as
+  proof the site works.
+- `code-standards-checker`: reads CI config first, as the authoritative list of
+  checks that must pass. Section 6 no longer emits a Static Analysis block for the
+  PR body; standards results stay out of the description because the checks UI
+  reports them, and it previously claimed `pr-create` assembled a report it did not.
+- `commit-message-generator`: wraps the body at 72 columns and puts the ticket from
+  the branch name in a `Refs:` footer.
 
 - Per-push CI moved from GitHub Actions to CircleCI to cut GitHub Actions
   minute spend. The seven jobs in `.github/workflows/test.yml` (removed) are

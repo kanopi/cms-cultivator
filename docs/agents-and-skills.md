@@ -457,6 +457,7 @@ Don't try to "game" the system—just describe what you need:
 |-------|-------------|----------|---------------------|
 | commit-message-generator | "commit", "staged" | Quick commits | `commit-message-generator` |
 | pr-create | "create a PR", "open a pull request" | PR creation with generated description | `pr-create` |
+| pr-quality-report | "quality report", "update the quality report on the PR" | The closing Quality Report, attached or regenerated as the last section of the PR body | `pr-quality-report` |
 | pr-review | "review this PR", "review my changes" | PR review or pre-PR self-review | `pr-review` |
 | pr-release | "prepare a release", "generate a changelog" | Changelog + deployment checklist | `pr-release` |
 | worktree-manager | "new worktree", "work on two tickets at once" | Parallel tickets/sessions with DDEV isolation | `worktree-manager` |
