@@ -65,6 +65,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and stashes survived — stashes are shared across worktrees via the main
   clone's `refs/stash`, so their disappearance means something over-deleted.
 
+- `worktree-manager`: branches follow the Kanopi standard
+  `<type>/<ticketID>-<short-desc>` with the bare Teamwork ID
+  (`feature/1234-hero-block`), adds the `devops` type, and resolves the
+  repo's default branch instead of assuming `main`. Directories keep the
+  `<repo>-tw<id>` form, and ticket detection for `--branch` recognizes both
+  `<type>/1234-…` and older `<type>/tw1234-…` branches.
+- `pr-create` / `pr-quality-report`: org PR attribution (`attribution.pr`)
+  is the body's last line, after the Quality Report, and regeneration keeps
+  it there. The `Was AI used in this pull request?` checkbox appears exactly
+  once and is verified after every write; it is added when the template
+  lacks it, unless the session's attribution settings say to add none.
+  `Delivery Record:` links go above the Quality Report, and `pr-create`
+  finalizes a required or accepted delivery record once the PR exists.
+- `pr-quality-report` / `code-standards-checker`: a core, framework, or PHP
+  upgrade beyond a patch release is no longer treated as dependency-only.
+  Static checks run against custom code, and Security Analysis applies.
+- `commit-message-generator`: skips the `Assisted-by:` trailer when the
+  session's attribution settings say to add no attribution lines to commits.
+
 ### Fixed
 
 - `worktree-manager`: the remove workflow assumed `git worktree remove` either
@@ -79,7 +98,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the main clone shows nothing unique, and the path is guarded so a bad variable
   cannot expand into something catastrophic. Notes that `git status --porcelain`
   cannot warn about this, since it hides the ignored files that cause it.
-
+- `pr-quality-report`, `pr-create`: PR bodies are read through
+  `tr -d '\r'`. A body last edited in the GitHub web UI has CRLF line
+  endings, so the anchored matches missed every line: regeneration appended
+  a second Quality Report and the disclosure count read 0.
+- `pr-quality-report`: moving org attribution to the end now drops an
+  unticked template copy of the AI checkbox as well, instead of leaving two.
 
 ## [2.5.0] - 2026-10-22
 

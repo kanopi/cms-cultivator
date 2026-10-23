@@ -178,7 +178,9 @@ Rules:
   `git log --grep="^Assisted-by:"` work.
 - **Skip the trailer** when the change was written entirely by a human and
   AI only helped phrase this commit message — the trailer attests to the
-  change, not the prose. Also skip on explicit request (`--no-assisted-by`).
+  change, not the prose. Also skip on explicit request (`--no-assisted-by`),
+  and when the session's attribution settings say to add no attribution lines
+  to commit messages — org settings outrank this skill.
 - This trailer replaces `Co-Authored-By` for AI attribution — never add
   `Co-Authored-By: Claude…` (or any AI co-author line) to commit messages.
 

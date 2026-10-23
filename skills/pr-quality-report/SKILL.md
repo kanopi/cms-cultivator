@@ -29,8 +29,12 @@ covers the report and no second confirmation is needed.
   application code, templates, build config, tests.
 - **Dependency-only change** — version bumps and lockfile churn with no custom code
   edited: Composer and npm bumps, Drupal module updates, WordPress plugin updates,
-  package metadata. A dependency that is patched, forked, or overridden counts as
-  custom code.
+  package metadata, and core patch or security releases (Drupal 11.3.19 → 11.3.20). A
+  dependency that is patched, forked, or overridden counts as custom code.
+- **Core, framework, or PHP upgrade beyond a patch release** (Drupal 11.3 → 11.4,
+  WordPress 6.7 → 6.8, PHP 8.3 → 8.4) is **not** dependency-only: it runs update hooks,
+  changes config, and deprecates APIs the custom code uses. Security Analysis applies,
+  and Snyk runs on the custom code it touches.
 
 ## What goes in the report
 
@@ -114,7 +118,8 @@ passed; tests run in CI are reported by the checks UI, not here. Unknown is neve
 
 The report is the last section of the PR body. That makes regenerating it safe: strip
 the previous report, then append the new one. Only org attribution may follow it —
-anything else placed after the report is destroyed on the next regeneration.
+anything else placed after the report is destroyed on the next regeneration. A
+`Delivery Record:` link belongs above the report.
 
 **Org attribution.** Claude Code's `attribution.pr`, often pushed through org managed
 settings, ends PR descriptions with a fixed line — Kanopi's is
@@ -132,19 +137,25 @@ once, with the whole body on stdin.
 it back after approval:
 
 ```bash
-BODY=$(gh pr view <pr-number> --json body -q .body)
+# Strip \r: a body last edited in the GitHub web UI has CRLF line endings, and the
+# anchored matches below would miss every line — appending a second report.
+BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')
 [ -n "$BODY" ] || { echo "Could not read PR body; aborting."; exit 1; }
 
 # The session's org attribution text, if it has one; Kanopi's shown. It is only ever
-# kept, never added, so the default is safe when the session carries none.
+# kept, never added, so the default is safe when the session carries none. Set it to
+# the session's own text when that differs, or a different org's line is dropped.
 ATTR='- [x] Was AI used in this pull request?'
 LAST=$(printf '%s\n' "$BODY" | grep -v '^[[:space:]]*$' | tail -1)
 KEEP=""; [ "$LAST" = "$ATTR" ] && KEEP="$ATTR"
 
 {
   # Everything above the previous report — minus the attribution, if it moves to the end.
+  # Drop every tick state of the AI checkbox too, or an unticked template copy survives.
   printf '%s\n' "$BODY" | awk '/^## Quality Report$/{exit} {print}' \
-    | if [ -n "$KEEP" ]; then grep -vFx -- "$ATTR"; else cat; fi
+    | if [ -n "$KEEP" ]; then
+        grep -vFx -- "$ATTR" | grep -vE '^- \[[ xX]\] Was AI used in this pull request\?$'
+      else cat; fi
 
   cat <<'PRBODY'
 ## Quality Report
@@ -165,14 +176,16 @@ org attribution puts it there — and be ticked when AI assisted the change itse
 a description quotes it:
 
 ```bash
-gh pr view <pr-number> --json body -q .body \
+gh pr view <pr-number> --json body -q .body | tr -d '\r' \
   | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'   # must print 1
 ```
 
 A missing, duplicated, or wrongly unticked box sits above the report, so fixing it is a
 separate edit: read the body, correct that one line — adding it under `## Description`,
 after the ticket line, if it is missing — and write it back with the same empty-read
-guard. Show the fix at the approval gate.
+guard. Show the fix at the approval gate. If the session's attribution settings say to
+add no attribution lines to PR descriptions, never add a missing box; only correct one
+the template already has.
 
 - **Never append a second report.** One body holds exactly one, reflecting the latest
   run.

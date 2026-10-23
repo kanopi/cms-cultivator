@@ -181,8 +181,10 @@ routine deploy is needed.
 - **AI disclosure, every PR.** The body carries the `Was AI used in this pull
   request?` checkbox exactly once — in the template's position, or last when org
   attribution puts it there. If the resolved template has none, add it under
-  `## Description`, after the ticket line. Tick it (`[x]`) when AI assisted the
-  change itself — the same test as the `Assisted-by:` trailer.
+  `## Description`, after the ticket line — unless the session's attribution
+  settings say to add no attribution lines to PR descriptions; then keep a template
+  copy if there is one and add nothing. Tick it (`[x]`) when AI assisted the change
+  itself — the same test as the `Assisted-by:` trailer.
 - **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
   environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
@@ -194,7 +196,8 @@ routine deploy is needed.
 - **Quality Report.** When the project's instructions call for one, generate it with
   `pr-quality-report` and append it as the **last** section before step 7, so the
   approval gate shows it. Nothing goes below it except org attribution, which that
-  skill re-appends when it regenerates the report.
+  skill re-appends when it regenerates the report. A `Delivery Record:` link goes
+  above the report.
 - **Length.** GitHub rejects a body over 65,536 characters with a 422 and the
   description is lost, not truncated. Aim for a screen and a half: quote the summary
   line of tool output, never the log; link to files instead of pasting them; never
@@ -258,9 +261,17 @@ Verify the AI disclosure landed exactly once. Match the whole checkbox line — 
 phrase also appears when a description quotes it:
 
 ```bash
-gh pr view <pr-number> --json body -q .body \
+gh pr view <pr-number> --json body -q .body | tr -d '\r' \
   | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'   # must print 1
 ```
+
+Strip `\r` first: a body last edited in the GitHub web UI comes back with CRLF line
+endings, and the `$` anchor then matches nothing.
+
+**Delivery record.** If the project's instructions call for one — required for a core,
+framework, or PHP upgrade beyond a patch release, offered for medium- and
+high-complexity work — finalize it now that the PR exists, with the `delivery-record`
+skill. Its `Delivery Record:` link goes above the Quality Report, never below.
 
 Return the PR URL to the user. If the Affected URL is a Tugboat placeholder, run pass 2
 from the testing-environment reference once the build finishes. Suggest next steps
