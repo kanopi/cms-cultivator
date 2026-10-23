@@ -66,7 +66,7 @@ Generate patches for Composer packages that apply cleanly both locally and in CI
 
 ## drupal-rector-update Skill
 
-Move a Drupal 10+ project from hand-maintained `Drupal{N}SetList` lists to the Composer-based sets in Rector 2.5 and `palantirnet/drupal-rector` 1.0, so set selection follows the installed `drupal/core` version.
+Move a Drupal 10+ project from hand-maintained `Drupal{N}SetList` lists to the Composer-based sets in Rector 2.5–2.6.4 and `palantirnet/drupal-rector` 1.x, so set selection follows the installed `drupal/core` version.
 
 ```bash
 /drupal-rector-update     # Migrate or create rector.php for Composer-based sets
@@ -77,6 +77,7 @@ Move a Drupal 10+ project from hand-maintained `Drupal{N}SetList` lists to the C
 - Detects the docroot, custom code paths, DDEV, and the installed Rector, PHPStan, and Drupal core versions
 - Stops on a dirty working tree, then presents every Composer change (including a PHPStan 1 to 2 upgrade) for approval before running it
 - Writes or migrates `rector.php` to `withSetProviders(DrupalSetProvider::class)` and `withComposerBased(drupal: true)`, keeping existing paths, skips, and rules
+- Caps `rector/rector` at `<2.6.5` until drupal-rector ships `DrupalSetList::COMPOSER_BASED`, and confirms Drupal rules actually loaded
 - Dry-runs Rector and applies only after a second go-ahead
 
 It migrates Rector configuration only. To run an existing Rector setup (`rector-check`, `rector-fix`), use `code-standards-checker`.
