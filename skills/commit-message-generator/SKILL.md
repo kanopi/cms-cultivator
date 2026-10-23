@@ -1,6 +1,6 @@
 ---
 name: commit-message-generator
-description: Automatically generate conventional commit messages when user has staged changes and mentions committing. Analyzes git diff and status to create properly formatted commit messages following conventional commits specification, and appends the Assisted-by git trailer recording which AI model (Claude, GPT, Gemini, or any other LLM) assisted the change. Invoke when user mentions "commit", "staged", "committing", or asks for help with commit messages.
+description: Automatically generate conventional commit messages when user has staged changes and mentions committing. Analyzes git diff and status to create properly formatted commit messages following conventional commits specification. AI attribution comes from the tool's own trailer (Claude Code's Co-Authored-By); the skill never adds a second one. Invoke when user mentions "commit", "staged", "committing", or asks for help with commit messages.
 ---
 
 # Commit Message Generator
@@ -151,44 +151,33 @@ Refs: 30024167
 - Plugin work: `fix(plugin): correct ACF field validation`
 - Blocks: `feat(blocks): add testimonial Gutenberg block`
 
-### 5. Append the Assisted-by Trailer
+### 5. Leave AI Attribution to the Tool
 
-When AI assisted in producing the **change itself** (not merely this commit
-message), append an `Assisted-by:` git trailer as the last block of the
-message — the per-commit provenance convention adopted by the Linux kernel,
-Fedora, and the OpenInfra Foundation. The per-PR complement is the Delivery
-Record ([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
-
-**Format** — `Assisted-by: <Vendor>/<model-id>`, using whichever assistant
-actually did the work. This is deliberately vendor-neutral:
-
-```
-Assisted-by: Claude/claude-fable-5
-Assisted-by: OpenAI/gpt-5.4-codex
-Assisted-by: Google/gemini-3-pro
-```
+Claude Code adds its own AI attribution trailer to commits it creates — by default
+`Co-Authored-By: Claude <model> <noreply@anthropic.com>`, carrying the session's
+real model, and governed by the `attribution.commit` setting. That trailer is the
+per-commit provenance record. The per-PR complement is the Delivery Record
+([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
 
 Rules:
 
-- Identify the current session's model from your own runtime context; never
-  guess or hardcode a model name. One trailer line per assisting model if
-  more than one contributed.
-- Place trailers at the end of the message, after any `Refs:` /
-  `BREAKING CHANGE:` footers, so `git interpret-trailers` and
-  `git log --grep="^Assisted-by:"` work.
-- **Skip the trailer** when the change was written entirely by a human and
-  AI only helped phrase this commit message — the trailer attests to the
-  change, not the prose. Also skip on explicit request (`--no-assisted-by`),
-  and when the session's attribution settings say to add no attribution lines
-  to commit messages — org settings outrank this skill.
-- This trailer replaces `Co-Authored-By` for AI attribution — never add
-  `Co-Authored-By: Claude…` (or any AI co-author line) to commit messages.
+- **Add no attribution trailer of your own** — no `Assisted-by:`, and no second
+  `Co-Authored-By:`. Two trailers for one assistant split the audit trail.
+- **Never edit or remove the tool's trailer**, and never type a model name into
+  it yourself; the tool supplies it.
+- **Keep the trailers in one final block.** Git reads trailers only from the
+  last paragraph, so put `Refs:` and `BREAKING CHANGE:` footers directly above
+  the tool's trailer, with no blank line between them and nothing after.
+- **If the session's attribution settings say to add none**, add none.
+- **A human-written change** still gets Claude Code's trailer on any commit
+  Claude Code makes. If AI only phrased the message and the trailer would
+  misstate who wrote the change, have the human run the commit.
 
-The audit trail this enables:
+The audit trail:
 
 ```bash
-git log --grep="^Assisted-by:"        # every AI-assisted commit
-git log --grep="^Assisted-by: Claude" # by vendor
+git log --grep="^Co-Authored-By: Claude"   # every Claude Code commit
+git log --grep="^Assisted-by:"             # commits from before this convention
 ```
 
 ### 6. Present to User for Approval
@@ -215,7 +204,7 @@ feat(auth): add two-factor authentication support
 - Include recovery flow
 
 Refs: PROJ-123
-Assisted-by: Claude/claude-fable-5
+Co-Authored-By: Claude <model> <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -224,7 +213,7 @@ EOF
 
 This skill is invoked directly by the main session when the user mentions committing — there is no orchestrator agent in between. The skill works the same way whether triggered conversationally ("I'm ready to commit") or explicitly ("generate a commit message").
 
-The companion **`pr-create`** skill picks up where this one ends — once you've committed, ask to "create a PR" and `pr-create` will generate the PR description from your commits. The `Assisted-by:` trailers this skill writes are the per-commit half of Kanopi's provenance model; the per-PR half is the Delivery Record ([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
+The companion **`pr-create`** skill picks up where this one ends — once you've committed, ask to "create a PR" and `pr-create` will generate the PR description from your commits. The tool's attribution trailer — Claude Code's `Co-Authored-By:` — is the per-commit half of Kanopi's provenance model; the per-PR half is the Delivery Record ([kanopi/delivery-record](https://github.com/kanopi/delivery-record)).
 
 ## Best Practices
 
@@ -248,7 +237,7 @@ fix(auth): resolve session timeout on remember-me login
 - Correct cookie expiration logic
 - Add test coverage for remember-me flow
 
-Assisted-by: Claude/claude-fable-5
+Co-Authored-By: Claude <model> <noreply@anthropic.com>
 
 Would you like me to commit with this message?
 ```

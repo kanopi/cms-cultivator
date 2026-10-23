@@ -184,7 +184,7 @@ routine deploy is needed.
   `## Description`, after the ticket line — unless the session's attribution
   settings say to add no attribution lines to PR descriptions; then keep a template
   copy if there is one and add nothing. Tick it (`[x]`) when AI assisted the change
-  itself — the same test as the `Assisted-by:` trailer.
+  itself, not merely its description.
 - **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
   environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
@@ -262,7 +262,9 @@ phrase also appears when a description quotes it:
 
 ```bash
 gh pr view <pr-number> --json body -q .body | tr -d '\r' \
-  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'   # must print 1
+  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'
+# must print 1 — or 0 when the template has no box and the session's
+# attribution settings forbid adding one
 ```
 
 Strip `\r` first: a body last edited in the GitHub web UI comes back with CRLF line

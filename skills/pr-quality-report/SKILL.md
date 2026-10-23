@@ -171,13 +171,15 @@ through `awk` and the description is overwritten with the report alone.
 
 **Check the AI disclosure every time you write the body.** The `Was AI used in this pull
 request?` checkbox must appear exactly once — in the template's position, or last when
-org attribution puts it there — and be ticked when AI assisted the change itself (the
-`Assisted-by:` test). Count whole checkbox lines only; the bare phrase also turns up when
+org attribution puts it there — and be ticked when AI assisted the change itself, not
+merely its description. Count whole checkbox lines only; the bare phrase also turns up when
 a description quotes it:
 
 ```bash
 gh pr view <pr-number> --json body -q .body | tr -d '\r' \
-  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'   # must print 1
+  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'
+# must print 1 — or 0 when the template has no box and the session's
+# attribution settings forbid adding one
 ```
 
 A missing, duplicated, or wrongly unticked box sits above the report, so fixing it is a
@@ -243,4 +245,5 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 - **pr-create** — Creates the PR and calls this skill before its approval gate
 - **code-standards-checker** — Fixes standards violations before the PR opens; hands
   over only a local check that has no CI equivalent
-- **commit-message-generator** — Per-commit `Assisted-by:` provenance
+- **commit-message-generator** — Commit messages; per-commit provenance is the tool's
+  own `Co-Authored-By:` trailer
