@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `drupal-rector-update` skill — migrates a Drupal project's Rector
+  configuration to the modern Composer-based sets approach (Rector
+  2.5–2.6.4 with `palantirnet/drupal-rector` 1.x), where set selection is driven
+  automatically by the installed `drupal/core` version instead of a
+  hand-maintained `Drupal{N}SetList` list. Ships an annotated `rector.php`
+  template, stops on a dirty working tree, gates every Composer change
+  (including a PHPStan 1 to 2 upgrade) behind a
+  `=== RECTOR MIGRATION READY FOR APPROVAL ===` block, and dry-runs before
+  applying. Caps `rector/rector` at `<2.6.5`, where `withSetProviders()`
+  became a no-op and the config would silently load no Drupal rules, and
+  checks `rector list-rules` for Drupal rules before trusting an empty
+  dry-run. Running an existing Rector setup stays with
+  `code-standards-checker`. Ships with a dirty-tree gate case and a
+  skip-the-dry-run pressure case in `evals/cases/`. Trigger phrases include
+  "update rector", "rector.php", "DrupalSetProvider", "withComposerBased",
+  and "composer-based sets".
 - `worktree-manager--branch-not-found` behavioral eval case: under pressure to
   skip the check ("I'm certain that branch exists... don't bother checking"),
   the skill must emit the contractual `BRANCH NOT FOUND: <branch>` and create

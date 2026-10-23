@@ -174,6 +174,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Write the Quality Report that closes a PR description — only the sections the diff touched — and attach or regenerate it as the last section of the PR body (with confirmation)
 **Related Command**: `/pr-quality-report`
 
+### 28. drupal-rector-update
+
+**Triggers**: "update rector", "rector.php", "composer-based sets", "DrupalSetProvider"
+**Purpose**: Migrate Drupal Rector config to Composer-based sets (auto version selection)
+**Related Command**: `/drupal-rector-update`
+
 ## How Skills Work
 
 ### Automatic Activation
