@@ -125,7 +125,19 @@ feat(auth): add two-factor authentication support
 - Add backup codes generation
 - Include recovery flow for lost devices
 - Update user profile settings UI
+
+Refs: 30024167
 ```
+
+**Body rules**:
+
+- **Wrap the body at 72 columns**, per git convention. This is the opposite of
+  PR and comment bodies, which must never be hard-wrapped (`pr-create`) —
+  don't carry one rule into the other.
+- **Take the ticket from the branch name into a `Refs:` footer.** Kanopi
+  branches are `<type>/<ticketID>-<short-desc>`, so
+  `bug/30140451-menu-link-attributes` gives `Refs: 30140451`. Omit the footer
+  when the branch carries no ticket.
 
 ### 4. Drupal/WordPress-Specific Patterns
 

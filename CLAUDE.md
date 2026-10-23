@@ -200,9 +200,12 @@ cms-cultivator/
 │   └── plugin.json          # OpenAI Codex plugin manifest
 ├── .codex/
 │   └── agents/              # Codex agent translation files (one .toml per agent)
+├── .circleci/
+│   └── config.yml           # CI: BATS + frontmatter + routing evals + codex parity + docs build
 ├── .github/workflows/
-│   ├── docs.yml             # Zensical deployment
-│   └── test.yml             # BATS + frontmatter + routing evals + codex parity
+│   ├── docs.yml             # Zensical deployment (GitHub Pages OIDC, Actions-only)
+│   ├── behavioral-evals.yml # Weekly/manual behavioral evals
+│   └── release-artifacts.yml # Attach plugin/skill zips to releases
 ├── agents/                  # Specialist agent directories (one per agent)
 │   ├── design-specialist/
 │   ├── responsive-styling-specialist/
