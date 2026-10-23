@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: PR Quality Report"
+  short_description: "Write the Quality Report for a pull request and attach it as the last section of the PR body, with confirmation before editing an existing PR."

@@ -23,6 +23,123 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   "update rector", "rector.php", "DrupalSetProvider", "withComposerBased",
   and "composer-based sets".
 
+## [2.5.0] - 2026-10-22
+
+### Added
+
+- `pr-quality-report`: writes the Quality Report that closes a PR description and
+  attaches it as the last section of the body, or regenerates it on an existing PR
+  by stripping the old report and appending the new one, with an empty-read guard
+  so a failed `gh pr view` cannot wipe the description. Sections appear only when
+  the diff touched their subject; no file list, and no restating of results the CI
+  checks UI already shows. Also documents passing multiline bodies to `gh` on stdin
+  with `--body-file -` and a quoted heredoc.
+
+### Changed
+
+- `pr-create`: resolves the PR template from the repo, then the org `.github`
+  repo, before falling back to the built-in one, since `--body-file` skips `gh`'s
+  own template population. The resolution script lives in
+  `references/template-resolution.md`. Checks the real default branch instead of assuming
+  `main`/`master`. New body rules: no hard wrapping, each template element exactly
+  once (no duplicated "Was AI used" checkbox), nothing below the Quality Report,
+  and a 65,536-character length limit. Adds platform-independent deploy
+  requirements and an environment-claim honesty rule. Creates the PR via
+  `--body-file -` on stdin instead of `--body "$(…)"`.
+- `pr-create`: descriptions are terse by default — 1–2 sentence description,
+  2–4 one-line bullets for Acceptance Criteria and Steps to Validate, no preamble,
+  file narration, or closing summary. `--concise` is retired as a mode (still
+  accepted, now a no-op), and the inline quality checks it used to skip always run.
+- `pr-create`: new `references/testing-environment.md` for repos that deploy.
+  Pantheon multidev URLs are constructed; Tugboat preview URLs are fetched in two
+  passes, from the Tugboat API (token in `~/.tugboat.yml`) or Tugboat's PR comment,
+  since the hash makes them unguessable. Affected URL holds the link only, every
+  navigating validation step gets a deep link, and repos with no hosting
+  environment omit the section silently. A `ready` Tugboat build is not taken as
+  proof the site works.
+- `code-standards-checker`: reads CI config first, as the authoritative list of
+  checks that must pass. Section 6 no longer emits a Static Analysis block for the
+  PR body; standards results stay out of the description because the checks UI
+  reports them, and it previously claimed `pr-create` assembled a report it did not.
+- `commit-message-generator`: wraps the body at 72 columns and puts the ticket from
+  the branch name in a `Refs:` footer.
+
+- Per-push CI moved from GitHub Actions to CircleCI to cut GitHub Actions
+  minute spend. The seven jobs in `.github/workflows/test.yml` (removed) are
+  consolidated into three CircleCI jobs in `.circleci/config.yml`:
+  `tests-and-validation` (BATS, frontmatter, Codex parity, security scan,
+  JSON/YAML/TOML validation), `routing-evals`, and `documentation-build`.
+  Fewer containers per push also keeps CircleCI credit spend down; all jobs
+  run on the `small` resource class.
+- Still on GitHub Actions deliberately: `docs.yml` (GitHub Pages OIDC deploy
+  only works from Actions, and it is path-filtered to docs changes),
+  `behavioral-evals.yml` (weekly schedule plus manual dispatch only), and
+  `release-artifacts.yml` (per-release, uses the built-in `GITHUB_TOKEN`).
+
+## [2.4.0] - 2026-08-16
+
+### Changed
+
+- `ddev-docker-cleanup`: comments in `scripts/lib.sh` now explain the bash 3.2
+  accommodations (macOS ships bash 3.2 as `/bin/bash`). No behavior change.
+- `pr-review` rebuilt from scratch after three same-day reworks each fixed the stated
+  complaint and introduced a new one. The root cause was that every directive in the
+  209-line skill was satisfied by writing more, and each word-limiting instrument tried
+  (hard cap, soft target, per-label budget) either got ignored or bought its words back
+  as jargon. The rebuilt skill has no word or count limits anywhere. Length is bounded
+  by structure instead: a review is exactly one verdict line, findings most severe
+  first, and one closing `Unverified:` line, and a sentence with no slot is deleted.
+- Each finding uses a labeled micro-template: a bold severity headline (`Critical` /
+  `Important` / `Minor`), then `File: path:line`, `Issue:` (the input or state, then the
+  wrong result), and `Fix:` (a `suggestion` block or one named action), one line each.
+  Two locations, because they are often different lines: `File:` is where the problem
+  shows, `Apply:` is where the change goes, omitted when they match. Inline comments
+  anchor at `Apply:`, since that is the line GitHub applies a suggestion to; measured
+  runs put a third of suggestion blocks on the wrong line before this.
+- The 0-100 confidence score with its 80 floor is replaced by verify votes. Each
+  finding is re-read against the file and voted CONFIRMED (quote the triggering line),
+  PLAUSIBLE (state what would confirm it), or REFUTED (quote the line that disproves
+  it, then drop it). A quoted line is checkable; a self-reported number is not. This
+  keeps the verify-before-post step that caught a fabricated claim (`use` after
+  `return` asserted as a syntax error where `php -l` accepts it) on its way to a
+  colleague's PR.
+- Correctness review gains a third lens, removed behavior: for every line the diff
+  deletes or replaces, name the invariant it enforced and find where the new code
+  re-establishes it. All three lenses (blast radius, silent failure, removed behavior)
+  now direct investigation only; their answers reach the output solely as verified
+  findings or on the `Unverified:` line, which also carries shared selectors, hooks,
+  and config keys the review could not clear. The prior wording rewarded narrating
+  lens answers into the review body, which is where a measured 472-word single-finding
+  review came from.
+- Posted reviews carry a body wrapper (see `references/posted-format.md`): an AI Code
+  Review title, Recommendation checkboxes, a Changes Requested section for Critical
+  and Important findings, and a Suggestions section for Minor ones. The checked box
+  and the delegated-mode `FINAL_RECOMMENDATION` sentinel derive from the one
+  recommendation, while the GitHub review event is always a non-blocking comment:
+  reviews post as whoever ran the skill, often an automated routine, and an approve or
+  request-changes event from that account would gate the PR on that person
+  re-reviewing. Self-reviews stay bare and are never posted.
+- Still no Strengths section and no praise, against the obra/superpowers reference
+  this rework otherwise borrows from. Credibility comes from findings that survive
+  verification, not from balancing them with compliments.
+
+### Added
+
+- `pr-review-specialist` agent: `pr-review self` now spawns it so the review runs in a
+  fresh context that holds none of the reasoning that produced the code. Read-only,
+  never spawns another agent, never posts, and inherits the session model: a sonnet pin
+  was measured first and found 0 of 6 known defects across three fixture PRs where the
+  session model found them plus new ones, so the cost saving was rejected. The skill
+  checks the base ref resolves and the diff is non-empty before spawning, and falls
+  back to an in-session review where agents do not exist (Claude Desktop, Codex,
+  sandboxed evals).
+- `skills/pr-review/references/posted-format.md`: the posted-body wrapper spec, loaded
+  only at the posting step.
+- Behavioral eval case `pr-review--findings-are-actionable`, with its
+  `wp-plugin-buggy-change` fixture, graded against the new format: a severity headline,
+  the `Issue:` and `Fix:` labels, a code block, the planted off-by-one still caught, no
+  praise, no internal tooling noise, and a bloat ceiling.
+
 ## [2.3.0] - 2026-08-16
 
 ### Added

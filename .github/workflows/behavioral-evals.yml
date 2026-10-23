@@ -1,7 +1,7 @@
 # Behavioral evals — real headless `claude -p` runs graded against
 # evals/cases/*.json. These cost real tokens, so they NEVER run per-push:
 # manual dispatch + a weekly smoke-subset schedule only. The per-push gate
-# stays the fast quartet in test.yml (which includes this harness's free
+# lives in .circleci/config.yml (which includes this harness's free
 # static --check via bats).
 #
 # Requires the ANTHROPIC_API_KEY repo/org secret. The full suite remains a

@@ -53,6 +53,7 @@ Generate commit messages, PR descriptions, changelogs, and review code.
 **Skills:**
 - `commit-message-generator` - Generate conventional commit messages
 - `pr-create` - Create PR with generated description
+- `pr-quality-report` - Write the Quality Report that closes the PR description
 - `pr-review` - AI-assisted code review
 - `pr-release` - Generate release PR with changelog
 
@@ -122,15 +123,18 @@ Skills spawn specialized agents for focused work:
 **Browser Validation:**
 - browser-validator-specialist
 
+**Code Review:**
+- pr-review-specialist
+
 **Drupal.org Contribution:**
 - drupalorg-issue-specialist, drupalorg-mr-specialist
 
-PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow.
+PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`) run directly from the main session without an orchestrator agent — each skill contains its complete workflow. The one exception: `pr-review self` spawns pr-review-specialist so the review runs in a fresh context.
 
 ### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
-- **PR & development workflow:** commit-message-generator, pr-create, pr-review, pr-release, ddev-workflow, ddev-docker-cleanup, worktree-manager, composer-patch-generator, drupal-rector-update
+- **PR & development workflow:** commit-message-generator, pr-create, pr-quality-report, pr-review, pr-release, ddev-workflow, ddev-docker-cleanup, worktree-manager, composer-patch-generator, drupal-rector-update
 - **Testing & code quality:** code-standards-checker, test-scaffolding, test-plan-generator, coverage-analyzer, documentation-generator
 - **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
 - **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper

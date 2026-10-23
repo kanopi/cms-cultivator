@@ -84,6 +84,12 @@ Review a pull request or analyze your own changes before creating a PR.
 /pr-review self testing           # Generate test plan
 ```
 
+Self-review spawns the `pr-review-specialist` agent: a fresh context that holds none of
+the reasoning that produced the code, on the session's model, read-only. A developer or an
+agent can run this to check the work before opening the PR. Where agents do not exist
+(Claude Desktop, Codex), the skill says so and reviews in-session; the output is
+identical either way, and nothing is posted in either case.
+
 **Focus options:**
 - `code` - Code quality, readability, maintainability
 - `security` - Security vulnerabilities, input validation
@@ -96,23 +102,43 @@ Review a pull request or analyze your own changes before creating a PR.
 - **Spec** — does the diff do what the linked Teamwork ticket and PR body say it does?
   Missing, partial, incorrect, or out-of-scope requirements, each quoting the
   requirement line
-- **Correctness** — bugs in the code the diff touched, including blast radius (a
-  selector, hook, or override that also reaches things the ticket never mentioned) and
-  silent failure (a poll, retry, or fallback that swallows its own failure path)
+- **Correctness** — bugs in the changed lines and in the unchanged lines of any function
+  the diff touches, investigated through three lenses: blast radius (a selector, hook,
+  or config key that also reaches things the ticket never mentioned), silent failure (a
+  poll, retry, or fallback that swallows its own failure path), and removed behavior (a
+  deleted line whose invariant the new code never re-establishes)
 
 **What it filters out.** Every candidate must carry a concrete failure scenario, and any
-claim about contrib, plugin, or vendor behavior must cite the `file:line` actually read.
-Candidates are then scored 0–100 and only 80-and-above is reported. A fourteen-item CMS
-exclusion list drops what CI already catches, pre-existing issues, unmodified lines, and
-the other usual false positives.
+claim about contrib, plugin, or vendor behavior must quote the `file:line` actually
+read. Each survivor is then re-read against the file and voted CONFIRMED, PLAUSIBLE, or
+REFUTED; only the first two are reported, and a REFUTED vote quotes the line that
+disproves it. Exclusions drop what the linting tools already catch, pre-existing issues
+in code the diff does not touch, and third-party behavior not confirmed by reading the
+source.
 
-**Outputs:**
-- At most 8 findings, most severe first, each with a severity prefix (Critical,
-  Required, Optional, Nit, FYI), a `file:line`, the failure scenario, and the fix
-- Only the sections that have content — there is no fixed template
-- `No issues found`, plus one line on what was checked, when nothing clears the bar.
-  A clean review is a real result, not a failure to look hard enough
-- A reasoned approve / request changes / comment recommendation
+**Outputs:** one review shape in every mode, whether you are reviewing a PR,
+self-reviewing, or running it from an automated routine.
+- A one-line verdict, then the findings most severe first, then a closing `Unverified:`
+  line when something could not be checked, including shared selectors or hooks the
+  review could not clear
+- One labeled micro-template per finding: a bold severity headline (`Critical`,
+  `Important`, `Minor`), then `File: path:line`, `Issue:`, and `Fix:`, one line each
+- Two locations, because they are often different lines: `File:` is where the problem
+  shows, `Apply:` is where the change goes. `Apply:` is omitted when they are the same
+- `Fix:` holds a `suggestion` block with the literal replacement for the `Apply:` line,
+  or one named concrete action. No nameable line to change means no suggestion block,
+  since the block is one click from being merged
+- On posting to a PR, the body carries the AI Code Review title, Recommendation
+  checkboxes, a Changes Requested section (Critical and Important) and a Suggestions
+  section (Minor). Every finding whose `Apply:` line is in the diff becomes an inline
+  comment the author can commit in one click, listed one line each in the body; the
+  rest appear in full in the body. Self-reviews are not posted
+- Reviews post as comment events, never approve or request-changes, because they post
+  as whoever ran the skill (often an automated routine) and a blocking event would
+  gate the PR on that person re-reviewing. The Recommendation checkbox carries the
+  verdict
+- `No issues found`, plus one line on what was checked, when nothing survives. A clean
+  review is a real result
 
 ---
 

@@ -125,7 +125,7 @@ The test suite covers multiple categories:
 - ✅ README exists with proper badges
 - ✅ Zensical configuration valid
 - ✅ All documentation pages exist
-- ✅ GitHub Actions workflow configured
+- ✅ CI workflows configured
 
 ### Kanopi Integration Tests
 
@@ -166,22 +166,17 @@ The test suite covers multiple categories:
 
 ## CI/CD Integration
 
-Tests run automatically via GitHub Actions on:
+Tests run automatically via CircleCI on every push and pull request.
 
-- Push to main branch
-- Pull requests
-- Manual workflow dispatch
+See [`.circleci/config.yml`](https://github.com/kanopi/cms-cultivator/blob/main/.circleci/config.yml) for the complete CI/CD configuration.
 
-See [`.github/workflows/test.yml`](https://github.com/kanopi/cms-cultivator/blob/1.x/.github/workflows/test.yml) for the complete CI/CD configuration.
+### CircleCI Jobs
 
-### GitHub Actions Jobs
+1. **tests-and-validation** - BATS suite, frontmatter validation, Codex parity, security scan, and JSON/YAML/TOML validation
+2. **routing-evals** - TF-IDF routing and collision evals
+3. **documentation-build** - Builds the Zensical site and checks internal links
 
-1. **BATS Tests** - Runs all BATS test suite
-2. **Frontmatter Validation** - Validates skill frontmatter
-3. **Documentation Build** - Builds Zensical site
-4. **Parity Validation** - Verifies docs stay in sync with skill directories
-5. **Security Scan** - Checks for secrets and conflicts
-6. **JSON/YAML/TOML Validation** - Validates config files
+GitHub Actions still handles the workflows that need it: the GitHub Pages docs deployment (`docs.yml`), the weekly behavioral evals (`behavioral-evals.yml`), and release artifact packaging (`release-artifacts.yml`).
 
 ## Test Output
 
