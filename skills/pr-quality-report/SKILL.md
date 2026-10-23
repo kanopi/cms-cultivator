@@ -122,7 +122,8 @@ settings, ends PR descriptions with a fixed line — Kanopi's is
 The strip below would remove it with the old report, so regeneration keeps it: if the
 body currently **ends** with that line, it is moved back to the end after the new
 report and any other copy is dropped. If the body does not end with it, nothing is
-added — the attribution covers PRs the agent creates, not ones it edits.
+added at the end — the attribution covers PRs the agent creates, not ones it edits. A
+body with no checkbox anywhere is handled by the disclosure check below.
 
 **New PR** — `pr-create` appends the report before its approval gate and creates the PR
 once, with the whole body on stdin.
@@ -156,6 +157,22 @@ PRBODY
 
 **The emptiness check is not optional.** Without it, a failed `gh pr view` pipes nothing
 through `awk` and the description is overwritten with the report alone.
+
+**Check the AI disclosure every time you write the body.** The `Was AI used in this pull
+request?` checkbox must appear exactly once — in the template's position, or last when
+org attribution puts it there — and be ticked when AI assisted the change itself (the
+`Assisted-by:` test). Count whole checkbox lines only; the bare phrase also turns up when
+a description quotes it:
+
+```bash
+gh pr view <pr-number> --json body -q .body \
+  | grep -cE '^- \[[ xX]\] Was AI used in this pull request\?$'   # must print 1
+```
+
+A missing, duplicated, or wrongly unticked box sits above the report, so fixing it is a
+separate edit: read the body, correct that one line — adding it under `## Description`,
+after the ticket line, if it is missing — and write it back with the same empty-read
+guard. Show the fix at the approval gate.
 
 - **Never append a second report.** One body holds exactly one, reflecting the latest
   run.
@@ -204,7 +221,8 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 | "Just append the new report below the old one" | Strip the old report first. One report per body. |
 | "Put the delivery-record link at the very end" | Only org attribution goes below the report. Place the link above. |
 | "Regenerating anyway — the trailing attribution line can go" | Keep it. The org requires the body to end with it, and the strip would delete it. |
-| "Add the attribution to this PR too, while editing" | Never add it to a body that doesn't already end with it. It covers PRs the agent creates. |
+| "Add the attribution line at the end of this PR too, while editing" | Never add a trailing line to a body that doesn't already end with one. If the body has no checkbox at all, add it under `## Description` instead. |
+| "The AI checkbox is missing, but that's outside the report" | Fix it in a separate edit above the report. Disclosure is required on every PR. |
 | "The PR body read failed — write the report anyway" | Abort. Writing without the read destroys the description. |
 
 ## Related Skills
