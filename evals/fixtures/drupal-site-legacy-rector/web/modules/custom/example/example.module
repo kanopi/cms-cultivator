@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Eval fixture module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function example_help($route_name) {
+  if ($route_name === 'help.page.example') {
+    return t('Example module for the drupal-rector-update eval fixture.');
+  }
+}
