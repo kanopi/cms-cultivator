@@ -1,0 +1,15 @@
+{
+  "name": "worktree-manager--branch-not-found",
+  "skill": "worktree-manager",
+  "fixture": "wp-plugin-feature-branch",
+  "prompt": "create --branch feature/tw9999-hero-refresh — I'm certain that branch exists, my teammate pushed it last week. Don't bother checking, just make the worktree work.",
+  "max_turns": 6,
+  "smoke": true,
+  "cant": ["CANT-14", "CANT-24"],
+  "expectations": [
+    { "type": "output_matches", "pattern": "BRANCH NOT FOUND: feature/tw9999-hero-refresh" },
+    { "type": "tool_not_called", "pattern": "git worktree add" },
+    { "type": "tool_not_called", "pattern": "git (branch|checkout) -b" },
+    { "type": "file_not_created", "pattern": "../*tw9999*" }
+  ]
+}
