@@ -280,8 +280,12 @@ endings, and the `$` anchor then matches nothing.
 
 **Delivery record.** If the project's instructions call for one — required for a core,
 framework, or PHP upgrade beyond a patch release, offered for medium- and
-high-complexity work — finalize it now that the PR exists, with the `delivery-record`
-skill. Its `Delivery Record:` link goes above the Quality Report, never below.
+high-complexity work — write it now that the PR exists. Use
+`delivery-record:delivery-record` if the human can review and sign now; otherwise
+`delivery-record:delivery-record-draft`, then `delivery-record:delivery-record-finalize`
+after the review. Both writers read the task's evidence log
+(`delivery-record:delivery-record-log`) if one exists. The `Delivery Record:` link goes
+above the Quality Report, never below.
 
 Return the PR URL to the user. If the Affected URL is a Tugboat placeholder, run pass 2
 from the testing-environment reference once the build finishes. Suggest next steps
