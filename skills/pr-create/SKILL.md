@@ -136,8 +136,8 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 * [Anything reviewers/PMs should know — known issues, scope decisions]
 
 ## Steps to Validate
-1. [Explicit testing instructions with URLs where applicable]
-2. [Cover the happy path and at least one edge case]
+- [ ] [A real place the change shows up — page, flow, or entry point — and what to confirm]
+- [ ] [Every other distinct usage the search finds, plus at least one edge case]
 
 ## Affected URL
 [Multidev or staging URL]
@@ -149,8 +149,10 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 **Be terse — every description, not a mode:**
 
 - **Description:** 1–2 sentences on what changed and why.
-- **Acceptance Criteria and Steps to Validate:** 2–4 bullets each, one line per
-  bullet.
+- **Acceptance Criteria:** 2–4 bullets, one line per bullet.
+- **Steps to Validate:** one checkbox per distinct real usage, as many as that
+  takes, one line each. Terse applies to each step's wording, never to how many
+  usages get covered.
 - **Deploy Notes:** only when there are real deployment requirements.
 - **Step 5 findings:** one line each, in the section they belong to.
 - **No preamble.** Never open with "This PR…" or "In this pull request…", and
@@ -185,7 +187,12 @@ routine deploy is needed.
   settings say to add no attribution lines to PR descriptions; then keep a template
   copy if there is one and add nothing. Tick it (`[x]`) when AI assisted the change
   itself, not merely its description.
-- **Steps to Validate is the single validation list.** Do not repeat it elsewhere.
+- **Steps to Validate is the single validation list,** and every step is a GitHub
+  task-list checkbox (`- [ ]`) a reviewer ticks once tested, whatever list style the
+  template's placeholder uses. Build it from real usages, not hypotheticals: search
+  for every place the changed code runs and give each distinct one its own step,
+  following [`references/validation-steps.md`](references/validation-steps.md). Do
+  not repeat the list elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
   environment (`.tugboat/config.yml`, `pantheon.yml`, `pantheon.upstream.yml`, or
   `terminus` in CI or Composer scripts), follow
@@ -344,5 +351,7 @@ gate and the honesty of the description are the contract:
 | "Reuse the last PR's description, the work is similar" | Every description is generated from this branch's actual diff and commits. |
 | "The Tugboat build isn't done — link the dashboard and move on" | Write the placeholder, then fetch the real preview URL in pass 2. A dashboard link is never the answer. |
 | "The repo's template has no AI checkbox, so there's nothing to tick" | Add it under `## Description`. Disclosure is required on every PR, whatever the template. |
+| "One example page proves the component works" | Test every distinct place it's used. A template that renders on one page can break in another region, content type, or view mode. |
+| "I'll describe a typical page that would use it" | Find real ones. Each step names an actual page, piece of content, route, or entry point that the search turned up. |
 | "This change is big — it deserves a longer description" | Keep the limits. Depth belongs in the ticket or a linked doc; the diff carries the detail. |
 | "A sentence on where the preview URL came from helps the reviewer" | The Affected URL section holds the link and nothing else. Findings from the preview go in Deploy Notes or Assumptions. |
