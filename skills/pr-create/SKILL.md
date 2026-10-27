@@ -137,7 +137,7 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 
 ## Steps to Validate
 - [ ] [A real place the change shows up — page, flow, or entry point — and what to confirm]
-- [ ] [Every other distinct usage the search finds, plus at least one edge case]
+- [ ] [A usage that differs from the first — another context, data shape, or entry point — and at least one edge case]
 
 ## Affected URL
 [Multidev or staging URL]
@@ -150,9 +150,9 @@ Teamwork Ticket(s): [PROJ-123](https://kanopi.teamwork.com/app/tasks/123)
 
 - **Description:** 1–2 sentences on what changed and why.
 - **Acceptance Criteria:** 2–4 bullets, one line per bullet.
-- **Steps to Validate:** one checkbox per distinct real usage, as many as that
-  takes, one line each. Terse applies to each step's wording, never to how many
-  usages get covered.
+- **Steps to Validate:** one checkbox per *dissimilar* real scenario, usually 3–5
+  including an edge case, one line each. Usages that run the same code path in the
+  same context with the same kind of data are one scenario: test one, skip the rest.
 - **Deploy Notes:** only when there are real deployment requirements.
 - **Step 5 findings:** one line each, in the section they belong to.
 - **No preamble.** Never open with "This PR…" or "In this pull request…", and
@@ -190,7 +190,8 @@ routine deploy is needed.
 - **Steps to Validate is the single validation list,** and every step is a GitHub
   task-list checkbox (`- [ ]`) a reviewer ticks once tested, whatever list style the
   template's placeholder uses. Build it from real usages, not hypotheticals: search
-  for every place the changed code runs and give each distinct one its own step,
+  for every place the changed code runs, then pick the short set that differ from
+  each other in a way the change could break — context, data, entry point, or user —
   following [`references/validation-steps.md`](references/validation-steps.md). Do
   not repeat the list elsewhere.
 - **Affected URL and validation links.** If the repository deploys to a hosting
@@ -351,7 +352,8 @@ gate and the honesty of the description are the contract:
 | "Reuse the last PR's description, the work is similar" | Every description is generated from this branch's actual diff and commits. |
 | "The Tugboat build isn't done — link the dashboard and move on" | Write the placeholder, then fetch the real preview URL in pass 2. A dashboard link is never the answer. |
 | "The repo's template has no AI checkbox, so there's nothing to tick" | Add it under `## Description`. Disclosure is required on every PR, whatever the template. |
-| "One example page proves the component works" | Test every distinct place it's used. A template that renders on one page can break in another region, content type, or view mode. |
+| "One example page proves the component works" | Test one usage per dissimilar scenario. A template that renders on one page can break in another region, view mode, or with different data. |
+| "Five pages use it — list all five" | If they use it the same way, they are one scenario. Test one and spend the other steps on usages that differ. |
 | "I'll describe a typical page that would use it" | Find real ones. Each step names an actual page, piece of content, route, or entry point that the search turned up. |
 | "This change is big — it deserves a longer description" | Keep the limits. Depth belongs in the ticket or a linked doc; the diff carries the detail. |
 | "A sentence on where the preview URL came from helps the reviewer" | The Affected URL section holds the link and nothing else. Findings from the preview go in Deploy Notes or Assumptions. |
