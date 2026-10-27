@@ -141,8 +141,8 @@ Each step that asks the reviewer to open a page carries an absolute link to that
 on the testing environment. The reviewer never assembles a URL by hand.
 
 ```markdown
-1. Visit [/admin/structure/types](https://pr-123-clientsite.pantheonsite.io/admin/structure/types) and confirm the Fancy Block type is listed.
-2. Run `drush cr`, then reload [/news](https://pr-123-clientsite.pantheonsite.io/news) and confirm the sidebar order is unchanged.
+- [ ] Visit [/admin/structure/types](https://pr-123-clientsite.pantheonsite.io/admin/structure/types) and confirm the Fancy Block type is listed.
+- [ ] Run `drush cr`, then reload [/news](https://pr-123-clientsite.pantheonsite.io/news) and confirm the sidebar order is unchanged.
 ```
 
 - **Link text is the path; the href is the full URL.**
