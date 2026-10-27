@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-10-27
+
+### Changed
+
+- `pr-create`: step 9 routes the delivery record to `delivery-record` when the
+  human can sign now, otherwise to `delivery-record-draft` and then
+  `delivery-record-finalize`, matching kanopi/delivery-record v1.2.0. Before
+  this it always named `delivery-record`, which is wrong right after a PR
+  opens, when no review has happened yet.
+
 ## [2.6.1] - 2026-10-27
 
 ### Changed
