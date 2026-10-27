@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `pr-create`: every Steps to Validate item is a `- [ ]` checkbox, so reviewers
+  can tick each one off as tested, and the list is built from real usages instead
+  of 2–4 hypothetical steps. A new `references/validation-steps.md` has the skill
+  search for every template, selector, caller, entry point, and piece of real
+  content the change touches, and give each distinct one its own step, with at
+  least one edge case. The 2–4 cap now applies to Acceptance Criteria only.
+
 ## [2.6.0] - 2026-10-23
 
 ### Added
