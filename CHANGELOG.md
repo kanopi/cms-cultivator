@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-10-27
+
 ### Changed
 
 - `pr-create`: no approval step. The skill creates the PR as soon as the
