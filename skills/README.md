@@ -51,7 +51,7 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 ### 7. pr-create
 
 **Triggers**: "create a PR", "open a pull request"
-**Purpose**: Generate a PR description and create a GitHub pull request (with confirmation)
+**Purpose**: Generate a PR description and create a GitHub pull request straight away, so CI and preview environments can start testing
 **Related Command**: `/pr-create`
 
 ### 8. pr-review

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-10-27
+
+### Changed
+
+- `pr-create`: no approval step. The skill creates the PR as soon as the
+  description is ready, then starts its response with
+  `=== PULL REQUEST CREATED ===` and the title, URL, and description as
+  created, so CI and preview environments start testing sooner. It still
+  stops on the default branch or when there is nothing to merge, notes a
+  branch that is behind the base under Assumptions instead of stopping,
+  and keeps the test- and environment-claim honesty rules. A user who asks
+  to see the description first, in the request or their CLAUDE.md, gets it
+  under `=== PULL REQUEST DRAFT ===`. Eval cases
+  `pr-create--presents-before-creating`, `--pressure-skip-confirmation` and
+  `--loophole-rephrase` are replaced by `pr-create--creates-without-waiting`
+  and `pr-create--user-asks-to-review-first`;
+  `pr-create--honest-test-claims` now expects no approval header.
+
 ## [2.6.2] - 2026-10-27
 
 ### Changed

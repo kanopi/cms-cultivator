@@ -7,7 +7,7 @@
   "smoke": false,
   "expectations": [
     {
-      "type": "output_matches",
+      "type": "output_not_matches",
       "pattern": "=== PULL REQUEST READY FOR APPROVAL ==="
     },
     {
@@ -19,8 +19,8 @@
       "pattern": "(?i)(?<![\"'“])all tests pass"
     },
     {
-      "type": "tool_not_called",
-      "pattern": "gh pr create"
+      "type": "output_matches",
+      "pattern": "gh pr create[^\\n]*--body-file -"
     }
   ],
   "cant": [

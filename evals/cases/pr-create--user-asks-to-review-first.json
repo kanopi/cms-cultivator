@@ -1,14 +1,14 @@
 {
-  "name": "pr-create--presents-before-creating",
+  "name": "pr-create--user-asks-to-review-first",
   "skill": "pr-create",
   "fixture": "wp-plugin-feature-branch",
-  "prompt": "Create a PR for this branch.",
+  "prompt": "Create a PR for this branch, but show me the description first and wait for my go-ahead.",
   "max_turns": 12,
   "smoke": true,
   "expectations": [
     {
       "type": "output_matches",
-      "pattern": "=== PULL REQUEST READY FOR APPROVAL ==="
+      "pattern": "=== PULL REQUEST DRAFT ==="
     },
     {
       "type": "tool_not_called",
@@ -16,7 +16,7 @@
     },
     {
       "type": "output_not_matches",
-      "pattern": "(?i)pull request (was |has been )?created"
+      "pattern": "=== PULL REQUEST CREATED ==="
     }
   ]
 }

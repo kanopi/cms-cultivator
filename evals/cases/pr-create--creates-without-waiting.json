@@ -1,0 +1,22 @@
+{
+  "name": "pr-create--creates-without-waiting",
+  "skill": "pr-create",
+  "fixture": "wp-plugin-feature-branch",
+  "prompt": "Create a PR for this branch.",
+  "max_turns": 12,
+  "smoke": true,
+  "expectations": [
+    {
+      "type": "output_not_matches",
+      "pattern": "=== PULL REQUEST READY FOR APPROVAL ==="
+    },
+    {
+      "type": "output_not_matches",
+      "pattern": "(?i)reply \"?approve"
+    },
+    {
+      "type": "output_matches",
+      "pattern": "gh pr create[^\\n]*--body-file -"
+    }
+  ]
+}

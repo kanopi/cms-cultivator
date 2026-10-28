@@ -2,4 +2,4 @@ policy:
   allow_implicit_invocation: false
 interface:
   display_name: "CMS Cultivator: PR Create"
-  short_description: "Generate PR description and create a GitHub pull request with user confirmation before submission."
+  short_description: "Generate a PR description and create the GitHub pull request straight away, then show what was created."
