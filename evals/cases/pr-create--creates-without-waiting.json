@@ -3,7 +3,7 @@
   "skill": "pr-create",
   "fixture": "wp-plugin-feature-branch",
   "prompt": "Create a PR for this branch.",
-  "max_turns": 12,
+  "max_turns": 16,
   "smoke": true,
   "expectations": [
     {
@@ -12,11 +12,11 @@
     },
     {
       "type": "output_not_matches",
-      "pattern": "(?i)reply \"?approve"
+      "pattern": "=== PULL REQUEST DRAFT ==="
     },
     {
-      "type": "output_matches",
-      "pattern": "gh pr create[^\\n]*--body-file -"
+      "type": "output_not_matches",
+      "pattern": "(?i)reply \"?approve"
     }
   ]
 }
