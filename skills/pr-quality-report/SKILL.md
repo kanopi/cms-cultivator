@@ -14,8 +14,8 @@ body. The main session runs this skill directly; no orchestrator agent is involv
 everyone on the repository.
 
 **Confirmation required.** Show the report and wait for explicit approval before
-`gh pr edit`. When `pr-create` calls this skill before its own approval gate, that gate
-covers the report and no second confirmation is needed.
+`gh pr edit`. When `pr-create` calls this skill for a new PR, there is nothing to confirm:
+the report goes up with the PR, and `pr-create` shows it afterwards.
 
 ## Usage
 
@@ -130,7 +130,7 @@ report and any other copy is dropped. If the body does not end with it, nothing 
 added at the end — the attribution covers PRs the agent creates, not ones it edits. A
 body with no checkbox anywhere is handled by the disclosure check below.
 
-**New PR** — `pr-create` appends the report before its approval gate and creates the PR
+**New PR** — `pr-create` appends the report and creates the PR
 once, with the whole body on stdin.
 
 **Existing PR** — read the body, drop the earlier report, append the new one, and write
@@ -185,7 +185,7 @@ gh pr view <pr-number> --json body -q .body | tr -d '\r' \
 A missing, duplicated, or wrongly unticked box sits above the report, so fixing it is a
 separate edit: read the body, correct that one line — adding it under `## Description`,
 after the ticket line, if it is missing — and write it back with the same empty-read
-guard. Show the fix at the approval gate. If the session's attribution settings say to
+guard. On an existing PR, show the fix along with the report before writing it. If the session's attribution settings say to
 add no attribution lines to PR descriptions, never add a missing box; only correct one
 the template already has.
 
@@ -242,7 +242,7 @@ call without regenerating it, or inspecting it before it goes up. Delete it afte
 
 ## Related Skills
 
-- **pr-create** — Creates the PR and calls this skill before its approval gate
+- **pr-create** — Creates the PR, with this skill's report as the last section
 - **code-standards-checker** — Fixes standards violations before the PR opens; hands
   over only a local check that has no CI equivalent
 - **commit-message-generator** — Commit messages; per-commit provenance is the tool's

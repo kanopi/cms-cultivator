@@ -121,9 +121,8 @@ it or drops it on rebuild, which is why route A comes first.
     "https://api.tugboatqa.com/v3/previews/$ID/log"
   ```
 
-**Writing pass 2 back.** It replaces only the placeholder and the bare paths approved
-at the gate, so it adds no new content and needs no second approval — report the
-substitution after writing. Edit the sections above the Quality Report:
+**Writing pass 2 back.** It replaces only the placeholder and the bare paths written
+at creation, so it adds no new content — report the substitution after writing. Edit the sections above the Quality Report:
 
 ```bash
 BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')

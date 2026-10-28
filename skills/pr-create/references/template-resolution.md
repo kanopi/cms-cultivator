@@ -1,6 +1,6 @@
 # PR Template Resolution
 
-Step 9 passes the body with `--body-file`, which skips `gh`'s own template
+Step 7 of `SKILL.md` passes the body with `--body-file`, which skips `gh`'s own template
 population, so never rely on `gh` to insert it. Resolve the template explicitly
 and use the first hit:
 

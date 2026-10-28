@@ -61,8 +61,8 @@ Create pull request directly on GitHub with generated description.
 1. Analyzes git changes (commits, diffs, files)
 2. Detects Drupal/WordPress-specific changes
 3. Generates a terse PR description
-4. Shows preview and asks for confirmation
-5. Creates PR on GitHub via `gh` CLI
+4. Creates the PR on GitHub via `gh` CLI straight away
+5. Shows the title, URL, and description it created
 
 **What it detects:**
 - Drupal configuration changes

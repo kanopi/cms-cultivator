@@ -21,7 +21,7 @@ Streamline pull request creation, review, and deployment. PR skills run directly
 | Skill | Description |
 |-------|-------------|
 | `commit-message-generator` | Generate conventional commit messages from staged changes |
-| `pr-create` | Create a pull request with a generated description (presents for approval before running `gh pr create`) |
+| `pr-create` | Create a pull request with a generated description (creates it straight away, then shows what was created) |
 | `pr-review` | Review a PR (`/pr-review 123`) or self-review your branch (`/pr-review self`) with focus areas: code, security, breaking, testing, size, performance |
 | `pr-release` | Generate changelog (Keep a Changelog format), deployment checklist, and PR description update |
 | `worktree-manager` | Create, list, and tear down git worktrees with Kanopi branch naming and automatic DDEV isolation so multiple tickets (and AI sessions) run in parallel from one clone |
