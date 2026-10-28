@@ -1,6 +1,6 @@
 ---
 name: pr-quality-report
-description: Write the Quality Report that closes a pull request description — changes summary, security analysis, tests written, checks deferred to CI, performance, and accessibility, each section only when the diff touched its subject — and attach it as the last section of the PR body, or regenerate it safely on an existing PR. Also covers passing any multiline body to gh with --body-file and a quoted heredoc. Invoke when the user asks for a "quality report", to "add" or "update the quality report on the PR", to "regenerate the PR report", or when project instructions require a Quality Report before a task is done.
+description: Write the Quality Report that closes a pull request description — changes summary, security analysis, tests written, checks deferred to CI, performance, and accessibility, each section only when the diff touched its subject — and attach it as the last section of the PR body, or regenerate it safely on an existing PR. Works on GitHub (gh) and GitLab (glab) merge requests, with a paste-ready fallback for hosts without a CLI. Also covers passing any multiline body to gh with --body-file and a quoted heredoc. Invoke when the user asks for a "quality report", to "add" or "update the quality report on the PR", to "regenerate the PR report", or when project instructions require a Quality Report before a task is done.
 ---
 
 # PR Quality Report
@@ -14,7 +14,7 @@ body. The main session runs this skill directly; no orchestrator agent is involv
 everyone on the repository.
 
 **Confirmation required.** Show the report and wait for explicit approval before
-`gh pr edit`. When `pr-create` calls this skill for a new PR, there is nothing to confirm:
+writing the body (`gh pr edit`, `glab mr update`). When `pr-create` calls this skill for a new PR, there is nothing to confirm:
 the report goes up with the PR, and `pr-create` shows it afterwards.
 
 ## Usage
@@ -55,7 +55,7 @@ trains readers to skim past the sections that matter.
 - **Never omit a section to shorten the report.** Omit it because its subject did not
   change. If an applicable section runs long, shorten its content.
 - **Never add a file list** — no "Files Modified" section, no table of paths, no
-  per-file summary. GitHub's Files changed tab already has them, with diffs, and a
+  per-file summary. The host's Files changed tab already has them, with diffs, and a
   hand-written copy goes stale on the next commit. Say what changed in Changes
   Summary; let the diff show where.
 - **Never restate what CI reports** — no "Static Checks" section, no pass/fail table
@@ -65,8 +65,8 @@ trains readers to skim past the sections that matter.
 - **Steps to Validate lives in the PR template.** Do not duplicate it here.
 - **It is a deliverable, not a summary.** Style rules that suppress end-of-task
   summaries do not apply to it.
-- **No hard wrapping.** Every bullet and table cell is one unbroken line; GitHub renders
-  a newline inside a paragraph as a line break.
+- **No hard wrapping.** Every bullet and table cell is one unbroken line; GitHub and GitLab
+  render a newline inside a paragraph as a line break.
 
 ```markdown
 ## Quality Report
@@ -134,10 +134,19 @@ body with no checkbox anywhere is handled by the disclosure check below.
 once, with the whole body on stdin.
 
 **Existing PR** — read the body, drop the earlier report, append the new one, and write
-it back after approval:
+it back after approval. Check the host first (`git remote get-url origin`) and never
+assume GitHub. The block below is the GitHub form; on GitLab, swap the read and the write:
+
+| | GitHub | GitLab |
+|---|---|---|
+| Read | `gh pr view <n> --json body -q .body` | `glab mr view <n> -F json \| jq -r .description` |
+| Write | `… \| gh pr edit <n> --body-file -` | `… > "$BODY_FILE"`, then `glab mr update <n> --description "$(cat "$BODY_FILE")" --yes` |
+
+`glab` has no `--body-file`, so on GitLab the brace group writes to a temp file instead
+of a pipe. Bitbucket and other hosts have no CLI: see **No host CLI** below.
 
 ```bash
-# Strip \r: a body last edited in the GitHub web UI has CRLF line endings, and the
+# Strip \r: a body last edited in a web UI has CRLF line endings, and the
 # anchored matches below would miss every line — appending a second report.
 BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')
 [ -n "$BODY" ] || { echo "Could not read PR body; aborting."; exit 1; }
@@ -193,8 +202,10 @@ the template already has.
   run.
 - **Other sections are a separate edit.** This procedure rewrites the report only.
   Filling in a Tugboat preview URL (see `pr-create`) changes sections above it.
-- **No `gh`** — output the full body, template plus report, and hand over the
-  `gh pr edit --body-file -` command with the body in a quoted heredoc.
+- **No host CLI** — `gh` or `glab` missing, or a host with none (Bitbucket, other):
+  output the full body, template plus report. On GitHub or GitLab, hand over the
+  write command with the body in a quoted heredoc; elsewhere, the body in a fenced
+  block for the user to paste into the PR's description.
 
 ## Multiline content with gh
 
@@ -210,7 +221,9 @@ PRBODY
 ```
 
 `--body-file -` works the same on `gh pr create`, `gh pr edit`, `gh pr comment`,
-`gh issue create`, and `gh issue comment`.
+`gh issue create`, and `gh issue comment`. `glab` has no equivalent: write the body to a
+file with the same quoted heredoc and pass `--description "$(cat "$BODY_FILE")"` (or
+`--message` for `glab mr note`).
 
 Three rules for the heredoc:
 

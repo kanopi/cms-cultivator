@@ -181,11 +181,11 @@ Re-verify: `ddev composer phpcs`
 ### 6. Results Stay Out of the PR Body
 
 Fix every violation before the PR opens. Do not restate standards results in the PR
-description: the GitHub checks UI is the live record for anything CI runs, and a
+description: the host's checks UI (GitHub checks, GitLab pipelines, Bitbucket builds) is the live record for anything CI runs, and a
 pass/fail table in the body is a snapshot that goes stale on the next push.
 
 The one exception is a tool that ran locally and has **no CI equivalent** — its result
-appears nowhere in the GitHub UI. Hand that single line, with the command and scope,
+appears nowhere in the host's UI. Hand that single line, with the command and scope,
 to `pr-quality-report` for the section that covers it.
 
 ## No Tooling Configured

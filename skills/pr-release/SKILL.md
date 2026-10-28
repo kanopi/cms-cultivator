@@ -9,12 +9,12 @@ Generate changelog entries, deployment checklists, and update the release PR des
 
 ## ⚠️ Side Effect Warning
 
-**This skill updates a GitHub PR description** — an action that modifies publicly visible content:
+**This skill updates a PR description** (a merge request on GitLab) — an action that modifies publicly visible content:
 
-- Updates the PR description via `gh pr edit`
+- Updates the PR description via the host CLI (`gh pr edit` on GitHub, `glab mr update` on GitLab)
 - The changelog and deployment checklist are visible to all repository members
 
-**Confirmation required** before updating the PR. Present all artifacts for review and wait for explicit approval before running `gh pr edit`.
+**Confirmation required** before updating the PR. Present all artifacts for review and wait for explicit approval before updating the PR.
 
 This skill does **not** create git tags, merge the PR, or deploy. Those remain manual.
 
@@ -31,7 +31,7 @@ This skill does **not** create git tags, merge the PR, or deploy. Those remain m
 
 - On a release branch (typically named `release/<version>` or similar)
 - Commits follow conventional commits (`feat`, `fix`, `breaking`, `chore`, etc.)
-- GitHub CLI (`gh`) installed and authenticated for the Tier 2 path
+- The host's CLI installed and authenticated for the Tier 2 path — `gh` for GitHub, `glab` for GitLab. Check the host with `git remote get-url origin`; never assume GitHub. Bitbucket and other hosts have no CLI and use the Environment fallback
 
 ## Workflow
 
@@ -194,14 +194,14 @@ Reply "approve" to update the PR and save these artifacts, or provide your edits
 ```
 
 The header comes **first, always** — even when context is incomplete. If no
-release PR can be found, `gh` is unavailable, or the version source of truth
+release PR can be found, the host CLI is unavailable, or the version source of truth
 is ambiguous, still present the artifacts under the header and note what's
 missing; never go hunting past the point of usefulness or start applying
 changes instead.
 
 ### 8. Wait for explicit user approval
 
-⛔ **Do not run `gh pr edit` and do not write to any file — `CHANGELOG.md`,
+⛔ **Do not update the PR (`gh pr edit`, `glab mr update`) and do not write to any file — `CHANGELOG.md`,
 version files (`plugin.json`, `composer.json`, `style.css`, plugin headers),
 or anything else — until the user replies "approve" or provides edits.**
 Step 7's presentation is the only output before approval. "I approve in
@@ -215,13 +215,17 @@ On approval:
 
 1. **Update `CHANGELOG.md`** — insert the new entry under `## [Unreleased]` (move existing Unreleased content into the new version block if appropriate).
 2. **Update the version source of truth** (e.g., `plugin.json`, `composer.json`, `style.css`).
-3. **Update the PR description** via `gh pr edit <pr-number> --title "<title>" --body "$(cat <<'EOF'\n<body>\nEOF\n)"`.
+3. **Update the PR description** with the body in a quoted heredoc:
+   - **GitHub:** `gh pr edit <pr-number> --title "<title>" --body-file - <<'PRBODY'` … `PRBODY`
+   - **GitLab:** write the body to `$BODY_FILE` with the same heredoc, then `glab mr update <mr-iid> --title "<title>" --description "$(cat "$BODY_FILE")" --yes`
 4. Tell the user: "Release artifacts applied. Tag and deploy remain manual — run `git tag v<version> && git push --tags` when ready."
 
-## Environment fallback (no `gh` CLI)
+## Environment fallback (no host CLI)
+
+Applies when `gh` or `glab` is missing, and always on Bitbucket and other hosts with no CLI.
 
 1. Run steps 1–7 normally.
-2. After approval, **provide the commands** for the user to run manually — heredoc-formatted so they can paste.
+2. After approval, **provide the commands** for the user to run manually — heredoc-formatted so they can paste. On a host with no CLI, give the title and body in a fenced block to paste into the PR on the host's web UI.
 3. Edit `CHANGELOG.md` and version files locally; the user pushes.
 
 ## Semantic Versioning Quick Reference
