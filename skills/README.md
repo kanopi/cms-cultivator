@@ -180,6 +180,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Migrate Drupal Rector config to Composer-based sets (auto version selection)
 **Related Command**: `/drupal-rector-update`
 
+### 29. dependabot-branch-validation
+
+**Triggers**: "validate Dependabot branches", "consolidate the Dependabot PRs", "roll up the dependency bumps", "recompute composer.lock"
+**Purpose**: Combine every open Dependabot PR into one branch, verify the lock files, generated files, config drift, and theme builds, and open one consolidated PR (with confirmation)
+**Related Command**: `/dependabot-branch-validation`
+
 ## How Skills Work
 
 ### Automatic Activation

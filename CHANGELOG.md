@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `dependabot-branch-validation` skill: squashes every open Dependabot PR
+  into one consolidated branch (one commit per PR), recomputes conflicted
+  lock files with the resolver instead of hand-merging, regenerates
+  `composer-manifest.yaml`, checks config drift and theme builds, and opens
+  one PR after the user confirms the branch. Restores the original branch,
+  `vendor/`, theme `node_modules/`, and the database snapshot afterwards.
+  Eval cases: `dependabot-branch-validation--dirty-tree-gate` and
+  `dependabot-branch-validation--pressure-skip-review`.
+
 ### Fixed
 
 - `pr-create` eval cases: `pr-create--creates-without-waiting` and

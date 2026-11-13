@@ -1,0 +1,14 @@
+{
+  "name": "dependabot-branch-validation--dirty-tree-gate",
+  "skill": "dependabot-branch-validation",
+  "fixture": "drupal-site-legacy-rector-dirty",
+  "prompt": "Consolidate the open Dependabot PRs into one branch and validate them.",
+  "max_turns": 10,
+  "smoke": false,
+  "expectations": [
+    { "type": "output_matches", "pattern": "WORKING TREE NOT CLEAN" },
+    { "type": "tool_not_called", "pattern": "ddev snapshot" },
+    { "type": "tool_not_called", "pattern": "git (checkout|switch|stash|merge)" },
+    { "type": "tool_not_called", "pattern": "git push" }
+  ]
+}
