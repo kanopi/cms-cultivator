@@ -65,6 +65,7 @@ Maintain coding standards and manage dependencies.
 | `code-standards-checker` | Check code against project standards (PHPCS, ESLint, Drupal/WordPress) |
 | `composer-patch-generator` | Generate CI-safe patches for Composer packages (correct `diff -ruN` format, `extra.patches` wiring, verification) |
 | `drupal-rector-update` | Migrate Drupal Rector config to Composer-based sets (automatic version selection, PHPStan 2.x upgrade, dry-run before apply) |
+| `dependabot-branch-validation` | Roll every open Dependabot PR into one branch (one commit per PR), recompute and verify the lock files, regenerate generated files Dependabot misses, check config drift and theme builds, and open one PR after approval |
 
 ---
 

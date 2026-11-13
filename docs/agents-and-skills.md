@@ -482,6 +482,7 @@ Don't try to "game" the system—just describe what you need:
 | drupalorg-contribution-helper | "drupal.org git workflow", "issue fork" | Quick git workflow reference | — |
 | composer-patch-generator | "composer patch", "patch a contrib module", "cweagans", "diff -ruN", "extra.patches", "applies locally but fails in CI" | CI-safe patches for Composer packages (correct diff -ruN format, dist-archive base, composer.json wiring, verification) | `composer-patch-generator` |
 | drupal-rector-update | "update rector", "rector.php", "DrupalSetProvider", "withComposerBased", "composer-based sets", "stop maintaining rector set lists" | Migrating Drupal Rector to Composer-based sets (automatic version selection, PHPStan 2.x upgrade, dry-run before apply) | `drupal-rector-update` |
+| dependabot-branch-validation | "validate Dependabot branches", "consolidate the Dependabot PRs", "roll up the dependency bumps", "recompute composer.lock" | Rolling every open Dependabot PR into one validated branch and PR (lock recompute, manifest, config drift, theme builds; confirmation before push) | `dependabot-branch-validation` |
 | wp-add-skills | "add WordPress skills", "install the official WordPress agent-skills" | Installing the WordPress/agent-skills catalog | `wp-add-skills` |
 
 ## Integration with Workflow
