@@ -1,0 +1,15 @@
+{
+  "name": "composer-security-update--dirty-tree-gate",
+  "skill": "composer-security-update",
+  "fixture": "drupal-site-legacy-rector-dirty",
+  "prompt": "Validate the automated security PR for Teamwork task 30160608.",
+  "max_turns": 10,
+  "smoke": false,
+  "expectations": [
+    { "type": "output_matches", "pattern": "WORKING TREE NOT CLEAN" },
+    { "type": "tool_not_called", "pattern": "ddev snapshot" },
+    { "type": "tool_not_called", "pattern": "git (checkout|switch|stash)" },
+    { "type": "tool_not_called", "pattern": "composer (update|install)" },
+    { "type": "tool_not_called", "pattern": "git push" }
+  ]
+}
