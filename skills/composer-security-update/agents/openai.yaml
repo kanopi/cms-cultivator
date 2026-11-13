@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Composer Security Update"
+  short_description: "Validate the automated security advisory PR locally (audit before and after, update hooks, config drift, theme builds) and append a validation section after user approval."

@@ -180,6 +180,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Migrate Drupal Rector config to Composer-based sets (auto version selection)
 **Related Command**: `/drupal-rector-update`
 
+### 29. composer-security-update
+
+**Triggers**: "validate the security PR", "run composer audit", "fix the CVEs", a "Security Advisory:" Teamwork task, a `security/tw-*` PR
+**Purpose**: Validate the automated security advisory PR locally (audit before and after, update hooks, config drift, theme builds), push fix-ups, and append a validation section to the existing PR (with confirmation)
+**Related Command**: `/composer-security-update`
+
 ## How Skills Work
 
 ### Automatic Activation

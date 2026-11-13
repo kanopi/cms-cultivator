@@ -65,6 +65,7 @@ Maintain coding standards and manage dependencies.
 | `code-standards-checker` | Check code against project standards (PHPCS, ESLint, Drupal/WordPress) |
 | `composer-patch-generator` | Generate CI-safe patches for Composer packages (correct `diff -ruN` format, `extra.patches` wiring, verification) |
 | `drupal-rector-update` | Migrate Drupal Rector config to Composer-based sets (automatic version selection, PHPStan 2.x upgrade, dry-run before apply) |
+| `composer-security-update` | Validate the automated security advisory PR locally: `composer audit` before and after, update hooks against a refreshed database, config drift, theme builds, and a per-advisory cleared/blocked report appended to the PR after approval |
 
 ---
 
