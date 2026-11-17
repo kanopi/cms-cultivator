@@ -148,6 +148,29 @@ skip_without_agents() {
   done
 }
 
+@test "skill descriptions are at most 1024 characters" {
+  # Claude plugin validation rejects any SKILL.md description over 1024
+  # characters. Handles single-line values and folded or literal blocks.
+  for skill in skills/*/SKILL.md; do
+    len=$(awk '
+      NR == 1 && /^---$/ { infm = 1; next }
+      infm && /^---$/ { exit }
+      infm && /^description:/ {
+        v = $0; sub(/^description:[ ]*/, "", v)
+        if (v ~ /^[>|][-+]?[ ]*$/) { block = 1; v = ""; next }
+        gsub(/^["\x27]|["\x27]$/, "", v); out = v; next
+      }
+      block && /^[ \t]+/ { l = $0; sub(/^[ \t]+/, "", l); out = (out == "" ? l : out " " l); next }
+      block { block = 0 }
+      END { print length(out) }
+    ' "$skill")
+    if [ "$len" -gt 1024 ]; then
+      echo "Description in $skill is $len characters (max 1024)"
+      return 1
+    fi
+  done
+}
+
 @test "skill names match directory names" {
   for skill_dir in skills/*/; do
     dir_name=$(basename "$skill_dir")

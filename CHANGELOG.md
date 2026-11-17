@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.1] - 2026-11-17
+
+### Fixed
+
+- `composer-security-update`: the SKILL.md description was 1,254
+  characters, over the 1,024 limit, so plugin validation rejected v2.7.0.
+  Shortened to 1,000 characters with the same trigger phrases. New test in
+  `tests/test-plugin.bats` fails on any skill description over 1,024
+  characters.
+
 ## [2.7.0] - 2026-11-17
 
 ### Added
