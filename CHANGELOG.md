@@ -16,6 +16,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `creates-without-waiting` checks that no approval or draft header appears,
   and `honest-test-claims` checks the `gh pr create` attempt carries
   "Tests not run" and never "all tests pass". Turn caps raised to 16.
+- PR skills no longer assume every repository is on GitHub. `pr-create`
+  reads `git remote get-url origin` first and follows a new
+  `references/git-hosts.md`: GitHub through `gh`, GitLab (including
+  git.drupalcode.org) through `glab mr create`, and Bitbucket or other hosts
+  through a pushed branch, a paste-ready description, and the host's new-PR
+  link. Template resolution checks `.gitlab/merge_request_templates/` and
+  limits the org `.github` fallback to GitHub; the Tugboat pass-2 lookup reads
+  GitLab commit statuses and MR comments. `pr-quality-report`, `pr-release`,
+  and `pr-review` read and write the MR description, fetch context, and post
+  reviews with `glab` on GitLab, and fall back to paste-ready output on hosts
+  with no CLI. `code-standards-checker` refers to the host's checks UI rather
+  than GitHub's.
 
 ## [2.6.3] - 2026-10-27
 

@@ -1,6 +1,6 @@
 # Posted review format
 
-Used whenever a review is posted to GitHub: step 6 posting and delegated mode. Self-reviews
+Used whenever a review is posted to the PR host: step 6 posting and delegated mode. Self-reviews
 never use it.
 
 ## Body
@@ -41,3 +41,30 @@ Unverified: <line, when present>
 - A `No issues found` review posts the title, the recommendation, the verdict line, and the
   coverage line. No sections.
 - Transcribe findings without rewording. The wrapper adds structure, never new sentences.
+
+## Posting by host
+
+Check the host with `git remote get-url origin`; never assume GitHub.
+
+- **GitHub:** one `gh api repos/{owner}/{repo}/pulls/<n>/reviews` call with
+  `event: COMMENT`, `body`, and a `comments` array of `{path, line, body}`.
+- **GitLab:** GitLab has no single review call and no review event, so the Recommendation
+  checkbox alone carries the verdict. Post the body as one note, then each anchored
+  finding as a diff discussion positioned with the MR's `diff_refs`:
+
+  ```bash
+  glab mr note <n> --message "$(cat "$BODY_FILE")"
+  REFS=$(glab mr view <n> -F json | jq -c .diff_refs)
+  glab api --method POST "projects/:id/merge_requests/<n>/discussions" \
+    -f body="$(cat "$FINDING_FILE")" \
+    -f "position[position_type]=text" \
+    -f "position[base_sha]=$(jq -r .base_sha <<<"$REFS")" \
+    -f "position[start_sha]=$(jq -r .start_sha <<<"$REFS")" \
+    -f "position[head_sha]=$(jq -r .head_sha <<<"$REFS")" \
+    -f "position[new_path]=<path>" -f "position[new_line]=<line>"
+  ```
+
+  Write each body to a file with a quoted heredoc first. A discussion GitLab rejects
+  (the line is outside the diff) moves into the body note instead; never drop it.
+- **Bitbucket and other hosts:** no CLI to post with. Hand the user the body, with every
+  finding in full, as one fenced block to paste as a PR comment.

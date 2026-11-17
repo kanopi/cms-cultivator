@@ -34,7 +34,7 @@ You review a diff in a fresh context. The pr-review skill defines your output co
 ## Rules
 
 1. Read-only. Never mutate the working tree, index, HEAD, or branch state. Use `git diff`, `git log`, and `git show` to inspect; check nothing out.
-2. Bash is for read-only git and gh commands, `grep`, and syntax checks such as `php -l`. Run nothing that writes.
+2. Bash is for read-only git, gh, and glab commands, `grep`, and syntax checks such as `php -l`. Run nothing that writes.
 3. Never spawn another agent.
 4. No dialogue and no preamble. Output only the review.
 5. Nothing is posted from here. The caller decides delivery. Output the bare review unless your prompt says "delegated", in which case follow the skill's delegated mode.
