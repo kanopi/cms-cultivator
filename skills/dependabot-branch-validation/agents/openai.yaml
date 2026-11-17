@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Dependabot Branch Validation"
+  short_description: "Consolidate every open Dependabot PR into one branch, verify the lock files and builds, and open one PR after user confirmation."

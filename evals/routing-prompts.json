@@ -156,6 +156,18 @@
     {
       "prompt": "are we vulnerable? check the security/tw branch cleared every advisory",
       "expect": "composer-security-update"
+    },
+    {
+      "prompt": "consolidate all the open Dependabot PRs into one branch",
+      "expect": "dependabot-branch-validation"
+    },
+    {
+      "prompt": "roll up the dependency bumps from Dependabot and validate them",
+      "expect": "dependabot-branch-validation"
+    },
+    {
+      "prompt": "check the Dependabot PRs and make sure the lock file was computed correctly",
+      "expect": "dependabot-branch-validation"
     }
   ]
 }

@@ -186,6 +186,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Validate the automated security advisory PR locally (audit before and after, update hooks, config drift, theme builds), push fix-ups, and append a validation section to the existing PR (with confirmation)
 **Related Command**: `/composer-security-update`
 
+### 30. dependabot-branch-validation
+
+**Triggers**: "validate Dependabot branches", "consolidate the Dependabot PRs", "roll up the dependency bumps", "recompute composer.lock"
+**Purpose**: Combine every open Dependabot PR into one branch, verify the lock files, generated files, config drift, and theme builds, and open one consolidated PR (with confirmation)
+**Related Command**: `/dependabot-branch-validation`
+
 ## How Skills Work
 
 ### Automatic Activation
