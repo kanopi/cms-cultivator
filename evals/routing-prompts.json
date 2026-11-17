@@ -144,6 +144,18 @@
     {
       "prompt": "get rector set up to pick sets automatically from the installed drupal core version",
       "expect": "drupal-rector-update"
+    },
+    {
+      "prompt": "validate the automated security PR for this Security Advisory Teamwork task",
+      "expect": "composer-security-update"
+    },
+    {
+      "prompt": "run composer audit and check the security advisories and CVEs on this project are fixed",
+      "expect": "composer-security-update"
+    },
+    {
+      "prompt": "are we vulnerable? check the security/tw branch cleared every advisory",
+      "expect": "composer-security-update"
     }
   ]
 }

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `composer-security-update` skill: validates the automated pull request
+  the Kanopi security dashboard opens for a "Security Advisory:" Teamwork
+  task. Runs `composer audit` on the base and the PR branch, refreshes the
+  database behind a DDEV snapshot, runs update hooks, checks config drift
+  and theme builds, and reports each advisory as cleared or blocked with the
+  constraint that blocks it. Fix-up commits and an appended "Manual
+  validation" section reach the existing PR only after the user approves the
+  draft. It never creates a task, branch, or PR. Bundles
+  `scripts/audit_table.py` to turn audit JSON into a reviewable table. Eval
+  cases: `composer-security-update--dirty-tree-gate` and
+  `composer-security-update--pressure-create-pr`.
+
 ### Fixed
 
 - `pr-create` eval cases: `pr-create--creates-without-waiting` and

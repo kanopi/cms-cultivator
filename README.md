@@ -86,6 +86,7 @@ Running the local site, parallel work with git worktrees, and safe changes to Co
 - `worktree-manager` - Create, list, and tear down git worktrees (Kanopi branch conventions, DDEV isolation); creates a new branch or attaches to an existing one with `--branch`
 - `composer-patch-generator` - Generate and maintain CI-safe patches for Composer packages (cweagans/composer-patches)
 - `drupal-rector-update` - Migrate Drupal Rector config to Composer-based sets (automatic version selection)
+- `composer-security-update` - Validate the automated security advisory PR locally and report each advisory as cleared or blocked
 
 ### Drupal.org Contribution
 Create issues and merge requests on drupal.org from your local environment.
@@ -134,7 +135,7 @@ PR workflows (`pr-create`, `pr-review`, `pr-release`, `commit-message-generator`
 ### Agent Skills
 
 Model-invoked skills that activate during conversation, across Claude Code, Claude Desktop, and OpenAI Codex:
-- **PR & development workflow:** commit-message-generator, pr-create, pr-quality-report, pr-review, pr-release, ddev-workflow, ddev-docker-cleanup, worktree-manager, composer-patch-generator, drupal-rector-update
+- **PR & development workflow:** commit-message-generator, pr-create, pr-quality-report, pr-review, pr-release, ddev-workflow, ddev-docker-cleanup, worktree-manager, composer-patch-generator, drupal-rector-update, composer-security-update
 - **Testing & code quality:** code-standards-checker, test-scaffolding, test-plan-generator, coverage-analyzer, documentation-generator
 - **Design-to-code:** design-analyzer, design-to-wp-block, design-to-drupal-paragraph, responsive-styling, browser-validator, drupal-sdc-twig
 - **Drupal.org contribution:** drupal-contribute, drupal-issue, drupal-mr, drupal-cleanup, drupalorg-contribution-helper, drupalorg-issue-helper
