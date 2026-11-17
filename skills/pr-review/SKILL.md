@@ -76,12 +76,16 @@ Rules for the shape:
    specialist (below). A prompt naming a base and head: you are the spawned specialist or an
    automated routine, so review that diff here, with no dialogue, and never spawn. None of
    these: ask.
-3. **Context.** In parallel: `gh pr view <n> --json title,body,baseRefName,changedFiles`,
+3. **Context.** Check the host first with `git remote get-url origin`; never assume GitHub.
+   GitHub, in parallel: `gh pr view <n> --json title,body,baseRefName,changedFiles`,
    `gh pr diff <n>`, `gh pr checks <n>`, and `gh issue view <n>` for any issue the PR or its
-   commits reference. Local diff: against the default branch, plus uncommitted changes. No
-   `gh`: ask for the diff and say what you could not see. Over 1,000 lines: suggest a split.
-4. **Spec axis.** Follow the Teamwork link in the PR body, then a GitHub issue the PR or its
-   commits reference, then the PR body. Quote the requirement line for each spec finding.
+   commits reference. GitLab: `glab mr view <n> -F json`, `glab mr diff <n>`, `glab ci status`
+   on the MR branch, and `glab issue view <n>`. Local diff: against the default branch, plus
+   uncommitted changes. No host CLI (missing, or Bitbucket and other hosts): review the
+   branch locally with `git diff <base>...<head>` after fetching it, or ask for the diff, and
+   say what you could not see. Over 1,000 lines: suggest a split.
+4. **Spec axis.** Follow the Teamwork link in the PR body, then a GitHub or GitLab issue the PR
+   or its commits reference, then the PR body. Quote the requirement line for each spec finding.
    When none of these carries requirements, say so in one line and skip this axis. Never
    invent a requirement.
 5. **Correctness axis.** Bugs in the changed lines and in the unchanged lines of any function
@@ -111,9 +115,10 @@ Rules for the shape:
    finding to hit a count.
 
    Delivery: a self-review returns the bare review and nothing is posted. For a PR, ask "Post
-   this review?", format the body per `references/posted-format.md`, and post in one
-   `gh api repos/{owner}/{repo}/pulls/<n>/reviews` call with `event: COMMENT`, `body`, and a
-   `comments` array of `{path, line, body}`. Always `COMMENT`: the review posts as whoever ran
+   this review?", format the body per `references/posted-format.md`, and post it on the detected host. GitHub:
+   one `gh api repos/{owner}/{repo}/pulls/<n>/reviews` call with `event: COMMENT`, `body`, and
+   a `comments` array of `{path, line, body}`. GitLab and other hosts: see
+   `references/posted-format.md`. Always `COMMENT`: the review posts as whoever ran
    the skill, often an automated routine, and an approve or request-changes event from that
    account gates the PR on that person re-reviewing. The Recommendation checkboxes carry the
    verdict instead. Use another event only when the user explicitly asks for it. Anchor each

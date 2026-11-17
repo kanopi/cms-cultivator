@@ -70,9 +70,17 @@ Lighthouse Reports") link to the dashboard, not the preview. The last path segme
 that link is the preview ID.
 
 ```bash
+# GitHub
 ID=$(gh pr checks <pr-number> --json link -q '.[].link' \
   | grep -om1 'dashboard\.tugboatqa\.com/[^/?#]*' | cut -d/ -f2)
+# GitLab — Tugboat reports as a commit status on the MR's head commit
+ID=$(glab api "projects/:id/repository/commits/$(git rev-parse HEAD)/statuses" \
+  | jq -r '.[].target_url' \
+  | grep -om1 'dashboard\.tugboatqa\.com/[^/?#]*' | cut -d/ -f2)
 ```
+
+On Bitbucket or another host with no CLI, ask the user for the dashboard link, or skip
+to route A if they can give the preview ID.
 
 **Route A — the Tugboat API. Authoritative; use it first.** The token is in
 `~/.tugboat.yml`. Call the API directly rather than the `tugboat` CLI, which may be an
@@ -98,6 +106,7 @@ the dashboard link.
 ```bash
 gh pr view <pr-number> --json comments -q '.comments[].body' \
   | grep -Eom1 'https://pr[0-9]+-[a-z0-9]+\.tugboat(qa\.com|\.qa)'
+# GitLab: glab mr view <mr-iid> --comments | grep -Eom1 '<same pattern>'
 ```
 
 The comment is posted under the account that connected the integration, not a bot —
@@ -130,6 +139,10 @@ BODY=$(gh pr view <pr-number> --json body -q .body | tr -d '\r')
 # Substitute the base URL into the placeholder and the bare paths, then:
 printf '%s\n' "$BODY_UPDATED" | gh pr edit <pr-number> --body-file -
 ```
+
+On GitLab, read with `glab mr view <mr-iid> -F json | jq -r .description` and write
+with `glab mr update <mr-iid> --description "$BODY_UPDATED" --yes`; the same
+emptiness check applies.
 
 The emptiness check is not optional: a failed read would otherwise overwrite the
 description with nothing.
