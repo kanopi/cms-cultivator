@@ -67,6 +67,7 @@ Maintain coding standards and manage dependencies.
 | `drupal-rector-update` | Migrate Drupal Rector config to Composer-based sets (automatic version selection, PHPStan 2.x upgrade, dry-run before apply) |
 | `composer-security-update` | Validate the automated security advisory PR locally: `composer audit` before and after, update hooks against a refreshed database, config drift, theme builds, and a per-advisory cleared/blocked report appended to the PR after approval |
 | `dependabot-branch-validation` | Roll every open Dependabot PR into one branch (one commit per PR), recompute and verify the lock files, regenerate generated files Dependabot misses, check config drift and theme builds, and open one PR after approval |
+| `site-offboarding` | Inventory a departing site's paid plugins, hosting, CI, Dependabot, open PRs, and advisories from the repo, then draft the offboarding tasks, #helpdesk notices (now and after client handover), and tech lead checklist; PR close commands wait for the task URL and never delete branches |
 
 ---
 
