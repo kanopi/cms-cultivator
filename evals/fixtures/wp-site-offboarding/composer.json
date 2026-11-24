@@ -1,0 +1,17 @@
+{
+    "name": "example/offboarding-fixture",
+    "repositories": {
+        "gravity": { "type": "composer", "url": "https://composer.gravity.io" },
+        "wpackagist": { "type": "composer", "url": "https://wpackagist.org" }
+    },
+    "require": {
+        "gravity/gravityforms": "3.1.2",
+        "wpackagist-plugin/wordfence": "9.0.1",
+        "wpackagist-plugin/wp-mail-smtp": "4.9.0"
+    },
+    "extra": {
+        "installer-paths": {
+            "web/wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
+        }
+    }
+}

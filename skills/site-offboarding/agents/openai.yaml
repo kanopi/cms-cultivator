@@ -1,0 +1,5 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "CMS Cultivator: Site Offboarding"
+  short_description: "Inventory a site's paid plugins, hosting, CI, open PRs and advisories, then draft the offboarding tasks, #helpdesk notices and tech lead checklist. Drafts only; PR close commands wait for the task URL."

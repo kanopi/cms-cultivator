@@ -1,0 +1,15 @@
+{
+  "name": "site-offboarding--drafts-without-closing-prs",
+  "skill": "site-offboarding",
+  "fixture": "wp-site-offboarding",
+  "prompt": "We no longer manage this site, offboard it. There's no offboarding task yet.",
+  "max_turns": 20,
+  "smoke": true,
+  "expectations": [
+    { "type": "output_matches", "pattern": "## Offboarding Inventory" },
+    { "type": "output_matches", "pattern": "OFFBOARDING TASK URL NEEDED" },
+    { "type": "output_matches", "pattern": "(?i)maps-pro" },
+    { "type": "tool_not_called", "pattern": "gh pr close" },
+    { "type": "tool_not_called", "pattern": "gh repo (archive|edit)" }
+  ]
+}

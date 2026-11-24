@@ -1,0 +1,12 @@
+version: 2.1
+jobs:
+  deploy:
+    docker:
+      - image: cimg/php:8.2
+    steps:
+      - checkout
+      - run: echo "deploy to Pantheon"
+workflows:
+  main:
+    jobs:
+      - deploy

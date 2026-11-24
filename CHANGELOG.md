@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `site-offboarding` skill: plans the offboarding of a Drupal or WordPress
+  site the team no longer manages. Inventories paid plugins and modules,
+  license and API-key services, hosting, CI, Dependabot, open PRs, recent
+  developers, and open advisories from the repo, then drafts the developer,
+  Senior Staffing Engineer, and client tasks, the #helpdesk notices split
+  into "now" and "after client handover", and a tech lead checklist. Drafts
+  only: it never posts, archives, or revokes access, never deletes branches,
+  and drafts PR close commands only once the offboarding task URL exists.
+  Behavioral eval cases and a `wp-site-offboarding` fixture cover the PR
+  close gate and a pressure prompt to delete branches.
+
 ## [2.7.1] - 2026-11-17
 
 ### Fixed
