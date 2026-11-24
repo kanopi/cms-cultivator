@@ -168,6 +168,18 @@
     {
       "prompt": "check the Dependabot PRs and make sure the lock file was computed correctly",
       "expect": "dependabot-branch-validation"
+    },
+    {
+      "prompt": "we no longer manage this site, help me offboard it",
+      "expect": "site-offboarding"
+    },
+    {
+      "prompt": "the client is leaving, what do we need to shut off and hand back to them?",
+      "expect": "site-offboarding"
+    },
+    {
+      "prompt": "draft the offboarding tasks and the helpdesk request to archive the repo",
+      "expect": "site-offboarding"
     }
   ]
 }

@@ -192,6 +192,12 @@ Agent Skills are the universal invocation format — they work in Claude Code, C
 **Purpose**: Combine every open Dependabot PR into one branch, verify the lock files, generated files, config drift, and theme builds, and open one consolidated PR (with confirmation)
 **Related Command**: `/dependabot-branch-validation`
 
+### 31. site-offboarding
+
+**Triggers**: "offboard this site", "we no longer manage this site", "the client is leaving", "decommission the site"
+**Purpose**: Inventory paid plugins, hosting, CI, open PRs, and advisories from the repo, then draft the offboarding tasks, #helpdesk notices, and tech lead checklist (drafts only; PR close commands wait for the task URL)
+**Related Command**: `/site-offboarding`
+
 ## How Skills Work
 
 ### Automatic Activation
